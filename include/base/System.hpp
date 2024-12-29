@@ -1,5 +1,5 @@
 #pragma once
-#include "core/Entity.hpp"
+#include "base/Entity.hpp"
 #include <vector>
 
 class System

@@ -1,5 +1,5 @@
 #pragma once
-#include "internal/scene/SceneTransition.hpp"
+#include "base/SceneTransition.hpp"
 #include "raylib.h"
 
 class Scene

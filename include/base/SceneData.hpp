@@ -4,15 +4,6 @@
 #include <string>
 #include <typeinfo>
 
-enum class SceneRequest
-{
-  NONE = 0,
-  QUIT,
-  PUSH_NEW_SCENE,
-  POP_CURRENT_SCENE,
-  REPLACE_CURRENT_SCENE
-};
-
 class SceneData
 {
   std::any _data;
@@ -46,11 +37,4 @@ public:
   {
     return _data.has_value();
   }
-};
-
-struct SceneTransition
-{
-  SceneRequest request = SceneRequest::NONE;
-  int sceneID = -1;
-  SceneData data = SceneData();
 };

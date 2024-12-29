@@ -1,5 +1,4 @@
 #pragma once
-#include "SceneTransition.hpp"
 #include "base/Scene.hpp"
 #include <functional>
 #include <memory>
