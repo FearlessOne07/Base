@@ -1,3 +1,3 @@
-#include "core/game/RenderContextSingleton.hpp"
+#include "internal/game/RenderContextSingleton.hpp"
 
 RenderContext RenderContextSingleton::_instance = {};

@@ -1,6 +1,6 @@
 #pragma once
-#include "core/Game.hpp"
-#include "core/scene/SceneManager.hpp"
+#include "base/Game.hpp"
+#include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
 #include <functional>
 #include <memory>

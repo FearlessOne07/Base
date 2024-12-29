@@ -1,6 +1,6 @@
 #pragma once
 #include "RenderContext.hpp"
-#include "core/Game.hpp"
+#include "base/Game.hpp"
 
 class RenderContextSingleton
 {

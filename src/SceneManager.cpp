@@ -1,5 +1,5 @@
-#include "core/scene/SceneManager.hpp"
-#include "core/scene/SceneTransition.hpp"
+#include "internal/scene/SceneManager.hpp"
+#include "internal/scene/SceneTransition.hpp"
 #include <iostream>
 #include <stdexcept>
 #include <utility>

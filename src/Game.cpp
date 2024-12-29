@@ -1,7 +1,7 @@
-#include "core/Game.hpp"
-#include "core/game/RenderContext.hpp"
-#include "core/game/RenderContextSingleton.hpp"
-#include "internal/GameImpl.hpp"
+#include "base/Game.hpp"
+#include "internal/game/GameImpl.hpp"
+#include "internal/game/RenderContext.hpp"
+#include "internal/game/RenderContextSingleton.hpp"
 #include "raylib.h"
 #include <algorithm>
 

@@ -1,4 +1,4 @@
-#include "core/entity/EntityManager.hpp"
+#include "internal/entity/EntityManager.hpp"
 #include <utility>
 
 Entity &EntityManager::AddEntity()
