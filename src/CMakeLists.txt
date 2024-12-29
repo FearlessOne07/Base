@@ -6,12 +6,9 @@ set(SRC
 )
 add_library("${PROJECT_NAME}" STATIC "${SRC}")
 
-target_link_directories("${PROJECT_NAME}" PRIVATE
-  "${CMAKE_SOURCE_DIR}/lib"
-)
-
-target_link_libraries("${PROJECT_NAME}" PRIVATE
-  raylib
+target_link_libraries("${PROJECT_NAME}"
+  PRIVATE
+    raylib
 )
 
 target_include_directories("${PROJECT_NAME}"
