@@ -7,6 +7,9 @@
 #include <unordered_map>
 #include <utility>
 
+namespace Base
+{
+
 class Entity
 {
   friend class EntityManager;
@@ -77,3 +80,4 @@ public:
     }
   }
 };
+} // namespace Base

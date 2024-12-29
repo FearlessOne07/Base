@@ -4,6 +4,9 @@
 #include <memory>
 #include <stack>
 
+namespace Base
+{
+
 class SceneManager
 {
 
@@ -29,3 +32,4 @@ public:
 
   void SetQuitCallBack(QuitCallBack quitCallback);
 };
+} // namespace Base

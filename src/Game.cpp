@@ -5,6 +5,9 @@
 #include "raylib.h"
 #include <algorithm>
 
+namespace Base
+{
+
 void Game::GameImpl::Init(int width, int height, const char *title, int fps)
 {
   // Initialize Raylib
@@ -18,7 +21,7 @@ void Game::GameImpl::Init(int width, int height, const char *title, int fps)
     SetTargetFPS(fps);
   }
 
-  // Initia Render Texture
+  // Initialise Render Texture
   _renderTexture = LoadRenderTexture(width, height);
   _gameWidth = _renderTexture.texture.width;
   _gameHeight = _renderTexture.texture.height;
@@ -130,3 +133,4 @@ void Game::RegisterSceneImpl(int sceneID, std::function<std::unique_ptr<Scene>()
 {
   _impl->RegisterScene(sceneID, factory);
 }
+} // namespace Base

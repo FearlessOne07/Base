@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
 #include <memory>
+namespace Base
+{
 
 class Scene;
 class Game
@@ -23,3 +25,4 @@ private:
   GameImpl *_impl = nullptr;
   void RegisterSceneImpl(int sceneID, std::function<std::unique_ptr<Scene>()> factory);
 };
+} // namespace Base

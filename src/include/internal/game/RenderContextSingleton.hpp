@@ -1,6 +1,8 @@
 #pragma once
 #include "RenderContext.hpp"
 #include "base/Game.hpp"
+namespace Base
+{
 
 class RenderContextSingleton
 {
@@ -22,3 +24,4 @@ private:
 
   static RenderContext _instance; // The shared RenderContext instance
 };
+} // namespace Base

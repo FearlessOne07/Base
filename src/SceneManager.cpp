@@ -4,6 +4,9 @@
 #include <stdexcept>
 #include <utility>
 
+namespace Base
+{
+
 void SceneManager::PushScene(int scene, SceneData sceneData)
 {
   if (!_scenes.empty())
@@ -119,3 +122,4 @@ void SceneManager::RegisterScene(int sceneID, FactoryCallBack factory)
     PushScene(0);
   }
 }
+} // namespace Base

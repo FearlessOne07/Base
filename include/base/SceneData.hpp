@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <string>
 #include <typeinfo>
+namespace Base
+{
 
 class SceneData
 {
@@ -38,3 +40,4 @@ public:
     return _data.has_value();
   }
 };
+} // namespace Base

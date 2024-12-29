@@ -3,6 +3,9 @@
 #include <cstddef>
 #include <vector>
 
+namespace Base
+{
+
 class EntityManager
 {
 private:
@@ -12,3 +15,4 @@ private:
 public:
   Entity &AddEntity();
 };
+} // namespace Base

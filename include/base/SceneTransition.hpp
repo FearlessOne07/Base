@@ -1,5 +1,7 @@
 #pragma once
 #include "base/SceneData.hpp"
+namespace Base
+{
 
 enum class SceneRequest
 {
@@ -16,3 +18,4 @@ struct SceneTransition
   int sceneID = -1;
   SceneData data = SceneData();
 };
+} // namespace Base

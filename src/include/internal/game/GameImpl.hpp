@@ -4,6 +4,8 @@
 #include "raylib.h"
 #include <functional>
 #include <memory>
+namespace Base
+{
 
 class Scene;
 class Game::GameImpl
@@ -30,3 +32,4 @@ public:
   void RegisterScene(int sceneID, FactoryCallBack factory);
   void Run();
 };
+} // namespace Base

@@ -1,6 +1,8 @@
 #pragma once
 #include "base/SceneTransition.hpp"
 #include "raylib.h"
+namespace Base
+{
 
 class Scene
 {
@@ -43,3 +45,4 @@ public:
     _sceneTransition = {SceneRequest::NONE, -1};
   }
 };
+} // namespace Base
