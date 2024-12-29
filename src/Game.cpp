@@ -106,6 +106,16 @@ void Game::GameImpl::RegisterScene(int sceneID, FactoryCallBack factory)
 }
 
 // Game Class
+Game::Game()
+{
+  _impl = new GameImpl;
+}
+
+Game::~Game()
+{
+  delete _impl;
+}
+
 void Game::Run()
 {
   _impl->Run();

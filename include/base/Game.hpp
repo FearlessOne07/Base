@@ -6,7 +6,8 @@ class Scene;
 class Game
 {
 public:
-  Game() = default;
+  Game();
+  ~Game();
   Game(Game &game) = delete;
   Game &operator=(Game &g) = delete;
 
