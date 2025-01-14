@@ -5,13 +5,14 @@
 namespace Base
 {
 
-class System
-{
-public:
-  virtual ~System()
+  class System
   {
-  }
-  virtual void Update(float dt, std::vector<Entity> &entities) = 0;
-};
+  protected:
+  public:
+    virtual ~System()
+    {
+    }
+    virtual void Update(float dt, std::vector<Entity> &entities) = 0;
+  };
 
 } // namespace Base

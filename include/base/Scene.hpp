@@ -1,48 +1,35 @@
 #pragma once
 #include "base/SceneTransition.hpp"
 #include "raylib.h"
+#include <memory>
 namespace Base
 {
+  class EntityManager;
+  class Scene
+  {
+  private:
+    friend class SceneManager; // SceneManager
+    void SetEntityManager(EntityManager *manager);
+    SceneTransition GetSceneTransition() const;
+    void ResetSceneTransition();
 
-class Scene
-{
-private:
-  SceneTransition _sceneTransition = SceneTransition();
-  Color _fillColor = BLACK;
+    struct SceneState;
+    std::unique_ptr<SceneState> _state;
 
-protected: // Inclass Access
-  void SetSceneClearColor(Color color)
-  {
-    _fillColor = color;
-  }
-  void SetSceneTransition(SceneTransition transition)
-  {
-    _sceneTransition = transition;
-  }
-  void Clear() const
-  {
-    ClearBackground(_fillColor);
+  protected: // Inclass Access
+    void SetSceneClearColor(Color color);
+    void SetSceneTransition(SceneTransition transition);
+    void Clear() const;
+
+  protected: // Virtual
+    virtual void GetInput() = 0;
+
+  public:
+    Scene();
+    virtual ~Scene();
+    virtual void Update(float dt) = 0;
+    virtual void Enter(SceneData sceneData = SceneData()) = 0;
+    virtual void Render() = 0;
+    virtual void Exit() = 0;
   };
-
-protected: // Virtual
-  virtual void GetInput() = 0;
-
-public:
-  virtual ~Scene()
-  {
-  }
-  virtual void Update(float dt) = 0;
-  virtual void Enter(SceneData sceneData = SceneData()) = 0;
-  virtual void Render() = 0;
-  virtual void Exit() = 0;
-
-  SceneTransition GetSceneTransition() const
-  {
-    return _sceneTransition;
-  }
-  void ResetSceneTransition()
-  {
-    _sceneTransition = {SceneRequest::NONE, -1};
-  }
-};
 } // namespace Base

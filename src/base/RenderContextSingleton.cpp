@@ -2,5 +2,5 @@
 
 namespace Base
 {
-RenderContext RenderContextSingleton::_instance = {};
+  RenderContext RenderContextSingleton::_instance = {};
 }

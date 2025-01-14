@@ -6,6 +6,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 set(CMAKE_BUILD_TYPE "Release")
 
+set(HEADER_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(HEADER_DEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+file(COPY "${HEADER_SOURCE_DIR}/" DESTINATION ${HEADER_DEST_DIR})
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/vendor/raylib/src/raylib.h" DESTINATION ${HEADER_DEST_DIR}/raylib)
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/vendor/raylib/src/raymath.h" DESTINATION ${HEADER_DEST_DIR}/raylib)
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/vendor/raylib/src/rlgl.h" DESTINATION ${HEADER_DEST_DIR}/raylib)
+
 add_subdirectory(
   "./vendor/raylib/"
 )

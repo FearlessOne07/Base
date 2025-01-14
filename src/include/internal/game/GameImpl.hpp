@@ -1,5 +1,6 @@
 #pragma once
 #include "base/Game.hpp"
+#include "internal/entity/EntityManager.hpp"
 #include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
 #include <functional>
@@ -7,29 +8,30 @@
 namespace Base
 {
 
-class Scene;
-class Game::GameImpl
-{
-  // Type defs
-  using FactoryCallBack = std::function<std::unique_ptr<Scene>()>;
+  class Scene;
+  class Game::GameImpl
+  {
+    // Type defs
+    using FactoryCallBack = std::function<std::unique_ptr<Scene>()>;
 
-private:
-  bool _running;
-  RenderTexture _renderTexture;
-  float _gameWidth;
-  float _gameHeight;
+  private:
+    bool _running;
+    RenderTexture _renderTexture;
+    float _gameWidth;
+    float _gameHeight;
 
-private: // Systems
-  SceneManager _scenemanager;
+  private: // Systems
+    SceneManager _scenemanager;
+    EntityManager _entityManager;
 
-private: // Methods
-  void Quit();
-  void End();
+  private: // Methods
+    void Quit();
+    void End();
 
-public:
-  GameImpl() = default;
-  void Init(int width, int height, const char *title, int fps = 0);
-  void RegisterScene(int sceneID, FactoryCallBack factory);
-  void Run();
-};
+  public:
+    GameImpl() = default;
+    void Init(int width, int height, const char *title, int fps = 0);
+    void RegisterScene(int sceneID, FactoryCallBack factory);
+    void Run();
+  };
 } // namespace Base

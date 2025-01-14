@@ -6,38 +6,38 @@
 namespace Base
 {
 
-class SceneData
-{
-  std::any _data;
-
-public:
-  SceneData() = default;
-  ~SceneData() = default;
-
-  template <typename T> void Set(T value)
+  class SceneData
   {
-    _data = std::move(value);
-  }
+    std::any _data;
 
-  template <typename T> T Get() const
-  {
-    if (!_data.has_value())
+  public:
+    SceneData() = default;
+    ~SceneData() = default;
+
+    template <typename T> void Set(T value)
     {
-      throw std::runtime_error("SceneData is empty.");
+      _data = std::move(value);
     }
 
-    // Check type safety
-    if (_data.type().hash_code() != typeid(T).hash_code())
+    template <typename T> T Get() const
     {
-      throw std::runtime_error("SceneData type mismatch. Expected: " + std::string(typeid(T).name()) +
-                               ", but got: " + std::string(_data.type().name()));
-    }
+      if (!_data.has_value())
+      {
+        throw std::runtime_error("SceneData is empty.");
+      }
 
-    return std::any_cast<T>(_data);
-  }
-  bool HasValue() const
-  {
-    return _data.has_value();
-  }
-};
+      // Check type safety
+      if (_data.type().hash_code() != typeid(T).hash_code())
+      {
+        throw std::runtime_error("SceneData type mismatch. Expected: " + std::string(typeid(T).name()) +
+                                 ", but got: " + std::string(_data.type().name()));
+      }
+
+      return std::any_cast<T>(_data);
+    }
+    bool HasValue() const
+    {
+      return _data.has_value();
+    }
+  };
 } // namespace Base
