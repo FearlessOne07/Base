@@ -1,7 +1,7 @@
 #include "base/Game.hpp"
+#include "base/RenderContext.hpp"
+#include "base/RenderContextSingleton.hpp"
 #include "internal/game/GameImpl.hpp"
-#include "internal/game/RenderContext.hpp"
-#include "internal/game/RenderContextSingleton.hpp"
 #include "raylib.h"
 #include <algorithm>
 
@@ -44,7 +44,7 @@ namespace Base
       _gameWidth,     _gameHeight, //
       (float)marginX, (float)marginY, scale,
     };
-    RenderContextSingleton::UpdateInstance(rendercontext);
+    RenderContextSingleton::UpdateInstance(&rendercontext);
   }
 
   void Game::GameImpl::Run()
@@ -65,7 +65,7 @@ namespace Base
         (float)marginX, (float)marginY, scale,
       };
 
-      RenderContextSingleton::UpdateInstance(rendercontext);
+      RenderContextSingleton::UpdateInstance(&rendercontext);
 
       // Delta Time
       float dt = GetFrameTime();
