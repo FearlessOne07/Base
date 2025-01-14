@@ -3,19 +3,19 @@
 namespace Base
 {
 
-enum class SceneRequest
-{
-  NONE = 0,
-  QUIT,
-  PUSH_NEW_SCENE,
-  POP_CURRENT_SCENE,
-  REPLACE_CURRENT_SCENE
-};
+  enum class SceneRequest
+  {
+    NONE = 0,
+    QUIT,
+    PUSH_NEW_SCENE,
+    POP_CURRENT_SCENE,
+    REPLACE_CURRENT_SCENE
+  };
 
-struct SceneTransition
-{
-  SceneRequest request = SceneRequest::NONE;
-  int sceneID = -1;
-  SceneData data = SceneData();
-};
+  struct SceneTransition
+  {
+    SceneRequest request = SceneRequest::NONE;
+    int sceneID = -1;
+    SceneData data = SceneData();
+  };
 } // namespace Base

@@ -2,11 +2,11 @@
 namespace Base
 {
 
-struct Component
-{
-  virtual ~Component()
+  struct Component
   {
-  }
-};
+    virtual ~Component()
+    {
+    }
+  };
 
 } // namespace Base

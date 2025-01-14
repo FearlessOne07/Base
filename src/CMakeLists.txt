@@ -1,8 +1,9 @@
 set(SRC
-  "./Game.cpp"
-  "./SceneManager.cpp"
-  "./EntityManager.cpp"
-  "./RenderContextSingleton.cpp"
+  "./base/Game.cpp"
+  "./base/SceneManager.cpp"
+  "./base/EntityManager.cpp"
+  "./base/RenderContextSingleton.cpp"
+  "./base/Scene.cpp"
 )
 add_library("${PROJECT_NAME}" STATIC "${SRC}")
 
