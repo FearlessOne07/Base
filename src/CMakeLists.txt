@@ -15,7 +15,7 @@ target_link_libraries("${PROJECT_NAME}"
 
 target_link_directories("${PROJECT_NAME}"
   PUBLIC
-    "../lib/"
+    "../build/vendor/raylib/raylib/"
 )
 
 target_include_directories("${PROJECT_NAME}"
