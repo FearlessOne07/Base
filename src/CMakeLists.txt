@@ -4,6 +4,7 @@ set(SRC
   "./base/EntityManager.cpp"
   "./base/RenderContextSingleton.cpp"
   "./base/Scene.cpp"
+  "./base/RenderContext.cpp"
 )
 add_library("${PROJECT_NAME}" STATIC "${SRC}")
 

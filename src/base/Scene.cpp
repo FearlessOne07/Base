@@ -1,4 +1,5 @@
 #include "base/Scene.hpp"
+#include <memory>
 
 namespace Base
 {
@@ -41,6 +42,9 @@ namespace Base
     }
   }
 
+  Scene::Scene() : _state(std::make_unique<SceneState>())
+  {
+  }
   Scene::~Scene()
   {
   }
