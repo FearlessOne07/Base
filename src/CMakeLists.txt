@@ -14,13 +14,12 @@ target_link_libraries("${PROJECT_NAME}"
 )
 
 target_link_directories("${PROJECT_NAME}"
-  PUBLIC
-    "../build/vendor/raylib/raylib/"
+  PRIVATE
+    "${ROOT_BASE_DIR}/build/vendor/raylib"
 )
 
 target_include_directories("${PROJECT_NAME}"
   PRIVATE
-    "${CMAKE_SOURCE_DIR}/src/include/"
-  PUBLIC
-    "${CMAKE_SOURCE_DIR}/include"
+    "${ROOT_BASE_DIR}/src/include/"
+    "${ROOT_BASE_DIR}/include/"
 )
