@@ -1,29 +1,31 @@
 #pragma once
 #include "base/Entity.hpp"
+#include "base/Exports.hpp"
 #include <cstddef>
+#include <memory>
 #include <vector>
 
 namespace Base
 {
 
-  class EntityManager
+  class BASEAPI EntityManager
   {
   private:
-    std::vector<Entity> _entities;
+    std::vector<std::shared_ptr<Entity>> _entities;
     size_t _nextID = 0;
 
   public:
-    Entity &AddEntity();
+    std::shared_ptr<Entity> AddEntity();
 
-    template <typename... Componets> std::vector<Base::Entity *> Query()
+    template <typename... Components> std::vector<std::shared_ptr<Entity>> Query()
     {
-      std::vector<Entity *> results = {};
+      std::vector<std::shared_ptr<Entity>> results = {};
 
       for (auto &e : _entities)
       {
-        if ((e.HasComponent<Componets>() && ...))
+        if ((e->HasComponent<Components>() && ...))
         {
-          results.push_back(&e);
+          results.emplace_back(e);
         }
       }
       return results;

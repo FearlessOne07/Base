@@ -1,12 +1,9 @@
 #pragma once
+#include "Exports.hpp"
+
 namespace Base
 {
 
-  struct Component
-  {
-    virtual ~Component()
-    {
-    }
-  };
+  struct BASEAPI Component{virtual ~Component(){}};
 
 } // namespace Base

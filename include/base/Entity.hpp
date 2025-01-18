@@ -1,5 +1,6 @@
 #pragma once
 #include "base/Component.hpp"
+#include "base/Exports.hpp"
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -11,34 +12,18 @@
 namespace Base
 {
 
-  class Entity
+  class BASEAPI Entity
   {
     friend class EntityManager;
 
     size_t _id = 0;
     std::unordered_map<std::type_index, std::unique_ptr<Component>> _components;
-
-    Entity(size_t id) : _id(id)
-    {
-    }
+    Entity(size_t id);
 
   public:
     // Move constructor and Move assignment operator
-    Entity(Entity &&e) noexcept : _id(e._id), _components(std::move(e._components))
-    {
-      e._id = 0;
-    }
-
-    Entity &operator=(Entity &&e) noexcept
-    {
-      if (this != &e)
-      {
-        _id = e._id;
-        _components = std::move(e._components);
-        e._id = 0;
-      }
-      return *this;
-    }
+    Entity(Entity &&e) noexcept;
+    Entity &operator=(Entity &&e) noexcept;
 
     // Delete Copy comstructor and copy assignment operator
     Entity &operator=(Entity &) = delete;
@@ -48,7 +33,6 @@ namespace Base
     {
       // Check Type of T
       static_assert(std::is_base_of<Component, T>::value, "T must derive from the class 'Component'");
-
       return _components.find(std::type_index(typeid(T))) == _components.end();
     }
 
@@ -57,7 +41,6 @@ namespace Base
 
       // Check Type of T
       static_assert(std::is_base_of<Component, T>::value, "T must derive from the class 'Component'");
-
       std::type_index ti = std::type_index(typeid(T));
       if (!HasComponent<T>())
       {
@@ -88,5 +71,8 @@ namespace Base
         return static_cast<T *>(_components.at(ti).get());
       }
     }
+
+    // Access
+    size_t GetID() const;
   };
 } // namespace Base

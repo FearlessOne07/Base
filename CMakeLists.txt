@@ -5,6 +5,21 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE "Release")
 
+option(BUILD_DEBUG "Build type for the library" ON)
+option(BUILD_SHARED_LIB "Build Base as a shared library" OFF)
+
+if(BUILD_DEBUG)
+  set(CMAKE_BUILD_TYPE "Debug")
+else()
+  set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+if(BUILD_SHARED_LIB)
+  set(BUILD_SHARED_LIBS ON)
+else()
+  set(BUILD_SHARED_LIBS OFF)
+endif()
+
 set(ROOT_BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE STRING "The root directory")
 message(STATUS "Root Base directory: ${ROOT_BASE_DIR}")
 
@@ -18,7 +33,6 @@ file(COPY "${HEADER_SOURCE_DIR}/" DESTINATION ${HEADER_DEST_DIR})
 file(COPY "${ROOT_BASE_DIR}/vendor/raylib/src/raylib.h" DESTINATION ${HEADER_DEST_DIR}/raylib)
 file(COPY "${ROOT_BASE_DIR}/vendor/raylib/src/raymath.h" DESTINATION ${HEADER_DEST_DIR}/raylib)
 file(COPY "${ROOT_BASE_DIR}/vendor/raylib/src/rlgl.h" DESTINATION ${HEADER_DEST_DIR}/raylib)
-
 
 add_subdirectory(
   "./vendor/raylib/"

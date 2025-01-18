@@ -1,4 +1,5 @@
 #pragma once
+#include "base/Exports.hpp"
 #include "base/SceneData.hpp"
 namespace Base
 {
@@ -12,7 +13,7 @@ namespace Base
     REPLACE_CURRENT_SCENE
   };
 
-  struct SceneTransition
+  struct BASEAPI SceneTransition
   {
     SceneRequest request = SceneRequest::NONE;
     int sceneID = -1;

@@ -1,11 +1,16 @@
 #include "internal/scene/SceneManager.hpp"
 #include "base/SceneTransition.hpp"
+#include "internal/entity/EntityManager.hpp"
 #include <iostream>
 #include <stdexcept>
 #include <utility>
 
 namespace Base
 {
+
+  SceneManager::SceneManager(EntityManager *entityManager) : _entityManager(entityManager)
+  {
+  }
 
   void SceneManager::PushScene(int scene, SceneData sceneData)
   {
@@ -15,7 +20,8 @@ namespace Base
       _scenes.top()->Exit();
     }
     // Push new scen to the stack and enter it
-    _scenes.push(std::move(_factories.at(scene)()));
+    _scenes.push(_factories.at(scene)());
+    _scenes.top()->SetEntityManager(_entityManager);
     _scenes.top()->Enter();
   }
 
@@ -23,7 +29,6 @@ namespace Base
   {
     if (!_scenes.empty())
     {
-
       // Exit the current scene and pop it off the stack
       _scenes.top()->Exit();
       _scenes.pop();
@@ -40,14 +45,13 @@ namespace Base
   {
     if (!_scenes.empty())
     {
-
       // Exit the current scene and pop it
       _scenes.top()->Exit();
       _scenes.pop();
     }
 
     // Push the new scene and enter it
-    _scenes.push(std::move(_factories.at(scene)()));
+    _scenes.push(_factories.at(scene)());
     _scenes.top()->Enter();
   }
 

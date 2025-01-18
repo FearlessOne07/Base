@@ -5,8 +5,15 @@ set(SRC
   "./base/RenderContextSingleton.cpp"
   "./base/Scene.cpp"
   "./base/RenderContext.cpp"
+  "./base/System.cpp"
+  "./base/Entity.cpp"
 )
-add_library("${PROJECT_NAME}" STATIC "${SRC}")
+add_library("${PROJECT_NAME}" "${SRC}")
+
+target_compile_definitions(base PRIVATE
+    $<$<CONFIG:Debug>:DEBUG>
+    $<$<BOOL:${BUILD_SHARED_LIB}>:BASE_EXPORT>
+)
 
 target_link_libraries("${PROJECT_NAME}"
   PUBLIC
@@ -17,6 +24,7 @@ target_link_directories("${PROJECT_NAME}"
   PRIVATE
     "${ROOT_BASE_DIR}/build/vendor/raylib"
 )
+
 
 target_include_directories("${PROJECT_NAME}"
   PRIVATE

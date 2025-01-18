@@ -28,7 +28,6 @@ namespace Base
     _running = true;
 
     // Init Systems
-    _scenemanager = SceneManager();
     _scenemanager.SetQuitCallBack([this]() { this->Quit(); });
 
     // Initialize render context
@@ -131,6 +130,6 @@ namespace Base
 
   void Game::RegisterSceneImpl(int sceneID, std::function<std::unique_ptr<Scene>()> factory)
   {
-    _impl->RegisterScene(sceneID, factory);
+    _impl->RegisterScene(sceneID, std::move(factory));
   }
 } // namespace Base
