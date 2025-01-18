@@ -1,12 +1,11 @@
 #include "internal/entity/EntityManager.hpp"
-#include <utility>
+#include <memory>
 
 namespace Base
 {
-  Entity &EntityManager::AddEntity()
+  std::shared_ptr<Entity> EntityManager::AddEntity()
   {
-    Entity e(_nextID++);
-    _entities.emplace_back(std::move(e));
+    _entities.push_back(std::shared_ptr<Entity>(new Entity(_nextID++)));
     return _entities.back();
   };
 } // namespace Base

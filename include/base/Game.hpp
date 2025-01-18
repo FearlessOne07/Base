@@ -1,11 +1,12 @@
 #pragma once
+#include "base/Exports.hpp"
 #include <functional>
 #include <memory>
 namespace Base
 {
 
   class Scene;
-  class Game
+  class BASEAPI Game
   {
   public:
     Game();

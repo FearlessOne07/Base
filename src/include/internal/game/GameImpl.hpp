@@ -1,15 +1,17 @@
 #pragma once
+#include "base/Exports.hpp"
 #include "base/Game.hpp"
 #include "internal/entity/EntityManager.hpp"
 #include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
 #include <functional>
 #include <memory>
+
 namespace Base
 {
 
   class Scene;
-  class Game::GameImpl
+  class BASEAPI Game::GameImpl
   {
     // Type defs
     using FactoryCallBack = std::function<std::unique_ptr<Scene>()>;
@@ -21,8 +23,8 @@ namespace Base
     float _gameHeight;
 
   private: // Systems
-    SceneManager _scenemanager;
-    EntityManager _entityManager;
+    EntityManager _entityManager = EntityManager();
+    SceneManager _scenemanager = SceneManager(&_entityManager);
 
   private: // Methods
     void Quit();

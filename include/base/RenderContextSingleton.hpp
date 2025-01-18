@@ -1,19 +1,21 @@
 #pragma once
+#include "base/Exports.hpp"
 #include "base/Game.hpp"
 namespace Base
 {
   class RenderContext;
-  class RenderContextSingleton
+  class BASEAPI RenderContextSingleton
   {
   public:
     // Access the constant RenderContext
     static const RenderContext *GetInstance();
+    ~RenderContextSingleton();
 
   private:
     friend class Game; // Allow `Game` to modify the RenderContext
 
     // Update the RenderContext (accessible only by `Game`)
-    static void UpdateInstance(const RenderContext *newContext);
-    static RenderContext _instance;
+    static void UpdateInstance(RenderContext *newContext);
+    static RenderContext *_instance;
   };
 } // namespace Base

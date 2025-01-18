@@ -1,18 +1,13 @@
 #pragma once
 #include "base/Entity.hpp"
-#include <vector>
 
 namespace Base
 {
-
-  class System
+  class EntityManager;
+  class BASEAPI System
   {
-  protected:
   public:
-    virtual ~System()
-    {
-    }
-    virtual void Update(float dt, std::vector<Entity> &entities) = 0;
+    virtual ~System();
+    virtual void Update(float dt, EntityManager *entityManager) = 0;
   };
-
 } // namespace Base

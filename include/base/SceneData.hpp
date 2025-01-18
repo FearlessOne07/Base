@@ -1,4 +1,5 @@
 #pragma once
+#include "base/Exports.hpp"
 #include <any>
 #include <stdexcept>
 #include <string>
@@ -6,7 +7,7 @@
 namespace Base
 {
 
-  class SceneData
+  class BASEAPI SceneData
   {
     std::any _data;
 
@@ -29,8 +30,10 @@ namespace Base
       // Check type safety
       if (_data.type().hash_code() != typeid(T).hash_code())
       {
-        throw std::runtime_error("SceneData type mismatch. Expected: " + std::string(typeid(T).name()) +
-                                 ", but got: " + std::string(_data.type().name()));
+        throw std::runtime_error( //
+          "SceneData type mismatch. Expected: " + std::string(typeid(T).name()) +
+          ", but got: " + std::string(_data.type().name()) //
+        );
       }
 
       return std::any_cast<T>(_data);
