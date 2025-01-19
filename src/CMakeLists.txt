@@ -12,7 +12,7 @@ add_library("${PROJECT_NAME}" "${SRC}")
 
 target_compile_definitions(base PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
-    $<$<BOOL:${BUILD_SHARED_LIB}>:BASE_EXPORT>
+    $<$<BOOL:${BASE_BUILD_SHARED_LIB}>:BASE_BUILD_LIBTYPE_SHARED>
 )
 
 target_link_libraries("${PROJECT_NAME}"
