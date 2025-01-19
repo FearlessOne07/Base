@@ -6,20 +6,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE "Release")
 
 option(BASE_BUILD_DEBUG "Build type for the library" ON)
-option(BASE_BUILD_SHARED_LIB "Build Base as a shared library" OFF)
-
-set(BASE_BUILD_SHARED_LIB "${BASE_BUILD_SHARED_LIB}" CACHE BOOL "Whether to build the base library as shared")
-
 if(BASE_BUILD_DEBUG)
   set(CMAKE_BUILD_TYPE "Debug")
 else()
   set(CMAKE_BUILD_TYPE "Release")
-endif()
-
-if(BASE_BUILD_SHARED_LIB)
-  set(BUILD_SHARED_LIBS ON)
-else()
-  set(BUILD_SHARED_LIBS OFF)
 endif()
 
 set(ROOT_BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE STRING "The root directory")
