@@ -1,4 +1,5 @@
 #include "base/Scene.hpp"
+#include "base/SceneData.hpp"
 #include <memory>
 
 namespace Base
@@ -15,9 +16,13 @@ namespace Base
     _state->fillColor = color;
   }
 
-  void Scene::SetSceneTransition(SceneTransition transition)
+  void Scene::__setSceneTransition(std::type_index sceneID, SceneRequest request, SceneData data)
   {
-    _state->sceneTransition = transition;
+    _state->sceneTransition = {
+      .request = request,
+      .sceneID = sceneID,
+      .data = data,
+    };
   }
 
   void Scene::Clear() const
@@ -31,7 +36,7 @@ namespace Base
   }
   void Scene::ResetSceneTransition()
   {
-    _state->sceneTransition = {SceneRequest::NONE, -1};
+    _state->sceneTransition = {SceneRequest::NONE, typeid(-1)};
   }
 
   void Scene::SetEntityManager(EntityManager *manager)

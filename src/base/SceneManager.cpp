@@ -12,7 +12,7 @@ namespace Base
   {
   }
 
-  void SceneManager::PushScene(int scene, SceneData sceneData)
+  void SceneManager::PushScene(std::type_index scene, SceneData sceneData)
   {
     if (!_scenes.empty())
     {
@@ -41,7 +41,7 @@ namespace Base
     }
   }
 
-  void SceneManager::ReplaceScene(int scene, SceneData sceneData)
+  void SceneManager::ReplaceScene(std::type_index scene, SceneData sceneData)
   {
     if (!_scenes.empty())
     {
@@ -110,7 +110,7 @@ namespace Base
     }
   }
 
-  void SceneManager::RegisterScene(int sceneID, FactoryCallBack factory)
+  void SceneManager::RegisterScene(std::type_index sceneID, FactoryCallBack factory)
   {
     if (_factories.find(sceneID) == _factories.end())
     {
@@ -123,7 +123,13 @@ namespace Base
 
     if (_scenes.empty())
     {
-      PushScene(0);
+      std::type_index first = typeid(0);
+      for (auto &[id, factory] : _factories)
+      {
+        first = id;
+        break;
+      }
+      PushScene(first);
     }
   }
 } // namespace Base
