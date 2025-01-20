@@ -102,7 +102,7 @@ namespace Base
     _running = false;
   }
 
-  void Game::GameImpl::RegisterScene(int sceneID, FactoryCallBack factory)
+  void Game::GameImpl::RegisterScene(std::type_index sceneID, FactoryCallBack factory)
   {
     _scenemanager.RegisterScene(sceneID, std::move(factory));
   }
@@ -128,7 +128,7 @@ namespace Base
     _impl->Init(width, height, title, fps);
   }
 
-  void Game::RegisterSceneImpl(int sceneID, std::function<std::unique_ptr<Scene>()> factory)
+  void Game::RegisterSceneImpl(std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory)
   {
     _impl->RegisterScene(sceneID, std::move(factory));
   }

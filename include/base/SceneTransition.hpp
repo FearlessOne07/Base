@@ -1,6 +1,8 @@
 #pragma once
 #include "base/Exports.hpp"
 #include "base/SceneData.hpp"
+#include <typeindex>
+
 namespace Base
 {
 
@@ -16,7 +18,7 @@ namespace Base
   struct BASEAPI SceneTransition
   {
     SceneRequest request = SceneRequest::NONE;
-    int sceneID = -1;
+    std::type_index sceneID = typeid(-1);
     SceneData data = SceneData();
   };
 } // namespace Base

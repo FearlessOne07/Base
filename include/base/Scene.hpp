@@ -1,8 +1,10 @@
 #pragma once
 #include "base/Exports.hpp"
+#include "base/SceneData.hpp"
 #include "base/SceneTransition.hpp"
 #include "raylib.h"
 #include <memory>
+#include <typeindex>
 namespace Base
 {
   class EntityManager;
@@ -10,17 +12,22 @@ namespace Base
   {
   private:
     friend class SceneManager; // SceneManager
-    void SetEntityManager(EntityManager *manager);
     SceneTransition GetSceneTransition() const;
+    void SetEntityManager(EntityManager *manager);
     void ResetSceneTransition();
+    void __setSceneTransition(std::type_index sceneID, SceneRequest request, SceneData data = SceneData());
 
     struct SceneState;
     std::unique_ptr<SceneState> _state;
 
   protected: // Inclass Access
     void SetSceneClearColor(Color color);
-    void SetSceneTransition(SceneTransition transition);
     void Clear() const;
+
+    template <typename T> void SetSceneTransition(SceneRequest request, SceneData data = SceneData())
+    {
+      __setSceneTransition(typeid(T), request, data);
+    }
 
   protected: // Virtual
     virtual void GetInput() = 0;

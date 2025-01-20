@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 #include <stack>
+#include <typeindex>
 
 namespace Base
 {
@@ -16,20 +17,20 @@ namespace Base
 
   private:
     QuitCallBack _quitCallBack = nullptr;
-    std::unordered_map<int, FactoryCallBack> _factories;
+    std::unordered_map<std::type_index, FactoryCallBack> _factories;
     EntityManager *_entityManager = nullptr;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
 
-    void PushScene(int sceneID, SceneData sceneData = SceneData());
-    void ReplaceScene(int sceneId, SceneData sceneData = SceneData());
+    void PushScene(std::type_index sceneID, SceneData sceneData = SceneData());
+    void ReplaceScene(std::type_index sceneId, SceneData sceneData = SceneData());
     void PopScene();
 
   public:
     SceneManager(EntityManager *entityManager);
     SceneManager() = default;
-    void RegisterScene(int sceneID, FactoryCallBack factory);
+    void RegisterScene(std::type_index sceneID, FactoryCallBack factory);
     void Update(float dt);
     void Render();
 
