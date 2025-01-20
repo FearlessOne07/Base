@@ -24,7 +24,7 @@ namespace Base
     void SetSceneClearColor(Color color);
     void Clear() const;
 
-    template <typename T> void SetSceneTransition(SceneRequest request, SceneData data = SceneData())
+    template <typename T = void> void SetSceneTransition(SceneRequest request, SceneData data = SceneData())
     {
       __setSceneTransition(typeid(T), request, data);
     }
