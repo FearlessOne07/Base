@@ -1,5 +1,6 @@
 #include "base/Scene.hpp"
 #include "base/SceneData.hpp"
+#include "base/SystemManager.hpp"
 #include <memory>
 
 namespace Base
@@ -9,6 +10,7 @@ namespace Base
     SceneTransition sceneTransition = SceneTransition();
     Color fillColor = BLACK;
     EntityManager *entityManager = nullptr;
+    SystemManager *systemManager = nullptr;
   };
 
   void Scene::SetSceneClearColor(Color color)
@@ -47,9 +49,18 @@ namespace Base
     }
   }
 
+  void Scene::SetSystemManager(SystemManager *manager)
+  {
+    if (manager)
+    {
+      _state->systemManager = manager;
+    }
+  }
+
   Scene::Scene() : _state(std::make_unique<SceneState>())
   {
   }
+
   Scene::~Scene()
   {
   }

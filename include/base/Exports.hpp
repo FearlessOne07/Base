@@ -1,19 +1,19 @@
 #if defined(_WIN32)  // Windows platform
     #if defined(BASE_BUILD_LIBTYPE_SHARED)
-        #define BASEAPI __declspec(dllexport)  // Export symbols when building a shared library
+        #define BASEAPI __declspec(dllexport)
     #elif defined(BASE_USE_LIBTYPE_SHARED)
-        #define BASEAPI __declspec(dllimport)  // Import symbols when using a shared library
+        #define BASEAPI __declspec(dllimport)
     #else
-        #define BASEAPI  // Empty for static libraries or unspecified cases
+        #define BASEAPI
     #endif
 #else  // Unix-like platforms
     #if defined(BASE_BUILD_LIBTYPE_SHARED)
-        #define BASEAPI __attribute__((visibility("default")))  // Export symbols when building a shared library
+        #define BASEAPI __attribute__((visibility("default")))
     #else
-        #define BASEAPI  // Empty for static libraries or unspecified cases
+        #define BASEAPI
     #endif
 #endif
 
 #ifndef BASEAPI
-    #define BASEAPI  // Fallback: Ensure BASEAPI is always defined (e.g., for static libraries)
+    #define BASEAPI
 #endif

@@ -3,7 +3,6 @@
 
 namespace Base
 {
-
   Entity::Entity(size_t id) : _id(id)
   {
   }

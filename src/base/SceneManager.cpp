@@ -1,6 +1,7 @@
 #include "internal/scene/SceneManager.hpp"
+#include "base/EntityManager.hpp"
+#include "base/Scene.hpp"
 #include "base/SceneTransition.hpp"
-#include "internal/entity/EntityManager.hpp"
 #include <iostream>
 #include <stdexcept>
 #include <utility>
@@ -8,7 +9,8 @@
 namespace Base
 {
 
-  SceneManager::SceneManager(EntityManager *entityManager) : _entityManager(entityManager)
+  SceneManager::SceneManager(EntityManager *entityManager, SystemManager *systemManager)
+    : _entityManager(entityManager), _systemManager(systemManager)
   {
   }
 
@@ -17,12 +19,12 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene
-      _scenes.top()->Exit();
+      _scenes.top()->Exit(_systemManager);
     }
     // Push new scen to the stack and enter it
     _scenes.push(_factories.at(scene)());
     _scenes.top()->SetEntityManager(_entityManager);
-    _scenes.top()->Enter();
+    _scenes.top()->Enter(_systemManager);
   }
 
   void SceneManager::PopScene()
@@ -30,14 +32,14 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene and pop it off the stack
-      _scenes.top()->Exit();
+      _scenes.top()->Exit(_systemManager);
       _scenes.pop();
     }
 
     // Enter the scene below it if there is one
     if (!_scenes.empty())
     {
-      _scenes.top()->Enter();
+      _scenes.top()->Enter(_systemManager);
     }
   }
 
@@ -46,13 +48,13 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene and pop it
-      _scenes.top()->Exit();
+      _scenes.top()->Exit(_systemManager);
       _scenes.pop();
     }
 
     // Push the new scene and enter it
     _scenes.push(_factories.at(scene)());
-    _scenes.top()->Enter();
+    _scenes.top()->Enter(_systemManager);
   }
 
   void SceneManager::SetQuitCallBack(QuitCallBack quitCallBack)
