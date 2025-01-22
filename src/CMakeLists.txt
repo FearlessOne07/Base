@@ -7,6 +7,7 @@ set(SRC
   "./base/RenderContext.cpp"
   "./base/System.cpp"
   "./base/Entity.cpp"
+  "./base/SystemManager.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 
