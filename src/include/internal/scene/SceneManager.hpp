@@ -1,6 +1,6 @@
 #pragma once
 #include "base/Exports.hpp"
-#include "base/Scene.hpp"
+#include "base/SceneData.hpp"
 #include <functional>
 #include <memory>
 #include <stack>
@@ -8,7 +8,9 @@
 
 namespace Base
 {
+  class Scene;
   class EntityManager;
+  class SystemManager;
   class BASEAPI SceneManager
   {
     // Type Defs
@@ -19,6 +21,7 @@ namespace Base
     QuitCallBack _quitCallBack = nullptr;
     std::unordered_map<std::type_index, FactoryCallBack> _factories;
     EntityManager *_entityManager = nullptr;
+    SystemManager *_systemManager = nullptr;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
@@ -28,7 +31,7 @@ namespace Base
     void PopScene();
 
   public:
-    SceneManager(EntityManager *entityManager);
+    SceneManager(EntityManager *entityManager, SystemManager *systemManager);
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory);
     void Update(float dt);

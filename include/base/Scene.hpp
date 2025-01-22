@@ -8,12 +8,14 @@
 namespace Base
 {
   class EntityManager;
+  class SystemManager;
   class BASEAPI Scene
   {
   private:
     friend class SceneManager; // SceneManager
     SceneTransition GetSceneTransition() const;
-    void SetEntityManager(EntityManager *manager);
+    void SetEntityManager(EntityManager *);
+    void SetSystemManager(SystemManager *);
     void ResetSceneTransition();
     void __setSceneTransition(std::type_index sceneID, SceneRequest request, SceneData data = SceneData());
 
@@ -36,8 +38,8 @@ namespace Base
     Scene();
     virtual ~Scene();
     virtual void Update(float dt) = 0;
-    virtual void Enter(SceneData sceneData = SceneData()) = 0;
+    virtual void Enter(SystemManager *systemManager, SceneData sceneData = SceneData()) = 0;
     virtual void Render() = 0;
-    virtual void Exit() = 0;
+    virtual void Exit(SystemManager *systemManager) = 0;
   };
 } // namespace Base

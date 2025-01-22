@@ -1,4 +1,4 @@
-#include "internal/entity/EntityManager.hpp"
+#include "base/EntityManager.hpp"
 #include <memory>
 
 namespace Base

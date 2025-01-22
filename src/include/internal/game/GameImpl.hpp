@@ -1,7 +1,8 @@
 #pragma once
+#include "base/EntityManager.hpp"
 #include "base/Exports.hpp"
 #include "base/Game.hpp"
-#include "internal/entity/EntityManager.hpp"
+#include "base/SystemManager.hpp"
 #include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
 #include <functional>
@@ -11,6 +12,7 @@ namespace Base
 {
 
   class Scene;
+  class System;
   class BASEAPI Game::GameImpl
   {
     // Type defs
@@ -24,7 +26,8 @@ namespace Base
 
   private: // Systems
     EntityManager _entityManager = EntityManager();
-    SceneManager _scenemanager = SceneManager(&_entityManager);
+    SystemManager _systemmanager = SystemManager(&_entityManager);
+    SceneManager _scenemanager = SceneManager(&_entityManager, &_systemmanager);
 
   private: // Methods
     void Quit();
@@ -34,6 +37,7 @@ namespace Base
     GameImpl() = default;
     void Init(int width, int height, const char *title, int fps = 0);
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory);
+    void RegisterSystem(std::type_index systemID, std::unique_ptr<System> system);
     void Run();
   };
 } // namespace Base

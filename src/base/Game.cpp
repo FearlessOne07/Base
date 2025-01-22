@@ -1,9 +1,12 @@
 #include "base/Game.hpp"
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
+#include "base/Scene.hpp"
+#include "base/System.hpp"
 #include "internal/game/GameImpl.hpp"
 #include "raylib.h"
 #include <algorithm>
+#include <utility>
 
 namespace Base
 {
@@ -107,6 +110,11 @@ namespace Base
     _scenemanager.RegisterScene(sceneID, std::move(factory));
   }
 
+  void Game::GameImpl::RegisterSystem(std::type_index systemID, std::unique_ptr<System> system)
+  {
+    _systemmanager.RegisterSystem(systemID, std::move(system));
+  }
+
   // Game Class
   Game::Game()
   {
@@ -131,5 +139,10 @@ namespace Base
   void Game::RegisterSceneImpl(std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory)
   {
     _impl->RegisterScene(sceneID, std::move(factory));
+  }
+
+  void Game::RegisterSystemImpl(std::type_index systemID, std::unique_ptr<System> system)
+  {
+    _impl->RegisterSystem(systemID, std::move(system));
   }
 } // namespace Base
