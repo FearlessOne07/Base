@@ -35,8 +35,8 @@ namespace Base
     {
       if (std::is_base_of<System, T>())
       {
-        std::type_index sceneID = std::type_index(typeid(T));
-        RegisterSystemImpl(sceneID, []() -> std::unique_ptr<Scene> { return std::make_unique<T>(); });
+        std::type_index systemID = std::type_index(typeid(T));
+        RegisterSystemImpl(systemID, []() -> std::unique_ptr<Scene> { return std::make_unique<T>(); });
       }
       else
       {

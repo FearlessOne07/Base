@@ -12,7 +12,6 @@ namespace Base
 {
   void RenderSystem::Update(float dt, EntityManager *entitymanager)
   {
-
     // Shape Component
     std::vector<std::shared_ptr<Entity>> entities_shcmp = entitymanager->Query<ShapeComponent, MoveComponent>();
 
@@ -22,7 +21,6 @@ namespace Base
       {
         ShapeComponent *shc = e->GetComponent<ShapeComponent>();
         MoveComponent *mc = e->GetComponent<MoveComponent>();
-
         if (shc->fill)
         {
           DrawPoly(mc->position, shc->points, shc->radius, shc->rotation, shc->color);
@@ -40,7 +38,6 @@ namespace Base
     {
       if (e)
       {
-
         TextureComponent *tcmp = e->GetComponent<TextureComponent>();
         MoveComponent *mcmp = e->GetComponent<MoveComponent>();
 
