@@ -15,7 +15,6 @@ namespace Base
     friend class SceneManager; // SceneManager
     SceneTransition GetSceneTransition() const;
     void SetEntityManager(EntityManager *);
-    void SetSystemManager(SystemManager *);
     void ResetSceneTransition();
     void __setSceneTransition(std::type_index sceneID, SceneRequest request, SceneData data = SceneData());
 
@@ -24,6 +23,7 @@ namespace Base
 
   protected: // Inclass Access
     void SetSceneClearColor(Color color);
+    EntityManager *GetEntityManager() const;
     void Clear() const;
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, SceneData data = SceneData())

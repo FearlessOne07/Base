@@ -10,7 +10,6 @@ namespace Base
     SceneTransition sceneTransition = SceneTransition();
     Color fillColor = BLACK;
     EntityManager *entityManager = nullptr;
-    SystemManager *systemManager = nullptr;
   };
 
   void Scene::SetSceneClearColor(Color color)
@@ -49,12 +48,9 @@ namespace Base
     }
   }
 
-  void Scene::SetSystemManager(SystemManager *manager)
+  EntityManager *Scene::GetEntityManager() const
   {
-    if (manager)
-    {
-      _state->systemManager = manager;
-    }
+    return _state->entityManager;
   }
 
   Scene::Scene() : _state(std::make_unique<SceneState>())
