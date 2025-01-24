@@ -20,10 +20,6 @@ namespace Base
     void __activateSystem(std::type_index);
     void __deactivateSystem(std::type_index);
 
-  private: // Methods
-    void RegisterSystem(std::type_index, std::unique_ptr<System> system);
-    void Update(float dt);
-
   public:
     template <typename T> void ActivatSystem()
     {
@@ -34,5 +30,7 @@ namespace Base
     {
       __deactivateSystem(typeid(T));
     }
+    void RegisterSystem(std::type_index, std::unique_ptr<System> system);
+    void Update(float dt);
   };
 } // namespace Base
