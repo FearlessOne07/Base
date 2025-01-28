@@ -9,6 +9,7 @@ namespace Base
 {
   class EntityManager;
   class SystemManager;
+  class AssetManager;
   class BASEAPI Scene
   {
   private:
@@ -38,7 +39,7 @@ namespace Base
     Scene();
     virtual ~Scene();
     virtual void Update(float dt) = 0;
-    virtual void Enter(SystemManager *systemManager, SceneData sceneData = SceneData()) = 0;
+    virtual void Enter(SystemManager *systemManager, AssetManager *assetManager, SceneData sceneData = SceneData()) = 0;
     virtual void Render() = 0;
     virtual void Exit(SystemManager *systemManager) = 0;
   };
