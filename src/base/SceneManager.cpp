@@ -19,7 +19,7 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene
-      _scenes.top()->Exit(_systemManager);
+      _scenes.top()->Exit(_systemManager, _assetManager);
     }
     // Push new scen to the stack and enter it
     _scenes.push(_factories.at(scene)());
@@ -32,7 +32,7 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene and pop it off the stack
-      _scenes.top()->Exit(_systemManager);
+      _scenes.top()->Exit(_systemManager, _assetManager);
       _scenes.pop();
     }
 
@@ -48,7 +48,7 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene and pop it
-      _scenes.top()->Exit(_systemManager);
+      _scenes.top()->Exit(_systemManager, _assetManager);
       _scenes.pop();
     }
 

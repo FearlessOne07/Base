@@ -41,6 +41,6 @@ namespace Base
     virtual void Update(float dt) = 0;
     virtual void Enter(SystemManager *systemManager, AssetManager *assetManager, SceneData sceneData = SceneData()) = 0;
     virtual void Render() = 0;
-    virtual void Exit(SystemManager *systemManager) = 0;
+    virtual void Exit(SystemManager *systemManager, AssetManager *assetManager) = 0;
   };
 } // namespace Base
