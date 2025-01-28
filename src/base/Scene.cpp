@@ -1,6 +1,5 @@
 #include "base/Scene.hpp"
 #include "base/SceneData.hpp"
-#include "base/SystemManager.hpp"
 #include <memory>
 
 namespace Base
