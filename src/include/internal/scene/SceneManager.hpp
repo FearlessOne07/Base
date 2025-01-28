@@ -11,6 +11,7 @@ namespace Base
   class Scene;
   class EntityManager;
   class SystemManager;
+  class AssetManager;
   class BASEAPI SceneManager
   {
     // Type Defs
@@ -22,6 +23,7 @@ namespace Base
     std::unordered_map<std::type_index, FactoryCallBack> _factories;
     EntityManager *_entityManager = nullptr;
     SystemManager *_systemManager = nullptr;
+    AssetManager *_assetManager = nullptr;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
@@ -31,7 +33,7 @@ namespace Base
     void PopScene();
 
   public:
-    SceneManager(EntityManager *entityManager, SystemManager *systemManager);
+    SceneManager(EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager);
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory);
     void Update(float dt);

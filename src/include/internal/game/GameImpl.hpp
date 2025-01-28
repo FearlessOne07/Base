@@ -1,4 +1,5 @@
 #pragma once
+#include "base/AssetManager.hpp"
 #include "base/EntityManager.hpp"
 #include "base/Exports.hpp"
 #include "base/Game.hpp"
@@ -27,7 +28,8 @@ namespace Base
   private: // Systems
     EntityManager _entityManager = EntityManager();
     SystemManager _systemmanager = SystemManager(&_entityManager);
-    SceneManager _scenemanager = SceneManager(&_entityManager, &_systemmanager);
+    AssetManager _assetManager = AssetManager();
+    SceneManager _scenemanager = SceneManager(&_entityManager, &_systemmanager, &_assetManager);
 
   private: // Methods
     void Quit();

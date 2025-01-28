@@ -9,8 +9,8 @@
 namespace Base
 {
 
-  SceneManager::SceneManager(EntityManager *entityManager, SystemManager *systemManager)
-    : _entityManager(entityManager), _systemManager(systemManager)
+  SceneManager::SceneManager(EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager)
+    : _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager)
   {
   }
 
@@ -24,7 +24,7 @@ namespace Base
     // Push new scen to the stack and enter it
     _scenes.push(_factories.at(scene)());
     _scenes.top()->SetEntityManager(_entityManager);
-    _scenes.top()->Enter(_systemManager);
+    _scenes.top()->Enter(_systemManager, _assetManager, sceneData);
   }
 
   void SceneManager::PopScene()
@@ -39,7 +39,7 @@ namespace Base
     // Enter the scene below it if there is one
     if (!_scenes.empty())
     {
-      _scenes.top()->Enter(_systemManager);
+      _scenes.top()->Enter(_systemManager, _assetManager);
     }
   }
 
@@ -54,7 +54,7 @@ namespace Base
 
     // Push the new scene and enter it
     _scenes.push(_factories.at(scene)());
-    _scenes.top()->Enter(_systemManager);
+    _scenes.top()->Enter(_systemManager, _assetManager, sceneData);
   }
 
   void SceneManager::SetQuitCallBack(QuitCallBack quitCallBack)
