@@ -3,9 +3,9 @@
 
 namespace Base
 {
-  std::shared_ptr<Entity> EntityManager::AddEntity()
+  Entity *EntityManager::AddEntity()
   {
     _entities.push_back(std::shared_ptr<Entity>(new Entity(_nextID++)));
-    return _entities.back();
+    return _entities.back().get();
   };
 } // namespace Base

@@ -15,7 +15,7 @@ namespace Base
     size_t _nextID = 0;
 
   public:
-    std::shared_ptr<Entity> AddEntity();
+    Entity *AddEntity();
 
     template <typename... Components> std::vector<std::shared_ptr<Entity>> Query()
     {

@@ -8,6 +8,7 @@ set(SRC
   "./base/System.cpp"
   "./base/Entity.cpp"
   "./base/SystemManager.cpp"
+  "./base/AssetManager.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 

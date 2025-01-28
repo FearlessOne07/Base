@@ -22,9 +22,9 @@ namespace Base
     std::unique_ptr<SceneState> _state;
 
   protected: // Inclass Access
+    void Clear() const;
     void SetSceneClearColor(Color color);
     EntityManager *GetEntityManager() const;
-    void Clear() const;
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, SceneData data = SceneData())
     {

@@ -74,6 +74,7 @@ namespace Base
 
       // Update Scene mamnager
       _scenemanager.Update(dt);
+      _systemmanager.Update(dt);
 
       // Begin rendering of Scenes
       BeginTextureMode(_renderTexture);
