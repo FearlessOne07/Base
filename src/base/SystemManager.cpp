@@ -13,7 +13,7 @@ namespace Base
 
   void SystemManager::RegisterSystem(std::type_index systemID, std::unique_ptr<System> system)
   {
-    if (_systems.find(systemID) != _systems.end())
+    if (_systems.find(systemID) == _systems.end())
     {
       _systems[systemID] = std::move(system);
     }
@@ -24,7 +24,7 @@ namespace Base
   }
   void SystemManager::__activateSystem(std::type_index systemID)
   {
-    if (_systems.find(systemID) != _systems.end())
+    if (_systems.find(systemID) != _systems.end() && !_systems.at(systemID)->IsActive())
     {
       _systems.at(systemID)->Activate();
     }
@@ -35,7 +35,7 @@ namespace Base
   }
   void SystemManager::__deactivateSystem(std::type_index systemID)
   {
-    if (_systems.find(systemID) != _systems.end())
+    if (_systems.find(systemID) != _systems.end() && _systems.at(systemID)->IsActive())
     {
       _systems.at(systemID)->Deactivate();
     }
