@@ -27,13 +27,13 @@ namespace Base
         }
         else
         {
-          DrawPolyLines(mc->position, shc->points, shc->radius, shc->rotation, shc->color);
+          DrawPolyLinesEx(mc->position, shc->points, shc->radius, shc->rotation, shc->nonFillThickness, shc->color);
         }
       }
     }
 
     // Texture Component
-    std::vector<std::shared_ptr<Entity>> entities_tcmp = entitymanager->Query<ShapeComponent, MoveComponent>();
+    std::vector<std::shared_ptr<Entity>> entities_tcmp = entitymanager->Query<ShapeComponent, TextureComponent>();
     for (std::shared_ptr<Entity> e : entities_tcmp)
     {
       if (e)
