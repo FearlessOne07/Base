@@ -33,7 +33,7 @@ namespace Base
     {
       // Check Type of T
       static_assert(std::is_base_of<Component, T>::value, "T must derive from the class 'Component'");
-      return _components.find(std::type_index(typeid(T))) == _components.end();
+      return _components.find(std::type_index(typeid(T))) != _components.end();
     }
 
     template <typename T, typename... Args> void AddComponent(Args &&...args)
