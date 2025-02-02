@@ -9,8 +9,10 @@ set(SRC
   "./base/Entity.cpp"
   "./base/SystemManager.cpp"
   "./base/AssetManager.cpp"
+
   "./systems/MoveSystem.cpp"
   "./systems/RenderSystem.cpp"
+  "./systems/InputSystem.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 

@@ -1,17 +1,26 @@
 #include "base/AssetManager.hpp"
 #include "raylib.h"
 #include <memory>
+#include <sstream>
 #include <stdexcept>
 
 namespace Base
 {
-
   template <> void AssetManager::LoadAsset<Texture>(fs::path path)
   {
     std::string name = path.stem().string();
     std::string fullpath = path.string();
 
-    _assets[name] = std::make_shared<Texture>(LoadTexture(fullpath.c_str()));
+    if (_assets.find(name) == _assets.end())
+    {
+      _assets[name] = std::make_shared<Texture>(LoadTexture(fullpath.c_str()));
+    }
+    else
+    {
+      std::stringstream error;
+      error << "Repeated loading of texture '" << name << "'";
+      throw std::runtime_error(error.str());
+    }
   }
 
   template <> void AssetManager::LoadAsset<Music>(fs::path path)
@@ -19,28 +28,66 @@ namespace Base
     std::string name = path.stem().string();
     std::string fullpath = path.string();
 
-    _assets[name] = std::make_shared<Music>(LoadMusicStream(fullpath.c_str()));
+    if (_assets.find(name) == _assets.end())
+    {
+      _assets[name] = std::make_shared<Music>(LoadMusicStream(fullpath.c_str()));
+    }
+    else
+    {
+      std::stringstream error;
+      error << "Repeated loading of music stream '" << name << "'";
+      throw std::runtime_error(error.str());
+    }
   }
 
   template <> void AssetManager::LoadAsset<Sound>(fs::path path)
   {
     std::string name = path.stem().string();
     std::string fullpath = path.string();
-    _assets[name] = std::make_shared<Sound>(LoadSound(fullpath.c_str()));
+
+    if (_assets.find(name) == _assets.end())
+    {
+      _assets[name] = std::make_shared<Sound>(LoadSound(fullpath.c_str()));
+    }
+    else
+    {
+      std::stringstream error;
+      error << "Repeated loading of sound '" << name << "'";
+      throw std::runtime_error(error.str());
+    }
   }
 
   template <> std::shared_ptr<Texture> AssetManager::GetAsset<Texture>(std::string &name)
   {
+
+    if (_assets.find(name) == _assets.end())
+    {
+      std::stringstream error;
+      error << "Texture '" << name << "' does not exist";
+      throw std::runtime_error(error.str());
+    }
     return std::static_pointer_cast<Texture>(_assets.at(name));
   }
 
   template <> std::shared_ptr<Music> AssetManager::GetAsset<Music>(std::string &name)
   {
+    if (_assets.find(name) == _assets.end())
+    {
+      std::stringstream error;
+      error << "Music Stream '" << name << "' does not exist";
+      throw std::runtime_error(error.str());
+    }
     return std::static_pointer_cast<Music>(_assets.at(name));
   }
 
   template <> std::shared_ptr<Sound> AssetManager::GetAsset<Sound>(std::string &name)
   {
+    if (_assets.find(name) == _assets.end())
+    {
+      std::stringstream error;
+      error << "Sound '" << name << "' does not exist";
+      throw std::runtime_error(error.str());
+    }
     return std::static_pointer_cast<Sound>(_assets.at(name));
   }
 
@@ -53,7 +100,9 @@ namespace Base
     }
     else
     {
-      throw std::runtime_error("Specified texture does not exist");
+      std::stringstream error;
+      error << "Texture '" << name << "' does not exist";
+      throw std::runtime_error(error.str());
     }
   }
   template <> void AssetManager::UnloadAsset<Music>(std::string &name)
@@ -65,7 +114,9 @@ namespace Base
     }
     else
     {
-      throw std::runtime_error("Specified music stream does not exist");
+      std::stringstream error;
+      error << "Music Stream '" << name << "' does not exist";
+      throw std::runtime_error(error.str());
     }
   }
 
@@ -78,7 +129,9 @@ namespace Base
     }
     else
     {
-      throw std::runtime_error("Specified sound does not exist");
+      std::stringstream error;
+      error << "Sound '" << name << "' does not exist";
+      throw std::runtime_error(error.str());
     }
   }
 } // namespace Base
