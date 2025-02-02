@@ -100,7 +100,7 @@ namespace Base
     else
     {
       throw std::runtime_error("No scene in scene stack");
-    }
+   }
   }
 
   void SceneManager::Render()
@@ -108,7 +108,7 @@ namespace Base
     if (!_scenes.empty())
     {
       // Render current scene
-      _scenes.top()->Render();
+      _scenes.top()->Clear();
     }
   }
 
