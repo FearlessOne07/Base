@@ -13,10 +13,5 @@ namespace Base
     Vector2 velocity = {0, 0};
     int acceleration = 0;
     float speed = 0.f;
-
-    MoveComponent(Vector2 position, Vector2 targetVelocity, Vector2 velocity, int acceleration, int speed)
-      : position(position), targetVelocity(targetVelocity), velocity(velocity), acceleration(acceleration), speed(speed)
-    {
-    }
   };
 } // namespace Base

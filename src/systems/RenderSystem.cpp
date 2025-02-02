@@ -1,6 +1,7 @@
 
 #include "base/systems/RenderSystem.hpp"
 #include "base/EntityManager.hpp"
+#include "base/components/ABBComponent.hpp"
 #include "base/components/MoveComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TextureComponent.hpp"
@@ -27,13 +28,43 @@ namespace Base
         }
         else
         {
-          DrawPolyLines(mc->position, shc->points, shc->radius, shc->rotation, shc->color);
+          DrawPolyLinesEx(mc->position, shc->points, shc->radius, shc->rotation, shc->nonFillThickness, shc->color);
+        }
+      }
+    }
+
+    // AABB Component
+    std::vector<std::shared_ptr<Entity>> entities_abbcmp = entitymanager->Query<MoveComponent, ABBComponent>();
+    for (std::shared_ptr<Entity> e : entities_abbcmp)
+    {
+      if (e)
+      {
+        ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
+        MoveComponent *mcmp = e->GetComponent<MoveComponent>();
+
+        if (abbcmp && mcmp)
+        {
+
+          if (abbcmp->fill)
+          {
+            DrawRectanglePro( //
+              {mcmp->position.x, mcmp->position.y, abbcmp->boundingBox.width, abbcmp->boundingBox.height}, {0, 0}, 0,
+              abbcmp->color //
+            );
+          }
+          else
+          {
+            DrawRectangleLinesEx(
+              {mcmp->position.x, mcmp->position.y, abbcmp->boundingBox.width, abbcmp->boundingBox.height},
+              abbcmp->nonFillThickness, abbcmp->color //
+            );
+          }
         }
       }
     }
 
     // Texture Component
-    std::vector<std::shared_ptr<Entity>> entities_tcmp = entitymanager->Query<ShapeComponent, MoveComponent>();
+    std::vector<std::shared_ptr<Entity>> entities_tcmp = entitymanager->Query<MoveComponent, TextureComponent>();
     for (std::shared_ptr<Entity> e : entities_tcmp)
     {
       if (e)

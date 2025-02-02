@@ -74,16 +74,17 @@ namespace Base
 
       // Update Scene mamnager
       _scenemanager.Update(dt);
-      _systemmanager.Update(dt);
 
       // Begin rendering of Scenes
       BeginTextureMode(_renderTexture);
+      ClearBackground({33, 34, 39, 255});
+      _systemmanager.Update(dt);
       _scenemanager.Render();
       EndTextureMode();
 
       // Draw Render texture to the Screen
       BeginDrawing();
-      ClearBackground({33, 34, 39, 255});
+      ClearBackground(BLACK);
       DrawTexturePro( //
         _renderTexture.texture, {0, 0, _gameWidth, -_gameHeight},
         {(float)marginX, (float)marginY, _gameWidth * scale, _gameHeight * scale}, {0, 0}, 0.f, WHITE //
