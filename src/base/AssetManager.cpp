@@ -7,7 +7,7 @@
 
 namespace Base
 {
-  template <> std::shared_ptr<Texture> AssetManager::LoadAsset<Texture>(fs::path path)
+  template <> BASEAPI std::shared_ptr<Texture> AssetManager::LoadAsset<Texture>(fs::path path)
   {
     if (fs::exists(path))
     {
@@ -34,7 +34,7 @@ namespace Base
     }
   }
 
-  template <> std::shared_ptr<Music> AssetManager::LoadAsset<Music>(fs::path path)
+  template <> BASEAPI std::shared_ptr<Music> AssetManager::LoadAsset<Music>(fs::path path)
   {
     if (fs::exists(path))
     {
@@ -61,7 +61,7 @@ namespace Base
     }
   }
 
-  template <> std::shared_ptr<Sound> AssetManager::LoadAsset<Sound>(fs::path path)
+  template <> BASEAPI std::shared_ptr<Sound> AssetManager::LoadAsset<Sound>(fs::path path)
   {
     if (fs::exists(path))
     {
@@ -88,7 +88,7 @@ namespace Base
     }
   }
 
-  template <> std::shared_ptr<Texture> AssetManager::GetAsset<Texture>(std::string &name)
+  template <> BASEAPI std::shared_ptr<Texture> AssetManager::GetAsset<Texture>(std::string &name)
   {
 
     if (_assets.find(name) == _assets.end())
@@ -100,7 +100,7 @@ namespace Base
     return std::static_pointer_cast<Texture>(_assets.at(name));
   }
 
-  template <> std::shared_ptr<Music> AssetManager::GetAsset<Music>(std::string &name)
+  template <> BASEAPI std::shared_ptr<Music> AssetManager::GetAsset<Music>(std::string &name)
   {
     if (_assets.find(name) == _assets.end())
     {
@@ -111,7 +111,7 @@ namespace Base
     return std::static_pointer_cast<Music>(_assets.at(name));
   }
 
-  template <> std::shared_ptr<Sound> AssetManager::GetAsset<Sound>(std::string &name)
+  template <> BASEAPI std::shared_ptr<Sound> AssetManager::GetAsset<Sound>(std::string &name)
   {
     if (_assets.find(name) == _assets.end())
     {
@@ -122,7 +122,7 @@ namespace Base
     return std::static_pointer_cast<Sound>(_assets.at(name));
   }
 
-  template <> void AssetManager::UnloadAsset<Texture>(std::string &name)
+  template <> BASEAPI void AssetManager::UnloadAsset<Texture>(std::string &name)
   {
     if (_assets.find(name) != _assets.end())
     {
@@ -136,7 +136,7 @@ namespace Base
       throw std::runtime_error(error.str());
     }
   }
-  template <> void AssetManager::UnloadAsset<Music>(std::string &name)
+  template <> BASEAPI void AssetManager::UnloadAsset<Music>(std::string &name)
   {
     if (_assets.find(name) != _assets.end())
     {
@@ -151,7 +151,7 @@ namespace Base
     }
   }
 
-  template <> void AssetManager::UnloadAsset<Sound>(std::string &name)
+  template <> BASEAPI void AssetManager::UnloadAsset<Sound>(std::string &name)
   {
     if (_assets.find(name) != _assets.end())
     {
