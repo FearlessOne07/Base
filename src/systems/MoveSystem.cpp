@@ -19,7 +19,7 @@ namespace Base
 
         if (Vector2Length(mc->targetVelocity) > 0)
         {
-          Vector2Normalize(mc->targetVelocity);
+          mc->targetVelocity = Vector2Normalize(mc->targetVelocity);
         }
         mc->velocity = Vector2Lerp(mc->velocity, mc->targetVelocity, mc->acceleration * dt);
         mc->position = Vector2Add(mc->position, Vector2Scale(mc->velocity, mc->speed * dt));

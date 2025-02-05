@@ -14,19 +14,8 @@ namespace Base
     std::unordered_map<std::string, std::shared_ptr<void>> _assets;
 
   public:
-    template <typename T> void LoadAsset(fs::path)
-    {
-      static_assert(std::is_same_v<T, void>, "This asset type is not supported!");
-    }
-
-    template <typename T> std::shared_ptr<T> GetAsset(std::string &)
-    {
-      static_assert(std::is_same_v<T, void>, "This asset type is not supported!");
-    }
-
-    template <typename T> void UnloadAsset(std::string &)
-    {
-      static_assert(std::is_same_v<T, void>, "This asset type is not supported!");
-    }
+    template <typename T> std::shared_ptr<T> LoadAsset(fs::path);
+    template <typename T> std::shared_ptr<T> GetAsset(std::string &);
+    template <typename T> void UnloadAsset(std::string &);
   };
 } // namespace Base

@@ -1,58 +1,89 @@
 #include "base/AssetManager.hpp"
 #include "raylib.h"
+#include <filesystem>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
 
 namespace Base
 {
-  template <> void AssetManager::LoadAsset<Texture>(fs::path path)
+  template <> std::shared_ptr<Texture> AssetManager::LoadAsset<Texture>(fs::path path)
   {
-    std::string name = path.stem().string();
-    std::string fullpath = path.string();
-
-    if (_assets.find(name) == _assets.end())
+    if (fs::exists(path))
     {
-      _assets[name] = std::make_shared<Texture>(LoadTexture(fullpath.c_str()));
+      std::string name = path.stem().string();
+      std::string fullpath = path.string();
+
+      if (_assets.find(name) == _assets.end())
+      {
+        _assets[name] = std::make_shared<Texture>(LoadTexture(fullpath.c_str()));
+        return std::static_pointer_cast<Texture>(_assets.at(name));
+      }
+      else
+      {
+        std::stringstream error;
+        error << "Repeated loading of texture '" << name << "'";
+        throw std::runtime_error(error.str());
+      }
     }
     else
     {
       std::stringstream error;
-      error << "Repeated loading of texture '" << name << "'";
+      error << "Cannot find teture file '" << path.string() << "'";
       throw std::runtime_error(error.str());
     }
   }
 
-  template <> void AssetManager::LoadAsset<Music>(fs::path path)
+  template <> std::shared_ptr<Music> AssetManager::LoadAsset<Music>(fs::path path)
   {
-    std::string name = path.stem().string();
-    std::string fullpath = path.string();
-
-    if (_assets.find(name) == _assets.end())
+    if (fs::exists(path))
     {
-      _assets[name] = std::make_shared<Music>(LoadMusicStream(fullpath.c_str()));
+      std::string name = path.stem().string();
+      std::string fullpath = path.string();
+
+      if (_assets.find(name) == _assets.end())
+      {
+        _assets[name] = std::make_shared<Music>(LoadMusicStream(fullpath.c_str()));
+        return std::static_pointer_cast<Music>(_assets.at(name));
+      }
+      else
+      {
+        std::stringstream error;
+        error << "Repeated loading of music stream'" << name << "'";
+        throw std::runtime_error(error.str());
+      }
     }
     else
     {
       std::stringstream error;
-      error << "Repeated loading of music stream '" << name << "'";
+      error << "Cannot find music file '" << path.string() << "'";
       throw std::runtime_error(error.str());
     }
   }
 
-  template <> void AssetManager::LoadAsset<Sound>(fs::path path)
+  template <> std::shared_ptr<Sound> AssetManager::LoadAsset<Sound>(fs::path path)
   {
-    std::string name = path.stem().string();
-    std::string fullpath = path.string();
-
-    if (_assets.find(name) == _assets.end())
+    if (fs::exists(path))
     {
-      _assets[name] = std::make_shared<Sound>(LoadSound(fullpath.c_str()));
+      std::string name = path.stem().string();
+      std::string fullpath = path.string();
+
+      if (_assets.find(name) == _assets.end())
+      {
+        _assets[name] = std::make_shared<Sound>(LoadSound(fullpath.c_str()));
+        return std::static_pointer_cast<Sound>(_assets.at(name));
+      }
+      else
+      {
+        std::stringstream error;
+        error << "Repeated loading of sound '" << name << "'";
+        throw std::runtime_error(error.str());
+      }
     }
     else
     {
       std::stringstream error;
-      error << "Repeated loading of sound '" << name << "'";
+      error << "Cannot find sound file'" << path.string() << "'";
       throw std::runtime_error(error.str());
     }
   }

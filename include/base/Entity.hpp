@@ -36,14 +36,14 @@ namespace Base
       return _components.find(std::type_index(typeid(T))) != _components.end();
     }
 
-    template <typename T, typename... Args> T *AddComponent(Args &&...args)
+    template <typename T> T *AddComponent()
     {
       // Check Type of T
       static_assert(std::is_base_of<Component, T>::value, "T must derive from the class 'Component'");
       std::type_index ti = std::type_index(typeid(T));
       if (!HasComponent<T>())
       {
-        std::unique_ptr<Component> comp = std::make_unique<T>(std::forward<Args>(args)...);
+        std::unique_ptr<Component> comp = std::make_unique<T>();
         _components[ti] = std::move(comp);
         return static_cast<T *>(_components[ti].get());
       }
