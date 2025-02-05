@@ -42,7 +42,7 @@ namespace Base
         ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
         MoveComponent *mcmp = e->GetComponent<MoveComponent>();
 
-        if (abbcmp && mcmp)
+        if (abbcmp && mcmp && abbcmp->draw)
         {
 
           if (abbcmp->fill)
@@ -75,9 +75,30 @@ namespace Base
         if (tcmp && mcmp)
         {
           DrawTexturePro( //
-            tcmp->texture, {0, 0, tcmp->size.x, tcmp->size.y},
-            {mcmp->position.x, mcmp->position.y, tcmp->size.x * tcmp->scale, tcmp->size.y * tcmp->scale}, tcmp->origin,
-            0, WHITE //
+            *tcmp->texture, tcmp->source,
+            {mcmp->position.x, mcmp->position.y, tcmp->source.width * tcmp->scale, tcmp->source.height * tcmp->scale},
+            tcmp->origin, 0, WHITE //
+          );
+        }
+      }
+    }
+
+    std::vector<std::shared_ptr<Entity>> entities_tcmp_abb = entitymanager->Query<ABBComponent, TextureComponent>();
+    for (std::shared_ptr<Entity> e : entities_tcmp_abb)
+    {
+      if (e)
+      {
+        TextureComponent *tcmp = e->GetComponent<TextureComponent>();
+        ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
+
+        if (tcmp && abbcmp && !abbcmp->draw)
+        {
+          DrawTexturePro( //
+            *tcmp->texture, tcmp->source,
+            {abbcmp->boundingBox.x, abbcmp->boundingBox.y, tcmp->source.width * tcmp->scale,
+             tcmp->source.height * tcmp->scale},
+            tcmp->origin, 0,
+            WHITE //
           );
         }
       }
