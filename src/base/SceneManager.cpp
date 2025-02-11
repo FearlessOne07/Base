@@ -64,10 +64,20 @@ namespace Base
 
   void SceneManager::Update(float dt)
   {
-    if (!_scenes.empty())
+    if (_scenes.empty() && !_factories.empty())
+    {
+      std::type_index first = typeid(0);
+      for (auto &[id, factory] : _factories)
+      {
+        first = id;
+        break;
+      }
+      PushScene(first);
+    }
+    else if (!_scenes.empty())
     {
       // Update Current Scene
-      _scenes.top()->Update(dt);
+      _scenes.top()->Update(dt, _systemManager);
 
       // Check if the current scene has requested a scene change
       SceneTransition sceneTrans = _scenes.top()->GetSceneTransition();
@@ -99,7 +109,7 @@ namespace Base
     }
     else
     {
-      throw std::runtime_error("No scene in scene stack");
+      throw std::runtime_error("No Registered scene!");
     }
   }
 
@@ -109,7 +119,7 @@ namespace Base
     {
       // Render current scene
       _scenes.top()->Clear();
-      _scenes.top()->Render();
+      _scenes.top()->Render(_systemManager);
     }
   }
 
@@ -122,17 +132,6 @@ namespace Base
     else
     {
       throw std::runtime_error("Registration of duplicate scene");
-    }
-
-    if (_scenes.empty())
-    {
-      std::type_index first = typeid(0);
-      for (auto &[id, factory] : _factories)
-      {
-        first = id;
-        break;
-      }
-      PushScene(first);
     }
   }
 } // namespace Base

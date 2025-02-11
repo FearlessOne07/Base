@@ -31,12 +31,12 @@ namespace Base
       }
     };
 
-    template <typename T> void RegisterSystem()
+    template <typename T> void RegisterSystem(bool isRenderSystem = false)
     {
       if (std::is_base_of<System, T>())
       {
         std::type_index systemID = std::type_index(typeid(T));
-        RegisterSystemImpl(systemID, std::make_unique<T>());
+        RegisterSystemImpl(systemID, std::make_unique<T>(), isRenderSystem);
       }
       else
       {
@@ -50,6 +50,6 @@ namespace Base
     class GameImpl;
     GameImpl *_impl = nullptr;
     void RegisterSceneImpl(std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory);
-    void RegisterSystemImpl(std::type_index systemID, std::unique_ptr<System> system);
+    void RegisterSystemImpl(std::type_index systemID, std::unique_ptr<System> system, bool isRenderSystem);
   };
 } // namespace Base

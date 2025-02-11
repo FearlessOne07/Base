@@ -1,8 +1,8 @@
 #pragma once
 #include "base/Exports.hpp"
+#include <map>
 #include <memory>
 #include <typeindex>
-#include <unordered_map>
 
 namespace Base
 {
@@ -13,7 +13,8 @@ namespace Base
   private: // References
     friend class Game;
     EntityManager *_entityManager = nullptr;
-    std::unordered_map<std::type_index, std::unique_ptr<System>> _systems;
+    std::map<std::type_index, std::unique_ptr<System>> _systems;
+    std::type_index _renderSystemID = typeid(nullptr);
 
   private: // Methods
     SystemManager(EntityManager *entityManager);
@@ -30,7 +31,8 @@ namespace Base
     {
       __deactivateSystem(typeid(T));
     }
-    void RegisterSystem(std::type_index, std::unique_ptr<System> system);
+    void RegisterSystem(std::type_index, std::unique_ptr<System> system, bool isRenderSystem = false);
     void Update(float dt);
+    void Render();
   };
 } // namespace Base
