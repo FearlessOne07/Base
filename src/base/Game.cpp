@@ -43,8 +43,11 @@ namespace Base
     int marginX = (windowWidth - (_gameWidth * scale)) / 2;
     int marginY = (windowHeight - (_gameHeight * scale)) / 2;
     RenderContext rendercontext = {
-      _gameWidth,     _gameHeight, //
-      (float)marginX, (float)marginY, scale,
+      .gameWidth = _gameWidth,
+      .gameHeight = _gameHeight,
+      .marginX = (float)marginX,
+      .marginY = (float)marginY,
+      .scale = scale,
     };
     RenderContextSingleton::UpdateInstance(&rendercontext);
   }
@@ -63,10 +66,12 @@ namespace Base
       int marginX = (windowWidth - (_gameWidth * scale)) / 2;
       int marginY = (windowHeight - (_gameHeight * scale)) / 2;
       RenderContext rendercontext = {
-        _gameWidth,     _gameHeight, //
-        (float)marginX, (float)marginY, scale,
+        .gameWidth = _gameWidth,
+        .gameHeight = _gameHeight,
+        .marginX = (float)marginX,
+        .marginY = (float)marginY,
+        .scale = scale,
       };
-
       RenderContextSingleton::UpdateInstance(&rendercontext);
 
       // Delta Time
@@ -77,8 +82,7 @@ namespace Base
 
       // Begin rendering of Scenes
       BeginTextureMode(_renderTexture);
-      ClearBackground({33, 34, 39, 255});
-      _systemmanager.Update(dt);
+      ClearBackground(BLACK);
       _scenemanager.Render();
       EndTextureMode();
 
@@ -112,9 +116,11 @@ namespace Base
     _scenemanager.RegisterScene(sceneID, std::move(factory));
   }
 
-  void Game::GameImpl::RegisterSystem(std::type_index systemID, std::unique_ptr<System> system)
+  void Game::GameImpl::RegisterSystem(                                                    //
+    std::type_index systemID, std::unique_ptr<System> system, bool isRenderSystem = false //
+  )
   {
-    _systemmanager.RegisterSystem(systemID, std::move(system));
+    _systemmanager.RegisterSystem(systemID, std::move(system), isRenderSystem);
   }
 
   // Game Class
@@ -143,8 +149,8 @@ namespace Base
     _impl->RegisterScene(sceneID, std::move(factory));
   }
 
-  void Game::RegisterSystemImpl(std::type_index systemID, std::unique_ptr<System> system)
+  void Game::RegisterSystemImpl(std::type_index systemID, std::unique_ptr<System> system, bool isRenderSystem = false)
   {
-    _impl->RegisterSystem(systemID, std::move(system));
+    _impl->RegisterSystem(systemID, std::move(system), isRenderSystem);
   }
 } // namespace Base

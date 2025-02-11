@@ -11,11 +11,15 @@ namespace Base
   {
   }
 
-  void SystemManager::RegisterSystem(std::type_index systemID, std::unique_ptr<System> system)
+  void SystemManager::RegisterSystem(std::type_index systemID, std::unique_ptr<System> system, bool isRenderSystem)
   {
     if (_systems.find(systemID) == _systems.end())
     {
       _systems[systemID] = std::move(system);
+      if (isRenderSystem)
+      {
+        _renderSystemID = systemID;
+      }
     }
     else
     {
@@ -48,10 +52,18 @@ namespace Base
   {
     for (auto &[id, system] : _systems)
     {
-      if (system->IsActive())
+      if (id != _renderSystemID && system->IsActive())
       {
         system->Update(dt, _entityManager);
       }
+    }
+  }
+
+  void SystemManager::Render()
+  {
+    if (_systems.at(_renderSystemID)->IsActive())
+    {
+      _systems.at(_renderSystemID)->Update(0, _entityManager);
     }
   }
 } // namespace Base

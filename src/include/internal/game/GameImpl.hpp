@@ -39,7 +39,7 @@ namespace Base
     GameImpl() = default;
     void Init(int width, int height, const char *title, int fps = 0);
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory);
-    void RegisterSystem(std::type_index systemID, std::unique_ptr<System> system);
+    void RegisterSystem(std::type_index systemID, std::unique_ptr<System> system, bool isRenderSystem);
     void Run();
   };
 } // namespace Base
