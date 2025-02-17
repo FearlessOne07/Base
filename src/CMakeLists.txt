@@ -13,6 +13,7 @@ set(SRC
   "./systems/MoveSystem.cpp"
   "./systems/RenderSystem.cpp"
   "./systems/InputSystem.cpp"
+  "./systems/CameraSystem.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 

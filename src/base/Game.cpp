@@ -65,12 +65,14 @@ namespace Base
       );
       int marginX = (windowWidth - (_gameWidth * scale)) / 2;
       int marginY = (windowHeight - (_gameHeight * scale)) / 2;
+      const RenderContext *rd = RenderContextSingleton::GetInstance();
       RenderContext rendercontext = {
         .gameWidth = _gameWidth,
         .gameHeight = _gameHeight,
         .marginX = (float)marginX,
         .marginY = (float)marginY,
         .scale = scale,
+        .camera = rd->camera,
       };
       RenderContextSingleton::UpdateInstance(&rendercontext);
 
