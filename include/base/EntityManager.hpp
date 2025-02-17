@@ -16,6 +16,7 @@ namespace Base
 
   public:
     Entity *AddEntity();
+    const Entity *GetEntity(size_t id);
 
     template <typename... Components> std::vector<std::shared_ptr<Entity>> Query()
     {
