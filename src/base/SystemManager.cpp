@@ -1,4 +1,4 @@
-#include "base/SystemManager.hpp"
+#include "base/SystemManager.hpp";
 #include "base/EntityManager.hpp"
 #include "base/System.hpp"
 #include <memory>
@@ -37,15 +37,14 @@ namespace Base
       throw std::runtime_error("Specified system does not exsist");
     }
   }
-  void SystemManager::__deactivateSystem(std::type_index systemID)
+  void SystemManager::DeactivateActiveSystems()
   {
-    if (_systems.find(systemID) != _systems.end() && _systems.at(systemID)->IsActive())
+    for (auto &[id, system] : _systems)
     {
-      _systems.at(systemID)->Deactivate();
-    }
-    else
-    {
-      throw std::runtime_error("Specified system does not exsist");
+      if (system->IsActive())
+      {
+        system->Deactivate();
+      }
     }
   }
   void SystemManager::Update(float dt)

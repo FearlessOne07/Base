@@ -9,10 +9,10 @@ namespace Base
   {
   public:
     float radius = 0.f;
-    unsigned int points = 0;
+    unsigned int points = 3;
     Color color = WHITE;
     bool fill = true;
-    float nonFillThickness = 0;
+    float nonFillThickness = 1;
     float rotation = 0.f;
   };
 } // namespace Base

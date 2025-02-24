@@ -3,6 +3,7 @@
 #include "base/EntityManager.hpp"
 #include "base/components/ABBComponent.hpp"
 #include "base/components/MoveComponent.hpp"
+#include "base/components/TransformComponent.hpp"
 #include "raylib.h"
 #include "raymath.h"
 #include <memory>
@@ -12,12 +13,13 @@ namespace Base
 {
   void MoveSystem::Update(float dt, EntityManager *entitymanager)
   {
-    std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<MoveComponent>();
+    std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<MoveComponent, TransformComponent>();
 
     for (std::shared_ptr<Entity> &e : entities)
     {
       if (e)
       {
+        TransformComponent *transcmp = e->GetComponent<TransformComponent>();
         MoveComponent *mc = e->GetComponent<MoveComponent>();
 
         if (Vector2Length(mc->targetVelocity) > 0)
@@ -36,38 +38,38 @@ namespace Base
           mc->velocity.y = 0;
         }
 
-        // Handle collisions for ABB entities
-        ABBComponent *abbcmp = nullptr;
-        bool hasABBComp = (abbcmp = e->GetComponent<ABBComponent>());
-        mc->position.x = mc->position.x + (mc->velocity.x * mc->speed * dt);
+        bool hasABBComp = e->HasComponent<ABBComponent>();
+        transcmp->position.x = transcmp->position.x + (mc->velocity.x * mc->speed * dt);
 
         if (hasABBComp)
         {
           HandleCollisions(e, 0, entitymanager);
         }
 
-        mc->position.y = mc->position.y + (mc->velocity.y * mc->speed * dt);
+        transcmp->position.y = transcmp->position.y + (mc->velocity.y * mc->speed * dt);
         if (hasABBComp)
         {
           HandleCollisions(e, 1, entitymanager);
         }
 
-        if (hasABBComp && abbcmp)
+        if (hasABBComp)
         {
+          ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
           abbcmp->oldBoundingBox = abbcmp->boundingBox;
-          abbcmp->boundingBox.x = mc->position.x;
-          abbcmp->boundingBox.y = mc->position.y;
+          abbcmp->boundingBox.x = transcmp->position.x;
+          abbcmp->boundingBox.y = transcmp->position.y;
         }
       }
     }
   }
 
-  void MoveSystem::HandleCollisions(std::shared_ptr<Entity> e, int axis, EntityManager *entityManager)
+  void MoveSystem::HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager)
   {
     std::vector<std::shared_ptr<Entity>> entites = entityManager->Query<ABBComponent>();
 
     ABBComponent *abbcmp1 = e->GetComponent<ABBComponent>();
     MoveComponent *mvcmp1 = e->GetComponent<MoveComponent>();
+    TransformComponent *transcmp = e->GetComponent<TransformComponent>();
 
     for (auto &e2 : entites)
     {
@@ -82,14 +84,14 @@ namespace Base
             if (abbcmp1->oldBoundingBox.x + abbcmp1->oldBoundingBox.width <= abbcmp2->boundingBox.x)
             {
               mvcmp1->velocity.x = 0;
-              mvcmp1->position.x = abbcmp2->boundingBox.x - abbcmp1->boundingBox.width;
+              transcmp->position.x = abbcmp2->boundingBox.x - abbcmp1->boundingBox.width;
             }
             else if (                                                                          //
               abbcmp1->oldBoundingBox.x >= abbcmp2->boundingBox.x + abbcmp2->boundingBox.width //
             )
             {
               mvcmp1->velocity.x = 0;
-              mvcmp1->position.x = abbcmp2->boundingBox.x + abbcmp2->boundingBox.width;
+              transcmp->position.x = abbcmp2->boundingBox.x + abbcmp2->boundingBox.width;
             }
           }
           else
@@ -97,20 +99,20 @@ namespace Base
             if (abbcmp1->oldBoundingBox.y + abbcmp1->oldBoundingBox.height <= abbcmp2->boundingBox.y)
             {
               mvcmp1->velocity.y = 0;
-              mvcmp1->position.y = abbcmp2->boundingBox.y - abbcmp1->boundingBox.height;
+              transcmp->position.y = abbcmp2->boundingBox.y - abbcmp1->boundingBox.height;
             }
             else if (                                                                           //
               abbcmp1->oldBoundingBox.y >= abbcmp2->boundingBox.y + abbcmp2->boundingBox.height //
             )
             {
               mvcmp1->velocity.y = 0;
-              mvcmp1->position.y = abbcmp2->boundingBox.y + abbcmp2->boundingBox.height;
+              transcmp->position.y = abbcmp2->boundingBox.y + abbcmp2->boundingBox.height;
             }
           }
         }
       }
-      abbcmp1->boundingBox.y = mvcmp1->position.y;
-      abbcmp1->boundingBox.x = mvcmp1->position.x;
+      abbcmp1->boundingBox.y = transcmp->position.y;
+      abbcmp1->boundingBox.x = transcmp->position.x;
     }
   }
 } // namespace Base

@@ -2,9 +2,9 @@
 #include "base/systems/RenderSystem.hpp"
 #include "base/EntityManager.hpp"
 #include "base/components/ABBComponent.hpp"
-#include "base/components/MoveComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TextureComponent.hpp"
+#include "base/components/TransformComponent.hpp"
 #include "raylib.h"
 #include <memory>
 #include <vector>
@@ -14,42 +14,45 @@ namespace Base
   void RenderSystem::Update(float dt, EntityManager *entitymanager)
   {
     // Shape Component
-    std::vector<std::shared_ptr<Entity>> entities_mvcmp = entitymanager->Query<MoveComponent>();
-    for (std::shared_ptr<Entity> e : entities_mvcmp)
+    std::vector<std::shared_ptr<Entity>> entities_transcmp = entitymanager->Query<TransformComponent>();
+    for (std::shared_ptr<Entity> e : entities_transcmp)
     {
       if (e)
       {
+        TransformComponent *transcmp = e->GetComponent<TransformComponent>();
+
         if (e->HasComponent<ShapeComponent>())
         {
           ShapeComponent *shc = e->GetComponent<ShapeComponent>();
-          MoveComponent *mc = e->GetComponent<MoveComponent>();
+
           if (shc->fill)
           {
-            DrawPoly(mc->position, shc->points, shc->radius, shc->rotation, shc->color);
+            DrawPoly(transcmp->position, shc->points, shc->radius, transcmp->rotation, shc->color);
           }
           else
           {
-            DrawPolyLinesEx(mc->position, shc->points, shc->radius, shc->rotation, shc->nonFillThickness, shc->color);
+            DrawPolyLinesEx(transcmp->position, shc->points, shc->radius, transcmp->rotation, shc->nonFillThickness,
+                            shc->color);
           }
         }
         else if (e->HasComponent<ABBComponent>())
         {
           ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
-          MoveComponent *mcmp = e->GetComponent<MoveComponent>();
 
-          if (abbcmp && mcmp && abbcmp->draw)
+          if (abbcmp && transcmp && abbcmp->draw)
           {
             if (abbcmp->fill)
             {
               DrawRectanglePro( //
-                {mcmp->position.x, mcmp->position.y, abbcmp->boundingBox.width, abbcmp->boundingBox.height}, {0, 0}, 0,
+                {transcmp->position.x, transcmp->position.y, abbcmp->boundingBox.width, abbcmp->boundingBox.height},
+                {0, 0}, transcmp->rotation,
                 abbcmp->color //
               );
             }
             else
             {
               DrawRectangleLinesEx(
-                {mcmp->position.x, mcmp->position.y, abbcmp->boundingBox.width, abbcmp->boundingBox.height},
+                {transcmp->position.x, transcmp->position.y, abbcmp->boundingBox.width, abbcmp->boundingBox.height},
                 abbcmp->nonFillThickness, abbcmp->color //
               );
             }
@@ -58,14 +61,14 @@ namespace Base
         else if (e->HasComponent<TextureComponent>())
         {
           TextureComponent *tcmp = e->GetComponent<TextureComponent>();
-          MoveComponent *mcmp = e->GetComponent<MoveComponent>();
 
-          if (tcmp && mcmp)
+          if (tcmp && transcmp)
           {
             DrawTexturePro( //
               *tcmp->texture, tcmp->source,
-              {mcmp->position.x, mcmp->position.y, tcmp->source.width * tcmp->scale, tcmp->source.height * tcmp->scale},
-              tcmp->origin, 0, WHITE //
+              {transcmp->position.x, transcmp->position.y, tcmp->source.width * tcmp->scale,
+               tcmp->source.height * tcmp->scale},
+              tcmp->origin, transcmp->rotation, WHITE //
             );
           }
         }

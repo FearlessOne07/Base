@@ -24,7 +24,7 @@ namespace Base
 
   protected: // Inclass Access
     void Clear() const;
-    void SetSceneClearColor(Color color);
+    void SetClearColor(Color color);
     EntityManager *GetEntityManager() const;
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, SceneData data = SceneData())

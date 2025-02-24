@@ -11,7 +11,7 @@ namespace Base
     EntityManager *entityManager = nullptr;
   };
 
-  void Scene::SetSceneClearColor(Color color)
+  void Scene::SetClearColor(Color color)
   {
     _state->fillColor = color;
   }

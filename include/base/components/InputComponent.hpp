@@ -14,28 +14,8 @@ namespace Base
     std::unordered_map<int, std::function<void()>> mousePressedBinds;
     std::unordered_map<int, std::function<void()>> mouseDownBinds;
 
-    void BindKeyDown(int key, std::function<void()> action)
-    {
-      if (keyDownBinds.find(key) == keyDownBinds.end())
-      {
-        keyDownBinds[key] = action;
-      }
-    }
-
-    void BindKeyReleased(int key, std::function<void()> action)
-    {
-      if (keyReleasedBinds.find(key) == keyReleasedBinds.end())
-      {
-        keyReleasedBinds[key] = action;
-      }
-    }
-
-    void BindKeyPressed(int key, std::function<void()> action)
-    {
-      if (keyPressedBinds.find(key) == keyPressedBinds.end())
-      {
-        keyPressedBinds[key] = action;
-      }
-    }
+    void BindKeyDown(int key, std::function<void()> action);
+    void BindKeyReleased(int key, std::function<void()> action);
+    void BindKeyPressed(int key, std::function<void()> action);
   };
 } // namespace Base
