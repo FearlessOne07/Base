@@ -10,6 +10,6 @@ namespace Base
   {
   public:
     void Update(float dt, EntityManager *entityManager) override;
-    void HandleCollisions(std::shared_ptr<Entity> e, int axis, EntityManager *entityManager);
+    void HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager);
   };
 } // namespace Base

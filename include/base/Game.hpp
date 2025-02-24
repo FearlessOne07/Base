@@ -40,7 +40,7 @@ namespace Base
       }
       else
       {
-        throw std::runtime_error("Type Must be a derivative if the Scene class");
+        throw std::runtime_error("Type Must be a derivative if the System class");
       }
     };
     void Init(int width, int height, const char *title, int fps = 0);

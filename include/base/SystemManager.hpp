@@ -19,7 +19,6 @@ namespace Base
   private: // Methods
     SystemManager(EntityManager *entityManager);
     void __activateSystem(std::type_index);
-    void __deactivateSystem(std::type_index);
 
   public:
     template <typename T> void ActivatSystem()
@@ -27,10 +26,7 @@ namespace Base
       __activateSystem(typeid(T));
     }
 
-    template <typename T> void DeactivatSystem()
-    {
-      __deactivateSystem(typeid(T));
-    }
+    void DeactivateActiveSystems();
     void RegisterSystem(std::type_index, std::unique_ptr<System> system, bool isRenderSystem = false);
     void Update(float dt);
     void Render();

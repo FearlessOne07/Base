@@ -14,6 +14,8 @@ set(SRC
   "./systems/RenderSystem.cpp"
   "./systems/InputSystem.cpp"
   "./systems/CameraSystem.cpp"
+
+  "./components/InputComponent.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 

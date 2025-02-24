@@ -2,6 +2,7 @@
 #include "base/EntityManager.hpp"
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
+#include "base/components/ABBComponent.hpp"
 #include "base/components/CameraComponent.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -18,6 +19,10 @@ namespace Base
     {
       CameraComponent *camcmp = e->GetComponent<CameraComponent>();
 
+      if (e->HasComponent<ABBComponent>())
+      {
+        ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
+      }
       switch (camcmp->cameraMode)
       {
       case CameraMode::BASIC_FOLLOW:
