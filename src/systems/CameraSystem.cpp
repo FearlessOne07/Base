@@ -4,6 +4,8 @@
 #include "base/RenderContextSingleton.hpp"
 #include "base/components/ABBComponent.hpp"
 #include "base/components/CameraComponent.hpp"
+#include "base/components/ShapeComponent.hpp"
+#include "base/components/TransformComponent.hpp"
 #include "raylib.h"
 #include "raymath.h"
 #include <memory>
@@ -22,6 +24,13 @@ namespace Base
       if (e->HasComponent<ABBComponent>())
       {
         ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
+        camcmp->target.x = abbcmp->boundingBox.x + (abbcmp->boundingBox.width / 2);
+        camcmp->target.y = abbcmp->boundingBox.y + (abbcmp->boundingBox.height / 2);
+      }
+      else if (e->HasComponent<ShapeComponent>())
+      {
+        TransformComponent *transcmp = e->GetComponent<TransformComponent>();
+        camcmp->target = transcmp->position;
       }
       switch (camcmp->cameraMode)
       {
