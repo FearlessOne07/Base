@@ -2,9 +2,10 @@
 #include "base/Exports.hpp"
 #include "base/SceneData.hpp"
 #include "base/SceneTransition.hpp"
-#include "raylib.h"
+#include "raylib/raylib.h"
 #include <memory>
 #include <typeindex>
+
 namespace Base
 {
   class EntityManager;
