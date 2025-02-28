@@ -28,8 +28,8 @@ namespace Base
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
 
-    void PushScene(std::type_index sceneID, SceneData sceneData = SceneData());
-    void ReplaceScene(std::type_index sceneId, SceneData sceneData = SceneData());
+    void PushScene(std::type_index sceneID, const SceneData &sceneData = SceneData());
+    void ReplaceScene(std::type_index sceneId, const SceneData &sceneData = SceneData());
     void PopScene();
 
   public:

@@ -26,28 +26,30 @@ namespace Base
 
     // Initialise Render Texture
     _renderTexture = LoadRenderTexture(width, height);
-    _gameWidth = _renderTexture.texture.width;
-    _gameHeight = _renderTexture.texture.height;
+    _gameWidth = static_cast<float>(_renderTexture.texture.width);
+    _gameHeight = static_cast<float>(_renderTexture.texture.height);
     _running = true;
 
     // Init Systems
     _scenemanager.SetQuitCallBack([this]() { this->Quit(); });
 
     // Initialize render context
-    int windowWidth = GetScreenWidth();
-    int windowHeight = GetScreenHeight();
+    float windowWidth = static_cast<float>(GetScreenWidth());
+    float windowHeight = static_cast<float>(GetScreenHeight());
     float scale = std::min( //
       (float)windowWidth / _gameWidth,
       (float)windowHeight / _gameHeight //
     );
-    int marginX = (windowWidth - (_gameWidth * scale)) / 2;
-    int marginY = (windowHeight - (_gameHeight * scale)) / 2;
+    float marginX = (windowWidth - (_gameWidth * scale)) / 2;
+    float marginY = (windowHeight - (_gameHeight * scale)) / 2;
+
     RenderContext rendercontext = {
       .gameWidth = _gameWidth,
       .gameHeight = _gameHeight,
       .marginX = (float)marginX,
       .marginY = (float)marginY,
       .scale = scale,
+      .camera = Camera2D(),
     };
     RenderContextSingleton::UpdateInstance(&rendercontext);
   }
@@ -57,14 +59,14 @@ namespace Base
     while (!WindowShouldClose() && _running)
     {
       // Update render context
-      int windowWidth = GetScreenWidth();
-      int windowHeight = GetScreenHeight();
+      float windowWidth = static_cast<float>(GetScreenWidth());
+      float windowHeight = static_cast<float>(GetScreenHeight());
       float scale = std::min(             //
         (float)windowWidth / _gameWidth,  //
         (float)windowHeight / _gameHeight //
       );
-      int marginX = (windowWidth - (_gameWidth * scale)) / 2;
-      int marginY = (windowHeight - (_gameHeight * scale)) / 2;
+      float marginX = (windowWidth - (_gameWidth * scale)) / 2;
+      float marginY = (windowHeight - (_gameHeight * scale)) / 2;
       const RenderContext *rd = RenderContextSingleton::GetInstance();
       RenderContext rendercontext = {
         .gameWidth = _gameWidth,

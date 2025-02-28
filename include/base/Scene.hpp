@@ -15,22 +15,28 @@ namespace Base
   {
   private:
     friend class SceneManager; // SceneManager
-    SceneTransition GetSceneTransition() const;
+    [[nodiscard]] auto GetSceneTransition() const -> SceneTransition;
     void SetEntityManager(EntityManager *);
     void ResetSceneTransition();
-    void __setSceneTransition(std::type_index sceneID, SceneRequest request, SceneData data = SceneData());
+    void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
 
-    struct SceneState;
+    struct SceneState
+    {
+      SceneTransition sceneTransition = SceneTransition();
+      Color fillColor = BLACK;
+      EntityManager *entityManager = nullptr;
+    };
+
     std::unique_ptr<SceneState> _state;
 
   protected: // Inclass Access
     void Clear() const;
     void SetClearColor(Color color);
-    EntityManager *GetEntityManager() const;
+    [[nodiscard]] EntityManager *GetEntityManager() const;
 
-    template <typename T = void> void SetSceneTransition(SceneRequest request, SceneData data = SceneData())
+    template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())
     {
-      __setSceneTransition(typeid(T), request, data);
+      _setSceneTransition(typeid(T), request, data);
     }
 
   protected: // Virtual
@@ -38,7 +44,7 @@ namespace Base
 
   public:
     Scene();
-    virtual ~Scene();
+    virtual ~Scene() = default;
     virtual void Update(float dt, SystemManager *systemManager) = 0;
     virtual void Enter(SystemManager *systemManager, AssetManager *assetManager, SceneData sceneData = SceneData()) = 0;
     virtual void Render(Base::SystemManager *systemManager) = 0;

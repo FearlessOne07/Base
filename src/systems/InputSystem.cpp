@@ -9,9 +9,9 @@ namespace Base
   {
     std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<InputComponent>();
 
-    for (auto &e : entities)
+    for (std::shared_ptr<Entity> &e : entities)
     {
-      InputComponent *inpcmp = e->GetComponent<InputComponent>();
+      auto *inpcmp = e->GetComponent<InputComponent>();
 
       for (auto &[key, action] : inpcmp->keyPressedBinds)
       {

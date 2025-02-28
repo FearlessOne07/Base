@@ -15,15 +15,15 @@ namespace Base
   {
     // Shape Component
     std::vector<std::shared_ptr<Entity>> entities_transcmp = entitymanager->Query<TransformComponent>();
-    for (std::shared_ptr<Entity> e : entities_transcmp)
+    for (std::shared_ptr<Entity> &e : entities_transcmp)
     {
       if (e)
       {
-        TransformComponent *transcmp = e->GetComponent<TransformComponent>();
+        auto *transcmp = e->GetComponent<TransformComponent>();
 
         if (e->HasComponent<ShapeComponent>())
         {
-          ShapeComponent *shc = e->GetComponent<ShapeComponent>();
+          auto *shc = e->GetComponent<ShapeComponent>();
 
           if (shc->fill)
           {
@@ -37,7 +37,7 @@ namespace Base
         }
         else if (e->HasComponent<ABBComponent>())
         {
-          ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
+          auto *abbcmp = e->GetComponent<ABBComponent>();
 
           if (abbcmp && transcmp && abbcmp->draw)
           {
@@ -60,7 +60,7 @@ namespace Base
         }
         else if (e->HasComponent<TextureComponent>())
         {
-          TextureComponent *tcmp = e->GetComponent<TextureComponent>();
+          auto *tcmp = e->GetComponent<TextureComponent>();
 
           if (tcmp && transcmp)
           {
@@ -77,12 +77,12 @@ namespace Base
 
     // ABB + Texture
     std::vector<std::shared_ptr<Entity>> entities_tcmp_abb = entitymanager->Query<ABBComponent, TextureComponent>();
-    for (std::shared_ptr<Entity> e : entities_tcmp_abb)
+    for (std::shared_ptr<Entity> &e : entities_tcmp_abb)
     {
       if (e)
       {
-        TextureComponent *tcmp = e->GetComponent<TextureComponent>();
-        ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
+        auto *tcmp = e->GetComponent<TextureComponent>();
+        auto *abbcmp = e->GetComponent<ABBComponent>();
 
         if (tcmp && abbcmp && !abbcmp->draw)
         {

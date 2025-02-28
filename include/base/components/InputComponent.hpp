@@ -17,5 +17,8 @@ namespace Base
     void BindKeyDown(int key, std::function<void()> action);
     void BindKeyReleased(int key, std::function<void()> action);
     void BindKeyPressed(int key, std::function<void()> action);
+
+    void BindMouseButtonPressed(int key, std::function<void()> action);
+    void BindMouseButtonDown(int key, std::function<void()> action);
   };
 } // namespace Base

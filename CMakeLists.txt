@@ -12,6 +12,8 @@ else()
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+message(STATUS "Base Build Type: ${CMAKE_BUILD_TYPE}")
+
 set(ROOT_BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE STRING "The root directory")
 message(STATUS "Root Base directory: ${ROOT_BASE_DIR}")
 

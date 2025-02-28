@@ -6,7 +6,7 @@ namespace Base
 {
   class BASEAPI CameraSystem : public System
   {
-    virtual void Update(float dt, EntityManager *entityManager) override;
+    void Update(float dt, EntityManager *entityManager) override;
 
   public:
     void SmoothFollow(float dt, CameraComponent *);

@@ -10,7 +10,7 @@ namespace Base
   public:
     Vector2 targetVelocity = {0, 0};
     Vector2 velocity = {0, 0};
-    int acceleration = 0;
+    float acceleration = 0;
     float speed = 0.f;
   };
 } // namespace Base
