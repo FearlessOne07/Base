@@ -5,7 +5,7 @@
 #include "base/Game.hpp"
 #include "base/SystemManager.hpp"
 #include "internal/scene/SceneManager.hpp"
-#include "raylib.h"
+#include "raylib/raylib.h"
 #include <functional>
 #include <memory>
 

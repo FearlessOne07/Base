@@ -1,4 +1,4 @@
-#include "base/SystemManager.hpp";
+#include "base/SystemManager.hpp"
 #include "base/EntityManager.hpp"
 #include "base/System.hpp"
 #include <memory>

@@ -6,8 +6,8 @@
 #include "base/components/CameraComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
-#include "raylib.h"
-#include "raymath.h"
+#include "raylib/raylib.h"
+#include "raylib/raymath.h"
 #include <memory>
 #include <vector>
 
@@ -36,11 +36,14 @@ namespace Base
       {
       case CameraMode::BASIC_FOLLOW:
         BasicFollow(dt, camcmp);
+        break;
       case CameraMode::SMOOTH_FOLLOW:
         SmoothFollow(dt, camcmp);
+        break;
       };
     }
   }
+
   void CameraSystem::BasicFollow(float dt, CameraComponent *camcmp)
   {
     const RenderContext *rd = RenderContextSingleton::GetInstance();

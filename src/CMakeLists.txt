@@ -19,6 +19,7 @@ set(SRC
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 
+
 target_compile_definitions(base PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
     $<$<BOOL:${BUILD_SHARED_LIBS}>:BASE_BUILD_LIBTYPE_SHARED>
@@ -33,7 +34,6 @@ target_link_directories("${PROJECT_NAME}"
   PRIVATE
     "${ROOT_BASE_DIR}/build/vendor/raylib"
 )
-
 
 target_include_directories("${PROJECT_NAME}"
   PRIVATE

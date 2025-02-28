@@ -1,7 +1,7 @@
 #pragma once
-
 #include "base/Exports.hpp"
-#include "raylib.h"
+#include "raylib/raylib.h"
+
 namespace Base
 {
 

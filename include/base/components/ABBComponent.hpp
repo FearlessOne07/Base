@@ -1,5 +1,5 @@
 #include "base/Component.hpp"
-#include "raylib.h"
+#include "raylib/raylib.h"
 
 namespace Base
 {
