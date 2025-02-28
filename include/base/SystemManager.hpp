@@ -18,12 +18,12 @@ namespace Base
 
   private: // Methods
     SystemManager(EntityManager *entityManager);
-    void __activateSystem(std::type_index);
+    void _activateSystem(std::type_index);
 
   public:
     template <typename T> void ActivatSystem()
     {
-      __activateSystem(typeid(T));
+      _activateSystem(typeid(T));
     }
 
     void DeactivateActiveSystems();

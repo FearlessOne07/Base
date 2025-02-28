@@ -15,7 +15,7 @@ namespace Base
   {
   private:
     friend class SceneManager; // SceneManager
-    [[nodiscard]] auto GetSceneTransition() const -> SceneTransition;
+    [[nodiscard]] SceneTransition GetSceneTransition() const;
     void SetEntityManager(EntityManager *);
     void ResetSceneTransition();
     void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
