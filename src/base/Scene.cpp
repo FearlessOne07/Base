@@ -4,19 +4,13 @@
 
 namespace Base
 {
-  struct Scene::SceneState
-  {
-    SceneTransition sceneTransition = SceneTransition();
-    Color fillColor = BLACK;
-    EntityManager *entityManager = nullptr;
-  };
 
   void Scene::SetClearColor(Color color)
   {
     _state->fillColor = color;
   }
 
-  void Scene::__setSceneTransition(std::type_index sceneID, SceneRequest request, SceneData data)
+  void Scene::_setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data)
   {
     _state->sceneTransition = {
       .request = request,
@@ -36,7 +30,7 @@ namespace Base
   }
   void Scene::ResetSceneTransition()
   {
-    _state->sceneTransition = {SceneRequest::NONE, typeid(-1)};
+    _state->sceneTransition = {.request = SceneRequest::NONE, .sceneID = typeid(-1)};
   }
 
   void Scene::SetEntityManager(EntityManager *manager)
@@ -53,10 +47,6 @@ namespace Base
   }
 
   Scene::Scene() : _state(std::make_unique<SceneState>())
-  {
-  }
-
-  Scene::~Scene()
   {
   }
 } // namespace Base

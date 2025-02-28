@@ -17,19 +17,19 @@ namespace Base
   {
     std::vector<std::shared_ptr<Entity>> entities = entityManager->Query<CameraComponent>();
 
-    for (auto &e : entities)
+    for (std::shared_ptr<Entity> &e : entities)
     {
-      CameraComponent *camcmp = e->GetComponent<CameraComponent>();
+      auto *camcmp = e->GetComponent<CameraComponent>();
 
       if (e->HasComponent<ABBComponent>())
       {
-        ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
+        auto *abbcmp = e->GetComponent<ABBComponent>();
         camcmp->target.x = abbcmp->boundingBox.x + (abbcmp->boundingBox.width / 2);
         camcmp->target.y = abbcmp->boundingBox.y + (abbcmp->boundingBox.height / 2);
       }
       else if (e->HasComponent<ShapeComponent>())
       {
-        TransformComponent *transcmp = e->GetComponent<TransformComponent>();
+        auto *transcmp = e->GetComponent<TransformComponent>();
         camcmp->target = transcmp->position;
       }
       switch (camcmp->cameraMode)

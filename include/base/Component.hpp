@@ -4,6 +4,9 @@
 namespace Base
 {
 
-  struct BASEAPI Component{virtual ~Component(){}};
+  struct BASEAPI Component
+  {
+    virtual ~Component() = default;
+  };
 
 } // namespace Base

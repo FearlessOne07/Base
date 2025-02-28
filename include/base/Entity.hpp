@@ -40,7 +40,7 @@ namespace Base
     {
       // Check Type of T
       static_assert(std::is_base_of<Component, T>::value, "T must derive from the class 'Component'");
-      std::type_index ti = std::type_index(typeid(T));
+      auto ti = std::type_index(typeid(T));
       if (!HasComponent<T>())
       {
         std::unique_ptr<Component> comp = std::make_unique<T>();
@@ -57,7 +57,7 @@ namespace Base
     {
       static_assert(std::is_base_of<Component, T>::value, "T must derive from the class 'Component'");
 
-      std::type_index ti = std::type_index(typeid(T));
+      auto ti = std::type_index(typeid(T));
 
       if (_components.find(ti) == _components.end())
       {

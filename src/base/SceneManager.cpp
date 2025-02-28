@@ -14,7 +14,7 @@ namespace Base
   {
   }
 
-  void SceneManager::PushScene(std::type_index scene, SceneData sceneData)
+  void SceneManager::PushScene(std::type_index scene, const SceneData &sceneData)
   {
     if (!_scenes.empty())
     {
@@ -43,7 +43,7 @@ namespace Base
     }
   }
 
-  void SceneManager::ReplaceScene(std::type_index scene, SceneData sceneData)
+  void SceneManager::ReplaceScene(std::type_index scene, const SceneData &sceneData)
   {
     if (!_scenes.empty())
     {
@@ -59,7 +59,7 @@ namespace Base
 
   void SceneManager::SetQuitCallBack(QuitCallBack quitCallBack)
   {
-    _quitCallBack = quitCallBack;
+    _quitCallBack = std::move(quitCallBack);
   }
 
   void SceneManager::Update(float dt)

@@ -19,8 +19,8 @@ namespace Base
     {
       if (e)
       {
-        TransformComponent *transcmp = e->GetComponent<TransformComponent>();
-        MoveComponent *mc = e->GetComponent<MoveComponent>();
+        auto *transcmp = e->GetComponent<TransformComponent>();
+        auto *mc = e->GetComponent<MoveComponent>();
 
         if (Vector2Length(mc->targetVelocity) > 0)
         {
@@ -54,7 +54,7 @@ namespace Base
 
         if (hasABBComp)
         {
-          ABBComponent *abbcmp = e->GetComponent<ABBComponent>();
+          auto *abbcmp = e->GetComponent<ABBComponent>();
           abbcmp->oldBoundingBox = abbcmp->boundingBox;
           abbcmp->boundingBox.x = transcmp->position.x;
           abbcmp->boundingBox.y = transcmp->position.y;
@@ -67,15 +67,15 @@ namespace Base
   {
     std::vector<std::shared_ptr<Entity>> entites = entityManager->Query<ABBComponent>();
 
-    ABBComponent *abbcmp1 = e->GetComponent<ABBComponent>();
-    MoveComponent *mvcmp1 = e->GetComponent<MoveComponent>();
-    TransformComponent *transcmp = e->GetComponent<TransformComponent>();
+    auto *abbcmp1 = e->GetComponent<ABBComponent>();
+    auto *mvcmp1 = e->GetComponent<MoveComponent>();
+    auto *transcmp = e->GetComponent<TransformComponent>();
 
-    for (auto &e2 : entites)
+    for (std::shared_ptr<Entity> &e2 : entites)
     {
       if (e != e2)
       {
-        ABBComponent *abbcmp2 = e2->GetComponent<ABBComponent>();
+        auto *abbcmp2 = e2->GetComponent<ABBComponent>();
 
         if (CheckCollisionRecs(abbcmp2->boundingBox, abbcmp1->boundingBox))
         {
