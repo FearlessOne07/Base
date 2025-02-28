@@ -26,7 +26,7 @@ namespace Base
       throw std::runtime_error("Registration of duplicate system");
     }
   }
-  void SystemManager::__activateSystem(std::type_index systemID)
+  void SystemManager::_activateSystem(std::type_index systemID)
   {
     if (_systems.find(systemID) != _systems.end() && !_systems.at(systemID)->IsActive())
     {
