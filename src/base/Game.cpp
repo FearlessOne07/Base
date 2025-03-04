@@ -83,6 +83,7 @@ namespace Base
 
       // Update Scene mamnager
       _scenemanager.Update(dt);
+      _entityManager.RemoveDeadEntities();
 
       // Begin rendering of Scenes
       BeginTextureMode(_renderTexture);

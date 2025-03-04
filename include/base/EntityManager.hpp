@@ -11,13 +11,17 @@ namespace Base
   class BASEAPI EntityManager
   {
   private:
+    friend class Game;
     std::vector<std::shared_ptr<Entity>> _entities;
     size_t _nextID = 0;
 
+    void RemoveDeadEntities();
+    void Update();
+
   public:
+    EntityManager();
     Entity *AddEntity();
     const Entity *GetEntity(size_t id);
-
     template <typename... Components> std::vector<std::shared_ptr<Entity>> Query()
     {
       std::vector<std::shared_ptr<Entity>> results = {};
@@ -32,4 +36,7 @@ namespace Base
       return results;
     }
   };
+
+  // Core
+
 } // namespace Base
