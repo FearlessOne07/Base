@@ -27,4 +27,15 @@ namespace Base
   {
     return _id;
   }
+
+  void Entity::SetDead()
+  {
+    _alive = false;
+  }
+
+  bool Entity::IsAlive() const
+  {
+    return _alive;
+  }
+
 } // namespace Base

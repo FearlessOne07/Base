@@ -17,6 +17,7 @@ namespace Base
     friend class EntityManager;
 
     size_t _id = 0;
+    bool _alive = true;
     std::unordered_map<std::type_index, std::unique_ptr<Component>> _components;
     Entity(size_t id);
 
@@ -32,14 +33,14 @@ namespace Base
     template <typename T> bool HasComponent()
     {
       // Check Type of T
-      static_assert(std::is_base_of<Component, T>::value, "T must derive from the class 'Component'");
+      static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
       return _components.find(std::type_index(typeid(T))) != _components.end();
     }
 
     template <typename T> T *AddComponent()
     {
       // Check Type of T
-      static_assert(std::is_base_of<Component, T>::value, "T must derive from the class 'Component'");
+      static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
       auto ti = std::type_index(typeid(T));
       if (!HasComponent<T>())
       {
@@ -49,13 +50,13 @@ namespace Base
       }
       else
       {
-        throw std::runtime_error("Entity Already has specified compoment");
+        throw std::runtime_error("Entity already has specified compoment");
       }
     }
 
     template <typename T> T *GetComponent()
     {
-      static_assert(std::is_base_of<Component, T>::value, "T must derive from the class 'Component'");
+      static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
 
       auto ti = std::type_index(typeid(T));
 
@@ -74,5 +75,7 @@ namespace Base
 
     // Access
     size_t GetID() const;
+    bool IsAlive() const;
+    void SetDead();
   };
 } // namespace Base
