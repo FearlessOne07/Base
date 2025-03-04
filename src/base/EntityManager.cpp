@@ -31,6 +31,5 @@ namespace Base
       return !(e->IsAlive());
     });
     _entities.erase(dead.begin(), dead.end());
-    std::cout << _entities.size() << "\n";
   }
 } // namespace Base

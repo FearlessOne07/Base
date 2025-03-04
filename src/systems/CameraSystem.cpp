@@ -8,6 +8,8 @@
 #include "base/components/TransformComponent.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
+#include <algorithm>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -52,6 +54,15 @@ namespace Base
   void CameraSystem::SmoothFollow(float dt, CameraComponent *camcmp)
   {
     const RenderContext *rd = RenderContextSingleton::GetInstance();
-    rd->camera.target = Vector2Lerp(rd->camera.target, camcmp->target, 2 * dt);
+
+    float distance = Vector2Distance(camcmp->target, rd->camera.target);
+    float speedFactor = distance / camcmp->maxFollowDistance;
+
+    speedFactor = std::clamp<float>(speedFactor, 0, 1);
+
+    Vector2 velocity = Vector2Subtract(camcmp->target, rd->camera.target);
+    rd->camera.target = Vector2Add(                                                                       ///
+      rd->camera.target, Vector2Scale(Vector2Normalize(velocity), camcmp->cameraSpeed * speedFactor * dt) //
+    );
   }
 } // namespace Base
