@@ -2,14 +2,13 @@
 #include "base/EntityManager.hpp"
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
-#include "base/components/ABBComponent.hpp"
+#include "base/components/BoundingBoxComponent.hpp"
 #include "base/components/CameraComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "raylib/raylib.h"
 #include "raylib/raymath.h"
 #include <algorithm>
-#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -22,16 +21,16 @@ namespace Base
     for (std::shared_ptr<Entity> &e : entities)
     {
       auto *camcmp = e->GetComponent<CameraComponent>();
+      auto *transcmp = e->GetComponent<TransformComponent>();
 
-      if (e->HasComponent<ABBComponent>())
+      if (e->HasComponent<BoundingBoxComponent>())
       {
-        auto *abbcmp = e->GetComponent<ABBComponent>();
-        camcmp->target.x = abbcmp->boundingBox.x + (abbcmp->boundingBox.width / 2);
-        camcmp->target.y = abbcmp->boundingBox.y + (abbcmp->boundingBox.height / 2);
+        auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
+        camcmp->target.x = transcmp->position.x + (abbcmp->size.x / 2);
+        camcmp->target.y = transcmp->position.y + (abbcmp->size.y / 2);
       }
       else if (e->HasComponent<ShapeComponent>())
       {
-        auto *transcmp = e->GetComponent<TransformComponent>();
         camcmp->target = transcmp->position;
       }
       switch (camcmp->cameraMode)

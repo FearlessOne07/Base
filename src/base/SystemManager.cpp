@@ -16,6 +16,7 @@ namespace Base
     if (_systems.find(systemID) == _systems.end())
     {
       _systems[systemID] = std::move(system);
+
       if (isRenderSystem)
       {
         _renderSystemID = systemID;
