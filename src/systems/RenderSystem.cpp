@@ -1,7 +1,7 @@
 
 #include "base/systems/RenderSystem.hpp"
 #include "base/EntityManager.hpp"
-#include "base/components/ABBComponent.hpp"
+#include "base/components/BoundingBoxComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TextureComponent.hpp"
 #include "base/components/TransformComponent.hpp"
@@ -31,29 +31,40 @@ namespace Base
           }
           else
           {
-            DrawPolyLinesEx(transcmp->position, shc->points, shc->radius, transcmp->rotation, shc->nonFillThickness,
-                            shc->color);
+            DrawPolyLinesEx(                                                                                      //
+              transcmp->position, shc->points, shc->radius, transcmp->rotation, shc->nonFillThickness, shc->color //
+            );
           }
         }
-        else if (e->HasComponent<ABBComponent>())
-        {
-          auto *abbcmp = e->GetComponent<ABBComponent>();
 
-          if (abbcmp && transcmp && abbcmp->draw)
+        if (e->HasComponent<BoundingBoxComponent>())
+        {
+          auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
+
+          if (abbcmp->draw)
           {
             if (abbcmp->fill)
             {
               DrawRectanglePro( //
-                {transcmp->position.x, transcmp->position.y, abbcmp->boundingBox.width, abbcmp->boundingBox.height},
-                {0, 0}, transcmp->rotation,
+                {abbcmp->lastPosition.x, abbcmp->lastPosition.y, abbcmp->size.x, abbcmp->size.y}, {0, 0},
+                transcmp->rotation,
+                RED //
+              );
+              DrawRectanglePro( //
+                {transcmp->position.x, transcmp->position.y, abbcmp->size.x, abbcmp->size.y}, {0, 0},
+                transcmp->rotation,
                 abbcmp->color //
               );
             }
             else
             {
-              DrawRectangleLinesEx(
-                {transcmp->position.x, transcmp->position.y, abbcmp->boundingBox.width, abbcmp->boundingBox.height},
-                abbcmp->nonFillThickness, abbcmp->color //
+              DrawRectangleLinesEx(                                                               //
+                {abbcmp->lastPosition.x, abbcmp->lastPosition.y, abbcmp->size.x, abbcmp->size.y}, //
+                abbcmp->nonFillThickness, RED                                                     //
+              );
+              DrawRectangleLinesEx(                                                           //
+                {transcmp->position.x, transcmp->position.y, abbcmp->size.x, abbcmp->size.y}, //
+                abbcmp->nonFillThickness, abbcmp->color                                       //
               );
             }
           }
@@ -76,19 +87,21 @@ namespace Base
     }
 
     // ABB + Texture
-    std::vector<std::shared_ptr<Entity>> entities_tcmp_abb = entitymanager->Query<ABBComponent, TextureComponent>();
+    std::vector<std::shared_ptr<Entity>> entities_tcmp_abb =
+      entitymanager->Query<BoundingBoxComponent, TextureComponent>();
     for (std::shared_ptr<Entity> &e : entities_tcmp_abb)
     {
       if (e)
       {
         auto *tcmp = e->GetComponent<TextureComponent>();
-        auto *abbcmp = e->GetComponent<ABBComponent>();
+        auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
+        auto *transcmp = e->GetComponent<TransformComponent>();
 
         if (tcmp && abbcmp && !abbcmp->draw)
         {
           DrawTexturePro( //
             *tcmp->texture, tcmp->source,
-            {abbcmp->boundingBox.x, abbcmp->boundingBox.y, tcmp->source.width * tcmp->scale,
+            {transcmp->position.x, transcmp->position.y, tcmp->source.width * tcmp->scale,
              tcmp->source.height * tcmp->scale},
             tcmp->origin, 0,
             WHITE //

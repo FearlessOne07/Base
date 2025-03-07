@@ -22,7 +22,8 @@ namespace Base
     EntityManager();
     Entity *AddEntity();
     const Entity *GetEntity(size_t id);
-    template <typename... Components> std::vector<std::shared_ptr<Entity>> Query()
+
+    template <typename... Components> auto Query() -> std::vector<std::shared_ptr<Entity>>
     {
       std::vector<std::shared_ptr<Entity>> results = {};
 
