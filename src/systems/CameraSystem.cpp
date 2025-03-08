@@ -50,6 +50,7 @@ namespace Base
     const RenderContext *rd = RenderContextSingleton::GetInstance();
     rd->camera.target = camcmp->target;
   }
+
   void CameraSystem::SmoothFollow(float dt, CameraComponent *camcmp)
   {
     const RenderContext *rd = RenderContextSingleton::GetInstance();
