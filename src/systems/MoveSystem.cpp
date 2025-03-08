@@ -2,6 +2,7 @@
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
 #include "base/components/BoundingBoxComponent.hpp"
+#include "base/components/GravityComponent.hpp"
 #include "base/components/MoveComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "raylib.h"
@@ -13,7 +14,7 @@ namespace Base
 {
   void MoveSystem::Update(float dt, EntityManager *entitymanager)
   {
-    std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<MoveComponent, TransformComponent>();
+    std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<MoveComponent>();
 
     for (std::shared_ptr<Entity> &e : entities)
     {
@@ -26,7 +27,20 @@ namespace Base
         {
           mc->targetVelocity = Vector2Normalize(mc->targetVelocity);
         }
-        mc->velocity = Vector2Lerp(mc->velocity, mc->targetVelocity, mc->acceleration * dt);
+
+        // Update X velocity
+        mc->velocity.x = Lerp(mc->velocity.x, mc->targetVelocity.x, mc->acceleration * dt);
+
+        // Update y velocity
+        if (e->HasComponent<Base::GravityComponent>())
+        {
+          auto *gravcmp = e->GetComponent<GravityComponent>();
+          mc->velocity.y += gravcmp->gravityStrength * dt;
+        }
+        else
+        {
+          mc->velocity.y = Lerp(mc->velocity.y, mc->targetVelocity.y, mc->acceleration * dt);
+        }
 
         if (abs(mc->velocity.x) < 5e-5)
         {
@@ -60,7 +74,15 @@ namespace Base
           auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
           abbcmp->lastPosition.y = transcmp->position.y;
         }
-        transcmp->position.y = transcmp->position.y + (mc->velocity.y * mc->speed * dt);
+
+        if (e->HasComponent<GravityComponent>())
+        {
+          transcmp->position.y = transcmp->position.y + (mc->velocity.y * dt);
+        }
+        else
+        {
+          transcmp->position.y = transcmp->position.y + (mc->velocity.y * mc->speed * dt);
+        }
 
         // Handle Y Collision
         if (hasBBox)
@@ -120,6 +142,12 @@ namespace Base
             {
               mvcmp1->velocity.y = 0;
               transcmp1->position.y = transcmp2->position.y - abbcmp1->size.y;
+
+              if (e->HasComponent<GravityComponent>())
+              {
+                auto *gravcmp = e->GetComponent<GravityComponent>();
+                gravcmp->isJumping = false;
+              }
             }
             else if (                                                            //
               abbcmp1->lastPosition.y >= transcmp2->position.y + abbcmp2->size.y //
