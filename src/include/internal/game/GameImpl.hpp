@@ -20,10 +20,10 @@ namespace Base
     using FactoryCallBack = std::function<std::unique_ptr<Scene>()>;
 
   private:
-    bool _running;
+    bool _running = false;
     RenderTexture _renderTexture;
-    float _gameWidth;
-    float _gameHeight;
+    float _gameWidth = 0.f;
+    float _gameHeight = 0.f;
 
   private: // Systems
     EntityManager _entityManager = EntityManager();
@@ -39,7 +39,7 @@ namespace Base
     GameImpl() = default;
     void Init(int width, int height, const char *title, int fps = 0);
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory);
-    void RegisterSystem(std::type_index systemID, std::unique_ptr<System> system, bool isRenderSystem);
+    void RegisterSystem(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem);
     void Run();
   };
 } // namespace Base

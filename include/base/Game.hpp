@@ -50,6 +50,6 @@ namespace Base
     class GameImpl;
     GameImpl *_impl = nullptr;
     void RegisterSceneImpl(std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory);
-    void RegisterSystemImpl(std::type_index systemID, std::unique_ptr<System> system, bool isRenderSystem);
+    void RegisterSystemImpl(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem);
   };
 } // namespace Base
