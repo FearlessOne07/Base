@@ -13,7 +13,7 @@ namespace Base
   private: // References
     friend class Game;
     EntityManager *_entityManager = nullptr;
-    std::map<std::type_index, std::unique_ptr<System>> _systems;
+    std::map<std::type_index, std::shared_ptr<System>> _systems;
     std::type_index _renderSystemID = typeid(nullptr);
 
   private: // Methods
@@ -27,7 +27,7 @@ namespace Base
     }
 
     void DeactivateActiveSystems();
-    void RegisterSystem(std::type_index, std::unique_ptr<System> system, bool isRenderSystem = false);
+    void RegisterSystem(std::type_index, std::shared_ptr<System> system, bool isRenderSystem = false);
     void Update(float dt);
     void Render();
   };

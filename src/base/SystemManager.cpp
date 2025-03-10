@@ -11,7 +11,7 @@ namespace Base
   {
   }
 
-  void SystemManager::RegisterSystem(std::type_index systemID, std::unique_ptr<System> system, bool isRenderSystem)
+  void SystemManager::RegisterSystem(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem)
   {
     if (_systems.find(systemID) == _systems.end())
     {

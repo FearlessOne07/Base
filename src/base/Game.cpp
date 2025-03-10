@@ -122,7 +122,7 @@ namespace Base
   }
 
   void Game::GameImpl::RegisterSystem(                                                    //
-    std::type_index systemID, std::unique_ptr<System> system, bool isRenderSystem = false //
+    std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem = false //
   )
   {
     _systemmanager.RegisterSystem(systemID, std::move(system), isRenderSystem);
@@ -154,7 +154,7 @@ namespace Base
     _impl->RegisterScene(sceneID, std::move(factory));
   }
 
-  void Game::RegisterSystemImpl(std::type_index systemID, std::unique_ptr<System> system, bool isRenderSystem = false)
+  void Game::RegisterSystemImpl(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem = false)
   {
     _impl->RegisterSystem(systemID, std::move(system), isRenderSystem);
   }
