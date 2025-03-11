@@ -46,11 +46,6 @@ namespace Base
             if (abbcmp->fill)
             {
               DrawRectanglePro( //
-                {abbcmp->lastPosition.x, abbcmp->lastPosition.y, abbcmp->size.x, abbcmp->size.y}, {0, 0},
-                transcmp->rotation,
-                RED //
-              );
-              DrawRectanglePro( //
                 {transcmp->position.x, transcmp->position.y, abbcmp->size.x, abbcmp->size.y}, {0, 0},
                 transcmp->rotation,
                 abbcmp->color //
@@ -58,10 +53,6 @@ namespace Base
             }
             else
             {
-              DrawRectangleLinesEx(                                                               //
-                {abbcmp->lastPosition.x, abbcmp->lastPosition.y, abbcmp->size.x, abbcmp->size.y}, //
-                abbcmp->nonFillThickness, RED                                                     //
-              );
               DrawRectangleLinesEx(                                                           //
                 {transcmp->position.x, transcmp->position.y, abbcmp->size.x, abbcmp->size.y}, //
                 abbcmp->nonFillThickness, abbcmp->color                                       //
