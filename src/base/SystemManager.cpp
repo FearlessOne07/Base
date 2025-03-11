@@ -61,9 +61,16 @@ namespace Base
 
   void SystemManager::Render()
   {
-    if (_systems.at(_renderSystemID)->IsActive())
+    if (_systems.find(_renderSystemID) != _systems.end())
     {
-      _systems.at(_renderSystemID)->Update(0, _entityManager);
+      if (_systems.at(_renderSystemID)->IsActive())
+      {
+        _systems.at(_renderSystemID)->Update(0, _entityManager);
+      }
+    }
+    else
+    {
+      throw std::runtime_error("No Render System has been registered");
     }
   }
 } // namespace Base
