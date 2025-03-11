@@ -11,6 +11,7 @@ namespace Base
 
     for (std::shared_ptr<Entity> &e : entities)
     {
+
       auto *inpcmp = e->GetComponent<InputComponent>();
 
       for (auto &[key, action] : inpcmp->keyPressedBinds)
