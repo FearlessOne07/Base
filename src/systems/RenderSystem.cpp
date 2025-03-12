@@ -46,16 +46,18 @@ namespace Base
             if (abbcmp->fill)
             {
               DrawRectanglePro( //
-                {transcmp->position.x, transcmp->position.y, abbcmp->size.x, abbcmp->size.y}, {0, 0},
-                transcmp->rotation,
+                {transcmp->position.x - abbcmp->positionOffset.x, transcmp->position.y - abbcmp->positionOffset.y,
+                 abbcmp->size.x, abbcmp->size.y},
+                {0, 0}, transcmp->rotation,
                 abbcmp->color //
               );
             }
             else
             {
-              DrawRectangleLinesEx(                                                           //
-                {transcmp->position.x, transcmp->position.y, abbcmp->size.x, abbcmp->size.y}, //
-                abbcmp->nonFillThickness, abbcmp->color                                       //
+              DrawRectangleLinesEx( //
+                {transcmp->position.x - abbcmp->positionOffset.x, transcmp->position.y - abbcmp->positionOffset.y,
+                 abbcmp->size.x, abbcmp->size.y},       //
+                abbcmp->nonFillThickness, abbcmp->color //
               );
             }
           }
