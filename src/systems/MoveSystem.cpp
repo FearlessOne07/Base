@@ -98,6 +98,7 @@ namespace Base
     }
   }
 
+  // TODO: Make This respect BoundingBox::positionslOffset
   void MoveSystem::HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager)
   {
     std::vector<std::shared_ptr<Entity>> entites = entityManager->Query<BoundingBoxComponent>();
