@@ -13,6 +13,7 @@ namespace Base
 
   public:
     Entity *GetOwner();
+    void SetOwner(std::shared_ptr<Entity> owner);
 
   private:
     std::shared_ptr<Entity> _owner = nullptr;
