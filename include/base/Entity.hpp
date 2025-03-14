@@ -12,7 +12,7 @@
 namespace Base
 {
 
-  class BASEAPI Entity
+  class BASEAPI Entity : public std::enable_shared_from_this<Entity>
   {
     friend class EntityManager;
 
@@ -45,6 +45,7 @@ namespace Base
       if (!HasComponent<T>())
       {
         std::unique_ptr<Component> comp = std::make_unique<T>();
+        comp->SetOwner(shared_from_this());
         _components[ti] = std::move(comp);
         return static_cast<T *>(_components[ti].get());
       }
@@ -54,7 +55,7 @@ namespace Base
       }
     }
 
-    template <typename T> T *GetComponent()
+    template <typename T> T *GetComponent() const
     {
       static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
 
