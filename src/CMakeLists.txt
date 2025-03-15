@@ -10,6 +10,7 @@ set(SRC
   "./base/SystemManager.cpp"
   "./base/AssetManager.cpp"
   "./base/Component.cpp"
+  "./base/EventBus.cpp"
 
   "./systems/MoveSystem.cpp"
   "./systems/RenderSystem.cpp"
