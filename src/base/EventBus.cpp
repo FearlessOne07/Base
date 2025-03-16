@@ -2,6 +2,16 @@
 
 namespace Base
 {
+  EventBus *EventBus::_instance = nullptr;
+  EventBus *EventBus::GetInstance()
+  {
+    if (!_instance)
+    {
+      _instance = new EventBus;
+    }
+    return _instance;
+  }
+
   void EventBus::Dispatch(const Event &event)
   {
     auto it = _handlers.find(std::type_index(typeid(event)));

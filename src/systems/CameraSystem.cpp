@@ -14,6 +14,12 @@
 
 namespace Base
 {
+  void CameraSystem::Start()
+  {
+  }
+  void CameraSystem::Stop()
+  {
+  }
   void CameraSystem::Update(float dt, EntityManager *entityManager)
   {
     std::vector<std::shared_ptr<Entity>> entities = entityManager->Query<CameraComponent>();

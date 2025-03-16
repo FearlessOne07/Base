@@ -2,15 +2,14 @@
 
 namespace Base
 {
-  System::~System()
-  {
-  }
   void System::Activate()
   {
+    Start();
     _isActive = true;
   }
   void System::Deactivate()
   {
+    Stop();
     _isActive = false;
   }
   bool System::IsActive() const

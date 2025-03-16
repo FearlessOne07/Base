@@ -6,10 +6,14 @@ namespace Base
 {
   class BASEAPI CameraSystem : public System
   {
-    void Update(float dt, EntityManager *entityManager) override;
-
-  public:
+  private:
     void SmoothFollow(float dt, CameraComponent *);
     void BasicFollow(float dt, CameraComponent *);
+
+    void Start() override;
+    void Stop() override;
+
+  public:
+    void Update(float dt, EntityManager *entityManager) override;
   };
 } // namespace Base

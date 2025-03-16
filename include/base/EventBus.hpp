@@ -16,9 +16,13 @@ namespace Base
     using EventHandler = std::function<void(const Event &)>;
 
   private:
+    static EventBus *_instance;
+
+  private:
     std::unordered_map<std::type_index, std::vector<EventHandler>> _handlers = {};
 
   public:
+    static EventBus *GetInstance();
     template <typename T> void SubscribeEvent(EventHandler &handler)
     {
       if (!std::is_base_of_v<Event, T>)

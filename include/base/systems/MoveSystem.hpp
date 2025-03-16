@@ -8,6 +8,9 @@ namespace Base
 {
   class BASEAPI MoveSystem : public System
   {
+  private:
+    void Start() override;
+    void Stop() override;
   public:
     void Update(float dt, EntityManager *entityManager) override;
     void HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager);

@@ -1,8 +1,9 @@
 #pragma once
+#include "base/Exports.hpp"
 
 namespace Base
 {
-  class Event
+  class BASEAPI Event
   {
     virtual ~Event() = default;
   };
