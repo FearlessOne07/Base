@@ -3,8 +3,17 @@
 
 namespace Base
 {
+
   struct BASEAPI BoundingBoxComponent : public Component
   {
+    enum struct Type
+    {
+      COLLIDER,
+      HURTBOX,
+      HITBOX,
+    };
+
+    Type type = Type::COLLIDER;
     Vector2 size = {0, 0};
     Vector2 positionOffset = {0, 0};
     Vector2 lastPosition = {0, 0};

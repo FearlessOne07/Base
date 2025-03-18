@@ -115,7 +115,10 @@ namespace Base
 
     for (std::shared_ptr<Entity> &e2 : entites)
     {
-      if (e != e2)
+      if ( //
+        e != e2 && abbcmp1->type == BoundingBoxComponent::Type::COLLIDER &&
+        e2->GetComponent<BoundingBoxComponent>()->type == BoundingBoxComponent::Type::COLLIDER //
+      )
       {
         auto *abbcmp2 = e2->GetComponent<BoundingBoxComponent>();
         auto *transcmp2 = e2->GetComponent<TransformComponent>();
