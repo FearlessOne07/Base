@@ -18,6 +18,7 @@ set(SRC
   "./systems/CameraSystem.cpp"
 
   "./components/InputComponent.cpp"
+  "./components/BoundingBoxComponent.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 
