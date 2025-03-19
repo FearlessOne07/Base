@@ -2,8 +2,8 @@
 #include "base/Game.hpp"
 namespace Base
 {
-  class RenderContext;
-  class   RenderContextSingleton
+  struct RenderContext;
+  class RenderContextSingleton
   {
   public:
     // Access the constant RenderContext
