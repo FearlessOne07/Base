@@ -1,14 +1,12 @@
 #pragma once
 #include "base/Entity.hpp"
-#include "base/Exports.hpp"
 #include <cstddef>
 #include <memory>
 #include <vector>
 
 namespace Base
 {
-
-  class BASEAPI EntityManager
+  class EntityManager
   {
   private:
     friend class Game;

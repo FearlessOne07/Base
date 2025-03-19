@@ -1,7 +1,6 @@
 #pragma once
 #include "base/AssetManager.hpp"
 #include "base/EntityManager.hpp"
-#include "base/Exports.hpp"
 #include "base/Game.hpp"
 #include "base/SystemManager.hpp"
 #include "internal/scene/SceneManager.hpp"
@@ -14,7 +13,7 @@ namespace Base
 
   class Scene;
   class System;
-  class BASEAPI Game::GameImpl
+  class   Game::GameImpl
   {
     // Type defs
     using FactoryCallBack = std::function<std::unique_ptr<Scene>()>;

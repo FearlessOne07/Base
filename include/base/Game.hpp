@@ -1,5 +1,4 @@
 #pragma once
-#include "base/Exports.hpp"
 #include <functional>
 #include <memory>
 #include <stdexcept>
@@ -10,7 +9,7 @@ namespace Base
 {
   class Scene;
   class System;
-  class BASEAPI Game
+  class Game
   {
   public:
     Game();

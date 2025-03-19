@@ -1,10 +1,9 @@
 #pragma once
-#include "base/Exports.hpp"
 #include "base/Game.hpp"
 namespace Base
 {
   class RenderContext;
-  class BASEAPI RenderContextSingleton
+  class   RenderContextSingleton
   {
   public:
     // Access the constant RenderContext

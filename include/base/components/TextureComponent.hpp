@@ -5,7 +5,7 @@
 
 namespace Base
 {
-  struct BASEAPI TextureComponent : public Component
+  struct   TextureComponent : public Component
   {
     std::shared_ptr<Texture> texture;
     float scale = 1.f;

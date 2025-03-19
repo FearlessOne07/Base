@@ -1,12 +1,11 @@
 #pragma once
 #include "base/Entity.hpp"
-#include "base/Exports.hpp"
 #include "base/System.hpp"
 #include <memory>
 
 namespace Base
 {
-  class BASEAPI MoveSystem : public System
+  class   MoveSystem : public System
   {
   private:
     void Start() override;

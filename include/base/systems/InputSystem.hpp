@@ -1,9 +1,8 @@
-#include "base/Exports.hpp"
 #include "base/System.hpp"
 
 namespace Base
 {
-  class BASEAPI InputSystem : public System
+  class   InputSystem : public System
   {
   private:
     void Start() override;

@@ -1,5 +1,4 @@
 #include <utility>
-
 #include "base/components/InputComponent.hpp"
 
 namespace Base

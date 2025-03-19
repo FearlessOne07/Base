@@ -1,5 +1,4 @@
 #pragma once
-#include "base/Exports.hpp"
 #include <any>
 #include <stdexcept>
 #include <string>
@@ -7,7 +6,7 @@
 namespace Base
 {
 
-  class BASEAPI SceneData
+  class   SceneData
   {
     std::any _data;
 

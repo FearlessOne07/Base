@@ -1,12 +1,11 @@
-#pragma once
-#include "Exports.hpp"
+#pragma once 
 #include <memory>
 
 namespace Base
 {
 
   class Entity;
-  struct BASEAPI Component
+  struct   Component
   {
 
     virtual ~Component() = default;

@@ -5,7 +5,7 @@
 namespace Base
 {
 
-  struct BASEAPI BoundingBoxComponent : public Component
+  struct   BoundingBoxComponent : public Component
   {
   private:
     std::bitset<3> _typeFlags;

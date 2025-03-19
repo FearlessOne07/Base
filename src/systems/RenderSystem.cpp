@@ -1,4 +1,3 @@
-
 #include "base/systems/RenderSystem.hpp"
 #include "base/EntityManager.hpp"
 #include "base/components/BoundingBoxComponent.hpp"

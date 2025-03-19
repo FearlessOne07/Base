@@ -1,6 +1,5 @@
 #pragma once
 #include "base/Event.hpp"
-#include "base/Exports.hpp"
 #include <functional>
 #include <stdexcept>
 #include <type_traits>
@@ -11,7 +10,7 @@
 
 namespace Base
 {
-  class BASEAPI EventBus
+  class EventBus
   {
     using EventHandler = std::function<void(const Event &)>;
 

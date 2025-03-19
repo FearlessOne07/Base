@@ -4,7 +4,7 @@
 namespace Base
 {
   class EntityManager;
-  class BASEAPI System
+  class   System
   {
   private:
     bool _isActive = false;

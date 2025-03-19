@@ -4,7 +4,7 @@
 
 namespace Base
 {
-  class BASEAPI CameraSystem : public System
+  class   CameraSystem : public System
   {
   private:
     void SmoothFollow(float dt, CameraComponent *);

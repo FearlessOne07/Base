@@ -1,5 +1,4 @@
 #pragma once
-#include "base/Exports.hpp"
 #include <map>
 #include <memory>
 #include <typeindex>
@@ -8,7 +7,7 @@ namespace Base
 {
   class EntityManager;
   class System;
-  class BASEAPI SystemManager
+  class SystemManager
   {
   private: // References
     friend class Game;

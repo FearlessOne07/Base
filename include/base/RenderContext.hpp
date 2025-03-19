@@ -1,11 +1,10 @@
 #pragma once
-#include "base/Exports.hpp"
 #include "raylib/raylib.h"
 
 namespace Base
 {
 
-  struct BASEAPI RenderContext
+  struct RenderContext
   {
     float gameWidth = 0.f;
     float gameHeight = 0.f;

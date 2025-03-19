@@ -1,6 +1,5 @@
 #pragma once
 #include "base/Component.hpp"
-#include "base/Exports.hpp"
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -12,7 +11,7 @@
 namespace Base
 {
 
-  class BASEAPI Entity : public std::enable_shared_from_this<Entity>
+  class   Entity : public std::enable_shared_from_this<Entity>
   {
     friend class EntityManager;
 

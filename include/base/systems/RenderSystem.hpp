@@ -1,11 +1,9 @@
-
 #pragma once
-#include "base/Exports.hpp"
 #include "base/System.hpp"
 
 namespace Base
 {
-  class BASEAPI RenderSystem : public System
+  class RenderSystem : public System
   {
   private:
     void Start() override;

@@ -1,5 +1,4 @@
 #pragma once
-#include "base/Exports.hpp"
 #include "base/SceneData.hpp"
 #include <functional>
 #include <memory>
@@ -12,7 +11,7 @@ namespace Base
   class EntityManager;
   class SystemManager;
   class AssetManager;
-  class BASEAPI SceneManager
+  class   SceneManager
   {
     // Type Defs
     using QuitCallBack = std::function<void()>;

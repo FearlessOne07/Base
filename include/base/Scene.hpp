@@ -1,5 +1,4 @@
 #pragma once
-#include "base/Exports.hpp"
 #include "base/SceneData.hpp"
 #include "base/SceneTransition.hpp"
 #include "raylib/raylib.h"
@@ -11,7 +10,7 @@ namespace Base
   class EntityManager;
   class SystemManager;
   class AssetManager;
-  class BASEAPI Scene
+  class   Scene
   {
   private:
     friend class SceneManager; // SceneManager

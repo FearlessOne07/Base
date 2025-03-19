@@ -1,11 +1,10 @@
 #pragma once
 #include "base/Component.hpp"
-#include "base/Exports.hpp"
 #include "raylib/raylib.h"
 
 namespace Base
 {
-  struct BASEAPI MoveComponent : public Component
+  struct   MoveComponent : public Component
   {
   public:
     Vector2 targetVelocity = {0, 0};
