@@ -104,7 +104,6 @@ namespace Base
     }
   }
 
-  // TODO: Make This respect BoundingBox::positionslOffset
   void MoveSystem::HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager)
   {
     std::vector<std::shared_ptr<Entity>> entites = entityManager->Query<BoundingBoxComponent>();
@@ -113,6 +112,7 @@ namespace Base
     auto *mvcmp1 = e->GetComponent<MoveComponent>();
     auto *transcmp1 = e->GetComponent<TransformComponent>();
 
+    // Apply Positional Offset
     Vector2 currentRectPos = {
       transcmp1->position.x - abbcmp1->positionOffset.x,
       transcmp1->position.y - abbcmp1->positionOffset.y,
