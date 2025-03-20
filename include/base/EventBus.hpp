@@ -1,6 +1,7 @@
 #pragma once
 #include "base/Event.hpp"
 #include <functional>
+#include <memory>
 #include <stdexcept>
 #include <type_traits>
 #include <typeindex>
@@ -12,7 +13,7 @@ namespace Base
 {
   class EventBus
   {
-    using EventHandler = std::function<void(const Event &)>;
+    using EventHandler = std::function<void(const std::shared_ptr<Event> &)>;
 
   private:
     static EventBus *_instance;
