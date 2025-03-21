@@ -12,7 +12,7 @@ namespace Base
     return _instance;
   }
 
-  void EventBus::Dispatch(const Event &event)
+  void EventBus::Dispatch(const std::shared_ptr<Event> &event)
   {
     auto it = _handlers.find(std::type_index(typeid(event)));
 

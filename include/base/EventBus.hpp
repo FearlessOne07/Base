@@ -37,6 +37,6 @@ namespace Base
       _handlers[id].emplace_back(std::move(handler));
     }
 
-    void Dispatch(const Event &);
+    void Dispatch(const std::shared_ptr<Event> &);
   };
 } // namespace Base

@@ -59,6 +59,14 @@ namespace Base
           action();
         }
       }
+
+      for (auto &[key, action] : inpcmp->mouseReleasedBinds)
+      {
+        if (IsMouseButtonUp(key))
+        {
+          action();
+        }
+      }
     }
   }
 } // namespace Base

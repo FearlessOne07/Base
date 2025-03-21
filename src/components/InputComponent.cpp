@@ -1,5 +1,5 @@
-#include <utility>
 #include "base/components/InputComponent.hpp"
+#include <utility>
 
 namespace Base
 {
@@ -40,6 +40,14 @@ namespace Base
     if (mouseDownBinds.find(key) == mouseDownBinds.end())
     {
       mouseDownBinds[key] = std::move(action);
+    }
+  }
+
+  void InputComponent::BindMouseButtonReleased(int key, std::function<void()> action)
+  {
+    if (mouseReleasedBinds.find(key) == mouseReleasedBinds.end())
+    {
+      mouseReleasedBinds[key] = std::move(action);
     }
   }
 } // namespace Base
