@@ -23,7 +23,7 @@ namespace Base
 
   public:
     static EventBus *GetInstance();
-    template <typename T> void SubscribeEvent(EventHandler &handler)
+    template <typename T> void SubscribeEvent(EventHandler handler)
     {
       if (!std::is_base_of_v<Event, T>)
       {
