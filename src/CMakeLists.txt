@@ -16,6 +16,7 @@ set(SRC
   "./systems/RenderSystem.cpp"
   "./systems/InputSystem.cpp"
   "./systems/CameraSystem.cpp"
+  "./systems/EntityCollisionSystem.cpp"
 
   "./components/InputComponent.cpp"
   "./components/BoundingBoxComponent.cpp"
