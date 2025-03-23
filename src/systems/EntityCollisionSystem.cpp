@@ -27,7 +27,7 @@ namespace Base
             auto *abb1 = e1->GetComponent<BoundingBoxComponent>();
             auto *trans1 = e1->GetComponent<TransformComponent>();
             auto *abb2 = e2->GetComponent<BoundingBoxComponent>();
-            auto *trans2 = e1->GetComponent<TransformComponent>();
+            auto *trans2 = e2->GetComponent<TransformComponent>();
 
             Rectangle rect1 = {
               trans1->position.x - abb1->positionOffset.x,
