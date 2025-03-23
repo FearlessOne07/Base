@@ -1,4 +1,5 @@
 #include "base/EventBus.hpp"
+#include <typeindex>
 
 namespace Base
 {
@@ -14,11 +15,12 @@ namespace Base
 
   void EventBus::Dispatch(const std::shared_ptr<Event> &event)
   {
-    auto it = _handlers.find(std::type_index(typeid(event)));
+    auto handlerId = std::type_index(typeid(*event));
+    auto it = _handlers.find(handlerId);
 
     if (it != _handlers.end())
     {
-      for (EventHandler &handler : _handlers[std::type_index(typeid(event))])
+      for (EventHandler &handler : _handlers[handlerId])
       {
         handler(event);
       }
