@@ -12,14 +12,6 @@
 
 namespace Base
 {
-  void EntityCollisionSystem::Start()
-  {
-  }
-
-  void EntityCollisionSystem::Stop()
-  {
-  }
-
   void EntityCollisionSystem::Update(float dt, EntityManager *entityManager)
   {
     std::vector<std::shared_ptr<Entity>> entities = entityManager->Query<Base::BoundingBoxComponent>();
@@ -51,10 +43,10 @@ namespace Base
               abb2->size.y,
             };
 
-            std::shared_ptr<EntityCollisionEvent> event = std::make_shared<EntityCollisionEvent>();
-
             if ((CheckCollisionRecs(rect1, rect2)))
             {
+              std::shared_ptr<EntityCollisionEvent> event = std::make_shared<EntityCollisionEvent>();
+
               if ( //
                 (abb1->HasTypeFlag(BoundingBoxComponent::Type::HITBOX) &&
                  abb2->HasTypeFlag(BoundingBoxComponent::Type::HURTBOX)) //
@@ -71,8 +63,9 @@ namespace Base
                 event->hittBoxEntity = e2;
                 event->hurtBoxEntity = e1;
               }
+
+              EventBus::GetInstance()->Dispatch(event);
             }
-            EventBus::GetInstance()->Dispatch(event);
           }
         }
       }

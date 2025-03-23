@@ -5,12 +5,6 @@
 
 namespace Base
 {
-  void InputSystem::Start()
-  {
-  }
-  void InputSystem::Stop()
-  {
-  }
   void InputSystem::Update(float dt, EntityManager *entitymanager)
   {
     std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<InputComponent>();

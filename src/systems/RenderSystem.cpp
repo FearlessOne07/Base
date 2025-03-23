@@ -10,12 +10,6 @@
 
 namespace Base
 {
-  void RenderSystem::Start()
-  {
-  }
-  void RenderSystem::Stop()
-  {
-  }
   void RenderSystem::Update(float dt, EntityManager *entitymanager)
   {
     // Shape Component

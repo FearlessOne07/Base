@@ -4,14 +4,11 @@
 
 namespace Base
 {
-  class   CameraSystem : public System
+  class CameraSystem : public System
   {
   private:
     void SmoothFollow(float dt, CameraComponent *);
     void BasicFollow(float dt, CameraComponent *);
-
-    void Start() override;
-    void Stop() override;
 
   public:
     void Update(float dt, EntityManager *entityManager) override;

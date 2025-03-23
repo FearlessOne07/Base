@@ -32,9 +32,9 @@ namespace Base
       auto id = std::type_index(typeid(T));
       if (_handlers.find(id) == _handlers.end())
       {
-        _handlers[id] = {};
+        _handlers.at(id) = {};
       }
-      _handlers[id].emplace_back(std::move(handler));
+      _handlers.at(id).emplace_back(std::move(handler));
     }
 
     void Dispatch(const std::shared_ptr<Event> &);

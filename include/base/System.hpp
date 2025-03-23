@@ -4,15 +4,15 @@
 namespace Base
 {
   class EntityManager;
-  class   System
+  class System
   {
   private:
     bool _isActive = false;
 
     // For the system to register events
-    virtual void Start() = 0;
+    virtual void Start();
     // For the system to unregister events
-    virtual void Stop() = 0;
+    virtual void Stop();
 
   public: // Virtual
     virtual ~System() = default;

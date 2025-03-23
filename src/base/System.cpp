@@ -16,4 +16,12 @@ namespace Base
   {
     return _isActive;
   }
+
+  void System::Start()
+  {
+  }
+
+  void System::Stop()
+  {
+  }
 } // namespace Base

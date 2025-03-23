@@ -12,12 +12,6 @@
 
 namespace Base
 {
-  void MoveSystem::Start()
-  {
-  }
-  void MoveSystem::Stop()
-  {
-  }
   void MoveSystem::Update(float dt, EntityManager *entitymanager)
   {
     std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<MoveComponent>();
