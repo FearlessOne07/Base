@@ -37,10 +37,22 @@ namespace Base
             auto *abb2 = e2->GetComponent<BoundingBoxComponent>();
             auto *trans2 = e1->GetComponent<TransformComponent>();
 
-            Rectangle rect1 = {trans1->position.x, trans1->position.y, abb1->size.x, abb1->size.y};
-            Rectangle rect2 = {trans2->position.x, trans2->position.y, abb2->size.x, abb2->size.y};
+            Rectangle rect1 = {
+              trans1->position.x - abb1->positionOffset.x,
+              trans1->position.y - abb1->positionOffset.y,
+              abb1->size.x,
+              abb1->size.y,
+            };
 
-            std::shared_ptr<EntityCollisionEvent> event;
+            Rectangle rect2 = {
+              trans2->position.x - abb2->positionOffset.x,
+              trans2->position.y - abb2->positionOffset.y,
+              abb2->size.x,
+              abb2->size.y,
+            };
+
+            std::shared_ptr<EntityCollisionEvent> event = std::make_shared<EntityCollisionEvent>();
+
             if ((CheckCollisionRecs(rect1, rect2)))
             {
               if ( //
