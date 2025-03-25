@@ -54,6 +54,7 @@ namespace Base
               {
                 event->hittBoxEntity = e1;
                 event->hurtBoxEntity = e2;
+                EventBus::GetInstance()->Dispatch(event);
               }
               else if ( //
                 (abb2->HasTypeFlag(BoundingBoxComponent::Type::HITBOX) &&
@@ -62,9 +63,8 @@ namespace Base
               {
                 event->hittBoxEntity = e2;
                 event->hurtBoxEntity = e1;
+                EventBus::GetInstance()->Dispatch(event);
               }
-
-              EventBus::GetInstance()->Dispatch(event);
             }
           }
         }
