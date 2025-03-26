@@ -1,6 +1,5 @@
 #include "base/systems/EntityCollisionSystem.hpp"
 #include "base/EntityManager.hpp"
-#include "base/Event.hpp"
 #include "base/EventBus.hpp"
 #include "base/components/BoundingBoxComponent.hpp"
 #include "base/components/TransformComponent.hpp"
@@ -20,7 +19,7 @@ namespace Base
     {
       for (auto &e2 : entities)
       {
-        if (e1 != e2)
+        if ((e1 != e2) && (e1->IsAlive() && e2->IsAlive()))
         {
           if (e1->HasComponent<BoundingBoxComponent>() && e2->HasComponent<BoundingBoxComponent>())
           {
