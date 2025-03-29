@@ -3,6 +3,7 @@
 #include "base/EntityManager.hpp"
 #include "base/components/BoundingBoxComponent.hpp"
 #include "base/components/GravityComponent.hpp"
+#include "base/components/ImpulseComponent.hpp"
 #include "base/components/MoveComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "raylib.h"
@@ -31,6 +32,12 @@ namespace Base
         // Update X velocity
         mc->velocity.x = Lerp(mc->velocity.x, mc->targetVelocity.x, mc->acceleration * dt);
 
+        if (e->HasComponent<ImpulseComponent>())
+        {
+          auto *impcmp = e->GetComponent<ImpulseComponent>();
+          mc->velocity.x += Vector2Normalize(impcmp->direction).x;
+        }
+
         // Update y velocity
         if (e->HasComponent<Base::GravityComponent>())
         {
@@ -40,6 +47,12 @@ namespace Base
         else
         {
           mc->velocity.y = Lerp(mc->velocity.y, mc->targetVelocity.y, mc->acceleration * dt);
+        }
+
+        if (e->HasComponent<ImpulseComponent>())
+        {
+          auto *impcmp = e->GetComponent<ImpulseComponent>();
+          mc->velocity.y += Vector2Normalize(impcmp->direction).y;
         }
 
         if (abs(mc->velocity.x) < 5e-5)
