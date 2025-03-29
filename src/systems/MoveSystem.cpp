@@ -62,7 +62,7 @@ namespace Base
         {
           auto *impcmp = e->GetComponent<ImpulseComponent>();
 
-          impcmp->direction = Vector2Scale(impcmp->direction, impcmp->forceDecayFactor);
+          impcmp->direction = Vector2Lerp(impcmp->direction, {0.f, 0.f}, impcmp->forceDecayFactor * dt);
         }
 
         if (abs(mc->velocity.x) < 5e-5)
