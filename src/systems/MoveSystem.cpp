@@ -8,6 +8,7 @@
 #include "base/components/TransformComponent.hpp"
 #include "raylib.h"
 #include "raymath.h"
+#include <cmath>
 #include <memory>
 #include <vector>
 
@@ -50,27 +51,33 @@ namespace Base
           mc->velocity.y = Lerp(mc->velocity.y, mc->targetVelocity.y, mc->acceleration * dt);
         }
 
-        // Apply Impulse if present
+        // Apply Impulse
         if (e->HasComponent<ImpulseComponent>())
         {
-          auto *impcmp = e->GetComponent<ImpulseComponent>();
-          mc->velocity.y += Vector2Normalize(impcmp->direction).y;
-        }
 
-        // Decay Impulse
-        if (e->HasComponent<ImpulseComponent>())
-        {
           auto *impcmp = e->GetComponent<ImpulseComponent>();
 
-          impcmp->direction = Vector2Lerp(impcmp->direction, {0.f, 0.f}, impcmp->forceDecayFactor * dt);
+          if (impcmp->IsActive())
+          {
+            Vector2 impulse = Vector2Scale(                                                        //
+              impcmp->direction, impcmp->force * 1.f - exp(impcmp->elapsedTime / impcmp->duration) //
+            );
+            Vector2Add(mc->velocity, impulse);
+            impcmp->elapsedTime += dt;
+          }
+          else
+          {
+            impcmp->direction = {.x = 0, .y = 0};
+            impcmp->force = 0;
+          }
         }
 
-        if (abs(mc->velocity.x) < 5e-5)
+        if (fabs(mc->velocity.x) < 5e-5)
         {
           mc->velocity.x = 0;
         }
 
-        if (abs(mc->velocity.y) < 5e-5)
+        if (fabs(mc->velocity.y) < 5e-5)
         {
           mc->velocity.y = 0;
         }

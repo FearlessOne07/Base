@@ -20,6 +20,7 @@ set(SRC
 
   "./components/InputComponent.cpp"
   "./components/BoundingBoxComponent.cpp"
+  "./components/ImpulseComponent.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 
