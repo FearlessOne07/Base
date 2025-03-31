@@ -33,13 +33,6 @@ namespace Base
         // Update X velocity
         mc->velocity.x = Lerp(mc->velocity.x, mc->targetVelocity.x, mc->acceleration * dt);
 
-        // Apply an ipulse if present
-        if (e->HasComponent<ImpulseComponent>())
-        {
-          auto *impcmp = e->GetComponent<ImpulseComponent>();
-          mc->velocity.x += Vector2Normalize(impcmp->direction).x;
-        }
-
         // Update y velocity
         if (e->HasComponent<Base::GravityComponent>())
         {
@@ -54,30 +47,26 @@ namespace Base
         // Apply Impulse
         if (e->HasComponent<ImpulseComponent>())
         {
-
           auto *impcmp = e->GetComponent<ImpulseComponent>();
 
           if (impcmp->IsActive())
           {
             // Decay Force
-            impcmp->force = impcmp->force * exp(-impcmp->elapsedTime);
+            impcmp->force *= exp(-500 * dt);
 
             // Scale Impulse
             Vector2 impulse = Vector2Scale(impcmp->direction, impcmp->force);
 
             // Apply
-            Vector2Add(mc->velocity, impulse);
+            mc->velocity = Vector2Add(mc->velocity, impulse);
 
             // Clamp to 0
             if (impcmp->force < 5e-5)
             {
               impcmp->force = 0;
+              impcmp->direction = {.x = 0, .y = 0};
             }
             impcmp->elapsedTime += dt;
-          }
-          else
-          {
-            impcmp->direction = {.x = 0, .y = 0};
           }
         }
 
