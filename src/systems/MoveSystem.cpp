@@ -59,21 +59,25 @@ namespace Base
 
           if (impcmp->IsActive())
           {
-            Vector2 impulse = Vector2Scale(                                //
-              impcmp->direction, impcmp->force * exp(-impcmp->elapsedTime) //
-            );
-            Vector2Add(mc->velocity, impulse);
-            impcmp->elapsedTime += dt;
+            // Decay Force
+            impcmp->force = impcmp->force * exp(-impcmp->elapsedTime);
 
-            if (impcmp->force * exp(-impcmp->elapsedTime) < 5e-5)
+            // Scale Impulse
+            Vector2 impulse = Vector2Scale(impcmp->direction, impcmp->force);
+
+            // Apply
+            Vector2Add(mc->velocity, impulse);
+
+            // Clamp to 0
+            if (impcmp->force < 5e-5)
             {
               impcmp->force = 0;
             }
+            impcmp->elapsedTime += dt;
           }
           else
           {
             impcmp->direction = {.x = 0, .y = 0};
-            impcmp->force = 0;
           }
         }
 
