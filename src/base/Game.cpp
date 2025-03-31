@@ -49,7 +49,6 @@ namespace Base
       .marginX = (float)marginX,
       .marginY = (float)marginY,
       .scale = scale,
-      .camera = Camera2D(),
     };
     RenderContextSingleton::UpdateInstance(&rendercontext);
   }
