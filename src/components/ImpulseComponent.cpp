@@ -3,6 +3,6 @@ namespace Base
 {
   bool ImpulseComponent::IsActive() const
   {
-    return elapsedTime < duration;
+    return force != 0;
   }
 } // namespace Base
