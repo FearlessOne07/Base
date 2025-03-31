@@ -66,7 +66,6 @@ namespace Base
               impcmp->force = 0;
               impcmp->direction = {.x = 0, .y = 0};
             }
-            impcmp->elapsedTime += dt;
           }
         }
 
