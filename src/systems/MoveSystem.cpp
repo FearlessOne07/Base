@@ -3,8 +3,8 @@
 #include "base/EntityManager.hpp"
 #include "base/components/BoundingBoxComponent.hpp"
 #include "base/components/GravityComponent.hpp"
-#include "base/components/ImpulseComponent.hpp"
 #include "base/components/MoveComponent.hpp"
+#include "base/components/RigidBodyComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -23,60 +23,20 @@ namespace Base
       if (e)
       {
         auto *transcmp = e->GetComponent<TransformComponent>();
-        auto *mc = e->GetComponent<MoveComponent>();
+        auto rbcmp = e->GetComponent<RigidBodyComponent>();
 
-        if (Vector2Length(mc->targetVelocity) > 0)
+        Vector2 direction = Vector2Normalize(rbcmp->direction);
+
+        rbcmp->velocity += rbcmp->direction * rbcmp->acceleration * dt;
+
+        if (fabs(rbcmp->velocity.x) < 5e-5)
         {
-          mc->targetVelocity = Vector2Normalize(mc->targetVelocity);
+          rbcmp->velocity.x = 0;
         }
 
-        // Update X velocity
-        mc->velocity.x = Lerp(mc->velocity.x, mc->targetVelocity.x, mc->acceleration * dt);
-
-        // Update y velocity
-        if (e->HasComponent<Base::GravityComponent>())
+        if (fabs(rbcmp->velocity.y) < 5e-5)
         {
-          auto *gravcmp = e->GetComponent<GravityComponent>();
-          mc->velocity.y += gravcmp->gravityStrength * dt;
-        }
-        else
-        {
-          mc->velocity.y = Lerp(mc->velocity.y, mc->targetVelocity.y, mc->acceleration * dt);
-        }
-
-        // Apply Impulse
-        if (e->HasComponent<ImpulseComponent>())
-        {
-          auto *impcmp = e->GetComponent<ImpulseComponent>();
-
-          if (impcmp->IsActive())
-          {
-            // Decay Force
-            impcmp->force *= exp(-500 * dt);
-
-            // Scale Impulse
-            Vector2 impulse = Vector2Scale(impcmp->direction, impcmp->force);
-
-            // Apply
-            mc->velocity = Vector2Add(mc->velocity, impulse);
-
-            // Clamp to 0
-            if (impcmp->force < 5e-5)
-            {
-              impcmp->force = 0;
-              impcmp->direction = {.x = 0, .y = 0};
-            }
-          }
-        }
-
-        if (fabs(mc->velocity.x) < 5e-5)
-        {
-          mc->velocity.x = 0;
-        }
-
-        if (fabs(mc->velocity.y) < 5e-5)
-        {
-          mc->velocity.y = 0;
+          rbcmp->velocity.y = 0;
         }
 
         bool hasBBox = e->HasComponent<BoundingBoxComponent>();
@@ -87,7 +47,7 @@ namespace Base
           auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
           abbcmp->lastPosition.x = transcmp->position.x;
         }
-        transcmp->position.x = transcmp->position.x + (mc->velocity.x * mc->speed * dt);
+        transcmp->position.x = transcmp->position.x + (rbcmp->velocity.x * rbcmp->speed * dt);
 
         // Handle X Collision
         if (hasBBox)
@@ -102,14 +62,7 @@ namespace Base
           abbcmp->lastPosition.y = transcmp->position.y;
         }
 
-        if (e->HasComponent<GravityComponent>())
-        {
-          transcmp->position.y = transcmp->position.y + (mc->velocity.y * dt);
-        }
-        else
-        {
-          transcmp->position.y = transcmp->position.y + (mc->velocity.y * mc->speed * dt);
-        }
+        transcmp->position.y = transcmp->position.y + (rbcmp->velocity.y * rbcmp->speed * dt);
 
         // Handle Y Collision
         if (hasBBox)
