@@ -36,21 +36,21 @@ namespace Base
           // Apply Braking force if we arent moving
           if (Vector2Length(direction) > 0)
           {
-            driving = direction * mvcmp->driveForce;
+            driving = direction * mvcmp->driveForce * dt;
           }
           else if (Vector2Length(direction) == 0)
           {
-            braking = direction * -mvcmp->brakeForce;
+            braking = direction * -mvcmp->brakeForce * dt;
           }
 
           if (rbcmp->mass > 0)
           {
-            rbcmp->velocity += (driving + braking) / rbcmp->mass;
+            rbcmp->velocity += (driving + braking) * dt / rbcmp->mass;
           }
         }
 
         // Update Positions
-        transcmp->position += rbcmp->velocity;
+        transcmp->position += rbcmp->velocity * dt;
       }
     }
   }
