@@ -77,84 +77,87 @@ namespace Base
 
   void MoveSystem::HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager)
   {
-    // std::vector<std::shared_ptr<Entity>> entites = entityManager->Query<BoundingBoxComponent>();
-    //
-    // auto *abbcmp1 = e->GetComponent<BoundingBoxComponent>();
-    // auto *mvcmp1 = e->GetComponent<MoveComponent>();
-    // auto *transcmp1 = e->GetComponent<TransformComponent>();
-    //
-    // // Apply Positional Offset
-    // Vector2 currentRectPos = {
-    //   transcmp1->position.x - abbcmp1->positionOffset.x,
-    //   transcmp1->position.y - abbcmp1->positionOffset.y,
-    // };
-    //
-    // Vector2 lastRectPos = {
-    //   abbcmp1->lastPosition.x - abbcmp1->positionOffset.x,
-    //   abbcmp1->lastPosition.y - abbcmp1->positionOffset.y,
-    // };
-    //
-    // for (std::shared_ptr<Entity> &e2 : entites)
-    // {
-    //   if (         //
-    //     e != e2 && //
-    //     abbcmp1->HasTypeFlag(BoundingBoxComponent::Type::COLLIDER) &&
-    //     e2->GetComponent<BoundingBoxComponent>()->HasTypeFlag(BoundingBoxComponent::Type::COLLIDER) //
-    //   )
-    //   {
-    //     auto *abbcmp2 = e2->GetComponent<BoundingBoxComponent>();
-    //     auto *transcmp2 = e2->GetComponent<TransformComponent>();
-    //     abbcmp2->lastPosition = transcmp2->position;
-    //
-    //     if (                                                                                  //
-    //       CheckCollisionRecs(                                                                 //
-    //         {transcmp2->position.x, transcmp2->position.y, abbcmp2->size.x, abbcmp2->size.y}, //
-    //         {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y}            //
-    //         )                                                                                 //
-    //     )
-    //     {
-    //       if (axis == 0)
-    //       {
-    //         if (lastRectPos.x + abbcmp1->size.x <= transcmp2->position.x)
-    //         {
-    //           mvcmp1->velocity.x = 0;
-    //           currentRectPos.x = transcmp2->position.x - abbcmp1->size.x;
-    //         }
-    //         else if (                                                  //
-    //           lastRectPos.x >= transcmp2->position.x + abbcmp2->size.x //
-    //         )
-    //         {
-    //           mvcmp1->velocity.x = 0;
-    //           currentRectPos.x = transcmp2->position.x + abbcmp1->size.x;
-    //         }
-    //       }
-    //       else
-    //       {
-    //         if (lastRectPos.y + abbcmp1->size.y <= transcmp2->position.y)
-    //         {
-    //           mvcmp1->velocity.y = 0;
-    //           currentRectPos.y = transcmp2->position.y - abbcmp1->size.y;
-    //
-    //           if (e->HasComponent<GravityComponent>())
-    //           {
-    //             auto *gravcmp = e->GetComponent<GravityComponent>();
-    //             gravcmp->isJumping = false;
-    //           }
-    //         }
-    //         else if (                                                  //
-    //           lastRectPos.y >= transcmp2->position.y + abbcmp2->size.y //
-    //         )
-    //         {
-    //           mvcmp1->velocity.y = 0;
-    //           currentRectPos.y = transcmp2->position.y + abbcmp1->size.y;
-    //         }
-    //       }
-    //
-    //       abbcmp1->lastPosition = transcmp1->position;
-    //       transcmp1->position.x = currentRectPos.x + abbcmp1->positionOffset.x;
-    //       transcmp1->position.y = currentRectPos.y + abbcmp1->positionOffset.y;
-    //     }
-    //   }
-    // }
+    std::vector<std::shared_ptr<Entity>> entites = entityManager->Query<BoundingBoxComponent>();
+
+    auto *abbcmp1 = e->GetComponent<BoundingBoxComponent>();
+    auto *mvcmp1 = e->GetComponent<MoveComponent>();
+    auto *transcmp1 = e->GetComponent<TransformComponent>();
+    auto *rbcmp1 = e->GetComponent<RigidBodyComponent>();
+
+    // Apply Positional Offset
+    Vector2 currentRectPos = {
+      transcmp1->position.x - abbcmp1->positionOffset.x,
+      transcmp1->position.y - abbcmp1->positionOffset.y,
+    };
+
+    Vector2 lastRectPos = {
+      abbcmp1->lastPosition.x - abbcmp1->positionOffset.x,
+      abbcmp1->lastPosition.y - abbcmp1->positionOffset.y,
+    };
+
+    for (std::shared_ptr<Entity> &e2 : entites)
+    {
+      if (         //
+        e != e2 && //
+        abbcmp1->HasTypeFlag(BoundingBoxComponent::Type::COLLIDER) &&
+        e2->GetComponent<BoundingBoxComponent>()->HasTypeFlag(BoundingBoxComponent::Type::COLLIDER) //
+      )
+      {
+        auto *abbcmp2 = e2->GetComponent<BoundingBoxComponent>();
+        auto *transcmp2 = e2->GetComponent<TransformComponent>();
+        auto *rbcmp2 = e2->GetComponent<RigidBodyComponent>();
+
+        abbcmp2->lastPosition = transcmp2->position;
+
+        if (                                                                                  //
+          CheckCollisionRecs(                                                                 //
+            {transcmp2->position.x, transcmp2->position.y, abbcmp2->size.x, abbcmp2->size.y}, //
+            {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y}            //
+            )                                                                                 //
+        )
+        {
+          if (axis == 0)
+          {
+            if (lastRectPos.x + abbcmp1->size.x <= transcmp2->position.x)
+            {
+              rbcmp1->velocity.x = 0;
+              currentRectPos.x = transcmp2->position.x - abbcmp1->size.x;
+            }
+            else if (                                                  //
+              lastRectPos.x >= transcmp2->position.x + abbcmp2->size.x //
+            )
+            {
+              rbcmp1->velocity.x = 0;
+              currentRectPos.x = transcmp2->position.x + abbcmp1->size.x;
+            }
+          }
+          else
+          {
+            if (lastRectPos.y + abbcmp1->size.y <= transcmp2->position.y)
+            {
+              rbcmp1->velocity.y = 0;
+              currentRectPos.y = transcmp2->position.y - abbcmp1->size.y;
+
+              if (e->HasComponent<GravityComponent>())
+              {
+                auto *gravcmp = e->GetComponent<GravityComponent>();
+                gravcmp->isJumping = false;
+              }
+            }
+            else if (                                                  //
+              lastRectPos.y >= transcmp2->position.y + abbcmp2->size.y //
+            )
+            {
+              rbcmp1->velocity.y = 0;
+              currentRectPos.y = transcmp2->position.y + abbcmp1->size.y;
+            }
+          }
+
+          abbcmp1->lastPosition = transcmp1->position;
+          transcmp1->position.x = currentRectPos.x + abbcmp1->positionOffset.x;
+          transcmp1->position.y = currentRectPos.y + abbcmp1->positionOffset.y;
+        }
+      }
+    }
   }
 } // namespace Base
