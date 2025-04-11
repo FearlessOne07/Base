@@ -4,12 +4,10 @@
 
 namespace Base
 {
-  struct   MoveComponent : public Component
+  struct MoveComponent : public Component
   {
   public:
-    Vector2 targetVelocity = {0, 0};
-    Vector2 velocity = {0, 0};
-    float acceleration = 0;
-    float speed = 0.f;
+    float driveForce = 0.f;
+    float brakeForce = 0.f;
   };
 } // namespace Base

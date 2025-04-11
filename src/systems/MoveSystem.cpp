@@ -16,64 +16,41 @@ namespace Base
 {
   void MoveSystem::Update(float dt, EntityManager *entitymanager)
   {
-    std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<MoveComponent>();
+    std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<RigidBodyComponent>();
 
     for (std::shared_ptr<Entity> &e : entities)
     {
       if (e)
       {
-        auto *transcmp = e->GetComponent<TransformComponent>();
-        auto rbcmp = e->GetComponent<RigidBodyComponent>();
+        auto *rbcmp = e->GetComponent<RigidBodyComponent>();
+        auto *mvcmp = e->GetComponent<MoveComponent>();
+        auto transcmp = e->GetComponent<TransformComponent>();
 
-        Vector2 direction = Vector2Normalize(rbcmp->direction);
-
-        rbcmp->velocity += rbcmp->direction * rbcmp->acceleration * dt;
-
-        if (fabs(rbcmp->velocity.x) < 5e-5)
+        if (!rbcmp->isKinematic)
         {
-          rbcmp->velocity.x = 0;
+          Vector2 direction = Vector2Normalize(rbcmp->direction);
+
+          Vector2 braking = {0, 0};
+          Vector2 driving = {0, 0};
+
+          // Apply Braking force if we arent moving
+          if (Vector2Length(direction) > 0)
+          {
+            driving = direction * mvcmp->driveForce;
+          }
+          else if (Vector2Length(direction) == 0)
+          {
+            braking = direction * -mvcmp->brakeForce;
+          }
+
+          if (rbcmp->mass > 0)
+          {
+            rbcmp->velocity += (driving + braking) / rbcmp->mass;
+          }
         }
 
-        if (fabs(rbcmp->velocity.y) < 5e-5)
-        {
-          rbcmp->velocity.y = 0;
-        }
-
-        bool hasBBox = e->HasComponent<BoundingBoxComponent>();
-
-        // Update X pos
-        if (hasBBox)
-        {
-          auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
-          abbcmp->lastPosition.x = transcmp->position.x;
-        }
-        transcmp->position.x = transcmp->position.x + (rbcmp->velocity.x * rbcmp->speed * dt);
-
-        // Handle X Collision
-        if (hasBBox)
-        {
-          HandleCollisions(e, 0, entitymanager);
-        }
-
-        // Update X pos
-        if (hasBBox)
-        {
-          auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
-          abbcmp->lastPosition.y = transcmp->position.y;
-        }
-
-        transcmp->position.y = transcmp->position.y + (rbcmp->velocity.y * rbcmp->speed * dt);
-
-        // Handle Y Collision
-        if (hasBBox)
-        {
-          HandleCollisions(e, 1, entitymanager);
-        }
-
-        if (hasBBox)
-        {
-          auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
-        }
+        // Update Positions
+        transcmp->position += rbcmp->velocity;
       }
     }
   }
