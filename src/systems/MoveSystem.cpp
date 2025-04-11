@@ -10,8 +10,6 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <cmath>
-#include <iostream>
-#include <iterator>
 #include <memory>
 #include <vector>
 
@@ -61,6 +59,7 @@ namespace Base
               if (impcmp->force > 0)
               {
                 Vector2 impDirection = Vector2Normalize(impcmp->direction);
+                rbcmp->velocity = {.x = 0, .y = 0};
                 rbcmp->velocity += (impDirection) * (impcmp->force / rbcmp->mass);
                 impcmp->force = 0;
                 impcmp->direction = {.x = 0, .y = 0};
