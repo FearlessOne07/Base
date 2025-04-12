@@ -30,7 +30,7 @@ namespace Base
     EntityManager _entityManager = EntityManager();
     AssetManager _assetManager = AssetManager();
     SystemManager _systemmanager = SystemManager(&_entityManager);
-    SceneManager _scenemanager = SceneManager(&_entityManager, &_systemmanager, &_assetManager);
+    SceneManager _scenemanager = SceneManager(&_uiManager, &_entityManager, &_systemmanager, &_assetManager);
 
   private: // Methods
     void Quit();

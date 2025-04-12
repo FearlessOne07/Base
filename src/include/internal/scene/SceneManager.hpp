@@ -21,10 +21,10 @@ namespace Base
   private:
     QuitCallBack _quitCallBack = nullptr;
     std::unordered_map<std::type_index, FactoryCallBack> _factories;
+    UIManager *_uiManager = nullptr;
     EntityManager *_entityManager = nullptr;
     SystemManager *_systemManager = nullptr;
     AssetManager *_assetManager = nullptr;
-    UIManager *_uiManager = nullptr;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
@@ -34,7 +34,9 @@ namespace Base
     void PopScene();
 
   public:
-    SceneManager(EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager);
+    SceneManager(                                                                                                  //
+      UIManager *uiManager, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager //
+    );
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory);
     void Update(float dt);

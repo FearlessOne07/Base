@@ -2,6 +2,7 @@
 #include "base/EntityManager.hpp"
 #include "base/Scene.hpp"
 #include "base/SceneTransition.hpp"
+#include "base/ui/UIManager.hpp"
 #include <iostream>
 #include <stdexcept>
 #include <utility>
@@ -9,8 +10,10 @@
 namespace Base
 {
 
-  SceneManager::SceneManager(EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager)
-    : _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager)
+  SceneManager::SceneManager(                                                                                    //
+    UIManager *uiManager, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager //
+    )
+    : _uiManager(uiManager), _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager)
   {
   }
 
