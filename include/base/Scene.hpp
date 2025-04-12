@@ -35,6 +35,7 @@ namespace Base
     void Clear() const;
     void SetClearColor(Color color);
     [[nodiscard]] EntityManager *GetEntityManager() const;
+    [[nodiscard]] UIManager *GetUIManager() const;
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())
     {

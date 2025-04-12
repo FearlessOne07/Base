@@ -54,6 +54,11 @@ namespace Base
     return _state->entityManager;
   }
 
+  UIManager *Scene::GetUIManager() const
+  {
+    return _state->uiManager;
+  }
+
   Scene::Scene() : _state(std::make_unique<SceneState>())
   {
   }
