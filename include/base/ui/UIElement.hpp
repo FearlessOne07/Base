@@ -13,7 +13,8 @@ namespace Base
     virtual void HandleInput();
 
   public:
-    virtual ~UIElement();
+    virtual ~UIElement() = default;
+    UIElement() = default;
     Vector2 position = {0, 0};
   };
 } // namespace Base

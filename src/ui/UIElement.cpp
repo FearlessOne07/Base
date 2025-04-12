@@ -3,5 +3,4 @@ namespace Base
 {
   void UIElement::Update() {};
   void UIElement::HandleInput() {};
-  UIElement::~UIElement() {};
 } // namespace Base
