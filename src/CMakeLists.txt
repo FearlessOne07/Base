@@ -25,6 +25,7 @@ set(SRC
   "./ui/UIManager.cpp"
   "./ui/UILayer.cpp"
   "./ui/UIElement.cpp"
+  "./ui/elements/UIButton.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 
