@@ -9,6 +9,8 @@ namespace Base
   {
     Vector2 textSize = MeasureTextEx(GetFontDefault(), text, static_cast<float>(fontSize), 1);
     DrawRectangleLinesEx({position.x, position.y, textSize.x, textSize.y}, 2, WHITE);
+
+    DrawText(text, (int)position.x, (int)position.y, fontSize, WHITE);
   }
 
   void UIButton::Update()
