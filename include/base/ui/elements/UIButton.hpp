@@ -8,11 +8,13 @@ namespace Base
   {
   private:
     void Render() override;
+    void Update() override;
 
   private:
     bool _isHovered = false;
 
   public:
+    int fontSize = 30;
     const char *text = "Button";
     std::function<void()> onClick = nullptr;
   };

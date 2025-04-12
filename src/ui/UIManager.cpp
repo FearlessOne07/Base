@@ -26,7 +26,6 @@ namespace Base
       _uiLayers[layerId] = UILayer();
     }
   }
-
   void UIManager::RemoveElement(                             //
     const std::string &layerId, const std::string &elementId //
   )
