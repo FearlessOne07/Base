@@ -24,6 +24,7 @@ namespace Base
     // Push new scen to the stack and enter it
     _scenes.push(_factories.at(scene)());
     _scenes.top()->SetEntityManager(_entityManager);
+    _scenes.top()->SetUIManager(_uiManager);
     _scenes.top()->Enter(_systemManager, _assetManager, sceneData);
   }
 
@@ -52,9 +53,8 @@ namespace Base
       _scenes.pop();
     }
 
-    // Push the new scene and enter it
-    _scenes.push(_factories.at(scene)());
-    _scenes.top()->Enter(_systemManager, _assetManager, sceneData);
+    // Push the new scene
+    PushScene(scene, sceneData);
   }
 
   void SceneManager::SetQuitCallBack(QuitCallBack quitCallBack)

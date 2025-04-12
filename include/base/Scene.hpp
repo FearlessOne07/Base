@@ -1,6 +1,7 @@
 #pragma once
 #include "base/SceneData.hpp"
 #include "base/SceneTransition.hpp"
+#include "base/ui/UIManager.hpp"
 #include "raylib/raylib.h"
 #include <memory>
 #include <typeindex>
@@ -10,12 +11,13 @@ namespace Base
   class EntityManager;
   class SystemManager;
   class AssetManager;
-  class   Scene
+  class Scene
   {
   private:
     friend class SceneManager; // SceneManager
     [[nodiscard]] SceneTransition GetSceneTransition() const;
     void SetEntityManager(EntityManager *);
+    void SetUIManager(UIManager *);
     void ResetSceneTransition();
     void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
 
@@ -24,6 +26,7 @@ namespace Base
       SceneTransition sceneTransition = SceneTransition();
       Color fillColor = BLACK;
       EntityManager *entityManager = nullptr;
+      UIManager *uiManager = nullptr;
     };
 
     std::unique_ptr<SceneState> _state;

@@ -11,7 +11,8 @@ namespace Base
   class EntityManager;
   class SystemManager;
   class AssetManager;
-  class   SceneManager
+  class UIManager;
+  class SceneManager
   {
     // Type Defs
     using QuitCallBack = std::function<void()>;
@@ -23,6 +24,7 @@ namespace Base
     EntityManager *_entityManager = nullptr;
     SystemManager *_systemManager = nullptr;
     AssetManager *_assetManager = nullptr;
+    UIManager *_uiManager = nullptr;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;

@@ -41,6 +41,14 @@ namespace Base
     }
   }
 
+  void Scene::SetUIManager(UIManager *manager)
+  {
+    if (manager)
+    {
+      _state->uiManager = manager;
+    }
+  }
+
   EntityManager *Scene::GetEntityManager() const
   {
     return _state->entityManager;

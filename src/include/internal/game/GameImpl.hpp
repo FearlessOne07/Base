@@ -3,6 +3,7 @@
 #include "base/EntityManager.hpp"
 #include "base/Game.hpp"
 #include "base/SystemManager.hpp"
+#include "base/ui/UIManager.hpp"
 #include "internal/scene/SceneManager.hpp"
 #include "raylib/raylib.h"
 #include <functional>
@@ -13,7 +14,7 @@ namespace Base
 
   class Scene;
   class System;
-  class   Game::GameImpl
+  class Game::GameImpl
   {
     // Type defs
     using FactoryCallBack = std::function<std::unique_ptr<Scene>()>;
@@ -25,9 +26,10 @@ namespace Base
     float _gameHeight = 0.f;
 
   private: // Systems
+    UIManager _uiManager = UIManager();
     EntityManager _entityManager = EntityManager();
-    SystemManager _systemmanager = SystemManager(&_entityManager);
     AssetManager _assetManager = AssetManager();
+    SystemManager _systemmanager = SystemManager(&_entityManager);
     SceneManager _scenemanager = SceneManager(&_entityManager, &_systemmanager, &_assetManager);
 
   private: // Methods
