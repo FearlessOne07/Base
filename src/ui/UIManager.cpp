@@ -1,12 +1,11 @@
 #include "base/ui/UIManager.hpp"
 #include "base/ui/UILayer.hpp"
-#include <algorithm>
 #include <stdexcept>
 
 namespace Base
 {
-  void UIManager::AddElement(                                                                     //
-    const std::string &layerId, const std::string &elementId, std::shared_ptr<UIElement> &element //
+  void UIManager::AddElement(                                                                           //
+    const std::string &layerId, const std::string &elementId, const std::shared_ptr<UIElement> &element //
   )
   {
     if (_uiLayers.find(layerId) == _uiLayers.end())

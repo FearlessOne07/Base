@@ -13,7 +13,9 @@ namespace Base
     std::unordered_map<std::string, UILayer> _uiLayers = {};
 
   public:
-    void AddElement(const std::string &layerId, const std::string &elementID, std::shared_ptr<UIElement> &element);
+    void AddElement(                                                                                      //
+      const std::string &layerId, const std::string &elementID, const std::shared_ptr<UIElement> &element //
+    );
     void AddLayer(const std::string &layerId);
 
     void RemoveElement(const std::string &layerId, const std::string &elementID);

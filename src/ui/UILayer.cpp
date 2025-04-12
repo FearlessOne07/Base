@@ -2,7 +2,7 @@
 namespace Base
 {
 
-  void UILayer::Add(const std::string &elementId, std::shared_ptr<UIElement> &element)
+  void UILayer::Add(const std::string &elementId, const std::shared_ptr<UIElement> &element)
   {
     if (_elements.find(elementId) == _elements.end())
     {

@@ -14,7 +14,7 @@ namespace Base
     std::unordered_map<std::string, std::shared_ptr<UIElement>> _elements;
 
   private:
-    void Add(const std::string &elementId, std::shared_ptr<UIElement> &element);
+    void Add(const std::string &elementId, const std::shared_ptr<UIElement> &element);
     void Remove(const std::string &elementId);
     std::shared_ptr<UIElement> &Get(const std::string &elementID);
   };
