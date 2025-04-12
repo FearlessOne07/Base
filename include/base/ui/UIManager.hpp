@@ -23,5 +23,6 @@ namespace Base
 
     //
     void RenderLayer(const std::string &layerId);
+    void Update();
   };
 } // namespace Base

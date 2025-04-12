@@ -72,4 +72,15 @@ namespace Base
       element->Render();
     }
   }
+
+  void UIManager::Update()
+  {
+    for (auto &[layerId, layer] : _uiLayers)
+    {
+      for (auto &[elementId, element] : _uiLayers.at(layerId)._elements)
+      {
+        element->Update();
+      }
+    }
+  }
 } // namespace Base

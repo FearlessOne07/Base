@@ -1,4 +1,6 @@
 #include "base/ui/elements/UIButton.hpp"
+#include "base/RenderContext.hpp"
+#include "base/RenderContextSingleton.hpp"
 #include "raylib.h"
 
 namespace Base
@@ -11,5 +13,15 @@ namespace Base
 
   void UIButton::Update()
   {
+    Vector2 textSize = MeasureTextEx(GetFontDefault(), text, static_cast<float>(fontSize), 1);
+    Vector2 mousePos = RenderContextSingleton::GetInstance()->GetScreenToGame(GetMousePosition());
+
+    if (CheckCollisionPointRec(mousePos, {position.x, position.y, textSize.x, textSize.y}))
+    {
+      if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+      {
+        onClick();
+      }
+    }
   }
 } // namespace Base

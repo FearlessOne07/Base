@@ -4,7 +4,7 @@
 
 namespace Base
 {
-  class UIButton : UIElement
+  class UIButton : public UIElement
   {
   private:
     void Render() override;
