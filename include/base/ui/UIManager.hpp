@@ -21,10 +21,13 @@ namespace Base
     void RemoveElement(const std::string &layerId, const std::string &elementID);
     void RemoveLayer(const std::string &layerId);
 
+    bool HasElement(const std::string &layerID, const std::string &elementId) const;
+
     std::shared_ptr<UIElement> &GetElement(const std::string &layerId, const std::string &elementID);
 
     //
     void RenderLayer(const std::string &layerId);
     void Update();
+    void Clear();
   };
 } // namespace Base

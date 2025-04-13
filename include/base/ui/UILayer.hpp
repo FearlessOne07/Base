@@ -16,6 +16,7 @@ namespace Base
   private:
     void Add(const std::string &elementId, const std::shared_ptr<UIElement> &element);
     void Remove(const std::string &elementId);
+    bool HasElement(const std::string &elementId) const;
     std::shared_ptr<UIElement> &Get(const std::string &elementID);
   };
 } // namespace Base

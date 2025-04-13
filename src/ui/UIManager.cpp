@@ -25,6 +25,7 @@ namespace Base
       _uiLayers[layerId] = UILayer();
     }
   }
+
   void UIManager::RemoveElement(                             //
     const std::string &layerId, const std::string &elementId //
   )
@@ -64,6 +65,18 @@ namespace Base
     }
   }
 
+  bool UIManager::HasElement(const std::string &layerID, const std::string &elementId) const
+  {
+    if (_uiLayers.find(layerID) == _uiLayers.end())
+    {
+      throw std::runtime_error("Specified UI Layer does not exist");
+    }
+    else
+    {
+      return _uiLayers.at(layerID).HasElement(elementId);
+    }
+  }
+
   void UIManager::RenderLayer(const std::string &layerId)
   {
     for (auto &[id, element] : _uiLayers.at(layerId)._elements)
@@ -81,5 +94,10 @@ namespace Base
         element->Update();
       }
     }
+  }
+
+  void UIManager::Clear()
+  {
+    _uiLayers.clear();
   }
 } // namespace Base

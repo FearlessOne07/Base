@@ -35,4 +35,9 @@ namespace Base
       return _elements.at(elementId);
     }
   }
+
+  bool UILayer::HasElement(const std::string &elementId) const
+  {
+    return _elements.find(elementId) != _elements.end();
+  }
 } // namespace Base
