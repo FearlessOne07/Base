@@ -3,7 +3,6 @@
 
 namespace Base
 {
-
   void InputComponent::BindKeyDown(int key, std::function<void()> action)
   {
     if (keyDownBinds.find(key) == keyDownBinds.end())

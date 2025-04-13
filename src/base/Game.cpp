@@ -3,6 +3,7 @@
 #include "base/RenderContextSingleton.hpp"
 #include "base/Scene.hpp"
 #include "base/System.hpp"
+#include "base/input/InputManager.hpp"
 #include "internal/game/GameImpl.hpp"
 #include "raylib.h"
 #include <algorithm>
@@ -57,6 +58,10 @@ namespace Base
   {
     while (!WindowShouldClose() && _running)
     {
+      // Update InputManager
+      InputManager *inpMan = InputManager::GetInstance();
+      inpMan->Update();
+
       // Update render context
       float windowWidth = static_cast<float>(GetScreenWidth());
       float windowHeight = static_cast<float>(GetScreenHeight());

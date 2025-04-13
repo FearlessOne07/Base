@@ -7,7 +7,15 @@ namespace Base
 
   const RenderContext *RenderContextSingleton::GetInstance()
   {
-    return _instance;
+    if (_instance)
+    {
+      return _instance;
+    }
+    else
+    {
+      _instance = new RenderContext;
+      return _instance;
+    }
   }
 
   void RenderContextSingleton::UpdateInstance(RenderContext *newContext)
@@ -18,7 +26,10 @@ namespace Base
   // Destructor: cleans up the instance if it exists
   RenderContextSingleton::~RenderContextSingleton()
   {
-    delete _instance; // Clean up the instance if it was allocated
-    _instance = nullptr;
+    if (_instance)
+    {
+      delete _instance; // Clean up the instance if it was allocated
+      _instance = nullptr;
+    }
   }
 } // namespace Base

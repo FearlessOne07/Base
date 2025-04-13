@@ -1,6 +1,8 @@
 #include "base/systems/InputSystem.hpp"
 #include "base/EntityManager.hpp"
 #include "base/components/InputComponent.hpp"
+#include "base/input/InputManager.hpp"
+#include "base/input/MouseState.hpp"
 #include "raylib.h"
 
 namespace Base
@@ -30,19 +32,46 @@ namespace Base
         }
       }
 
+      InputManager *inpMan = InputManager::GetInstance();
+      MouseState *mouseState = inpMan->GetMouseState();
+
       for (auto &[key, action] : inpcmp->mouseDownBinds)
       {
-        if (IsMouseButtonDown(key))
+        if (key == MOUSE_BUTTON_LEFT)
         {
-          action();
+          if (mouseState->mouseLeftDown.active && !mouseState->mouseLeftDown.handled)
+          {
+            action();
+            mouseState->mouseLeftDown.handled = true;
+          }
+        }
+        else if (key == MOUSE_BUTTON_RIGHT)
+        {
+          if (mouseState->mouseRightDown.active && !mouseState->mouseRightDown.handled)
+          {
+            action();
+            mouseState->mouseRightDown.handled = true;
+          }
         }
       }
 
       for (auto &[key, action] : inpcmp->mousePressedBinds)
       {
-        if (IsMouseButtonPressed(key))
+        if (key == MOUSE_BUTTON_LEFT)
         {
-          action();
+          if (mouseState->mouseLeftPressed.active && !mouseState->mouseLeftPressed.handled)
+          {
+            action();
+            mouseState->mouseLeftPressed.handled = true;
+          }
+        }
+        else if (key == MOUSE_BUTTON_RIGHT)
+        {
+          if (mouseState->mouseRightPressed.active && !mouseState->mouseRightPressed.handled)
+          {
+            action();
+            mouseState->mouseRightPressed.handled = true;
+          }
         }
       }
 

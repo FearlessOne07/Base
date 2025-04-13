@@ -22,6 +22,8 @@ set(SRC
   "./components/BoundingBoxComponent.cpp"
   "./components/ImpulseComponent.cpp"
 
+  "./input/InputManager.cpp"
+
   "./ui/UIManager.cpp"
   "./ui/UILayer.cpp"
   "./ui/UIElement.cpp"
