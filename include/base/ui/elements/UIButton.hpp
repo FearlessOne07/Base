@@ -14,7 +14,7 @@ namespace Base
     bool _isHovered = false;
 
   public:
-    int fontSize = 30;
+    float fontSize = 30;
     const char *text = "Button";
     std::function<void()> onClick = nullptr;
   };
