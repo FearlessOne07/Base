@@ -1,7 +1,6 @@
 #include "base/ui/elements/UIButton.hpp"
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
-#include "base/input/InputManager.hpp"
 #include "raylib.h"
 
 namespace Base
@@ -21,13 +20,7 @@ namespace Base
 
     if (CheckCollisionPointRec(mousePos, {position.x, position.y, textSize.x, textSize.y}))
     {
-      InputManager *inpMan = InputManager::GetInstance();
-
-      if (inpMan->GetMouseState()->mouseLeftPressed.active && !inpMan->GetMouseState()->mouseLeftPressed.handled)
-      {
-        onClick();
-        inpMan->GetMouseState()->mouseLeftPressed.handled = true;
-      }
+      _isHovered = true;
     }
   }
 } // namespace Base

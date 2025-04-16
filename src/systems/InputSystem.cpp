@@ -1,93 +1,55 @@
 #include "base/systems/InputSystem.hpp"
 #include "base/EntityManager.hpp"
+#include "base/EventBus.hpp"
 #include "base/components/InputComponent.hpp"
-#include "base/input/InputManager.hpp"
-#include "base/input/MouseState.hpp"
-#include "raylib.h"
+#include "base/input/Events/KeyEvent.hpp"
+#include <memory>
 
 namespace Base
 {
+  void InputSystem::Start()
+  {
+    EventBus *bus = EventBus::GetInstance();
+    bus->SubscribeEvent<KeyEvent>([this](const std::shared_ptr<Event> &event) {
+      this->OnKeyEvent(std::static_pointer_cast<KeyEvent>(event)); //
+    });
+  }
+
   void InputSystem::Update(float dt, EntityManager *entitymanager)
   {
-    std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<InputComponent>();
+    _entities = entitymanager->Query<InputComponent>();
+  }
 
-    for (std::shared_ptr<Entity> &e : entities)
+  void InputSystem::OnKeyEvent(const std::shared_ptr<KeyEvent> &event)
+  {
+    for (auto &e : _entities)
     {
+      if (event->isHandled)
+      {
+        break;
+      }
 
       auto *inpcmp = e->GetComponent<InputComponent>();
-
-      for (auto &[key, action] : inpcmp->keyPressedBinds)
+      if (event->action == KeyEvent::Action::PRESSED)
       {
-        if (IsKeyPressed(key))
+        for (auto &[key, action] : inpcmp->keyPressedBinds)
         {
-          action();
-        }
-      }
-
-      for (auto &[key, action] : inpcmp->keyDownBinds)
-      {
-        if (IsKeyDown(key))
-        {
-          action();
-        }
-      }
-
-      InputManager *inpMan = InputManager::GetInstance();
-      MouseState *mouseState = inpMan->GetMouseState();
-
-      for (auto &[key, action] : inpcmp->mouseDownBinds)
-      {
-        if (key == MOUSE_BUTTON_LEFT)
-        {
-          if (mouseState->mouseLeftDown.active && !mouseState->mouseLeftDown.handled)
+          if (event->key == key)
           {
             action();
-            mouseState->mouseLeftDown.handled = true;
-          }
-        }
-        else if (key == MOUSE_BUTTON_RIGHT)
-        {
-          if (mouseState->mouseRightDown.active && !mouseState->mouseRightDown.handled)
-          {
-            action();
-            mouseState->mouseRightDown.handled = true;
+            event->isHandled = true;
           }
         }
       }
-
-      for (auto &[key, action] : inpcmp->mousePressedBinds)
+      else if (event->action == KeyEvent::Action::HELD)
       {
-        if (key == MOUSE_BUTTON_LEFT)
+        for (auto &[key, action] : inpcmp->keyDownBinds)
         {
-          if (mouseState->mouseLeftPressed.active && !mouseState->mouseLeftPressed.handled)
+          if (event->key == key)
           {
             action();
-            mouseState->mouseLeftPressed.handled = true;
+            event->isHandled = true;
           }
-        }
-        else if (key == MOUSE_BUTTON_RIGHT)
-        {
-          if (mouseState->mouseRightPressed.active && !mouseState->mouseRightPressed.handled)
-          {
-            action();
-            mouseState->mouseRightPressed.handled = true;
-          }
-        }
-      }
-
-      for (auto &[key, action] : inpcmp->keyReleasedBinds)
-      {
-        if (IsKeyReleased(key))
-        {
-          action();
-        }
-      }
-
-      for (auto &[key, action] : inpcmp->mouseReleasedBinds)
-      {
-        if (IsMouseButtonUp(key))
-        {
-          action();
         }
       }
     }

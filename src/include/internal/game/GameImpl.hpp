@@ -4,6 +4,7 @@
 #include "base/Game.hpp"
 #include "base/SystemManager.hpp"
 #include "base/ui/UIManager.hpp"
+#include "internal/input/InputManager.hpp"
 #include "internal/scene/SceneManager.hpp"
 #include "raylib/raylib.h"
 #include <functional>
@@ -26,6 +27,7 @@ namespace Base
     float _gameHeight = 0.f;
 
   private: // Systems
+    InputManager _inpMan = InputManager();
     UIManager _uiManager = UIManager();
     EntityManager _entityManager = EntityManager();
     AssetManager _assetManager = AssetManager();
