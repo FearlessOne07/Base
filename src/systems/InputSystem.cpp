@@ -52,6 +52,17 @@ namespace Base
           }
         }
       }
+      else if (event->action == KeyEvent::Action::RELEASED)
+      {
+        for (auto &[key, action] : inpcmp->keyReleasedBinds)
+        {
+          if (event->key == key)
+          {
+            action();
+            event->isHandled = true;
+          }
+        }
+      }
     }
   }
 } // namespace Base

@@ -17,7 +17,7 @@ namespace Base
     virtual void OnKeyEvent(const std::shared_ptr<MouseButtonEvent> &event);
 
   public:
-    UIElement() = delete;
+    UIElement() = default;
     virtual ~UIElement() = default;
     Vector2 position = {0, 0};
   };
