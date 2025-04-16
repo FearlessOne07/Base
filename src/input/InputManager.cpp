@@ -1,6 +1,7 @@
 #include "internal/input/InputManager.hpp"
 #include "base/EventBus.hpp"
 #include "base/input/Events/KeyEvent.hpp"
+#include "base/input/Events/MouseButtonEvent.hpp"
 #include "raylib/raylib.h"
 #include <algorithm>
 #include <memory>
@@ -53,15 +54,46 @@ namespace Base
       }
     }
 
-    // // Mouse
-    // for (int btn = 0; btn <= MOUSE_BUTTON_RIGHT; ++btn)
-    // {
-    //   if (IsMouseButtonDown(btn))
-    //   {
-    //   }
-    //   else if (IsMouseButtonReleased(btn))
-    //   {
-    //   }
-    // }
+    // Mouse
+    for (int btn = 0; btn <= MOUSE_BUTTON_RIGHT; ++btn)
+    {
+      if (IsMouseButtonDown(btn))
+      {
+        if (!_heldMouseBtns.contains(btn))
+        {
+          _heldKeys[btn] = 1;
+          std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
+          event->button = btn;
+          event->action = MouseButtonEvent::Action::PRESSED;
+          bus->Dispatch(event);
+
+          if (event->isHandled)
+          {
+            _handledMousePresses.push_back(btn);
+          }
+        }
+        else
+        {
+          if (std::ranges::find(_handledMousePresses, btn) == _handledKeyPresses.end())
+          {
+            ++_heldMouseBtns.at(btn);
+            std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
+            event->button = btn;
+            event->action = MouseButtonEvent::Action::HELD;
+            bus->Dispatch(event);
+          }
+        }
+      }
+      else if (IsMouseButtonReleased(btn))
+      {
+        _heldMouseBtns.erase(btn);
+        _handledMousePresses.erase(std::ranges::find(_handledMousePresses, btn));
+
+        std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
+        event->button = btn;
+        event->action = MouseButtonEvent::Action::RELEASED;
+        bus->Dispatch(event);
+      }
+    }
   }
 } // namespace Base

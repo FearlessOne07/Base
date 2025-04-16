@@ -1,5 +1,6 @@
 #include "base/System.hpp"
 #include "base/input/Events/KeyEvent.hpp"
+#include "base/input/Events/MouseButtonEvent.hpp"
 #include <memory>
 #include <vector>
 
@@ -12,6 +13,7 @@ namespace Base
 
   private:
     void OnKeyEvent(const std::shared_ptr<KeyEvent> &event);
+    void OnMouseEvent(const std::shared_ptr<MouseButtonEvent> &event);
 
   public:
     void Start() override;

@@ -13,6 +13,10 @@ namespace Base
     bus->SubscribeEvent<KeyEvent>([this](const std::shared_ptr<Event> &event) {
       this->OnKeyEvent(std::static_pointer_cast<KeyEvent>(event)); //
     });
+
+    bus->SubscribeEvent<MouseButtonEvent>([this](const std::shared_ptr<Event> &event) {
+      this->OnMouseEvent(std::static_pointer_cast<MouseButtonEvent>(event)); //
+    });
   }
 
   void InputSystem::Update(float dt, EntityManager *entitymanager)
@@ -65,4 +69,51 @@ namespace Base
       }
     }
   }
+
+  void InputSystem::OnMouseEvent(const std::shared_ptr<MouseButtonEvent> &event)
+  {
+    for (auto &e : _entities)
+    {
+      if (event->isHandled)
+      {
+        break;
+      }
+
+      auto *inpcmp = e->GetComponent<InputComponent>();
+      if (event->action == MouseButtonEvent::Action::PRESSED)
+      {
+        for (auto &[key, action] : inpcmp->mousePressedBinds)
+        {
+          if (event->button == key)
+          {
+            action();
+            event->isHandled = true;
+          }
+        }
+      }
+      else if (event->action == MouseButtonEvent::Action::HELD)
+      {
+        for (auto &[key, action] : inpcmp->mouseDownBinds)
+        {
+          if (event->button == key)
+          {
+            action();
+            event->isHandled = true;
+          }
+        }
+      }
+      else if (event->action == MouseButtonEvent::Action::RELEASED)
+      {
+        for (auto &[key, action] : inpcmp->mouseReleasedBinds)
+        {
+          if (event->button == key)
+          {
+            action();
+            event->isHandled = true;
+          }
+        }
+      }
+    }
+  }
 } // namespace Base
+//

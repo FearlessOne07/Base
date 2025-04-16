@@ -9,8 +9,14 @@ namespace Base
   public:
     enum struct Action : std::uint8_t
     {
+      NONE,
       PRESSED,
-      DOWN
+      HELD,
+      RELEASED
     };
+
+    int button = 0;
+    Action action = Action::NONE;
+    bool isHandled = false;
   };
 } // namespace Base
