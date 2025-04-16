@@ -14,7 +14,7 @@ namespace Base
     virtual void Render() = 0;
     virtual void Update();
     virtual void OnKeyEvent(const std::shared_ptr<KeyEvent> &event);
-    virtual void OnKeyEvent(const std::shared_ptr<MouseButtonEvent> &event);
+    virtual void OnMouseButtonEvent(const std::shared_ptr<MouseButtonEvent> &event);
 
   public:
     UIElement() = default;

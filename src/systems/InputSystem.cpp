@@ -15,7 +15,7 @@ namespace Base
     });
 
     bus->SubscribeEvent<MouseButtonEvent>([this](const std::shared_ptr<Event> &event) {
-      this->OnMouseEvent(std::static_pointer_cast<MouseButtonEvent>(event)); //
+      this->OnMouseButtonEvent(std::static_pointer_cast<MouseButtonEvent>(event)); //
     });
   }
 
@@ -70,7 +70,7 @@ namespace Base
     }
   }
 
-  void InputSystem::OnMouseEvent(const std::shared_ptr<MouseButtonEvent> &event)
+  void InputSystem::OnMouseButtonEvent(const std::shared_ptr<MouseButtonEvent> &event)
   {
     for (auto &e : _entities)
     {

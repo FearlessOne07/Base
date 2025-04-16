@@ -5,10 +5,12 @@
 namespace Base
 {
   void UIElement::Update() {};
+
   void UIElement::OnKeyEvent(const std::shared_ptr<KeyEvent> &event)
   {
   }
-  void UIElement::OnKeyEvent(const std::shared_ptr<MouseButtonEvent> &event)
+
+  void UIElement::OnMouseButtonEvent(const std::shared_ptr<MouseButtonEvent> &event)
   {
   }
 } // namespace Base

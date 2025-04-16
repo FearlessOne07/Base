@@ -32,6 +32,7 @@ namespace Base
     _running = true;
 
     // Init Systems
+    _uiManager.Init();
     _scenemanager.SetQuitCallBack([this]() { this->Quit(); });
 
     // Initialize render context

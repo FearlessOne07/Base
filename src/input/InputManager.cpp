@@ -17,7 +17,7 @@ namespace Base
     {
       if (IsKeyDown(key))
       {
-        if (!_heldKeys.contains(key))
+        if (!_heldKeys.contains(key) && std::ranges::find(_handledKeyPresses, key) == _handledKeyPresses.end())
         {
           _heldKeys[key] = 1;
           std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
@@ -45,7 +45,12 @@ namespace Base
       else if (IsKeyReleased(key))
       {
         _heldKeys.erase(key);
-        _handledKeyPresses.erase(std::ranges::find(_handledKeyPresses, key));
+        auto it = std::ranges::find(_handledKeyPresses, key);
+
+        if (it != _handledKeyPresses.end())
+        {
+          _handledKeyPresses.erase(it);
+        }
 
         std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
         event->key = key;
@@ -59,9 +64,9 @@ namespace Base
     {
       if (IsMouseButtonDown(btn))
       {
-        if (!_heldMouseBtns.contains(btn))
+        if (!_heldMouseBtns.contains(btn) && std::ranges::find(_handledMousePresses, btn) == _handledMousePresses.end())
         {
-          _heldKeys[btn] = 1;
+          _heldMouseBtns[btn] = 1;
           std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
           event->button = btn;
           event->action = MouseButtonEvent::Action::PRESSED;
@@ -74,7 +79,7 @@ namespace Base
         }
         else
         {
-          if (std::ranges::find(_handledMousePresses, btn) == _handledKeyPresses.end())
+          if (std::ranges::find(_handledMousePresses, btn) == _handledMousePresses.end())
           {
             ++_heldMouseBtns.at(btn);
             std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();

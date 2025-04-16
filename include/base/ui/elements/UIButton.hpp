@@ -1,6 +1,7 @@
 #pragma once
 #include "base/ui/UIElement.hpp"
 #include <functional>
+#include <memory>
 
 namespace Base
 {
@@ -9,6 +10,8 @@ namespace Base
   private:
     void Render() override;
     void Update() override;
+
+    void OnMouseButtonEvent(const std::shared_ptr<MouseButtonEvent> &event) override;
 
   private:
     bool _isHovered = false;

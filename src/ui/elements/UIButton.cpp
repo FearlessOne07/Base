@@ -23,4 +23,16 @@ namespace Base
       _isHovered = true;
     }
   }
+
+  void UIButton::OnMouseButtonEvent(const std::shared_ptr<MouseButtonEvent> &event)
+  {
+    if (event->button == MOUSE_BUTTON_LEFT && event->action == MouseButtonEvent::Action::PRESSED)
+    {
+      if (_isHovered)
+      {
+        onClick();
+      }
+    }
+  }
+
 } // namespace Base

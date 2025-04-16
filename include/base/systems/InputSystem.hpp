@@ -13,7 +13,7 @@ namespace Base
 
   private:
     void OnKeyEvent(const std::shared_ptr<KeyEvent> &event);
-    void OnMouseEvent(const std::shared_ptr<MouseButtonEvent> &event);
+    void OnMouseButtonEvent(const std::shared_ptr<MouseButtonEvent> &event);
 
   public:
     void Start() override;

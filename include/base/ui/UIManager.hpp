@@ -1,5 +1,6 @@
 #pragma once
 
+#include "base/input/Events/KeyEvent.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/UILayer.hpp"
 #include <memory>
@@ -11,6 +12,12 @@ namespace Base
   {
   private:
     std::unordered_map<std::string, UILayer> _uiLayers = {};
+
+  public:
+    void Init();
+
+    void OnKeyEvent(const std::shared_ptr<KeyEvent> &event);
+    void OnMouseButtonEvent(const std::shared_ptr<MouseButtonEvent> &event);
 
   public:
     void AddElement(                                                                                      //
@@ -25,7 +32,6 @@ namespace Base
 
     std::shared_ptr<UIElement> &GetElement(const std::string &layerId, const std::string &elementID);
 
-    //
     void RenderLayer(const std::string &layerId);
     void Update();
     void Clear();
