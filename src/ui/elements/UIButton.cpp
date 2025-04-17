@@ -31,6 +31,7 @@ namespace Base
       if (_isHovered)
       {
         onClick();
+        event->isHandled = true;
       }
     }
   }
