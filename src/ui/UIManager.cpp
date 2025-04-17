@@ -49,6 +49,17 @@ namespace Base
     }
   }
 
+  void UIManager::Update()
+  {
+    for (auto &[layerId, layer] : _uiLayers)
+    {
+      for (auto &[elementId, element] : _uiLayers.at(layerId)._elements)
+      {
+        element->Update();
+      }
+    }
+  }
+
   void UIManager::AddElement(                                                                           //
     const std::string &layerId, const std::string &elementId, const std::shared_ptr<UIElement> &element //
   )
@@ -127,17 +138,6 @@ namespace Base
     for (auto &[id, element] : _uiLayers.at(layerId)._elements)
     {
       element->Render();
-    }
-  }
-
-  void UIManager::Update()
-  {
-    for (auto &[layerId, layer] : _uiLayers)
-    {
-      for (auto &[elementId, element] : _uiLayers.at(layerId)._elements)
-      {
-        element->Update();
-      }
     }
   }
 

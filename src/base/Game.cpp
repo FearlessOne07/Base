@@ -62,6 +62,9 @@ namespace Base
       // Update InputManager
       _inpMan.PollAndDispatch();
 
+      // Update UI
+      _uiManager.Update();
+
       // Update render context
       float windowWidth = static_cast<float>(GetScreenWidth());
       float windowHeight = static_cast<float>(GetScreenHeight());
