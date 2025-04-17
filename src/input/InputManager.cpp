@@ -92,7 +92,13 @@ namespace Base
       else if (IsMouseButtonReleased(btn))
       {
         _heldMouseBtns.erase(btn);
-        _handledMousePresses.erase(std::ranges::find(_handledMousePresses, btn));
+
+        auto it = std::ranges::find(_handledMousePresses, btn);
+
+        if (it != _handledMousePresses.end())
+        {
+          _handledMousePresses.erase(it);
+        }
 
         std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
         event->button = btn;
