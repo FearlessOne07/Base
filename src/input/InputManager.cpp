@@ -28,6 +28,10 @@ namespace Base
           if (event->isHandled)
           {
             _handledKeyPresses.push_back(key);
+            std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
+            event->key = key;
+            event->action = KeyEvent::Action::RELEASED;
+            bus->Dispatch(event);
           }
         }
         else
@@ -75,6 +79,10 @@ namespace Base
           if (event->isHandled)
           {
             _handledMousePresses.push_back(btn);
+            std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
+            event->button = btn;
+            event->action = MouseButtonEvent::Action::RELEASED;
+            bus->Dispatch(event);
           }
         }
         else
