@@ -18,10 +18,7 @@ namespace Base
     Vector2 textSize = MeasureTextEx(GetFontDefault(), text, static_cast<float>(fontSize), 1);
     Vector2 mousePos = RenderContextSingleton::GetInstance()->GetScreenToGame(GetMousePosition());
 
-    if (CheckCollisionPointRec(mousePos, {position.x, position.y, textSize.x, textSize.y}))
-    {
-      _isHovered = true;
-    }
+    _isHovered = CheckCollisionPointRec(mousePos, {position.x, position.y, textSize.x, textSize.y});
   }
 
   void UIButton::OnMouseButtonEvent(const std::shared_ptr<MouseButtonEvent> &event)
