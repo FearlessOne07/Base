@@ -1,5 +1,7 @@
 #pragma once
 
+#include "base/Event.hpp"
+#include <memory>
 #include <unordered_map>
 #include <vector>
 namespace Base
@@ -12,7 +14,10 @@ namespace Base
     std::vector<int> _handledKeyPresses;
     std::vector<int> _handledMousePresses;
 
+    std::shared_ptr<Event> _lastEvent = nullptr;
+
   public:
     void PollAndDispatch();
+    void PostUpdate();
   };
 } // namespace Base

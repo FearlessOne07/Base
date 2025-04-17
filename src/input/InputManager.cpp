@@ -24,14 +24,11 @@ namespace Base
           event->key = key;
           event->action = KeyEvent::Action::PRESSED;
           bus->Dispatch(event);
+          _lastEvent = event;
 
           if (event->isHandled)
           {
             _handledKeyPresses.push_back(key);
-            std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
-            event->key = key;
-            event->action = KeyEvent::Action::RELEASED;
-            bus->Dispatch(event);
           }
         }
         else
@@ -43,6 +40,7 @@ namespace Base
             event->key = key;
             event->action = KeyEvent::Action::HELD;
             bus->Dispatch(event);
+            _lastEvent = event;
           }
         }
       }
@@ -60,6 +58,7 @@ namespace Base
         event->key = key;
         event->action = KeyEvent::Action::RELEASED;
         bus->Dispatch(event);
+        _lastEvent = event;
       }
     }
 
@@ -75,14 +74,11 @@ namespace Base
           event->button = btn;
           event->action = MouseButtonEvent::Action::PRESSED;
           bus->Dispatch(event);
+          _lastEvent = event;
 
           if (event->isHandled)
           {
             _handledMousePresses.push_back(btn);
-            std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
-            event->button = btn;
-            event->action = MouseButtonEvent::Action::RELEASED;
-            bus->Dispatch(event);
           }
         }
         else
@@ -94,6 +90,7 @@ namespace Base
             event->button = btn;
             event->action = MouseButtonEvent::Action::HELD;
             bus->Dispatch(event);
+            _lastEvent = event;
           }
         }
       }
@@ -112,7 +109,42 @@ namespace Base
         event->button = btn;
         event->action = MouseButtonEvent::Action::RELEASED;
         bus->Dispatch(event);
+        _lastEvent = event;
       }
+    }
+  }
+
+  void InputManager::PostUpdate()
+  {
+    if (_lastEvent)
+    {
+      EventBus *bus = EventBus::GetInstance();
+
+      if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(_lastEvent))
+      {
+        {
+          keyEvent = std::static_pointer_cast<KeyEvent>(_lastEvent);
+          if (keyEvent->isHandled && keyEvent->action == KeyEvent::Action::PRESSED)
+          {
+            std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
+            event->key = keyEvent->key;
+            event->action = KeyEvent::Action::RELEASED;
+            bus->Dispatch(event);
+          }
+        }
+      }
+      else if (auto mouseEvent = std::dynamic_pointer_cast<MouseButtonEvent>(_lastEvent))
+      {
+        mouseEvent = std::static_pointer_cast<MouseButtonEvent>(_lastEvent);
+        if (mouseEvent->isHandled && mouseEvent->action == MouseButtonEvent::Action::PRESSED)
+        {
+          std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
+          event->button = mouseEvent->button;
+          event->action = MouseButtonEvent::Action::RELEASED;
+          bus->Dispatch(event);
+        }
+      }
+      _lastEvent = nullptr;
     }
   }
 } // namespace Base

@@ -92,6 +92,9 @@ namespace Base
       _scenemanager.Update(dt);
       _entityManager.RemoveDeadEntities();
 
+      // InputManager Post Update
+      _inpMan.PostUpdate();
+
       // Begin rendering of Scenes
       BeginTextureMode(_renderTexture);
       ClearBackground(BLACK);
