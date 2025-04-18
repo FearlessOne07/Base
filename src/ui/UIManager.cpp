@@ -139,9 +139,17 @@ namespace Base
 
   void UIManager::RenderLayer(const std::string &layerId)
   {
-    for (auto &[id, element] : _uiLayers.at(layerId)._elements)
+
+    if (_uiLayers.find(layerId) == _uiLayers.end())
     {
-      element->Render();
+      throw std::runtime_error("Specified UI layer does not exist");
+    }
+    else
+    {
+      for (auto &[id, element] : _uiLayers.at(layerId)._elements)
+      {
+        element->Render();
+      }
     }
   }
 
