@@ -6,14 +6,12 @@ namespace Base
   class RenderContextSingleton
   {
   public:
-    // Access the constant RenderContext
     static const RenderContext *GetInstance();
     ~RenderContextSingleton();
 
   private:
-    friend class Game; // Allow `Game` to modify the RenderContext
+    friend class Game;
 
-    // Update the RenderContext (accessible only by `Game`)
     static void UpdateInstance(RenderContext *newContext);
     static RenderContext *_instance;
   };

@@ -7,7 +7,6 @@ namespace Base
     float gravityStrength = 0;
     float jumpHeight = 0;
 
-    // State
     bool isJumping = false;
   };
 } // namespace Base

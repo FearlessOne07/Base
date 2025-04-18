@@ -4,13 +4,13 @@
 
 namespace Base
 {
-  enum struct   CameraMode
+  enum struct CameraMode : uint8_t
   {
     BASIC_FOLLOW = 0,
     SMOOTH_FOLLOW = 1
   };
 
-  struct   CameraComponent : public Component
+  struct CameraComponent : public Component
   {
     Vector2 target = {0, 0};
     CameraMode cameraMode;

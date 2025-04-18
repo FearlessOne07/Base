@@ -14,7 +14,7 @@ namespace Base
   class Scene
   {
   private:
-    friend class SceneManager; // SceneManager
+    friend class SceneManager;
     [[nodiscard]] SceneTransition GetSceneTransition() const;
     void SetEntityManager(EntityManager *);
     void SetUIManager(UIManager *);

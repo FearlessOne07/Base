@@ -23,17 +23,26 @@ namespace Base
 
   public:
     static EventBus *GetInstance();
+
     template <typename T> void SubscribeEvent(EventHandler handler)
     {
+      // Check if T is a derivative of Base::Event
       if (!std::is_base_of_v<Event, T>)
       {
         throw std::runtime_error("T must be a derivative of the  Event class");
       }
+
+      // Get the event ID
       auto id = std::type_index(typeid(T));
+
+      // Check if a vector of handlers for that event exists
       if (_handlers.find(id) == _handlers.end())
       {
+        // If not create one
         _handlers[id] = {};
       }
+
+      // Append tha handler to the list of handers for that event
       _handlers.at(id).emplace_back(std::move(handler));
     }
 

@@ -7,7 +7,7 @@ namespace Base
   class KeyEvent : public Event
   {
   public:
-    enum class Action : std::uint8_t
+    enum class Action : uint8_t
     {
       NONE = 0,
       PRESSED,

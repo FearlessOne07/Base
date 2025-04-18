@@ -31,6 +31,10 @@ namespace Base
         }
         element->OnKeyEvent(event);
       }
+      if (event->isHandled)
+      {
+        break;
+      }
     }
   }
 

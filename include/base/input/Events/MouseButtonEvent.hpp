@@ -7,7 +7,7 @@ namespace Base
   class MouseButtonEvent : public Event
   {
   public:
-    enum struct Action : std::uint8_t
+    enum struct Action : uint8_t
     {
       NONE,
       PRESSED,

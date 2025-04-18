@@ -6,7 +6,7 @@
 namespace Base
 {
 
-  class   SceneData
+  class SceneData
   {
     std::any _data;
 

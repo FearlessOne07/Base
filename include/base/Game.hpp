@@ -19,6 +19,7 @@ namespace Base
 
     template <typename T> void RegisterScene()
     {
+      // Check if T is a derivative of Base::Scene
       if (std::is_base_of<Scene, T>())
       {
         auto sceneID = std::type_index(typeid(T));
@@ -32,6 +33,7 @@ namespace Base
 
     template <typename T> void RegisterSystem(bool isRenderSystem = false)
     {
+      // Check if T is a derivative of Base::System
       if (std::is_base_of<System, T>())
       {
         auto systemID = std::type_index(typeid(T));
@@ -47,6 +49,8 @@ namespace Base
 
   private:
     class GameImpl;
+
+    // Pointer To Game Implementation
     GameImpl *_impl = nullptr;
     void RegisterSceneImpl(std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory);
     void RegisterSystemImpl(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem);

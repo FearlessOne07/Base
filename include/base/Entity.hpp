@@ -11,7 +11,7 @@
 namespace Base
 {
 
-  class   Entity : public std::enable_shared_from_this<Entity>
+  class Entity : public std::enable_shared_from_this<Entity>
   {
     friend class EntityManager;
 
@@ -21,7 +21,6 @@ namespace Base
     Entity(size_t id);
 
   public:
-    // Move constructor and Move assignment operator
     Entity(Entity &&e) noexcept;
     Entity &operator=(Entity &&e) noexcept;
 
@@ -31,22 +30,35 @@ namespace Base
 
     template <typename T> bool HasComponent()
     {
-      // Check Type of T
+      // Check if T is a derivative of Base::Component
       static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
+
+      // Check wether is exsits in the _components map an return the result
       return _components.find(std::type_index(typeid(T))) != _components.end();
     }
 
     template <typename T> T *AddComponent()
     {
-      // Check Type of T
+      // Check if T is a derivative of Base::Component
       static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
-      auto ti = std::type_index(typeid(T));
+
+      // Generate Component ID
+      auto compID = std::type_index(typeid(T));
+
+      // Check if component alreadt exists  on entity
       if (!HasComponent<T>())
       {
+        // Create Component
         std::unique_ptr<Component> comp = std::make_unique<T>();
+
+        // Set The component Owner
         comp->SetOwner(shared_from_this());
-        _components[ti] = std::move(comp);
-        return static_cast<T *>(_components[ti].get());
+
+        // Move component to map
+        _components[compID] = std::move(comp);
+
+        // Return Component for setup
+        return static_cast<T *>(_components[compID].get());
       }
       else
       {
@@ -56,11 +68,13 @@ namespace Base
 
     template <typename T> T *GetComponent() const
     {
+      // Check if T is a derivative of Base::Component
       static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
 
-      auto ti = std::type_index(typeid(T));
+      auto compId = std::type_index(typeid(T));
 
-      if (_components.find(ti) == _components.end())
+      // Check if component exists
+      if (_components.find(compId) == _components.end())
       {
         std::stringstream error;
         error << "Failed to get component " << typeid(T).name() << "; Entity[" << _id
@@ -69,7 +83,8 @@ namespace Base
       }
       else
       {
-        return static_cast<T *>(_components.at(ti).get());
+        // if so, return a pointer to it
+        return static_cast<T *>(_components.at(compId).get());
       }
     }
 
