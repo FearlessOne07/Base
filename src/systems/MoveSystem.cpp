@@ -66,6 +66,12 @@ namespace Base
               }
             }
           }
+
+          // TODO: Implement Gravity
+        }
+        else
+        {
+          // TODO: Implement Kinematic Motion
         }
 
         // Update Positions
