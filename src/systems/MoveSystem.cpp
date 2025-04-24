@@ -69,7 +69,7 @@ namespace Base
         }
         else if (rbcmp->isKinematic)
         {
-          transcmp->position += rbcmp->direction * rbcmp->speed;
+          transcmp->position += rbcmp->direction * rbcmp->speed * dt;
         }
 
         // Update Positions
