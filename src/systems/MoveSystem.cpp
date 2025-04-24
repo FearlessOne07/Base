@@ -66,12 +66,10 @@ namespace Base
               }
             }
           }
-
-          // TODO: Implement Gravity
         }
-        else
+        else if (rbcmp->isKinematic)
         {
-          // TODO: Implement Kinematic Motion
+          transcmp->position += rbcmp->direction * rbcmp->speed;
         }
 
         // Update Positions

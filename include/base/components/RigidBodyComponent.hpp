@@ -14,7 +14,6 @@ namespace Base
 
     // Kinematic
     float speed = 0.f;
-    Vector2 acceleration = {0, 0};
 
     // Non-Kinematics
     float mass = 1.f;
