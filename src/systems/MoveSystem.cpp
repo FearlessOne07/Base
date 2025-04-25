@@ -70,7 +70,7 @@ namespace Base
         else if (rbcmp->isKinematic)
         {
           Vector2 direction = Vector2Normalize(rbcmp->direction);
-          rbcmp->velocity = direction * rbcmp->speed * dt;
+          rbcmp->velocity = direction * rbcmp->speed;
         }
 
         if (abs(rbcmp->velocity.x) < 5e-10)
