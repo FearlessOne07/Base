@@ -19,7 +19,7 @@ set(SRC
   "./systems/EntityCollisionSystem.cpp"
 
   "./components/InputComponent.cpp"
-  "./components/BoundingBoxComponent.cpp"
+  "./components/ColliderComponent.cpp"
   "./components/ImpulseComponent.cpp"
 
   "./input/InputManager.cpp"

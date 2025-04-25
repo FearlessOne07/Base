@@ -2,7 +2,7 @@
 #include "base/EntityManager.hpp"
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
-#include "base/components/BoundingBoxComponent.hpp"
+#include "base/components/ColliderComponent.hpp"
 #include "base/components/CameraComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
@@ -23,9 +23,9 @@ namespace Base
       auto *camcmp = e->GetComponent<CameraComponent>();
       auto *transcmp = e->GetComponent<TransformComponent>();
 
-      if (e->HasComponent<BoundingBoxComponent>())
+      if (e->HasComponent<ColliderComponent>())
       {
-        auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
+        auto *abbcmp = e->GetComponent<ColliderComponent>();
         camcmp->target.x = transcmp->position.x + (abbcmp->size.x / 2);
         camcmp->target.y = transcmp->position.y + (abbcmp->size.y / 2);
       }

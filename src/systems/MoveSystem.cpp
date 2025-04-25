@@ -1,7 +1,7 @@
 #include "base/systems/MoveSystem.hpp"
 #include "base/Entity.hpp"
 #include "base/EntityManager.hpp"
-#include "base/components/BoundingBoxComponent.hpp"
+#include "base/components/ColliderComponent.hpp"
 #include "base/components/GravityComponent.hpp"
 #include "base/components/ImpulseComponent.hpp"
 #include "base/components/MoveComponent.hpp"
@@ -70,9 +70,17 @@ namespace Base
         else if (rbcmp->isKinematic)
         {
           Vector2 direction = Vector2Normalize(rbcmp->direction);
-          transcmp->position += direction * rbcmp->speed * dt;
+          rbcmp->velocity = direction * rbcmp->speed * dt;
         }
 
+        if (abs(rbcmp->velocity.x) < 5e-10)
+        {
+          rbcmp->velocity.x = 0;
+        }
+        if ((rbcmp->velocity.y) < 5e-10)
+        {
+          rbcmp->velocity.y = 0;
+        }
         // Update Positions
         transcmp->position += rbcmp->velocity * dt;
       }
@@ -81,9 +89,9 @@ namespace Base
 
   void MoveSystem::HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager)
   {
-    std::vector<std::shared_ptr<Entity>> entites = entityManager->Query<BoundingBoxComponent>();
+    std::vector<std::shared_ptr<Entity>> entites = entityManager->Query<ColliderComponent>();
 
-    auto *abbcmp1 = e->GetComponent<BoundingBoxComponent>();
+    auto *abbcmp1 = e->GetComponent<ColliderComponent>();
     auto *mvcmp1 = e->GetComponent<MoveComponent>();
     auto *transcmp1 = e->GetComponent<TransformComponent>();
     auto *rbcmp1 = e->GetComponent<RigidBodyComponent>();
@@ -103,11 +111,11 @@ namespace Base
     {
       if (         //
         e != e2 && //
-        abbcmp1->HasTypeFlag(BoundingBoxComponent::Type::COLLIDER) &&
-        e2->GetComponent<BoundingBoxComponent>()->HasTypeFlag(BoundingBoxComponent::Type::COLLIDER) //
+        abbcmp1->HasTypeFlag(ColliderComponent::Type::COLLIDER) &&
+        e2->GetComponent<ColliderComponent>()->HasTypeFlag(ColliderComponent::Type::COLLIDER) //
       )
       {
-        auto *abbcmp2 = e2->GetComponent<BoundingBoxComponent>();
+        auto *abbcmp2 = e2->GetComponent<ColliderComponent>();
         auto *transcmp2 = e2->GetComponent<TransformComponent>();
         auto *rbcmp2 = e2->GetComponent<RigidBodyComponent>();
 

@@ -1,7 +1,7 @@
 #include "base/systems/EntityCollisionSystem.hpp"
 #include "base/EntityManager.hpp"
 #include "base/EventBus.hpp"
-#include "base/components/BoundingBoxComponent.hpp"
+#include "base/components/ColliderComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/events/EntityCollisionEvent.hpp"
 #include "raylib.h"
@@ -13,7 +13,7 @@ namespace Base
 {
   void EntityCollisionSystem::Update(float dt, EntityManager *entityManager)
   {
-    std::vector<std::shared_ptr<Entity>> entities = entityManager->Query<Base::BoundingBoxComponent>();
+    std::vector<std::shared_ptr<Entity>> entities = entityManager->Query<Base::ColliderComponent>();
 
     for (auto &e1 : entities)
     {
@@ -21,11 +21,11 @@ namespace Base
       {
         if ((e1 != e2) && (e1->IsAlive() && e2->IsAlive()))
         {
-          if (e1->HasComponent<BoundingBoxComponent>() && e2->HasComponent<BoundingBoxComponent>())
+          if (e1->HasComponent<ColliderComponent>() && e2->HasComponent<ColliderComponent>())
           {
-            auto *abb1 = e1->GetComponent<BoundingBoxComponent>();
+            auto *abb1 = e1->GetComponent<ColliderComponent>();
             auto *trans1 = e1->GetComponent<TransformComponent>();
-            auto *abb2 = e2->GetComponent<BoundingBoxComponent>();
+            auto *abb2 = e2->GetComponent<ColliderComponent>();
             auto *trans2 = e2->GetComponent<TransformComponent>();
 
             Rectangle rect1 = {
@@ -47,8 +47,8 @@ namespace Base
               std::shared_ptr<EntityCollisionEvent> event = std::make_shared<EntityCollisionEvent>();
 
               if ( //
-                (abb1->HasTypeFlag(BoundingBoxComponent::Type::HITBOX) &&
-                 abb2->HasTypeFlag(BoundingBoxComponent::Type::HURTBOX)) //
+                (abb1->HasTypeFlag(ColliderComponent::Type::HITBOX) &&
+                 abb2->HasTypeFlag(ColliderComponent::Type::HURTBOX)) //
               )
               {
                 event->hittBoxEntity = e1;
@@ -56,8 +56,8 @@ namespace Base
                 EventBus::GetInstance()->Dispatch(event);
               }
               else if ( //
-                (abb2->HasTypeFlag(BoundingBoxComponent::Type::HITBOX) &&
-                 abb1->HasTypeFlag(BoundingBoxComponent::Type::HURTBOX)) //
+                (abb2->HasTypeFlag(ColliderComponent::Type::HITBOX) &&
+                 abb1->HasTypeFlag(ColliderComponent::Type::HURTBOX)) //
               )
               {
                 event->hittBoxEntity = e2;

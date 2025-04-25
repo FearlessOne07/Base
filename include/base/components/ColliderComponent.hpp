@@ -4,12 +4,14 @@
 
 namespace Base
 {
-  struct BoundingBoxComponent : public Component
+  struct ColliderComponent : public Component
   {
-  private:
-    std::bitset<3> _typeFlags;
-
   public:
+    enum struct Shape : uint8_t
+    {
+      BOX = 0,
+      CIRCLE
+    };
     enum struct Type : uint8_t
     {
       COLLIDER = 0,
@@ -17,10 +19,24 @@ namespace Base
       HITBOX = 2,
     };
 
-    Vector2 size = {0, 0};
+  private:
+    std::bitset<3> _typeFlags;
+
+  public:
+    // Shape
+    Shape shape = Shape::BOX;
+
+    // Position
     Vector2 positionOffset = {0, 0};
     Vector2 lastPosition = {0, 0};
 
+    // Box
+    Vector2 size = {0, 0};
+
+    // Circle
+    float radius = 0;
+
+    // Draw (Temp)
     bool draw = false;
     bool fill = true;
     Color color = WHITE;

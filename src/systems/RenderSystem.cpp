@@ -1,6 +1,6 @@
 #include "base/systems/RenderSystem.hpp"
 #include "base/EntityManager.hpp"
-#include "base/components/BoundingBoxComponent.hpp"
+#include "base/components/ColliderComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TextureComponent.hpp"
 #include "base/components/TransformComponent.hpp"
@@ -36,9 +36,9 @@ namespace Base
           }
         }
 
-        if (e->HasComponent<BoundingBoxComponent>())
+        if (e->HasComponent<ColliderComponent>())
         {
-          auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
+          auto *abbcmp = e->GetComponent<ColliderComponent>();
 
           if (abbcmp->draw)
           {
@@ -80,13 +80,13 @@ namespace Base
 
     // ABB + Texture
     std::vector<std::shared_ptr<Entity>> entities_tcmp_abb =
-      entitymanager->Query<BoundingBoxComponent, TextureComponent>();
+      entitymanager->Query<ColliderComponent, TextureComponent>();
     for (std::shared_ptr<Entity> &e : entities_tcmp_abb)
     {
       if (e)
       {
         auto *tcmp = e->GetComponent<TextureComponent>();
-        auto *abbcmp = e->GetComponent<BoundingBoxComponent>();
+        auto *abbcmp = e->GetComponent<ColliderComponent>();
         auto *transcmp = e->GetComponent<TransformComponent>();
 
         if (tcmp && abbcmp && !abbcmp->draw)
