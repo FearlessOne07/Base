@@ -28,7 +28,7 @@ namespace Base
     Entity &operator=(Entity &) = delete;
     Entity(Entity &) = delete;
 
-    template <typename T> bool HasComponent()
+    template <typename T> bool HasComponent() const
     {
       // Check if T is a derivative of Base::Component
       static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
