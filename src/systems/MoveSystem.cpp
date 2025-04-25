@@ -96,6 +96,39 @@ namespace Base
     auto *transcmp1 = e->GetComponent<TransformComponent>();
     auto *rbcmp1 = e->GetComponent<RigidBodyComponent>();
 
+    for (std::shared_ptr<Entity> &e2 : entites)
+    {
+      if (         //
+        e != e2 && //
+        abbcmp1->HasTypeFlag(ColliderComponent::Type::COLLIDER) &&
+        e2->GetComponent<ColliderComponent>()->HasTypeFlag(ColliderComponent::Type::COLLIDER) //
+      )
+      {
+
+        auto *abbcmp2 = e2->GetComponent<ColliderComponent>();
+
+        if (abbcmp1->shape == ColliderComponent::Shape::BOX && abbcmp2->shape == ColliderComponent::Shape::BOX)
+        {
+          ResolveBoxBox(e, e2, axis);
+        }
+      }
+    }
+  }
+
+  void MoveSystem::ResolveBoxBox(std::shared_ptr<Entity> &e1, std::shared_ptr<Entity> &e2, int axis)
+  {
+    // e1
+    auto *abbcmp1 = e1->GetComponent<ColliderComponent>();
+    auto *mvcmp1 = e1->GetComponent<MoveComponent>();
+    auto *transcmp1 = e1->GetComponent<TransformComponent>();
+    auto *rbcmp1 = e1->GetComponent<RigidBodyComponent>();
+
+    // e2
+    auto *abbcmp2 = e2->GetComponent<ColliderComponent>();
+    auto *transcmp2 = e2->GetComponent<TransformComponent>();
+    auto *rbcmp2 = e2->GetComponent<RigidBodyComponent>();
+    abbcmp2->lastPosition = transcmp2->position;
+
     // Apply Positional Offset
     Vector2 currentRectPos = {
       transcmp1->position.x - abbcmp1->positionOffset.x,
@@ -107,69 +140,53 @@ namespace Base
       abbcmp1->lastPosition.y - abbcmp1->positionOffset.y,
     };
 
-    for (std::shared_ptr<Entity> &e2 : entites)
+    if (                                                                                  //
+      CheckCollisionRecs(                                                                 //
+        {transcmp2->position.x, transcmp2->position.y, abbcmp2->size.x, abbcmp2->size.y}, //
+        {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y}            //
+        )                                                                                 //
+    )
     {
-      if (         //
-        e != e2 && //
-        abbcmp1->HasTypeFlag(ColliderComponent::Type::COLLIDER) &&
-        e2->GetComponent<ColliderComponent>()->HasTypeFlag(ColliderComponent::Type::COLLIDER) //
-      )
+      if (axis == 0)
       {
-        auto *abbcmp2 = e2->GetComponent<ColliderComponent>();
-        auto *transcmp2 = e2->GetComponent<TransformComponent>();
-        auto *rbcmp2 = e2->GetComponent<RigidBodyComponent>();
-
-        abbcmp2->lastPosition = transcmp2->position;
-
-        if (                                                                                  //
-          CheckCollisionRecs(                                                                 //
-            {transcmp2->position.x, transcmp2->position.y, abbcmp2->size.x, abbcmp2->size.y}, //
-            {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y}            //
-            )                                                                                 //
+        if (lastRectPos.x + abbcmp1->size.x <= transcmp2->position.x)
+        {
+          rbcmp1->velocity.x = 0;
+          currentRectPos.x = transcmp2->position.x - abbcmp1->size.x;
+        }
+        else if (                                                  //
+          lastRectPos.x >= transcmp2->position.x + abbcmp2->size.x //
         )
         {
-          if (axis == 0)
-          {
-            if (lastRectPos.x + abbcmp1->size.x <= transcmp2->position.x)
-            {
-              rbcmp1->velocity.x = 0;
-              currentRectPos.x = transcmp2->position.x - abbcmp1->size.x;
-            }
-            else if (                                                  //
-              lastRectPos.x >= transcmp2->position.x + abbcmp2->size.x //
-            )
-            {
-              rbcmp1->velocity.x = 0;
-              currentRectPos.x = transcmp2->position.x + abbcmp1->size.x;
-            }
-          }
-          else
-          {
-            if (lastRectPos.y + abbcmp1->size.y <= transcmp2->position.y)
-            {
-              rbcmp1->velocity.y = 0;
-              currentRectPos.y = transcmp2->position.y - abbcmp1->size.y;
-
-              if (e->HasComponent<GravityComponent>())
-              {
-                auto *gravcmp = e->GetComponent<GravityComponent>();
-                gravcmp->isJumping = false;
-              }
-            }
-            else if (                                                  //
-              lastRectPos.y >= transcmp2->position.y + abbcmp2->size.y //
-            )
-            {
-              rbcmp1->velocity.y = 0;
-              currentRectPos.y = transcmp2->position.y + abbcmp1->size.y;
-            }
-          }
-
-          abbcmp1->lastPosition = transcmp1->position;
-          transcmp1->position.x = currentRectPos.x + abbcmp1->positionOffset.x;
-          transcmp1->position.y = currentRectPos.y + abbcmp1->positionOffset.y;
+          rbcmp1->velocity.x = 0;
+          currentRectPos.x = transcmp2->position.x + abbcmp1->size.x;
         }
       }
+      else
+      {
+        if (lastRectPos.y + abbcmp1->size.y <= transcmp2->position.y)
+        {
+          rbcmp1->velocity.y = 0;
+          currentRectPos.y = transcmp2->position.y - abbcmp1->size.y;
+
+          if (e1->HasComponent<GravityComponent>())
+          {
+            auto *gravcmp = e1->GetComponent<GravityComponent>();
+            gravcmp->isJumping = false;
+          }
+        }
+        else if (                                                  //
+          lastRectPos.y >= transcmp2->position.y + abbcmp2->size.y //
+        )
+        {
+          rbcmp1->velocity.y = 0;
+          currentRectPos.y = transcmp2->position.y + abbcmp1->size.y;
+        }
+      }
+
+      abbcmp1->lastPosition = transcmp1->position;
+      transcmp1->position.x = currentRectPos.x + abbcmp1->positionOffset.x;
+      transcmp1->position.y = currentRectPos.y + abbcmp1->positionOffset.y;
     }
   }
 } // namespace Base
