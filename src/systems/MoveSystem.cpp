@@ -69,7 +69,8 @@ namespace Base
         }
         else if (rbcmp->isKinematic)
         {
-          transcmp->position += rbcmp->direction * rbcmp->speed * dt;
+          Vector2 direction = Vector2Normalize(rbcmp->direction);
+          transcmp->position += direction * rbcmp->speed * dt;
         }
 
         // Update Positions
