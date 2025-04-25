@@ -77,7 +77,7 @@ namespace Base
         {
           rbcmp->velocity.x = 0;
         }
-        if ((rbcmp->velocity.y) < 5e-10)
+        if (abs(rbcmp->velocity.y) < 5e-10)
         {
           rbcmp->velocity.y = 0;
         }
