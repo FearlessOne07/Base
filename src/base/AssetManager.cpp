@@ -1,9 +1,9 @@
 #include "base/AssetManager.hpp"
-#include <raylib.h>
+#include "internal/Exception/Exception.hpp"
 #include <filesystem>
 #include <memory>
+#include <raylib.h>
 #include <sstream>
-#include <stdexcept>
 
 namespace Base
 {
@@ -30,14 +30,14 @@ namespace Base
       {
         std::stringstream error;
         error << "Repeated loading of texture '" << name << "'";
-        throw std::runtime_error(error.str());
+        THROW_BASE_RUNTIME_ERROR(error.str());
       }
     }
     else
     {
       std::stringstream error;
       error << "Cannot find teture file '" << path.string() << "'";
-      throw std::runtime_error(error.str());
+      THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 
@@ -57,14 +57,14 @@ namespace Base
       {
         std::stringstream error;
         error << "Repeated loading of music stream'" << name << "'";
-        throw std::runtime_error(error.str());
+        THROW_BASE_RUNTIME_ERROR(error.str());
       }
     }
     else
     {
       std::stringstream error;
       error << "Cannot find music file '" << path.string() << "'";
-      throw std::runtime_error(error.str());
+      THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 
@@ -84,14 +84,14 @@ namespace Base
       {
         std::stringstream error;
         error << "Repeated loading of sound '" << name << "'";
-        throw std::runtime_error(error.str());
+        THROW_BASE_RUNTIME_ERROR(error.str());
       }
     }
     else
     {
       std::stringstream error;
       error << "Cannot find sound file'" << path.string() << "'";
-      throw std::runtime_error(error.str());
+      THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 
@@ -102,7 +102,7 @@ namespace Base
     {
       std::stringstream error;
       error << "Texture '" << name << "' does not exist";
-      throw std::runtime_error(error.str());
+      THROW_BASE_RUNTIME_ERROR(error.str());
     }
     return std::static_pointer_cast<Texture>(_assets.at(name));
   }
@@ -113,7 +113,7 @@ namespace Base
     {
       std::stringstream error;
       error << "Music Stream '" << name << "' does not exist";
-      throw std::runtime_error(error.str());
+      THROW_BASE_RUNTIME_ERROR(error.str());
     }
     return std::static_pointer_cast<Music>(_assets.at(name));
   }
@@ -124,7 +124,7 @@ namespace Base
     {
       std::stringstream error;
       error << "Sound '" << name << "' does not exist";
-      throw std::runtime_error(error.str());
+      THROW_BASE_RUNTIME_ERROR(error.str());
     }
     return std::static_pointer_cast<Sound>(_assets.at(name));
   }
@@ -140,7 +140,7 @@ namespace Base
     {
       std::stringstream error;
       error << "Texture '" << name << "' does not exist";
-      throw std::runtime_error(error.str());
+      THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
   template <> void AssetManager::UnloadAsset<Music>(const std::string &name)
@@ -154,7 +154,7 @@ namespace Base
     {
       std::stringstream error;
       error << "Music Stream '" << name << "' does not exist";
-      throw std::runtime_error(error.str());
+      THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 
@@ -169,7 +169,7 @@ namespace Base
     {
       std::stringstream error;
       error << "Sound '" << name << "' does not exist";
-      throw std::runtime_error(error.str());
+      THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 } // namespace Base

@@ -1,7 +1,7 @@
 #pragma once
+#include "internal/Exception/Exception.hpp"
 #include <functional>
 #include <memory>
-#include <stdexcept>
 #include <type_traits>
 #include <typeindex>
 
@@ -27,7 +27,7 @@ namespace Base
       }
       else
       {
-        throw std::runtime_error("Type Must be a derivative if the Scene class");
+        THROW_BASE_RUNTIME_ERROR("Type Must be a derivative if the Scene class");
       }
     };
 
@@ -41,7 +41,7 @@ namespace Base
       }
       else
       {
-        throw std::runtime_error("Type Must be a derivative if the System class");
+        THROW_BASE_RUNTIME_ERROR("Type Must be a derivative if the System class");
       }
     };
     void Init(int width, int height, const char *title, int fps = 0);

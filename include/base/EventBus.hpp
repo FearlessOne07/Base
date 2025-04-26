@@ -2,7 +2,7 @@
 #include "base/Event.hpp"
 #include <functional>
 #include <memory>
-#include <stdexcept>
+#include "internal/Exception/Exception.hpp"
 #include <type_traits>
 #include <typeindex>
 #include <unordered_map>
@@ -29,7 +29,7 @@ namespace Base
       // Check if T is a derivative of Base::Event
       if (!std::is_base_of_v<Event, T>)
       {
-        throw std::runtime_error("T must be a derivative of the  Event class");
+        THROW_BASE_RUNTIME_ERROR("T must be a derivative of the  Event class");
       }
 
       // Get the event ID

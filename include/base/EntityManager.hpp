@@ -36,6 +36,4 @@ namespace Base
     }
   };
 
-  // Core
-
 } // namespace Base

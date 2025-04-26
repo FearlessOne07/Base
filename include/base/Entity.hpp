@@ -1,8 +1,8 @@
 #pragma once
 #include "base/Component.hpp"
+#include "internal/Exception/Exception.hpp"
 #include <memory>
 #include <sstream>
-#include <stdexcept>
 #include <type_traits>
 #include <typeindex>
 #include <unordered_map>
@@ -62,7 +62,7 @@ namespace Base
       }
       else
       {
-        throw std::runtime_error("Entity already has specified compoment");
+        THROW_BASE_RUNTIME_ERROR("Entity already has specified compoment");
       }
     }
 
@@ -79,7 +79,7 @@ namespace Base
         std::stringstream error;
         error << "Failed to get component " << typeid(T).name() << "; Entity[" << _id
               << "] does not have specified component\n";
-        throw std::runtime_error(error.str());
+        THROW_BASE_RUNTIME_ERROR(error.str());
       }
       else
       {

@@ -4,7 +4,6 @@
 #include "base/SceneTransition.hpp"
 #include "base/ui/UIManager.hpp"
 #include <iostream>
-#include <stdexcept>
 #include <utility>
 
 namespace Base
@@ -112,7 +111,7 @@ namespace Base
     }
     else
     {
-      throw std::runtime_error("No Registered scene!");
+      THROW_BASE_RUNTIME_ERROR("No Registered scene!");
     }
   }
 
@@ -134,7 +133,7 @@ namespace Base
     }
     else
     {
-      throw std::runtime_error("Registration of duplicate scene");
+      THROW_BASE_RUNTIME_ERROR("Registration of duplicate scene");
     }
   }
 } // namespace Base

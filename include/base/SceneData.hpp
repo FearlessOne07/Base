@@ -1,6 +1,6 @@
 #pragma once
 #include <any>
-#include <stdexcept>
+#include "internal/Exception/Exception.hpp"
 #include <string>
 #include <typeinfo>
 namespace Base
@@ -23,13 +23,13 @@ namespace Base
     {
       if (!_data.has_value())
       {
-        throw std::runtime_error("SceneData is empty.");
+        THROW_BASE_RUNTIME_ERROR("SceneData is empty.");
       }
 
       // Check type safety
       if (_data.type().hash_code() != typeid(T).hash_code())
       {
-        throw std::runtime_error( //
+        THROW_BASE_RUNTIME_ERROR( //
           "SceneData type mismatch. Expected: " + std::string(typeid(T).name()) +
           ", but got: " + std::string(_data.type().name()) //
         );

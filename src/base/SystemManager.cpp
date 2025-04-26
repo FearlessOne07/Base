@@ -2,7 +2,6 @@
 #include "base/EntityManager.hpp"
 #include "base/System.hpp"
 #include <memory>
-#include <stdexcept>
 #include <utility>
 
 namespace Base
@@ -24,7 +23,7 @@ namespace Base
     }
     else
     {
-      throw std::runtime_error("Registration of duplicate system");
+      THROW_BASE_RUNTIME_ERROR("Registration of duplicate system");
     }
   }
   void SystemManager::_activateSystem(std::type_index systemID)
@@ -35,7 +34,7 @@ namespace Base
     }
     else
     {
-      throw std::runtime_error("Specified system does not exsist");
+      THROW_BASE_RUNTIME_ERROR("Specified system does not exsist");
     }
   }
   void SystemManager::DeactivateActiveSystems()
@@ -70,7 +69,7 @@ namespace Base
     }
     else
     {
-      throw std::runtime_error("No Render System has been registered");
+      THROW_BASE_RUNTIME_ERROR("No Render System has been registered");
     }
   }
 } // namespace Base
