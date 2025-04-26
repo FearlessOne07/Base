@@ -30,10 +30,11 @@ namespace Base
 
             if (abb1->shape == ColliderComponent::Shape::BOX && abb2->shape == ColliderComponent::Shape::BOX)
             {
-              BoxVsBoxCollision(e1, e2);
+              collision = BoxVsBoxCollision(e1, e2);
             }
             else if (abb1->shape == ColliderComponent::Shape::CIRCLE && abb2->shape == ColliderComponent::Shape::CIRCLE)
             {
+              collision = CircleVsCircleCollision(e1, e2);
             }
 
             if (collision)
