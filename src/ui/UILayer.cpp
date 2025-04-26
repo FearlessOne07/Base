@@ -1,4 +1,5 @@
 #include "base/ui/UILayer.hpp"
+#include "base/Exception.hpp"
 namespace Base
 {
 
@@ -14,7 +15,7 @@ namespace Base
   {
     if (_elements.find(elementId) == _elements.end())
     {
-      throw std::runtime_error("Specified UI element does not exist");
+      THROW_BASE_RUNTIME_ERROR("Specified UI element does not exist");
     }
     else
     {
@@ -28,7 +29,7 @@ namespace Base
   {
     if (_elements.find(elementId) == _elements.end())
     {
-      throw std::runtime_error("Specified UI element does not exist");
+      THROW_BASE_RUNTIME_ERROR("Specified UI element does not exist");
     }
     else
     {

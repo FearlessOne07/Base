@@ -1,4 +1,5 @@
 #include "base/Game.hpp"
+#include "base/EventBus.hpp"
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
 #include "base/Scene.hpp"
@@ -33,24 +34,30 @@ namespace Base
 
     // Init Systems
     _uiManager.Init();
-    _scenemanager.SetQuitCallBack([this]() { this->Quit(); });
+    _scenemanager.SetQuitCallBack([this]()
+                                  { this->Quit(); });
+
+    // Register Events
+    EventBus *bus = EventBus::GetInstance();
+    bus->SubscribeEvent<KeyEvent>([this](const std::shared_ptr<Event> event)
+                                  { this->OnKeyEvent(std::static_pointer_cast<KeyEvent>(event)); });
 
     // Initialize render context
     float windowWidth = static_cast<float>(GetScreenWidth());
     float windowHeight = static_cast<float>(GetScreenHeight());
     float scale = std::min( //
-      (float)windowWidth / _gameWidth,
-      (float)windowHeight / _gameHeight //
+        (float)windowWidth / _gameWidth,
+        (float)windowHeight / _gameHeight //
     );
     float marginX = (windowWidth - (_gameWidth * scale)) / 2;
     float marginY = (windowHeight - (_gameHeight * scale)) / 2;
 
     RenderContext rendercontext = {
-      .gameWidth = _gameWidth,
-      .gameHeight = _gameHeight,
-      .marginX = (float)marginX,
-      .marginY = (float)marginY,
-      .scale = scale,
+        .gameWidth = _gameWidth,
+        .gameHeight = _gameHeight,
+        .marginX = (float)marginX,
+        .marginY = (float)marginY,
+        .scale = scale,
     };
     RenderContextSingleton::UpdateInstance(&rendercontext);
   }
@@ -68,20 +75,20 @@ namespace Base
       // Update render context
       float windowWidth = static_cast<float>(GetScreenWidth());
       float windowHeight = static_cast<float>(GetScreenHeight());
-      float scale = std::min(             //
-        (float)windowWidth / _gameWidth,  //
-        (float)windowHeight / _gameHeight //
+      float scale = std::min(               //
+          (float)windowWidth / _gameWidth,  //
+          (float)windowHeight / _gameHeight //
       );
       float marginX = (windowWidth - (_gameWidth * scale)) / 2;
       float marginY = (windowHeight - (_gameHeight * scale)) / 2;
       const RenderContext *rd = RenderContextSingleton::GetInstance();
       RenderContext rendercontext = {
-        .gameWidth = _gameWidth,
-        .gameHeight = _gameHeight,
-        .marginX = (float)marginX,
-        .marginY = (float)marginY,
-        .scale = scale,
-        .camera = rd->camera,
+          .gameWidth = _gameWidth,
+          .gameHeight = _gameHeight,
+          .marginX = (float)marginX,
+          .marginY = (float)marginY,
+          .scale = scale,
+          .camera = rd->camera,
       };
       RenderContextSingleton::UpdateInstance(&rendercontext);
 
@@ -105,8 +112,8 @@ namespace Base
       BeginDrawing();
       ClearBackground(BLACK);
       DrawTexturePro( //
-        _renderTexture.texture, {0, 0, _gameWidth, -_gameHeight},
-        {(float)marginX, (float)marginY, _gameWidth * scale, _gameHeight * scale}, {0, 0}, 0.f, WHITE //
+          _renderTexture.texture, {0, 0, _gameWidth, -_gameHeight},
+          {(float)marginX, (float)marginY, _gameWidth * scale, _gameHeight * scale}, {0, 0}, 0.f, WHITE //
       );
       EndDrawing();
     }
@@ -121,6 +128,14 @@ namespace Base
     CloseWindow();
   }
 
+  void Game::GameImpl::OnKeyEvent(const std::shared_ptr<KeyEvent> &event)
+  {
+    if (event->key == KEY_F11 && event->action == KeyEvent::Action::PRESSED)
+    {
+      ToggleFullscreen();
+    }
+  }
+
   void Game::GameImpl::Quit()
   {
     _running = false;
@@ -131,8 +146,8 @@ namespace Base
     _scenemanager.RegisterScene(sceneID, std::move(factory));
   }
 
-  void Game::GameImpl::RegisterSystem(                                                    //
-    std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem = false //
+  void Game::GameImpl::RegisterSystem(                                                      //
+      std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem = false //
   )
   {
     _systemmanager.RegisterSystem(systemID, std::move(system), isRenderSystem);
