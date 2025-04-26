@@ -6,7 +6,7 @@
 #include "base/ui/UIManager.hpp"
 #include "internal/input/InputManager.hpp"
 #include "internal/scene/SceneManager.hpp"
-#include "raylib/raylib.h"
+#include "raylib.h"
 #include <functional>
 #include <memory>
 

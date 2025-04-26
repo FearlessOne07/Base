@@ -1,7 +1,7 @@
 #pragma once
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
-#include "raylib/raylib.h"
+#include "raylib.h"
 #include <memory>
 
 namespace Base

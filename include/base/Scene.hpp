@@ -2,7 +2,7 @@
 #include "base/SceneData.hpp"
 #include "base/SceneTransition.hpp"
 #include "base/ui/UIManager.hpp"
-#include "raylib/raylib.h"
+#include "raylib.h"
 #include <memory>
 #include <typeindex>
 

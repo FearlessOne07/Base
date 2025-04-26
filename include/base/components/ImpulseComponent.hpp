@@ -1,7 +1,7 @@
 #pragma once
 
 #include "base/Component.hpp"
-#include "raylib/raylib.h"
+#include "raylib.h"
 
 namespace Base
 {

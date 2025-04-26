@@ -1,5 +1,5 @@
 #include "base/Component.hpp"
-#include "raylib/raylib.h"
+#include <raylib.h>
 #include <bitset>
 
 namespace Base

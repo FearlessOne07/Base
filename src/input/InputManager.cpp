@@ -2,7 +2,7 @@
 #include "base/EventBus.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
-#include "raylib/raylib.h"
+#include "raylib.h"
 #include <algorithm>
 #include <memory>
 

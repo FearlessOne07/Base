@@ -2,12 +2,12 @@
 #include "base/EntityManager.hpp"
 #include "base/RenderContext.hpp"
 #include "base/RenderContextSingleton.hpp"
-#include "base/components/ColliderComponent.hpp"
 #include "base/components/CameraComponent.hpp"
+#include "base/components/ColliderComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TransformComponent.hpp"
-#include "raylib/raylib.h"
-#include "raylib/raymath.h"
+#include "raylib.h"
+#include "raymath.h"
 #include <algorithm>
 #include <memory>
 #include <vector>
