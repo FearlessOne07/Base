@@ -1,5 +1,5 @@
 #pragma once
-#include "base/SceneData.hpp"
+#include "base/Exception.hpp"
 #include "base/SceneTransition.hpp"
 #include "base/ui/UIManager.hpp"
 #include "raylib.h"

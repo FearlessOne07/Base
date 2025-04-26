@@ -1,6 +1,6 @@
 #pragma once
 #include "base/Component.hpp"
-#include "internal/exception/Exception.hpp"
+#include "base/Exception.hpp"
 #include <memory>
 #include <sstream>
 #include <type_traits>

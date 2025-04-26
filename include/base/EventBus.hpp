@@ -1,8 +1,8 @@
 #pragma once
 #include "base/Event.hpp"
+#include "base/Exception.hpp"
 #include <functional>
 #include <memory>
-#include "internal/exception/Exception.hpp"
 #include <type_traits>
 #include <typeindex>
 #include <unordered_map>
