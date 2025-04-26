@@ -1,5 +1,5 @@
 #pragma once
-#include "internal/Exception/Exception.hpp"
+#include "internal/exception/Exception.hpp"
 #include <functional>
 #include <memory>
 #include <type_traits>

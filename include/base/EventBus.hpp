@@ -2,7 +2,7 @@
 #include "base/Event.hpp"
 #include <functional>
 #include <memory>
-#include "internal/Exception/Exception.hpp"
+#include "internal/exception/Exception.hpp"
 #include <type_traits>
 #include <typeindex>
 #include <unordered_map>

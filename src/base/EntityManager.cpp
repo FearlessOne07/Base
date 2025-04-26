@@ -1,7 +1,6 @@
 #include "base/EntityManager.hpp"
 #include "base/components/TransformComponent.hpp"
 #include <algorithm>
-#include <iostream>
 #include <memory>
 #include <vector>
 
