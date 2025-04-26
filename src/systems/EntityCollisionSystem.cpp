@@ -23,50 +23,60 @@ namespace Base
         {
           if (e1->HasComponent<ColliderComponent>() && e2->HasComponent<ColliderComponent>())
           {
+
             auto *abb1 = e1->GetComponent<ColliderComponent>();
-            auto *trans1 = e1->GetComponent<TransformComponent>();
             auto *abb2 = e2->GetComponent<ColliderComponent>();
-            auto *trans2 = e2->GetComponent<TransformComponent>();
 
-            Rectangle rect1 = {
-              trans1->position.x - abb1->positionOffset.x,
-              trans1->position.y - abb1->positionOffset.y,
-              abb1->size.x,
-              abb1->size.y,
-            };
-
-            Rectangle rect2 = {
-              trans2->position.x - abb2->positionOffset.x,
-              trans2->position.y - abb2->positionOffset.y,
-              abb2->size.x,
-              abb2->size.y,
-            };
-
-            if ((CheckCollisionRecs(rect1, rect2)))
+            if (abb1->shape == ColliderComponent::Shape::BOX && abb2->shape == ColliderComponent::Shape::BOX)
             {
-              std::shared_ptr<EntityCollisionEvent> event = std::make_shared<EntityCollisionEvent>();
-
-              if ( //
-                (abb1->HasTypeFlag(ColliderComponent::Type::HITBOX) &&
-                 abb2->HasTypeFlag(ColliderComponent::Type::HURTBOX)) //
-              )
-              {
-                event->hittBoxEntity = e1;
-                event->hurtBoxEntity = e2;
-                EventBus::GetInstance()->Dispatch(event);
-              }
-              else if ( //
-                (abb2->HasTypeFlag(ColliderComponent::Type::HITBOX) &&
-                 abb1->HasTypeFlag(ColliderComponent::Type::HURTBOX)) //
-              )
-              {
-                event->hittBoxEntity = e2;
-                event->hurtBoxEntity = e1;
-                EventBus::GetInstance()->Dispatch(event);
-              }
+              BoxVsBoxCollision(e1, e2);
             }
           }
         }
+      }
+    }
+  }
+
+  void EntityCollisionSystem::BoxVsBoxCollision(std::shared_ptr<Entity> &e1, std::shared_ptr<Entity> &e2)
+  {
+    auto *abb1 = e1->GetComponent<ColliderComponent>();
+    auto *abb2 = e2->GetComponent<ColliderComponent>();
+    auto *trans1 = e1->GetComponent<TransformComponent>();
+    auto *trans2 = e2->GetComponent<TransformComponent>();
+
+    Rectangle rect1 = {
+      trans1->position.x - abb1->positionOffset.x,
+      trans1->position.y - abb1->positionOffset.y,
+      abb1->size.x,
+      abb1->size.y,
+    };
+
+    Rectangle rect2 = {
+      trans2->position.x - abb2->positionOffset.x,
+      trans2->position.y - abb2->positionOffset.y,
+      abb2->size.x,
+      abb2->size.y,
+    };
+
+    if ((CheckCollisionRecs(rect1, rect2)))
+    {
+      std::shared_ptr<EntityCollisionEvent> event = std::make_shared<EntityCollisionEvent>();
+
+      if (                                                                                                          //
+        (abb1->HasTypeFlag(ColliderComponent::Type::HITBOX) && abb2->HasTypeFlag(ColliderComponent::Type::HURTBOX)) //
+      )
+      {
+        event->hittBoxEntity = e1;
+        event->hurtBoxEntity = e2;
+        EventBus::GetInstance()->Dispatch(event);
+      }
+      else if (                                                                                                     //
+        (abb2->HasTypeFlag(ColliderComponent::Type::HITBOX) && abb1->HasTypeFlag(ColliderComponent::Type::HURTBOX)) //
+      )
+      {
+        event->hittBoxEntity = e2;
+        event->hurtBoxEntity = e1;
+        EventBus::GetInstance()->Dispatch(event);
       }
     }
   }
