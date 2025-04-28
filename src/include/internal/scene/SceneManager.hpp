@@ -1,5 +1,6 @@
 #pragma once
 #include "base/SceneData.hpp"
+#include "base/particles/ParticleManager.hpp"
 #include <functional>
 #include <memory>
 #include <stack>
@@ -25,6 +26,7 @@ namespace Base
     EntityManager *_entityManager = nullptr;
     SystemManager *_systemManager = nullptr;
     AssetManager *_assetManager = nullptr;
+    ParticleManager *_particleManager = nullptr;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
@@ -34,8 +36,9 @@ namespace Base
     void PopScene();
 
   public:
-    SceneManager(                                                                                                  //
-      UIManager *uiManager, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager //
+    SceneManager(                                                                                                   //
+      UIManager *uiManager, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
+      ParticleManager *particleManager                                                                              //
     );
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory);

@@ -3,6 +3,7 @@
 #include "base/EntityManager.hpp"
 #include "base/Game.hpp"
 #include "base/SystemManager.hpp"
+#include "base/particles/ParticleManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "internal/input/InputManager.hpp"
 #include "internal/scene/SceneManager.hpp"
@@ -31,8 +32,11 @@ namespace Base
     UIManager _uiManager = UIManager();
     EntityManager _entityManager = EntityManager();
     AssetManager _assetManager = AssetManager();
+    ParticleManager _particleManager = ParticleManager();
     SystemManager _systemmanager = SystemManager(&_entityManager);
-    SceneManager _scenemanager = SceneManager(&_uiManager, &_entityManager, &_systemmanager, &_assetManager);
+    SceneManager _scenemanager = SceneManager(                                         //
+      &_uiManager, &_entityManager, &_systemmanager, &_assetManager, &_particleManager //
+    );
 
   private: // Methods
     void Quit();

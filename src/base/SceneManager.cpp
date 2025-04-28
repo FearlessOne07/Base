@@ -2,6 +2,7 @@
 #include "base/EntityManager.hpp"
 #include "base/Scene.hpp"
 #include "base/SceneTransition.hpp"
+#include "base/particles/ParticleManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include <iostream>
 #include <utility>
@@ -9,10 +10,12 @@
 namespace Base
 {
 
-  SceneManager::SceneManager(                                                                                    //
-    UIManager *uiManager, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager //
+  SceneManager::SceneManager( //
+    UIManager *uiManager, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
+    ParticleManager *particleManager //
     )
-    : _uiManager(uiManager), _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager)
+    : _uiManager(uiManager), _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
+      _particleManager(particleManager)
   {
   }
 
@@ -27,6 +30,7 @@ namespace Base
     _scenes.push(_factories.at(scene)());
     _scenes.top()->SetEntityManager(_entityManager);
     _scenes.top()->SetUIManager(_uiManager);
+    _scenes.top()->SetParticleManager(_particleManager);
     _scenes.top()->Enter(_systemManager, _assetManager, sceneData);
   }
 

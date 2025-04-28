@@ -1,5 +1,6 @@
 #include "base/Scene.hpp"
 #include "base/SceneData.hpp"
+#include "base/particles/ParticleManager.hpp"
 #include <memory>
 
 namespace Base
@@ -46,6 +47,14 @@ namespace Base
     if (manager)
     {
       _state->uiManager = manager;
+    }
+  }
+
+  void Scene::SetParticleManager(ParticleManager *manager)
+  {
+    if (manager)
+    {
+      _state->particleManager = manager;
     }
   }
 

@@ -5,9 +5,8 @@ namespace Base
 {
   class ParticleEmitter
   {
-
   public:
-    ParticleEmitter();
+    ParticleEmitter() = default;
 
     enum struct ParticleShape : uint8_t
     {
@@ -32,7 +31,7 @@ namespace Base
     ParticleShape particleShape = ParticleEmitter::ParticleShape::RECT;
     Vector2 particleDirection = {0, 0};
     float particleSpeed = 0.f;
-    float particleLifeTime = 0.f;
+    float particleLifeTime = 1.f;
 
     Color particleStartColor = WHITE;
     Color particleEndColor = BLACK;
@@ -40,7 +39,6 @@ namespace Base
     // Rect
     Vector2 particleStartSize = {10, 10};
     Vector2 particleEndSize = {0, 0};
-    Vector2 particleSize = {0, 0};
 
     // Circle / Polygon
     float particleStartRadius = 10.f;

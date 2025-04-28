@@ -1,6 +1,7 @@
 #pragma once
 #include "base/Exception.hpp"
 #include "base/SceneTransition.hpp"
+#include "base/particles/ParticleManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "raylib.h"
 #include <memory>
@@ -18,6 +19,7 @@ namespace Base
     [[nodiscard]] SceneTransition GetSceneTransition() const;
     void SetEntityManager(EntityManager *);
     void SetUIManager(UIManager *);
+    void SetParticleManager(ParticleManager *);
     void ResetSceneTransition();
     void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
 
@@ -27,6 +29,7 @@ namespace Base
       Color fillColor = BLACK;
       EntityManager *entityManager = nullptr;
       UIManager *uiManager = nullptr;
+      ParticleManager *particleManager = nullptr;
     };
 
     std::unique_ptr<SceneState> _state;

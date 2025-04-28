@@ -37,6 +37,7 @@ namespace Base
 
   void ParticleManager::ParticleManagerImpl::Update(float dt)
   {
+
     // Emitters
     for (auto &emitter : _emitters)
     {
@@ -107,7 +108,7 @@ namespace Base
   {
     for (auto &particle : _activeParticles)
     {
-      float lifePoint = particle->lifeTimer / particle->lifeTime;
+      float lifePoint = 1.f - (particle->lifeTimer / particle->lifeTime);
 
       // Color
       Color color;
@@ -143,7 +144,7 @@ namespace Base
             size.x,
             size.y,
           },
-          {0, 0}, particle->rotation, color //
+          {size.x / 2, size.y / 2}, particle->rotation, color //
         );
       }
     }
@@ -152,6 +153,6 @@ namespace Base
   ParticleEmitter *ParticleManager::ParticleManagerImpl::AddEmitter()
   {
     _emitters.emplace_back();
-    return &_emitters.front();
+    return &_emitters.back();
   }
 } // namespace Base
