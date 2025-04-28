@@ -68,6 +68,11 @@ namespace Base
     return _state->uiManager;
   }
 
+  ParticleManager *Scene::GetParticleManager() const
+  {
+    return _state->particleManager;
+  }
+
   Scene::Scene() : _state(std::make_unique<SceneState>())
   {
   }
