@@ -23,6 +23,8 @@ set(SRC
   "./components/ColliderComponent.cpp"
   "./components/ImpulseComponent.cpp"
 
+  "./particles/ParticleManager.cpp"
+
   "./input/InputManager.cpp"
 
   "./ui/UIManager.cpp"
