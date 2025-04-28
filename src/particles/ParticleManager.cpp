@@ -1,3 +1,4 @@
+#include "base/particles/ParticleManager.hpp"
 #include "base/particles/ParticleEmitter.hpp"
 #include "internal/particles/ParticleManagerImpl.hpp"
 #include "raylib.h"
@@ -6,6 +7,16 @@
 
 namespace Base
 {
+  ParticleManager::ParticleManager()
+  {
+    _impl = new ParticleManagerImpl;
+  }
+
+  ParticleManager::~ParticleManager()
+  {
+    delete _impl;
+  }
+
   void ParticleManager::Init()
   {
     _impl->Init();

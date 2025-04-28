@@ -6,6 +6,8 @@ namespace Base
   class ParticleManager
   {
   public:
+    ParticleManager();
+    ~ParticleManager();
     void Init();
     void Update(float dt);
     void Render();
