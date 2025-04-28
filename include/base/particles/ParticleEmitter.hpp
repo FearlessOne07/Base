@@ -8,12 +8,6 @@ namespace Base
 
   public:
     ParticleEmitter();
-    ParticleEmitter(ParticleEmitter &&rhs) noexcept;
-    ParticleEmitter &operator=(ParticleEmitter &&rhs) noexcept;
-
-    // Delete Copy comstructor and copy assignment operator
-    ParticleEmitter &operator=(ParticleEmitter &) = delete;
-    ParticleEmitter(ParticleEmitter &) = delete;
 
     enum struct ParticleShape : uint8_t
     {
