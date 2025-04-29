@@ -1,6 +1,6 @@
-#include "base/Scene.hpp"
-#include "base/SceneData.hpp"
+#include "base/scenes/Scene.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/scenes/SceneData.hpp"
 #include <memory>
 
 namespace Base

@@ -1,5 +1,5 @@
 #pragma once
-#include "base/Component.hpp"
+#include "Component.hpp"
 #include <raylib.h>
 
 namespace Base

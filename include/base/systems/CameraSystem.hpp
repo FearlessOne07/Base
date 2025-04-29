@@ -1,5 +1,5 @@
 #pragma once
-#include "base/System.hpp"
+#include "System.hpp"
 #include "base/components/CameraComponent.hpp"
 
 namespace Base

@@ -1,9 +1,9 @@
 #include "base/systems/RenderSystem.hpp"
-#include "base/EntityManager.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TextureComponent.hpp"
 #include "base/components/TransformComponent.hpp"
+#include "base/entities/EntityManager.hpp"
 #include "raylib.h"
 #include <memory>
 #include <vector>

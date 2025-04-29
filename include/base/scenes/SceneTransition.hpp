@@ -1,11 +1,12 @@
 #pragma once
-#include "base/SceneData.hpp"
+#include "SceneData.hpp"
+#include <cstdint>
 #include <typeindex>
 
 namespace Base
 {
 
-  enum class SceneRequest
+  enum class SceneRequest : uint8_t
   {
     NONE = 0,
     QUIT,
@@ -14,7 +15,7 @@ namespace Base
     REPLACE_CURRENT_SCENE
   };
 
-  struct   SceneTransition
+  struct SceneTransition
   {
     SceneRequest request = SceneRequest::NONE;
     std::type_index sceneID = typeid(-1);

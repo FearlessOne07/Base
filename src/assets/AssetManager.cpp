@@ -1,5 +1,5 @@
-#include "base/AssetManager.hpp"
-#include "base/Exception.hpp"
+#include "base/assets/AssetManager.hpp"
+#include "base/util/Exception.hpp"
 #include <filesystem>
 #include <memory>
 #include <raylib.h>

@@ -1,31 +1,26 @@
 set(SRC
-  "./base/Game.cpp"
-  "./base/SceneManager.cpp"
-  "./base/EntityManager.cpp"
-  "./base/RenderContextSingleton.cpp"
-  "./base/Scene.cpp"
-  "./base/RenderContext.cpp"
-  "./base/System.cpp"
-  "./base/Entity.cpp"
-  "./base/SystemManager.cpp"
-  "./base/AssetManager.cpp"
-  "./base/Component.cpp"
-  "./base/EventBus.cpp"
-  "./base/Exception.cpp"
+  "./game/Game.cpp"
+  "./game/RenderContextSingleton.cpp"
+  "./game/RenderContext.cpp"
 
+  "./entities/EntityManager.cpp"
+  "./entities/Entity.cpp"
+
+  "./scenes/SceneManager.cpp"
+  "./scenes/Scene.cpp"
+
+  "./systems/SystemManager.cpp"
+  "./systems/System.cpp"
   "./systems/MoveSystem.cpp"
   "./systems/RenderSystem.cpp"
   "./systems/InputSystem.cpp"
   "./systems/CameraSystem.cpp"
   "./systems/EntityCollisionSystem.cpp"
 
+  "./components/Component.cpp"
   "./components/InputComponent.cpp"
   "./components/ColliderComponent.cpp"
   "./components/ImpulseComponent.cpp"
-
-  "./particles/ParticleManager.cpp"
-
-  "./input/InputManager.cpp"
 
   "./ui/UIManager.cpp"
   "./ui/UILayer.cpp"
@@ -33,6 +28,16 @@ set(SRC
 
   "./ui/elements/UIButton.cpp"
   "./ui/elements/UILabel.cpp"
+
+  "./particles/ParticleManager.cpp"
+
+  "./input/InputManager.cpp"
+
+  "./signals//EventBus.cpp"
+
+  "./assets/AssetManager.cpp"
+
+  "./util/Exception.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 

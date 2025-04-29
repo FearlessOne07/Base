@@ -1,6 +1,6 @@
-#include "base/SystemManager.hpp"
-#include "base/EntityManager.hpp"
-#include "base/System.hpp"
+#include "base/systems/SystemManager.hpp"
+#include "base/entities/EntityManager.hpp"
+#include "base/systems/System.hpp"
 #include <memory>
 #include <utility>
 

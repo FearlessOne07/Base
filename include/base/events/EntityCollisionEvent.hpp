@@ -1,5 +1,5 @@
-#include "base/Entity.hpp"
-#include "base/Event.hpp"
+#include "base/entities/Entity.hpp"
+#include "base/signals/Event.hpp"
 #include <memory>
 
 namespace Base

@@ -1,9 +1,9 @@
-#include "base/Game.hpp"
-#include "base/EventBus.hpp"
-#include "base/RenderContext.hpp"
-#include "base/RenderContextSingleton.hpp"
-#include "base/Scene.hpp"
-#include "base/System.hpp"
+#include "base/game/Game.hpp"
+#include "base/game/RenderContext.hpp"
+#include "base/game/RenderContextSingleton.hpp"
+#include "base/scenes/Scene.hpp"
+#include "base/signals/EventBus.hpp"
+#include "base/systems/System.hpp"
 #include "internal/game/GameImpl.hpp"
 #include "internal/input/InputManager.hpp"
 #include "raylib.h"
@@ -34,9 +34,8 @@ namespace Base
 
     // Init Systems
     _uiManager.Init();
-    _scenemanager.SetQuitCallBack([this]() { this->Quit(); });
-
     _particleManager.Init();
+    _scenemanager.SetQuitCallBack([this]() { this->Quit(); });
 
     // Register Events
     EventBus *bus = EventBus::GetInstance();

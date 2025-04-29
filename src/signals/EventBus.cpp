@@ -1,4 +1,4 @@
-#include "base/EventBus.hpp"
+#include "base/signals/EventBus.hpp"
 #include <typeindex>
 
 namespace Base

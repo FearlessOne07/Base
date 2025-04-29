@@ -1,4 +1,4 @@
-#include "base/Exception.hpp"
+#include "base/util/Exception.hpp"
 #include <sstream>
 #include <stdexcept>
 

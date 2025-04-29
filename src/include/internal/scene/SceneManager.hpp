@@ -1,6 +1,6 @@
 #pragma once
-#include "base/SceneData.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/scenes/SceneData.hpp"
 #include <functional>
 #include <memory>
 #include <stack>

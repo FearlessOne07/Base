@@ -1,6 +1,6 @@
 #include "base/systems/InputSystem.hpp"
-#include "base/EntityManager.hpp"
-#include "base/EventBus.hpp"
+#include "base/entities/EntityManager.hpp"
+#include "base/signals/EventBus.hpp"
 #include "base/components/InputComponent.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include <memory>

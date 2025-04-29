@@ -1,9 +1,9 @@
 #pragma once
-#include "base/AssetManager.hpp"
-#include "base/EntityManager.hpp"
-#include "base/Game.hpp"
-#include "base/SystemManager.hpp"
+#include "base/assets/AssetManager.hpp"
+#include "base/entities/EntityManager.hpp"
+#include "base/game/Game.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/systems/SystemManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "internal/input/InputManager.hpp"
 #include "internal/scene/SceneManager.hpp"

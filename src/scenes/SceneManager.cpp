@@ -1,8 +1,8 @@
 #include "internal/scene/SceneManager.hpp"
-#include "base/EntityManager.hpp"
-#include "base/Scene.hpp"
-#include "base/SceneTransition.hpp"
+#include "base/entities/EntityManager.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/scenes/Scene.hpp"
+#include "base/scenes/SceneTransition.hpp"
 #include "base/ui/UIManager.hpp"
 #include <iostream>
 #include <utility>

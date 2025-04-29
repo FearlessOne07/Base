@@ -1,4 +1,4 @@
-#include "base/Component.hpp"
+#include "Component.hpp"
 #include <raylib.h>
 #include <bitset>
 

@@ -1,7 +1,7 @@
 #include "internal/input/InputManager.hpp"
-#include "base/EventBus.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
+#include "base/signals/EventBus.hpp"
 #include "raylib.h"
 #include <algorithm>
 #include <memory>

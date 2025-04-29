@@ -1,4 +1,4 @@
-#include "base/EntityManager.hpp"
+#include "base/entities/EntityManager.hpp"
 #include "base/components/TransformComponent.hpp"
 #include <algorithm>
 #include <memory>

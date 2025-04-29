@@ -1,5 +1,5 @@
-#include "base/RenderContextSingleton.hpp"
-#include "base/RenderContext.hpp"
+#include "base/game/RenderContextSingleton.hpp"
+#include "base/game/RenderContext.hpp"
 
 namespace Base
 {

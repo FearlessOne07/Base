@@ -1,4 +1,4 @@
-#include "base/Component.hpp"
+#include "Component.hpp"
 
 namespace Base
 {

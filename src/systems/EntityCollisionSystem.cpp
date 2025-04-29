@@ -1,6 +1,6 @@
 #include "base/systems/EntityCollisionSystem.hpp"
-#include "base/EntityManager.hpp"
-#include "base/EventBus.hpp"
+#include "base/entities/EntityManager.hpp"
+#include "base/signals/EventBus.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/events/EntityCollisionEvent.hpp"

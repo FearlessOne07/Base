@@ -1,5 +1,5 @@
-#include "base/Component.hpp"
-#include "base/Entity.hpp"
+#include "base/components/Component.hpp"
+#include "base/entities/Entity.hpp"
 #include <memory>
 #include <utility>
 

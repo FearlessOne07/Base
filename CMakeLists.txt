@@ -23,11 +23,6 @@ set(HEADER_DEST_DIR "${ROOT_BASE_DIR}/include")
 
 message(STATUS "Base headers location ${ROOT_BASE_DIR}/include")
 
-file(COPY "${HEADER_SOURCE_DIR}/" DESTINATION ${HEADER_DEST_DIR})
-file(COPY "${ROOT_BASE_DIR}/vendor/raylib/src/raylib.h" DESTINATION ${HEADER_DEST_DIR}/raylib)
-file(COPY "${ROOT_BASE_DIR}/vendor/raylib/src/raymath.h" DESTINATION ${HEADER_DEST_DIR}/raylib)
-file(COPY "${ROOT_BASE_DIR}/vendor/raylib/src/rlgl.h" DESTINATION ${HEADER_DEST_DIR}/raylib)
-
 add_subdirectory(
   "./vendor/raylib/"
 )

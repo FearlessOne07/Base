@@ -1,6 +1,6 @@
 #pragma once
-#include "base/Entity.hpp"
-#include "base/System.hpp"
+#include "System.hpp"
+#include "base/entities/Entity.hpp"
 #include <memory>
 
 namespace Base

@@ -1,6 +1,6 @@
 #include "base/ui/elements/UIButton.hpp"
-#include "base/RenderContext.hpp"
-#include "base/RenderContextSingleton.hpp"
+#include "base/game/RenderContext.hpp"
+#include "base/game/RenderContextSingleton.hpp"
 #include "raylib.h"
 
 namespace Base

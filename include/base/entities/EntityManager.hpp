@@ -1,5 +1,5 @@
 #pragma once
-#include "base/Entity.hpp"
+#include "Entity.hpp"
 #include <cstddef>
 #include <memory>
 #include <vector>

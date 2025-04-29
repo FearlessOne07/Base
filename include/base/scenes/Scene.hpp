@@ -1,7 +1,6 @@
 #pragma once
-#include "base/Exception.hpp"
-#include "base/SceneTransition.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/scenes/SceneTransition.hpp"
 #include "base/ui/UIManager.hpp"
 #include "raylib.h"
 #include <memory>

@@ -1,7 +1,7 @@
 #include "base/ui/UIManager.hpp"
-#include "base/EventBus.hpp"
-#include "base/Exception.hpp"
+#include "base/signals/EventBus.hpp"
 #include "base/ui/UILayer.hpp"
+#include "base/util/Exception.hpp"
 
 namespace Base
 {
@@ -10,15 +10,13 @@ namespace Base
   {
     EventBus *bus = EventBus::GetInstance();
 
-    bus->SubscribeEvent<KeyEvent>([this](const std::shared_ptr<Event> &event)
-                                  {
-                                    this->OnKeyEvent(std::static_pointer_cast<KeyEvent>(event)); //
-                                  });
+    bus->SubscribeEvent<KeyEvent>([this](const std::shared_ptr<Event> &event) {
+      this->OnKeyEvent(std::static_pointer_cast<KeyEvent>(event)); //
+    });
 
-    bus->SubscribeEvent<MouseButtonEvent>([this](const std::shared_ptr<Event> &event)
-                                          {
-                                            this->OnMouseButtonEvent(std::static_pointer_cast<MouseButtonEvent>(event)); //
-                                          });
+    bus->SubscribeEvent<MouseButtonEvent>([this](const std::shared_ptr<Event> &event) {
+      this->OnMouseButtonEvent(std::static_pointer_cast<MouseButtonEvent>(event)); //
+    });
   }
 
   void UIManager::OnKeyEvent(const std::shared_ptr<KeyEvent> &event)
@@ -66,8 +64,8 @@ namespace Base
     }
   }
 
-  void UIManager::AddElement(                                                                             //
-      const std::string &layerId, const std::string &elementId, const std::shared_ptr<UIElement> &element //
+  void UIManager::AddElement(                                                                           //
+    const std::string &layerId, const std::string &elementId, const std::shared_ptr<UIElement> &element //
   )
   {
     if (_uiLayers.find(layerId) == _uiLayers.end())
@@ -88,8 +86,8 @@ namespace Base
     }
   }
 
-  void UIManager::RemoveElement(                               //
-      const std::string &layerId, const std::string &elementId //
+  void UIManager::RemoveElement(                             //
+    const std::string &layerId, const std::string &elementId //
   )
   {
     if (_uiLayers.find(layerId) == _uiLayers.end())

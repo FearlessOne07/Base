@@ -1,6 +1,6 @@
 #pragma once
-#include "base/Event.hpp"
-#include "base/Exception.hpp"
+#include "Event.hpp"
+#include "base/util/Exception.hpp"
 #include <functional>
 #include <memory>
 #include <type_traits>

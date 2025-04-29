@@ -1,5 +1,4 @@
 #pragma once
-
 #include "base/particles/ParticleEmitter.hpp"
 namespace Base
 {
