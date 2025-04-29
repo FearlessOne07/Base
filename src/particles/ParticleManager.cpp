@@ -152,7 +152,6 @@ namespace Base
     // Particles
     for (int i = 0; i < _activeParticles.size(); i++)
     {
-
       Particle *particle = _activeParticles[i];
       // Position
       particle->position += particle->direction * particle->speed * dt;
@@ -167,7 +166,7 @@ namespace Base
 
         // Swap
         _activeParticles[i] = _activeParticles.back();
-        _particles.back() = {};
+        *_activeParticles.back() = {};
         _activeParticles.pop_back();
         continue;
       }
@@ -194,7 +193,6 @@ namespace Base
       )
       {
         float radius = Lerp(particle->startRadius, particle->endRadius, lifePoint);
-
         if (particle->shape == ParticleEmitter::ParticleShape::POLYGON)
         {
           DrawPoly(particle->position, particle->sideNumber, radius, particle->rotation, color);
