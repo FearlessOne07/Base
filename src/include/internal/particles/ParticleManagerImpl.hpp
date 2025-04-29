@@ -3,7 +3,7 @@
 #include "base/particles/ParticleManager.hpp"
 #include "internal/particles/Particle.hpp"
 #include <array>
-#include <queue>
+#include <random>
 #include <vector>
 
 #ifndef MAX_PARTICLES
@@ -17,8 +17,9 @@ namespace Base
   private:
     std::array<Particle, MAX_PARTICLES> _particles;
     std::vector<Particle *> _activeParticles;
-    std::queue<int> _availableParticles;
     std::vector<ParticleEmitter> _emitters;
+    std::random_device _randomDevice;
+    std::mt19937_64 _randomGenerator;
 
   public:
     void Init();

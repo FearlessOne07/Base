@@ -7,7 +7,6 @@ namespace Base
   class Particle
   {
   public:
-    int index = 0;
     bool isActive = false;
     Vector2 position = {0, 0};
     Vector2 direction = {0, 0};
@@ -27,6 +26,8 @@ namespace Base
     // Circle / Polygon
     float startRadius = 10.f;
     float endRadius = 0.f;
+
+    int sideNumber = 3;
 
     // Rotation
     float rotationSpeed = 0.f;

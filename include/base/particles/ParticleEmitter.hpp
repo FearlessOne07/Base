@@ -12,7 +12,7 @@ namespace Base
     {
       RECT = 0,
       CIRCLE,
-      PLYGON,
+      POLYGON,
       TEXTURE
     };
 
@@ -25,7 +25,8 @@ namespace Base
 
     EmissionType emissionType = ParticleEmitter::EmissionType::POINT;
     bool isEmitting = true;
-    Vector2 position = {0, 0};
+    float emitionRate = 1.f;
+    float emissionTimer = 0.f;
 
     // Particle Spec
     ParticleShape particleShape = ParticleEmitter::ParticleShape::RECT;
@@ -43,7 +44,19 @@ namespace Base
     // Circle / Polygon
     float particleStartRadius = 10.f;
     float particleEndRadius = 0.f;
+    int particleSideNumber = 3;
 
-    float rotationSpeed = 0.f;
+    float particleRotationSpeed = 0.f;
+
+    // Point
+    Vector2 emissionPoint = {0, 0};
+
+    // Area
+    Vector2 emissionAreaPosition = {0, 0};
+    Vector2 emissionAreaSize = {100, 100};
+
+    // Line
+    Vector2 emissionLineStart = {0, 0};
+    Vector2 emissionLineEnd = {0, 0};
   };
 } // namespace Base
