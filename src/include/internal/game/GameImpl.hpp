@@ -41,7 +41,7 @@ namespace Base
   private: // Methods
     void Quit();
     void End();
-    void OnKeyEvent(const std::shared_ptr<KeyEvent> &event);
+    void UpdateRenderContext();
 
   public:
     GameImpl() = default;

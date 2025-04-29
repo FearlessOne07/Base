@@ -2,7 +2,6 @@
 #include "base/game/RenderContext.hpp"
 #include "base/game/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
-#include "base/signals/EventBus.hpp"
 #include "base/systems/System.hpp"
 #include "internal/game/GameImpl.hpp"
 #include "internal/input/InputManager.hpp"
@@ -37,29 +36,8 @@ namespace Base
     _particleManager.Init();
     _scenemanager.SetQuitCallBack([this]() { this->Quit(); });
 
-    // Register Events
-    EventBus *bus = EventBus::GetInstance();
-    bus->SubscribeEvent<KeyEvent>(
-      [this](const std::shared_ptr<Event> event) { this->OnKeyEvent(std::static_pointer_cast<KeyEvent>(event)); });
-
     // Initialize render context
-    float windowWidth = static_cast<float>(GetScreenWidth());
-    float windowHeight = static_cast<float>(GetScreenHeight());
-    float scale = std::min( //
-      (float)windowWidth / _gameWidth,
-      (float)windowHeight / _gameHeight //
-    );
-    float marginX = (windowWidth - (_gameWidth * scale)) / 2;
-    float marginY = (windowHeight - (_gameHeight * scale)) / 2;
-
-    RenderContext rendercontext = {
-      .gameWidth = _gameWidth,
-      .gameHeight = _gameHeight,
-      .marginX = (float)marginX,
-      .marginY = (float)marginY,
-      .scale = scale,
-    };
-    RenderContextSingleton::UpdateInstance(&rendercontext);
+    UpdateRenderContext();
   }
 
   void Game::GameImpl::Run()
@@ -73,24 +51,8 @@ namespace Base
       _uiManager.Update();
 
       // Update render context
-      float windowWidth = static_cast<float>(GetScreenWidth());
-      float windowHeight = static_cast<float>(GetScreenHeight());
-      float scale = std::min(             //
-        (float)windowWidth / _gameWidth,  //
-        (float)windowHeight / _gameHeight //
-      );
-      float marginX = (windowWidth - (_gameWidth * scale)) / 2;
-      float marginY = (windowHeight - (_gameHeight * scale)) / 2;
+      UpdateRenderContext();
       const RenderContext *rd = RenderContextSingleton::GetInstance();
-      RenderContext rendercontext = {
-        .gameWidth = _gameWidth,
-        .gameHeight = _gameHeight,
-        .marginX = (float)marginX,
-        .marginY = (float)marginY,
-        .scale = scale,
-        .camera = rd->camera,
-      };
-      RenderContextSingleton::UpdateInstance(&rendercontext);
 
       // Delta Time
       float dt = GetFrameTime();
@@ -113,8 +75,8 @@ namespace Base
       ClearBackground(BLACK);
       DrawTexturePro( //
         _renderTexture.texture, {0, 0, _gameWidth, -_gameHeight},
-        {(float)marginX, (float)marginY, _gameWidth * scale, _gameHeight * scale}, {0, 0}, 0.f, WHITE //
-      );
+        {rd->marginX, rd->marginY, _gameWidth * rd->scale, _gameHeight * rd->scale}, //
+        {0, 0}, 0.f, WHITE);
       EndDrawing();
     }
 
@@ -126,14 +88,6 @@ namespace Base
   {
     UnloadRenderTexture(_renderTexture);
     CloseWindow();
-  }
-
-  void Game::GameImpl::OnKeyEvent(const std::shared_ptr<KeyEvent> &event)
-  {
-    if (event->key == KEY_F11 && event->action == KeyEvent::Action::PRESSED)
-    {
-      ToggleFullscreen();
-    }
   }
 
   void Game::GameImpl::Quit()
@@ -151,6 +105,28 @@ namespace Base
   )
   {
     _systemmanager.RegisterSystem(systemID, std::move(system), isRenderSystem);
+  }
+
+  void Game::GameImpl::UpdateRenderContext()
+  {
+    auto windowWidth = static_cast<float>(GetScreenWidth());
+    auto windowHeight = static_cast<float>(GetScreenHeight());
+    float scale = std::min(             //
+      (float)windowWidth / _gameWidth,  //
+      (float)windowHeight / _gameHeight //
+    );
+    float marginX = (windowWidth - (_gameWidth * scale)) / 2;
+    float marginY = (windowHeight - (_gameHeight * scale)) / 2;
+    const RenderContext *rd = RenderContextSingleton::GetInstance();
+    RenderContext rendercontext = {
+      .gameWidth = _gameWidth,
+      .gameHeight = _gameHeight,
+      .marginX = (float)marginX,
+      .marginY = (float)marginY,
+      .scale = scale,
+      .camera = rd->camera,
+    };
+    RenderContextSingleton::UpdateInstance(&rendercontext);
   }
 
   // Game Class
