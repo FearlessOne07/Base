@@ -166,7 +166,6 @@ namespace Base
 
         // Swap
         _activeParticles[i] = _activeParticles.back();
-        *_activeParticles.back() = {};
         _activeParticles.pop_back();
         continue;
       }
