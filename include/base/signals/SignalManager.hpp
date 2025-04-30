@@ -24,7 +24,7 @@ namespace Base
   public:
     static SignalManager *GetInstance();
 
-    template <typename T> void SubscribeSignal(SignalHandler &handler)
+    template <typename T> void SubscribeSignal(const SignalHandler &handler)
     {
       // Check if T is a derivative of Base::Signal
       if (!std::is_base_of_v<Signal, T>)

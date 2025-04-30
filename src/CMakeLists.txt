@@ -8,6 +8,7 @@ set(SRC
 
   "./scenes/SceneManager.cpp"
   "./scenes/Scene.cpp"
+  "./scenes/SceneLayerStack.cpp"
 
   "./systems/SystemManager.cpp"
   "./systems/System.cpp"

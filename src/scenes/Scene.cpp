@@ -33,6 +33,10 @@ namespace Base
   {
     _state->sceneTransition = {.request = SceneRequest::NONE, .sceneID = typeid(-1)};
   }
+  SceneLayerStack Scene::GetLayerStack()
+  {
+    return _layerStack;
+  }
 
   void Scene::SetEntityManager(EntityManager *manager)
   {
