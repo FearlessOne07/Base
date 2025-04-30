@@ -2,7 +2,6 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/SceneLayerStack.hpp"
 #include "base/scenes/SceneTransition.hpp"
-#include "raylib.h"
 #include <memory>
 #include <typeindex>
 
@@ -24,7 +23,6 @@ namespace Base
     struct SceneState
     {
       SceneTransition sceneTransition = SceneTransition();
-      Color fillColor = BLACK;
       EntityManager *entityManager = nullptr;
       ParticleManager *particleManager = nullptr;
     };
@@ -33,8 +31,6 @@ namespace Base
     SceneLayerStack _layerStack;
 
   protected: // Inclass Access
-    void Clear() const;
-    void SetClearColor(Color color);
     [[nodiscard]] EntityManager *GetEntityManager() const;
     [[nodiscard]] ParticleManager *GetParticleManager() const;
     SceneLayerStack GetLayerStack();

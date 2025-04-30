@@ -122,7 +122,6 @@ namespace Base
     if (!_scenes.empty())
     {
       // Render current scene
-      _scenes.top()->Clear();
       _scenes.top()->Render(_systemManager);
     }
   }

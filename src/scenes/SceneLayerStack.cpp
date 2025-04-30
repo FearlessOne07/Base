@@ -1,18 +1,13 @@
 #include <ranges>
+#include <utility>
 
 #include "base/scenes/SceneLayerStack.hpp"
 
 namespace Base
 {
 
-  std::map<std::type_index, std::shared_ptr<SceneLayer>>::iterator SceneLayerStack::begin()
+  SceneLayerStack::SceneLayerStack(Scene *owner) : _owner(owner)
   {
-    return _layers.begin();
-  }
-
-  std::map<std::type_index, std::shared_ptr<SceneLayer>>::iterator SceneLayerStack::end()
-  {
-    return _layers.end();
   }
 
   void SceneLayerStack::OnInputEvent(std::shared_ptr<InputEvent> event)

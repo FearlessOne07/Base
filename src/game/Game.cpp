@@ -12,7 +12,6 @@
 
 namespace Base
 {
-
   void Game::GameImpl::Init(int width, int height, const char *title, int fps)
   {
     // Initialize Raylib

@@ -4,8 +4,12 @@
 #include <memory>
 namespace Base
 {
+  class Scene;
   class SceneLayer
   {
+    friend class SceneLayerStack;
+    Scene *_owner = nullptr;
+
   public:
     virtual void Update(float dt) = 0;
     virtual void Render() = 0;

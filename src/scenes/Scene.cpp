@@ -6,11 +6,6 @@
 namespace Base
 {
 
-  void Scene::SetClearColor(Color color)
-  {
-    _state->fillColor = color;
-  }
-
   void Scene::_setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data)
   {
     _state->sceneTransition = {
@@ -19,11 +14,6 @@ namespace Base
       .data = data,
     };
   }
-
-  void Scene::Clear() const
-  {
-    ClearBackground(_state->fillColor);
-  };
 
   SceneTransition Scene::GetSceneTransition() const
   {
@@ -64,7 +54,7 @@ namespace Base
     return _state->particleManager;
   }
 
-  Scene::Scene() : _state(std::make_unique<SceneState>())
+  Scene::Scene() : _layerStack(this), _state(std::make_unique<SceneState>())
   {
   }
 

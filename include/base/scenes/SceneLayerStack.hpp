@@ -1,13 +1,10 @@
 #pragma once
 #include "SceneLayer.hpp"
 #include "base/util/Exception.hpp"
-#include <iterator>
 #include <map>
 #include <memory>
 #include <type_traits>
 #include <typeindex>
-#include <unordered_map>
-#include <vector>
 
 namespace Base
 {
@@ -16,11 +13,10 @@ namespace Base
 
   private:
     std::map<std::type_index, std::shared_ptr<SceneLayer>> _layers;
+    Scene *_owner = nullptr;
 
   public:
-    std::map<std::type_index, std::shared_ptr<SceneLayer>>::iterator begin();
-    std::map<std::type_index, std::shared_ptr<SceneLayer>>::iterator end();
-
+    SceneLayerStack(Scene *owner);
     template <typename T> void AttachLayer()
     {
       if (std::is_base_of_v<SceneLayer, T>)
@@ -29,6 +25,7 @@ namespace Base
         if (_layers.find(id) == _layers.end())
         {
           _layers[id] = std::make_shared<T>();
+          _layers.at(id)->_owner = _owner;
         }
         else
         {
