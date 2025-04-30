@@ -3,7 +3,6 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
-#include "base/ui/UIManager.hpp"
 #include <iostream>
 #include <utility>
 
@@ -11,10 +10,10 @@ namespace Base
 {
 
   SceneManager::SceneManager( //
-    UIManager *uiManager, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
+    EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
     ParticleManager *particleManager //
     )
-    : _uiManager(uiManager), _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
+    : _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
       _particleManager(particleManager)
   {
   }
@@ -29,7 +28,6 @@ namespace Base
     // Push new scen to the stack and enter it
     _scenes.push(_factories.at(scene)());
     _scenes.top()->SetEntityManager(_entityManager);
-    _scenes.top()->SetUIManager(_uiManager);
     _scenes.top()->SetParticleManager(_particleManager);
     _scenes.top()->Enter(_systemManager, _assetManager, sceneData);
   }
@@ -138,6 +136,14 @@ namespace Base
     else
     {
       THROW_BASE_RUNTIME_ERROR("Registration of duplicate scene");
+    }
+  }
+
+  void SceneManager::OnInputEvent(std::shared_ptr<InputEvent> &event)
+  {
+    if (!_scenes.empty())
+    {
+      _scenes.top()->OnInputEvent(event);
     }
   }
 } // namespace Base

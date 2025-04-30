@@ -1,9 +1,9 @@
 #pragma once
 namespace Base
 {
-  class Event
+  class Signal
   {
   public:
-    virtual ~Event() = default;
+    virtual ~Signal() = default;
   };
 } // namespace Base

@@ -1,5 +1,5 @@
 #pragma once
-#include "Event.hpp"
+#include "Signal.hpp"
 #include "base/util/Exception.hpp"
 #include <functional>
 #include <memory>
@@ -11,25 +11,25 @@
 
 namespace Base
 {
-  class EventBus
+  class SignalManager
   {
-    using EventHandler = std::function<void(const std::shared_ptr<Event> &)>;
+    using SignalHandler = std::function<void(const std::shared_ptr<Signal> &)>;
 
   private:
-    static EventBus *_instance;
+    static SignalManager *_instance;
 
   private:
-    std::unordered_map<std::type_index, std::vector<EventHandler>> _handlers = {};
+    std::unordered_map<std::type_index, std::vector<SignalHandler>> _handlers = {};
 
   public:
-    static EventBus *GetInstance();
+    static SignalManager *GetInstance();
 
-    template <typename T> void SubscribeEvent(EventHandler handler)
+    template <typename T> void SubscribeSignal(SignalHandler &handler)
     {
-      // Check if T is a derivative of Base::Event
-      if (!std::is_base_of_v<Event, T>)
+      // Check if T is a derivative of Base::Signal
+      if (!std::is_base_of_v<Signal, T>)
       {
-        THROW_BASE_RUNTIME_ERROR("T must be a derivative of the  Event class");
+        THROW_BASE_RUNTIME_ERROR("T must be a derivative of the  Signal class");
       }
 
       // Get the event ID
@@ -46,6 +46,6 @@ namespace Base
       _handlers.at(id).emplace_back(std::move(handler));
     }
 
-    void Dispatch(const std::shared_ptr<Event> &);
+    void BroadCastSignal(const std::shared_ptr<Signal> &);
   };
 } // namespace Base

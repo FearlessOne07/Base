@@ -1,5 +1,6 @@
 #pragma once
 #include "base/entities/Entity.hpp"
+#include "base/input/InputEvent.hpp"
 
 namespace Base
 {
@@ -24,5 +25,6 @@ namespace Base
     void Activate();
     void Deactivate();
     bool IsActive() const;
+    virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
   };
 } // namespace Base

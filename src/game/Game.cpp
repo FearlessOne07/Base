@@ -7,6 +7,7 @@
 #include "internal/input/InputManager.hpp"
 #include "raylib.h"
 #include <algorithm>
+#include <memory>
 #include <utility>
 
 namespace Base
@@ -16,7 +17,6 @@ namespace Base
   {
     // Initialize Raylib
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(1280, 720, title);
     SetExitKey(0);
     SetWindowMinSize(1280, 720);
@@ -32,13 +32,14 @@ namespace Base
     _running = true;
 
     // Init Systems
-    _uiManager.Init();
     _particleManager.Init();
     _scenemanager.SetQuitCallBack([this]() { this->Quit(); });
 
+    _inpMan.RegisterListener(std::shared_ptr<InputListener>(&_scenemanager));
+
     // Initialize render context
     auto windowWidth = static_cast<float>(GetScreenWidth());
-    float windowHeight = static_cast<float>(GetScreenHeight());
+    auto windowHeight = static_cast<float>(GetScreenHeight());
     float scale = std::min( //
       (float)windowWidth / _gameWidth,
       (float)windowHeight / _gameHeight //
@@ -60,15 +61,9 @@ namespace Base
   {
     while (!WindowShouldClose() && _running)
     {
-      // Update InputManager
-      _inpMan.PollAndDispatch();
-
-      // Update UI
-      _uiManager.Update();
-
       // Update render context
-      float windowWidth = static_cast<float>(GetScreenWidth());
-      float windowHeight = static_cast<float>(GetScreenHeight());
+      auto windowWidth = static_cast<float>(GetScreenWidth());
+      auto windowHeight = static_cast<float>(GetScreenHeight());
       float scale = std::min(             //
         (float)windowWidth / _gameWidth,  //
         (float)windowHeight / _gameHeight //
@@ -89,11 +84,16 @@ namespace Base
       // Delta Time
       float dt = GetFrameTime();
 
-      // Update Scene mamnager
-      _scenemanager.Update(dt);
-      _entityManager.RemoveDeadEntities();
+      _inpMan.PollAndDispatch();
 
-      // InputManager Post Update
+      _scenemanager.Update(dt);
+
+      _systemmanager.Update(dt);
+
+      _particleManager.Update(dt);
+
+      // Post Update
+      _entityManager.RemoveDeadEntities();
       _inpMan.PostUpdate();
 
       // Begin rendering of Scenes

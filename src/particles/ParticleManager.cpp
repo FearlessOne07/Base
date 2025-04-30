@@ -2,6 +2,7 @@
 #include "base/particles/ParticleEmitter.hpp"
 #include "internal/particles/ParticleManagerImpl.hpp"
 #include "raylib.h"
+#include <algorithm>
 #include <random>
 #include <raymath.h>
 
@@ -163,12 +164,10 @@ namespace Base
       if (particle->lifeTimer <= 0)
       {
         particle->isActive = false;
-
-        // Swap
-        _activeParticles[i] = _activeParticles.back();
-        _activeParticles.pop_back();
         continue;
       }
+      auto dead = std::ranges::remove_if(_activeParticles, [](Particle *p) { return !p->isActive; });
+      _activeParticles.erase(dead.begin(), dead.end());
     }
   }
 

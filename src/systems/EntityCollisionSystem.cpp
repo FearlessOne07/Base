@@ -1,9 +1,9 @@
 #include "base/systems/EntityCollisionSystem.hpp"
-#include "base/entities/EntityManager.hpp"
-#include "base/signals/EventBus.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/TransformComponent.hpp"
-#include "base/events/EntityCollisionEvent.hpp"
+#include "base/entities/EntityManager.hpp"
+#include "base/signals/EntityCollisionSignal.hpp"
+#include "base/signals/SignalManager.hpp"
 #include "raylib.h"
 #include "raymath.h"
 #include <memory>
@@ -39,7 +39,7 @@ namespace Base
 
             if (collision)
             {
-              std::shared_ptr<EntityCollisionEvent> event = std::make_shared<EntityCollisionEvent>();
+              std::shared_ptr<EntityCollisionSignal> event = std::make_shared<EntityCollisionSignal>();
 
               if ( //
                 (abb1->HasTypeFlag(ColliderComponent::Type::HITBOX) &&
@@ -48,7 +48,7 @@ namespace Base
               {
                 event->hittBoxEntity = e1;
                 event->hurtBoxEntity = e2;
-                EventBus::GetInstance()->Dispatch(event);
+                SignalManager::GetInstance()->BroadCastSignal(event);
               }
               else if ( //
                 (abb2->HasTypeFlag(ColliderComponent::Type::HITBOX) &&
@@ -57,7 +57,7 @@ namespace Base
               {
                 event->hittBoxEntity = e2;
                 event->hurtBoxEntity = e1;
-                EventBus::GetInstance()->Dispatch(event);
+                SignalManager::GetInstance()->BroadCastSignal(event);
               }
             }
           }

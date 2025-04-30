@@ -1,4 +1,5 @@
 #pragma once
+#include "base/input/InputEvent.hpp"
 #include <map>
 #include <memory>
 #include <typeindex>
@@ -18,6 +19,8 @@ namespace Base
   private: // Methods
     SystemManager(EntityManager *entityManager);
     void _activateSystem(std::type_index);
+    void RegisterSystem(std::type_index, std::shared_ptr<System> system, bool isRenderSystem = false);
+    void Update(float dt);
 
   public:
     template <typename T> void ActivatSystem()
@@ -26,8 +29,7 @@ namespace Base
     }
 
     void DeactivateActiveSystems();
-    void RegisterSystem(std::type_index, std::shared_ptr<System> system, bool isRenderSystem = false);
-    void Update(float dt);
     void Render();
+    void OnInputEvent(std::shared_ptr<InputEvent> event);
   };
 } // namespace Base

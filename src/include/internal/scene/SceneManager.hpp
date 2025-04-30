@@ -1,6 +1,8 @@
 #pragma once
+#include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/SceneData.hpp"
+#include "internal/input/InputListener.hpp"
 #include <functional>
 #include <memory>
 #include <stack>
@@ -12,8 +14,7 @@ namespace Base
   class EntityManager;
   class SystemManager;
   class AssetManager;
-  class UIManager;
-  class SceneManager
+  class SceneManager : public InputListener
   {
     // Type Defs
     using QuitCallBack = std::function<void()>;
@@ -22,7 +23,6 @@ namespace Base
   private:
     QuitCallBack _quitCallBack = nullptr;
     std::unordered_map<std::type_index, FactoryCallBack> _factories;
-    UIManager *_uiManager = nullptr;
     EntityManager *_entityManager = nullptr;
     SystemManager *_systemManager = nullptr;
     AssetManager *_assetManager = nullptr;
@@ -36,14 +36,17 @@ namespace Base
     void PopScene();
 
   public:
-    SceneManager(                                                                                                   //
-      UIManager *uiManager, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
-      ParticleManager *particleManager                                                                              //
+    SceneManager(                                                                             //
+      EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
+      ParticleManager *particleManager                                                        //
     );
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory);
     void Update(float dt);
     void Render();
+
+    // Input
+    void OnInputEvent(std::shared_ptr<InputEvent> &event) override;
 
     void SetQuitCallBack(QuitCallBack quitCallback);
   };

@@ -24,4 +24,8 @@ namespace Base
   void System::Stop()
   {
   }
+
+  void System::OnInputEvent(std::shared_ptr<InputEvent> event)
+  {
+  }
 } // namespace Base

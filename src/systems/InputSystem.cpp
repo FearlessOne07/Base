@@ -1,7 +1,6 @@
 #include "base/systems/InputSystem.hpp"
-#include "base/entities/EntityManager.hpp"
-#include "base/signals/EventBus.hpp"
 #include "base/components/InputComponent.hpp"
+#include "base/entities/EntityManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include <memory>
 
@@ -9,19 +8,23 @@ namespace Base
 {
   void InputSystem::Start()
   {
-    EventBus *bus = EventBus::GetInstance();
-    bus->SubscribeEvent<KeyEvent>([this](const std::shared_ptr<Event> &event) {
-      this->OnKeyEvent(std::static_pointer_cast<KeyEvent>(event)); //
-    });
-
-    bus->SubscribeEvent<MouseButtonEvent>([this](const std::shared_ptr<Event> &event) {
-      this->OnMouseButtonEvent(std::static_pointer_cast<MouseButtonEvent>(event)); //
-    });
   }
 
   void InputSystem::Update(float dt, EntityManager *entitymanager)
   {
     _entities = entitymanager->Query<InputComponent>();
+  }
+
+  void InputSystem::OnInputEvent(std::shared_ptr<InputEvent> event)
+  {
+    if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(event))
+    {
+      OnKeyEvent(keyEvent);
+    }
+    else if (auto mouseEvent = std::dynamic_pointer_cast<MouseButtonEvent>(event))
+    {
+      OnMouseButtonEvent(mouseEvent);
+    }
   }
 
   void InputSystem::OnKeyEvent(const std::shared_ptr<KeyEvent> &event)

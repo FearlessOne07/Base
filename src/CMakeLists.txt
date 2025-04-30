@@ -22,18 +22,11 @@ set(SRC
   "./components/ColliderComponent.cpp"
   "./components/ImpulseComponent.cpp"
 
-  "./ui/UIManager.cpp"
-  "./ui/UILayer.cpp"
-  "./ui/UIElement.cpp"
-
-  "./ui/elements/UIButton.cpp"
-  "./ui/elements/UILabel.cpp"
-
   "./particles/ParticleManager.cpp"
 
   "./input/InputManager.cpp"
 
-  "./signals//EventBus.cpp"
+  "./signals/SignalManager.cpp"
 
   "./assets/AssetManager.cpp"
 

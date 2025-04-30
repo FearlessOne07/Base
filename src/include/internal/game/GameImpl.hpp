@@ -4,7 +4,6 @@
 #include "base/game/Game.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/systems/SystemManager.hpp"
-#include "base/ui/UIManager.hpp"
 #include "internal/input/InputManager.hpp"
 #include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
@@ -29,13 +28,12 @@ namespace Base
 
   private: // Systems
     InputManager _inpMan = InputManager();
-    UIManager _uiManager = UIManager();
     EntityManager _entityManager = EntityManager();
     AssetManager _assetManager = AssetManager();
     ParticleManager _particleManager = ParticleManager();
     SystemManager _systemmanager = SystemManager(&_entityManager);
-    SceneManager _scenemanager = SceneManager(                                         //
-      &_uiManager, &_entityManager, &_systemmanager, &_assetManager, &_particleManager //
+    SceneManager _scenemanager = SceneManager(                            //
+      &_entityManager, &_systemmanager, &_assetManager, &_particleManager //
     );
 
   private: // Methods

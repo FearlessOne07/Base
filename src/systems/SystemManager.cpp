@@ -1,9 +1,7 @@
 #include "base/systems/SystemManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/systems/System.hpp"
-#include <memory>
-#include <utility>
-
+#include <memory> #include <utility>
 namespace Base
 {
   SystemManager::SystemManager(EntityManager *entityManager) : _entityManager(entityManager)
@@ -72,4 +70,15 @@ namespace Base
       THROW_BASE_RUNTIME_ERROR("No Render System has been registered");
     }
   }
+
+  void SystemManager::OnInputEvent(std::shared_ptr<InputEvent> event)
+  {
+    for (auto &[id, system] : _systems)
+    {
+      if (system->IsActive())
+      {
+        system->OnInputEvent(event);
+      }
+    }
+  };
 } // namespace Base

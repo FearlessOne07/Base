@@ -4,11 +4,14 @@ namespace Base
 {
   class ParticleManager
   {
-  public:
+  private:
+    friend class Game;
     ParticleManager();
-    ~ParticleManager();
     void Init();
     void Update(float dt);
+
+  public:
+    ~ParticleManager();
     void Render();
     ParticleEmitter *AddEmitter();
 

@@ -42,14 +42,6 @@ namespace Base
     }
   }
 
-  void Scene::SetUIManager(UIManager *manager)
-  {
-    if (manager)
-    {
-      _state->uiManager = manager;
-    }
-  }
-
   void Scene::SetParticleManager(ParticleManager *manager)
   {
     if (manager)
@@ -63,11 +55,6 @@ namespace Base
     return _state->entityManager;
   }
 
-  UIManager *Scene::GetUIManager() const
-  {
-    return _state->uiManager;
-  }
-
   ParticleManager *Scene::GetParticleManager() const
   {
     return _state->particleManager;
@@ -75,5 +62,10 @@ namespace Base
 
   Scene::Scene() : _state(std::make_unique<SceneState>())
   {
+  }
+
+  void Scene::OnInputEvent(std::shared_ptr<InputEvent> &event)
+  {
+    _layerStack.OnInputEvent(event);
   }
 } // namespace Base

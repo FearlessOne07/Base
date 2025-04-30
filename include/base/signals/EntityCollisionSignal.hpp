@@ -1,10 +1,10 @@
 #include "base/entities/Entity.hpp"
-#include "base/signals/Event.hpp"
+#include "base/signals/Signal.hpp"
 #include <memory>
 
 namespace Base
 {
-  class EntityCollisionEvent : public Event
+  class EntityCollisionSignal : public Signal
   {
   public:
     std::shared_ptr<Entity> hurtBoxEntity;
