@@ -17,6 +17,7 @@ namespace Base
     [[nodiscard]] SceneTransition GetSceneTransition() const;
     void SetEntityManager(EntityManager *);
     void SetParticleManager(ParticleManager *);
+    void SetAssetManager(AssetManager *);
     void ResetSceneTransition();
     void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
 
@@ -25,28 +26,29 @@ namespace Base
       SceneTransition sceneTransition = SceneTransition();
       EntityManager *entityManager = nullptr;
       ParticleManager *particleManager = nullptr;
+      AssetManager *assetManager = nullptr;
     };
 
     std::unique_ptr<SceneState> _state;
     SceneLayerStack _layerStack;
 
-  protected: // Inclass Access
+  public:
+    Scene();
+    virtual ~Scene() = default;
+    virtual void Update(float dt, SystemManager *systemManager) = 0;
+    virtual void Enter(SystemManager *systemManager, SceneData sceneData = SceneData()) = 0;
+    virtual void Render(Base::SystemManager *systemManager) = 0;
+    virtual void Exit(SystemManager *systemManager) = 0;
+    virtual void OnInputEvent(std::shared_ptr<InputEvent> &event);
+
     [[nodiscard]] EntityManager *GetEntityManager() const;
     [[nodiscard]] ParticleManager *GetParticleManager() const;
-    SceneLayerStack GetLayerStack();
+    [[nodiscard]] AssetManager *GetAssetManager();
+    [[nodiscard]] SceneLayerStack GetLayerStack();
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())
     {
       _setSceneTransition(typeid(T), request, data);
     }
-
-  public:
-    Scene();
-    virtual ~Scene() = default;
-    virtual void Update(float dt, SystemManager *systemManager) = 0;
-    virtual void Enter(SystemManager *systemManager, AssetManager *assetManager, SceneData sceneData = SceneData()) = 0;
-    virtual void Render(Base::SystemManager *systemManager) = 0;
-    virtual void Exit(SystemManager *systemManager, AssetManager *assetManager) = 0;
-    virtual void OnInputEvent(std::shared_ptr<InputEvent> &event);
   };
 } // namespace Base

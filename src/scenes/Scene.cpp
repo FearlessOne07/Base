@@ -36,6 +36,14 @@ namespace Base
     }
   }
 
+  void Scene::SetAssetManager(AssetManager *manager)
+  {
+    if (manager)
+    {
+      _state->assetManager = manager;
+    }
+  }
+
   void Scene::SetParticleManager(ParticleManager *manager)
   {
     if (manager)
@@ -47,6 +55,11 @@ namespace Base
   EntityManager *Scene::GetEntityManager() const
   {
     return _state->entityManager;
+  }
+
+  AssetManager *Scene::GetAssetManager()
+  {
+    return _state->assetManager;
   }
 
   ParticleManager *Scene::GetParticleManager() const
