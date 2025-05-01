@@ -1,7 +1,6 @@
 set(SRC
   "./game/Game.cpp"
   "./game/RenderContextSingleton.cpp"
-  "./game/RenderContext.cpp"
 
   "./entities/EntityManager.cpp"
   "./entities/Entity.cpp"

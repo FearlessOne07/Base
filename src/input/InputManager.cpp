@@ -143,7 +143,7 @@ namespace Base
     }
   }
 
-  void InputManager::RegisterListener(std::shared_ptr<InputListener> listener)
+  void InputManager::RegisterListener(InputListener *listener)
   {
     _listenrs.push_back(listener);
   }

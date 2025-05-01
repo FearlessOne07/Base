@@ -34,7 +34,7 @@ namespace Base
     _particleManager.Init();
     _scenemanager.SetQuitCallBack([this]() { this->Quit(); });
 
-    _inpMan.RegisterListener(std::shared_ptr<InputListener>(&_scenemanager));
+    _inpMan.RegisterListener(&_scenemanager);
 
     // Initialize render context
     auto windowWidth = static_cast<float>(GetScreenWidth());
@@ -52,6 +52,11 @@ namespace Base
       .marginX = (float)marginX,
       .marginY = (float)marginY,
       .scale = scale,
+      .mousePosition =
+        {
+          (GetMousePosition().x - marginX) / scale,
+          (GetMousePosition().y - marginY) / scale,
+        },
     };
     RenderContextSingleton::UpdateInstance(&rendercontext);
   }
@@ -76,6 +81,7 @@ namespace Base
         .marginX = (float)marginX,
         .marginY = (float)marginY,
         .scale = scale,
+        .mousePosition = {(GetMousePosition().x - marginX) / scale, (GetMousePosition().y - marginY) / scale},
         .camera = rd->camera,
       };
       RenderContextSingleton::UpdateInstance(&rendercontext);

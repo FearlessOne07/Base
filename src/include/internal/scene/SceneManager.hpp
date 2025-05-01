@@ -46,7 +46,7 @@ namespace Base
     void Render();
 
     // Input
-    void OnInputEvent(std::shared_ptr<InputEvent> &event) override;
+    void OnInputEvent(std::shared_ptr<InputEvent> event) override;
 
     void SetQuitCallBack(QuitCallBack quitCallback);
   };

@@ -18,6 +18,7 @@ namespace Base
     void SetEntityManager(EntityManager *);
     void SetParticleManager(ParticleManager *);
     void SetAssetManager(AssetManager *);
+    void SetSystemManager(SystemManager *);
     void ResetSceneTransition();
     void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
 
@@ -27,6 +28,7 @@ namespace Base
       EntityManager *entityManager = nullptr;
       ParticleManager *particleManager = nullptr;
       AssetManager *assetManager = nullptr;
+      SystemManager *systemManager = nullptr;
     };
 
     std::unique_ptr<SceneState> _state;
@@ -35,16 +37,17 @@ namespace Base
   public:
     Scene();
     virtual ~Scene() = default;
-    virtual void Update(float dt, SystemManager *systemManager) = 0;
-    virtual void Enter(SystemManager *systemManager, SceneData sceneData = SceneData()) = 0;
-    virtual void Render(Base::SystemManager *systemManager) = 0;
-    virtual void Exit(SystemManager *systemManager) = 0;
-    virtual void OnInputEvent(std::shared_ptr<InputEvent> &event);
+    virtual void Update(float dt) = 0;
+    virtual void Enter(SceneData sceneData = SceneData()) = 0;
+    virtual void Render() = 0;
+    virtual void Exit() = 0;
+    virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
 
     [[nodiscard]] EntityManager *GetEntityManager() const;
+    [[nodiscard]] SystemManager *GetSystemManager() const;
     [[nodiscard]] ParticleManager *GetParticleManager() const;
     [[nodiscard]] AssetManager *GetAssetManager();
-    [[nodiscard]] SceneLayerStack GetLayerStack();
+    [[nodiscard]] SceneLayerStack &GetLayerStack();
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())
     {

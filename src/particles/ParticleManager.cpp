@@ -51,8 +51,8 @@ namespace Base
     {
       if (emitter.isEmitting)
       {
-        if (                                                                          //
-          emitter.emitionRate > 0 && emitter.emissionTimer >= 1 / emitter.emitionRate //
+        if (                                                                            //
+          emitter.emissionRate > 0 && emitter.emissionTimer >= 1 / emitter.emissionRate //
         )
         {
           emitter.emissionTimer = 0;
@@ -151,9 +151,8 @@ namespace Base
     }
 
     // Particles
-    for (int i = 0; i < _activeParticles.size(); i++)
+    for (auto particle : _activeParticles)
     {
-      Particle *particle = _activeParticles[i];
       // Position
       particle->position += particle->direction * particle->speed * dt;
       // Rotation
@@ -166,9 +165,10 @@ namespace Base
         particle->isActive = false;
         continue;
       }
-      auto dead = std::ranges::remove_if(_activeParticles, [](Particle *p) { return !p->isActive; });
-      _activeParticles.erase(dead.begin(), dead.end());
     }
+
+    auto dead = std::ranges::remove_if(_activeParticles, [](Particle *p) { return !p->isActive; });
+    _activeParticles.erase(dead.begin(), dead.end());
   }
 
   void ParticleManager::ParticleManagerImpl::Render()

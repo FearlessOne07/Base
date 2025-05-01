@@ -1,7 +1,8 @@
 #include "base/systems/SystemManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/systems/System.hpp"
-#include <memory> #include <utility>
+#include <memory>
+#include <utility>
 namespace Base
 {
   SystemManager::SystemManager(EntityManager *entityManager) : _entityManager(entityManager)
@@ -71,13 +72,17 @@ namespace Base
     }
   }
 
-  void SystemManager::OnInputEvent(std::shared_ptr<InputEvent> event)
+  void SystemManager::OnInputEvent(std::shared_ptr<InputEvent> &event)
   {
     for (auto &[id, system] : _systems)
     {
       if (system->IsActive())
       {
         system->OnInputEvent(event);
+        if (event->isHandled)
+        {
+          break;
+        }
       }
     }
   };

@@ -30,6 +30,6 @@ namespace Base
 
     void DeactivateActiveSystems();
     void Render();
-    void OnInputEvent(std::shared_ptr<InputEvent> event);
+    void OnInputEvent(std::shared_ptr<InputEvent> &event);
   };
 } // namespace Base

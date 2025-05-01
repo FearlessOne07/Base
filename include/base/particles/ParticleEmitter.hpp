@@ -25,7 +25,7 @@ namespace Base
 
     EmissionType emissionType = ParticleEmitter::EmissionType::POINT;
     bool isEmitting = true;
-    float emitionRate = 1.f;
+    float emissionRate = 1.f;
     float emissionTimer = 0.f;
 
     // Particle Spec

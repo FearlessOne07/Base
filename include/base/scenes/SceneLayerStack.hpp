@@ -1,10 +1,12 @@
 #pragma once
 #include "SceneLayer.hpp"
 #include "base/util/Exception.hpp"
-#include <map>
+#include <algorithm>
+#include <iterator>
 #include <memory>
 #include <type_traits>
 #include <typeindex>
+#include <vector>
 
 namespace Base
 {
@@ -12,7 +14,8 @@ namespace Base
   {
 
   private:
-    std::map<std::type_index, std::shared_ptr<SceneLayer>> _layers;
+    std::vector<std::shared_ptr<SceneLayer>> _layers;
+    std::vector<std::type_index> _layerIds;
     Scene *_owner = nullptr;
 
   public:
@@ -22,14 +25,16 @@ namespace Base
       if (std::is_base_of_v<SceneLayer, T>)
       {
         auto id = std::type_index(typeid(T));
-        if (_layers.find(id) == _layers.end())
+        if (std::ranges::find(_layerIds, id) == _layerIds.end())
         {
-          _layers[id] = std::make_shared<T>();
-          _layers.at(id)->_owner = _owner;
+          _layerIds.push_back(id);
+          _layers.emplace_back(std::make_shared<T>());
+          _layers.back()->_owner = _owner;
+          _layers.back()->OnAttach();
         }
         else
         {
-          THROW_BASE_RUNTIME_ERROR("Scene layer already exists");
+          THROW_BASE_RUNTIME_ERROR("Scene layer already attached");
         }
       }
       else
@@ -43,9 +48,11 @@ namespace Base
       if (std::is_base_of_v<SceneLayer, T>)
       {
         auto id = std::type_index(typeid(T));
-        if (_layers.find(id) != _layers.end())
+        if (auto it = std::ranges::find(_layerIds, id); it == _layerIds.end())
         {
-          _layers.erase(id);
+          int index = static_cast<int>(std::distance(_layerIds.begin(), it));
+          _layerIds.erase(it);
+          _layers.erase(_layers.begin() + index);
         }
         else
         {
@@ -58,7 +65,7 @@ namespace Base
       }
     }
 
-    void OnInputEvent(std::shared_ptr<InputEvent>);
+    void OnInputEvent(std::shared_ptr<InputEvent> &event);
     void Update(float dt);
     void Render();
   };

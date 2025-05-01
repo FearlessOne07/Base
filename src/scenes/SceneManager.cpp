@@ -23,14 +23,15 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene
-      _scenes.top()->Exit(_systemManager);
+      _scenes.top()->Exit();
     }
     // Push new scen to the stack and enter it
     _scenes.push(_factories.at(scene)());
     _scenes.top()->SetEntityManager(_entityManager);
     _scenes.top()->SetParticleManager(_particleManager);
     _scenes.top()->SetAssetManager(_assetManager);
-    _scenes.top()->Enter(_systemManager, sceneData);
+    _scenes.top()->SetSystemManager(_systemManager);
+    _scenes.top()->Enter(sceneData);
   }
 
   void SceneManager::PopScene()
@@ -38,14 +39,14 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene and pop it off the stack
-      _scenes.top()->Exit(_systemManager);
+      _scenes.top()->Exit();
       _scenes.pop();
     }
 
     // Enter the scene below it if there is one
     if (!_scenes.empty())
     {
-      _scenes.top()->Enter(_systemManager);
+      _scenes.top()->Enter();
     }
   }
 
@@ -54,7 +55,7 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene and pop it
-      _scenes.top()->Exit(_systemManager);
+      _scenes.top()->Exit();
       _scenes.pop();
     }
 
@@ -82,7 +83,7 @@ namespace Base
     else if (!_scenes.empty())
     {
       // Update Current Scene
-      _scenes.top()->Update(dt, _systemManager);
+      _scenes.top()->Update(dt);
 
       // Check if the current scene has requested a scene change
       SceneTransition sceneTrans = _scenes.top()->GetSceneTransition();
@@ -123,7 +124,7 @@ namespace Base
     if (!_scenes.empty())
     {
       // Render current scene
-      _scenes.top()->Render(_systemManager);
+      _scenes.top()->Render();
     }
   }
 
@@ -139,7 +140,7 @@ namespace Base
     }
   }
 
-  void SceneManager::OnInputEvent(std::shared_ptr<InputEvent> &event)
+  void SceneManager::OnInputEvent(std::shared_ptr<InputEvent> event)
   {
     if (!_scenes.empty())
     {

@@ -8,6 +8,6 @@ namespace Base
   {
   public:
     virtual ~InputListener() = default;
-    virtual void OnInputEvent(std::shared_ptr<InputEvent> &event) = 0;
+    virtual void OnInputEvent(std::shared_ptr<InputEvent> event) = 0;
   };
 } // namespace Base

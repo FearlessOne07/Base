@@ -23,7 +23,7 @@ namespace Base
   {
     _state->sceneTransition = {.request = SceneRequest::NONE, .sceneID = typeid(-1)};
   }
-  SceneLayerStack Scene::GetLayerStack()
+  SceneLayerStack &Scene::GetLayerStack()
   {
     return _layerStack;
   }
@@ -33,6 +33,14 @@ namespace Base
     if (manager)
     {
       _state->entityManager = manager;
+    }
+  }
+
+  void Scene::SetSystemManager(SystemManager *manager)
+  {
+    if (manager)
+    {
+      _state->systemManager = manager;
     }
   }
 
@@ -57,6 +65,11 @@ namespace Base
     return _state->entityManager;
   }
 
+  SystemManager *Scene::GetSystemManager() const
+  {
+    return _state->systemManager;
+  }
+
   AssetManager *Scene::GetAssetManager()
   {
     return _state->assetManager;
@@ -71,7 +84,7 @@ namespace Base
   {
   }
 
-  void Scene::OnInputEvent(std::shared_ptr<InputEvent> &event)
+  void Scene::OnInputEvent(std::shared_ptr<InputEvent> event)
   {
     _layerStack.OnInputEvent(event);
   }

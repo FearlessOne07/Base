@@ -15,12 +15,12 @@ namespace Base
     std::vector<int> _handledMousePresses;
 
     std::shared_ptr<InputEvent> _lastEvent = nullptr;
-    std::vector<std::shared_ptr<InputListener>> _listenrs;
+    std::vector<InputListener *> _listenrs;
 
   public:
     void PollAndDispatch();
     void PostUpdate();
-    void RegisterListener(std::shared_ptr<InputListener> listener);
+    void RegisterListener(InputListener *listener);
     void DispatchEvent(std::shared_ptr<InputEvent> event);
   };
 } // namespace Base
