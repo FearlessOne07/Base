@@ -21,6 +21,9 @@ namespace Base
     std::random_device _randomDevice;
     std::mt19937_64 _randomGenerator;
 
+  private:
+    void InitParticleFromEmitter(ParticleEmitter &emitter, Particle *particle);
+
   public:
     void Init();
     void Update(float dt);

@@ -44,6 +44,74 @@ namespace Base
     _activeParticles.reserve(MAX_PARTICLES);
   }
 
+  void ParticleManager::ParticleManagerImpl::InitParticleFromEmitter(ParticleEmitter &emitter, Particle *particle)
+  {
+    // General
+    particle->lifeTime = emitter.particleLifeTime;
+    particle->lifeTimer = particle->lifeTime;
+
+    // Movement
+    particle->isActive = true;
+    particle->direction = emitter.particleDirection;
+    particle->speed = emitter.particleSpeed;
+    particle->isActive = true;
+
+    // Looks
+    particle->startColor = emitter.particleStartColor;
+    particle->endColor = emitter.particleEndColor;
+    particle->shape = emitter.particleShape;
+    if (                                                           //
+      particle->shape == ParticleEmitter::ParticleShape::CIRCLE || //
+      particle->shape == ParticleEmitter::ParticleShape::POLYGON   //
+    )
+    {
+      particle->startRadius = emitter.particleStartRadius;
+      particle->endRadius = emitter.particleEndRadius;
+
+      if (particle->shape == ParticleEmitter::ParticleShape::POLYGON)
+      {
+        particle->sideNumber = emitter.particleSideNumber;
+      }
+    }
+    else if (particle->shape == ParticleEmitter::ParticleShape::RECT)
+    {
+      particle->startSize = emitter.particleStartSize;
+      particle->endSize = emitter.particleEndSize;
+    }
+    // Position
+
+    switch (emitter.emissionType)
+    {
+    case ParticleEmitter::EmissionType::POINT: {
+      particle->position = emitter.emissionPoint;
+      break;
+    }
+    case ParticleEmitter::EmissionType::LINE: {
+    }
+      particle->position.x =
+        std::uniform_real_distribution<float>(emitter.emissionLineStart.x, emitter.emissionLineEnd.x)(_randomGenerator);
+      particle->position.y =
+        std::uniform_real_distribution<float>(emitter.emissionLineStart.y, emitter.emissionLineEnd.y)(_randomGenerator);
+      break;
+    case ParticleEmitter::EmissionType::AREA: {
+    }
+      Vector2 minPosition = {
+        emitter.emissionAreaPosition.x,
+        emitter.emissionAreaPosition.y,
+      };
+      Vector2 maxPosition = {
+        emitter.emissionAreaPosition.x + emitter.emissionAreaSize.x,
+        emitter.emissionAreaPosition.y + emitter.emissionAreaSize.y,
+      };
+
+      particle->position.x = std::uniform_real_distribution<float>(minPosition.x, maxPosition.x)(_randomGenerator);
+      particle->position.y = std::uniform_real_distribution<float>(minPosition.y, maxPosition.y)(_randomGenerator);
+      break;
+    }
+
+    particle->rotationSpeed = emitter.particleRotationSpeed;
+    _activeParticles.emplace_back(particle);
+  }
   void ParticleManager::ParticleManagerImpl::Update(float dt)
   {
     // Emitters
@@ -51,108 +119,69 @@ namespace Base
     {
       if (emitter.isEmitting)
       {
-        if (                                                                            //
-          emitter.emissionRate > 0 && emitter.emissionTimer >= 1 / emitter.emissionRate //
-        )
+        if (!emitter.burst)
         {
-          emitter.emissionTimer = 0;
-
-          Particle *particle = nullptr;
-
-          for (auto &part : _particles)
-          {
-            if (!part.isActive)
-            {
-              particle = &part;
-              break;
-            }
-          }
-
-          if (!particle)
-          {
-            break;
-          }
-
-          // General
-          particle->lifeTime = emitter.particleLifeTime;
-          particle->lifeTimer = particle->lifeTime;
-
-          // Movement
-          particle->isActive = true;
-          particle->direction = emitter.particleDirection;
-          particle->speed = emitter.particleSpeed;
-          particle->isActive = true;
-
-          // Looks
-          particle->startColor = emitter.particleStartColor;
-          particle->endColor = emitter.particleEndColor;
-          particle->shape = emitter.particleShape;
-          if (                                                           //
-            particle->shape == ParticleEmitter::ParticleShape::CIRCLE || //
-            particle->shape == ParticleEmitter::ParticleShape::POLYGON   //
+          if (                                                                            //
+            emitter.emissionRate > 0 && emitter.emissionTimer >= 1 / emitter.emissionRate //
           )
           {
-            particle->startRadius = emitter.particleStartRadius;
-            particle->endRadius = emitter.particleEndRadius;
+            emitter.emissionTimer = 0;
+            Particle *particle = nullptr;
 
-            if (particle->shape == ParticleEmitter::ParticleShape::POLYGON)
+            for (auto &part : _particles)
             {
-              particle->sideNumber = emitter.particleSideNumber;
+              if (!part.isActive)
+              {
+                particle = &part;
+                break;
+              }
             }
+
+            if (!particle)
+            {
+              break;
+            }
+
+            InitParticleFromEmitter(emitter, particle);
           }
-          else if (particle->shape == ParticleEmitter::ParticleShape::RECT)
+          else
           {
-            particle->startSize = emitter.particleStartSize;
-            particle->endSize = emitter.particleEndSize;
+            emitter.emissionTimer += dt;
           }
-
-          // Position
-          switch (emitter.emissionType)
-          {
-          case ParticleEmitter::EmissionType::POINT: {
-            particle->position = emitter.emissionPoint;
-            break;
-          }
-          case ParticleEmitter::EmissionType::LINE: {
-          }
-            particle->position.x = std::uniform_real_distribution<float>( //
-              emitter.emissionLineStart.x, emitter.emissionLineEnd.x      //
-              )(_randomGenerator);
-            particle->position.y = std::uniform_real_distribution<float>( //
-              emitter.emissionLineStart.y, emitter.emissionLineEnd.y      //
-              )(_randomGenerator);
-            break;
-          case ParticleEmitter::EmissionType::AREA: {
-          }
-            Vector2 minPosition = {
-              emitter.emissionAreaPosition.x,
-              emitter.emissionAreaPosition.y,
-            };
-            Vector2 maxPosition = {
-              emitter.emissionAreaPosition.x + emitter.emissionAreaSize.x,
-              emitter.emissionAreaPosition.y + emitter.emissionAreaSize.y,
-            };
-
-            particle->position.x =
-              std::uniform_real_distribution<float>(minPosition.x, maxPosition.x)(_randomGenerator);
-            particle->position.y =
-              std::uniform_real_distribution<float>(minPosition.y, maxPosition.y)(_randomGenerator);
-            break;
-          }
-
-          particle->rotationSpeed = emitter.particleRotationSpeed;
-          _activeParticles.emplace_back(particle);
         }
         else
         {
-          emitter.emissionTimer += dt;
+          emitter.isEmitting = false;
+
+          for (int i = 0; i < emitter.burstEmissionCount; i++)
+          {
+
+            Particle *particle = nullptr;
+            for (auto &part : _particles)
+            {
+              if (!part.isActive)
+              {
+                particle = &part;
+                break;
+              }
+            }
+
+            if (!particle)
+            {
+              break;
+            }
+            emitter.initialisationFunction(emitter);
+            InitParticleFromEmitter(emitter, particle);
+          }
         }
       }
     }
 
     // Particles
-    for (auto particle : _activeParticles)
+    for (int i = 0; i < _activeParticles.size(); i++)
     {
+
+      Particle *particle = _activeParticles[i];
       // Position
       particle->position += particle->direction * particle->speed * dt;
       // Rotation
@@ -166,7 +195,6 @@ namespace Base
         continue;
       }
     }
-
     auto dead = std::ranges::remove_if(_activeParticles, [](Particle *p) { return !p->isActive; });
     _activeParticles.erase(dead.begin(), dead.end());
   }

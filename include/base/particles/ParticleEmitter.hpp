@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <functional>
 #include <raylib.h>
 namespace Base
 {
@@ -27,6 +28,13 @@ namespace Base
     bool isEmitting = true;
     float emissionRate = 1.f;
     float emissionTimer = 0.f;
+
+    bool burst = false;
+
+    float burstEmissionRate = 1.f;
+    int burstEmissionCount = 100;
+
+    std::function<void(ParticleEmitter &emitter)> initialisationFunction = nullptr;
 
     // Particle Spec
     ParticleShape particleShape = ParticleEmitter::ParticleShape::RECT;

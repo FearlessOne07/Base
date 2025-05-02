@@ -2,6 +2,7 @@
 #include "base/particles/ParticleEmitter.hpp"
 namespace Base
 {
+  class Particle;
   class ParticleManager
   {
   private:
