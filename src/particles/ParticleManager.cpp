@@ -1,5 +1,6 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/particles/ParticleEmitter.hpp"
+#include "base/util/Exception.hpp"
 #include "internal/particles/ParticleManagerImpl.hpp"
 #include "raylib.h"
 #include <algorithm>
@@ -170,6 +171,11 @@ namespace Base
             {
               break;
             }
+
+            if (!emitter.initialisationFunction)
+            {
+              THROW_BASE_RUNTIME_ERROR("Initialization function not provided for burst emitter!");
+            }
             emitter.initialisationFunction(emitter);
             InitParticleFromEmitter(emitter, particle);
           }
@@ -178,10 +184,8 @@ namespace Base
     }
 
     // Particles
-    for (int i = 0; i < _activeParticles.size(); i++)
+    for (auto particle : _activeParticles)
     {
-
-      Particle *particle = _activeParticles[i];
       // Position
       particle->position += particle->direction * particle->speed * dt;
       // Rotation
