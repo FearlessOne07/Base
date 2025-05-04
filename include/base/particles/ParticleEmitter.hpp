@@ -30,8 +30,6 @@ namespace Base
     float emissionTimer = 0.f;
 
     bool burst = false;
-
-    float burstEmissionRate = 1.f;
     int burstEmissionCount = 100;
 
     std::function<void(ParticleEmitter &emitter)> initialisationFunction = nullptr;

@@ -189,7 +189,7 @@ namespace Base
       // Position
       particle->position += particle->direction * particle->speed * dt;
       // Rotation
-      particle->rotation += particle->rotationSpeed;
+      particle->rotation += particle->rotationSpeed * dt;
 
       particle->lifeTimer -= dt;
 
