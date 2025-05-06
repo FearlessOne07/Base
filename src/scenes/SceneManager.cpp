@@ -32,6 +32,7 @@ namespace Base
     _scenes.top()->SetParticleManager(_particleManager);
     _scenes.top()->SetAssetManager(_assetManager);
     _scenes.top()->SetSystemManager(_systemManager);
+    _scenes.top()->SetCameraManager(_cameraManager);
     _scenes.top()->Enter(sceneData);
   }
 
