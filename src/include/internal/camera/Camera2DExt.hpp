@@ -1,19 +1,12 @@
 #pragma once
 
+#include "base/camera/CameraModes.hpp"
 #include "raylib.h"
-#include <cstdint>
 namespace Base
 {
   class Camera2DExt
   {
   public:
-    enum struct CameraMode : uint8_t
-    {
-      STATIC = 0,
-      BASIC_FOLLOW,
-      SMOOTH_FOLLOW
-    };
-
     // Base Raylib Camera
     Camera2D camera = {
       .offset = {0, 0},
@@ -24,7 +17,7 @@ namespace Base
 
     // Spec
     Vector2 target = {0, 0};
-    CameraMode cameraMode;
+    Camera2DExtMode cameraMode;
     float maxFollowDistance = 0.f;
     float cameraSpeed = 0.f;
   };

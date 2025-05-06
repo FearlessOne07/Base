@@ -30,7 +30,7 @@ namespace Base
     _impl->EndCameraMode();
   }
 
-  void CameraManager::SetCameraMode(Camera2DExt::CameraMode mode)
+  void CameraManager::SetCameraMode(Camera2DExtMode mode)
   {
     _impl->SetCameraMode(mode);
   }
@@ -58,13 +58,13 @@ namespace Base
   {
     switch (_camera.cameraMode)
     {
-    case Camera2DExt::CameraMode::BASIC_FOLLOW:
+    case Camera2DExtMode::BASIC_FOLLOW:
       BasicFollow(dt);
       break;
-    case Camera2DExt::CameraMode::SMOOTH_FOLLOW:
+    case Camera2DExtMode::SMOOTH_FOLLOW:
       SmoothFollow(dt);
       break;
-    case Camera2DExt::CameraMode::STATIC:
+    case Camera2DExtMode::STATIC:
       _camera.camera.target = _camera.target;
       break;
     };
@@ -85,7 +85,7 @@ namespace Base
     _camera.camera.offset = offset;
   }
 
-  void CameraManager::CameraManagerImpl::SetCameraMode(Camera2DExt::CameraMode mode)
+  void CameraManager::CameraManagerImpl::SetCameraMode(Camera2DExtMode mode)
   {
     _camera.cameraMode = mode;
   }

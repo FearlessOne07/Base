@@ -19,7 +19,7 @@ namespace Base
     void EndCameraMode();
 
     void SetCameraOffset(Vector2 offset);
-    void SetCameraMode(Camera2DExt::CameraMode mode);
+    void SetCameraMode(Camera2DExtMode mode);
     void SetCameraTarget(Vector2 offset);
     void SetCameraRotation(float rotation);
     void SetCameraZoom(float zoom);

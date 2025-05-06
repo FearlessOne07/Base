@@ -1,6 +1,5 @@
 #pragma once
-
-#include "internal/camera/Camera2DExt.hpp"
+#include "base/camera/CameraModes.hpp"
 #include "raylib.h"
 namespace Base
 {
@@ -13,7 +12,7 @@ namespace Base
     void BeginCameraMode();
     void EndCameraMode();
 
-    void SetCameraMode(Camera2DExt::CameraMode mode);
+    void SetCameraMode(Camera2DExtMode mode);
     void SetCameraOffset(Vector2 offset);
     void SetCameraTarget(Vector2 target);
     void SetCameraRotation(float rotation);
