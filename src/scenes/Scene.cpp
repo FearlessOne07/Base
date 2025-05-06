@@ -51,6 +51,13 @@ namespace Base
       _state->particleManager = manager;
     }
   }
+  void Scene::SetEntityManager(EntityManager *manager)
+  {
+    if (manager)
+    {
+      _state->entityManager = manager;
+    }
+  }
 
   void Scene::SetCameraManager(CameraManager *manager)
   {
