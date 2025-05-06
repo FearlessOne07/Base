@@ -24,5 +24,7 @@ namespace Base
   private:
     class CameraManagerImpl;
     CameraManagerImpl *_impl;
+
+  private:
   };
 } // namespace Base

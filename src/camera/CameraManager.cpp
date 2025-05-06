@@ -77,6 +77,23 @@ namespace Base
       _camera.camera.target = _camera.target;
       break;
     };
+
+    if (_shakeTimer > 0)
+    {
+      _shakeTimer -= dt;
+
+      // or keep your own time accumulato
+      float intensity = (_shakeTimer / _shakeDuration) * _shakeIntensity; // fade out
+
+      _shakeOffset.x = sinf(_shakeTimer * 20) * 10 * intensity;
+      _shakeOffset.y = cosf(_shakeTimer * 20 * 1.1f) * 10 * intensity;
+      _camera.camera.offset = (Vector2){_preShakeOffset.x + _shakeOffset.x, _preShakeOffset.x + _shakeOffset.y};
+    }
+    else
+    {
+      _shakeTimer = 0;
+      _camera.camera.offset = _preShakeOffset;
+    }
   }
 
   void CameraManager::CameraManagerImpl::BeginCameraMode()
@@ -139,5 +156,16 @@ namespace Base
     _camera.camera.target = Vector2Add(                                                                       ///
       _camera.camera.target, Vector2Scale(Vector2Normalize(velocity), _camera.cameraSpeed * speedFactor * dt) //
     );
+  }
+
+  void CameraManager::CameraManagerImpl::Shake(float duration, float intensity)
+  {
+    if (_shakeTimer == 0)
+    {
+      _shakeIntensity = intensity;
+      _shakeDuration = duration;
+      _shakeTimer = duration;
+      _preShakeOffset = _camera.camera.offset;
+    }
   }
 } // namespace Base
