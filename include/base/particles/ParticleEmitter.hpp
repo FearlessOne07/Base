@@ -37,8 +37,10 @@ namespace Base
     // Particle Spec
     ParticleShape particleShape = ParticleEmitter::ParticleShape::RECT;
     Vector2 particleDirection = {0, 0};
-    float particleSpeed = 0.f;
     float particleLifeTime = 1.f;
+
+    float particleStartSpeed = 100.f;
+    float particleEndSpeed = 0.f;
 
     Color particleStartColor = WHITE;
     Color particleEndColor = BLACK;

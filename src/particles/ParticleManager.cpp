@@ -54,7 +54,8 @@ namespace Base
     // Movement
     particle->isActive = true;
     particle->direction = emitter.particleDirection;
-    particle->speed = emitter.particleSpeed;
+    particle->startSpeed = emitter.particleStartSpeed;
+    particle->endSpeed = emitter.particleEndSpeed;
     particle->isActive = true;
 
     // Looks
@@ -186,8 +187,9 @@ namespace Base
     // Particles
     for (auto particle : _activeParticles)
     {
+      float lifePoint = 1.f - (particle->lifeTimer / particle->lifeTime);
       // Position
-      particle->position += particle->direction * particle->speed * dt;
+      particle->position += particle->direction * Lerp(particle->startSpeed, particle->endSpeed, lifePoint) * dt;
       // Rotation
       particle->rotation += particle->rotationSpeed * dt;
 

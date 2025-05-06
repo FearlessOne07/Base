@@ -41,6 +41,8 @@ namespace Base
       case CameraMode::SMOOTH_FOLLOW:
         SmoothFollow(dt, camcmp);
         break;
+      case CameraMode::STATIC:
+        break;
       };
     }
   }

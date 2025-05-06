@@ -6,8 +6,9 @@ namespace Base
 {
   enum struct CameraMode : uint8_t
   {
-    BASIC_FOLLOW = 0,
-    SMOOTH_FOLLOW = 1
+    STATIC = 0,
+    BASIC_FOLLOW,
+    SMOOTH_FOLLOW
   };
 
   struct CameraComponent : public Component

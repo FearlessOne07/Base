@@ -10,9 +10,11 @@ namespace Base
     bool isActive = false;
     Vector2 position = {0, 0};
     Vector2 direction = {0, 0};
-    float speed = 0.f;
     float lifeTime = 1.f;
     float lifeTimer = 0.f;
+
+    float startSpeed = 100.f;
+    float endSpeed = 0.f;
 
     ParticleEmitter::ParticleShape shape;
 
@@ -27,6 +29,7 @@ namespace Base
     float startRadius = 10.f;
     float endRadius = 0.f;
 
+    // Polygon
     int sideNumber = 3;
 
     // Rotation
