@@ -23,5 +23,8 @@ namespace Base
     void SetCameraTarget(Vector2 offset);
     void SetCameraRotation(float rotation);
     void SetCameraZoom(float zoom);
+
+    Vector2 GetScreenToWorld(Vector2 coordinate);
+    Vector2 GetWorldToScreen(Vector2 coordinate);
   };
 } // namespace Base

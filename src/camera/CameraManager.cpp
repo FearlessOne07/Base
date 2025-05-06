@@ -53,6 +53,15 @@ namespace Base
     _impl->SetCameraZoom(zoom);
   }
 
+  Vector2 CameraManager::GetScreenToWorld(Vector2 coordinate)
+  {
+    return _impl->GetScreenToWorld(coordinate);
+  }
+  Vector2 CameraManager::GetWorldToScreen(Vector2 coordinate)
+  {
+    return _impl->GetWorldToScreen(coordinate);
+  }
+
   // Imple
   void CameraManager::CameraManagerImpl::Update(float dt)
   {
@@ -103,6 +112,15 @@ namespace Base
   void CameraManager::CameraManagerImpl::SetCameraZoom(float zoom)
   {
     _camera.camera.zoom = zoom;
+  }
+
+  Vector2 CameraManager::CameraManagerImpl::GetScreenToWorld(Vector2 coordinate)
+  {
+    return GetScreenToWorld2D(coordinate, _camera.camera);
+  }
+  Vector2 CameraManager::CameraManagerImpl::GetWorldToScreen(Vector2 coordinate)
+  {
+    return GetWorldToScreen2D(coordinate, _camera.camera);
   }
 
   void CameraManager::CameraManagerImpl::BasicFollow(float dt)

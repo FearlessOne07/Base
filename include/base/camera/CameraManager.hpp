@@ -18,6 +18,9 @@ namespace Base
     void SetCameraRotation(float rotation);
     void SetCameraZoom(float zoom);
 
+    Vector2 GetScreenToWorld(Vector2 coordinate);
+    Vector2 GetWorldToScreen(Vector2 coordinate);
+
   private:
     class CameraManagerImpl;
     CameraManagerImpl *_impl;
