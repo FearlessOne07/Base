@@ -82,7 +82,6 @@ namespace Base
         .marginY = (float)marginY,
         .scale = scale,
         .mousePosition = {(GetMousePosition().x - marginX) / scale, (GetMousePosition().y - marginY) / scale},
-        .camera = rd->camera,
       };
       RenderContextSingleton::UpdateInstance(&rendercontext);
 

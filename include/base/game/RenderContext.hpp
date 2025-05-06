@@ -12,12 +12,6 @@ namespace Base
     float marginY = 0.f;
     float scale = 0.f;
     Vector2 mousePosition = {0, 0};
-    mutable Camera2D camera = {
-      .offset = {0, 0},
-      .target = {0, 0},
-      .rotation = 0,
-      .zoom = 1,
-    };
   };
 
 } // namespace Base
