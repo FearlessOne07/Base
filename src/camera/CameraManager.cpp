@@ -62,6 +62,11 @@ namespace Base
     return _impl->GetWorldToScreen(coordinate);
   }
 
+  void CameraManager::Shake(float duration, float intensity)
+  {
+    _impl->Shake(duration, intensity);
+  }
+
   // Imple
   void CameraManager::CameraManagerImpl::Update(float dt)
   {

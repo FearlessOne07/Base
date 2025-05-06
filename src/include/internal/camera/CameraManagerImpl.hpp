@@ -19,9 +19,9 @@ namespace Base
   private:
     void BasicFollow(float dt);
     void SmoothFollow(float dt);
-    void Shake(float duration, float intensity);
 
   public:
+    void Shake(float duration, float intensity);
     void Update(float dt);
     void BeginCameraMode();
     void EndCameraMode();

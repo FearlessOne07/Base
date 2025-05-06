@@ -20,6 +20,7 @@ namespace Base
 
     Vector2 GetScreenToWorld(Vector2 coordinate);
     Vector2 GetWorldToScreen(Vector2 coordinate);
+    void Shake(float duration, float intensity);
 
   private:
     class CameraManagerImpl;
