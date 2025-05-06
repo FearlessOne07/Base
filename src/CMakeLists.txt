@@ -14,7 +14,6 @@ set(SRC
   "./systems/MoveSystem.cpp"
   "./systems/RenderSystem.cpp"
   "./systems/InputSystem.cpp"
-  "./systems/CameraSystem.cpp"
   "./systems/EntityCollisionSystem.cpp"
 
   "./components/Component.cpp"
@@ -23,6 +22,8 @@ set(SRC
   "./components/ImpulseComponent.cpp"
 
   "./particles/ParticleManager.cpp"
+
+  "./camera/CameraManager.cpp"
 
   "./input/InputManager.cpp"
 

@@ -9,13 +9,17 @@ namespace Base
   private:
     Camera2DExt _camera = {};
 
+  private:
+    void BasicFollow(float dt);
+    void SmoothFollow(float dt);
+
   public:
     void Update(float dt);
     void BeginCameraMode();
     void EndCameraMode();
 
     void SetCameraOffset(Vector2 offset);
-    void SetCameraMode(CameraManager::CameraMode mode);
+    void SetCameraMode(Camera2DExt::CameraMode mode);
     void SetCameraTarget(Vector2 offset);
     void SetCameraRotation(float rotation);
     void SetCameraZoom(float zoom);

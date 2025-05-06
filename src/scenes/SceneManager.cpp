@@ -1,4 +1,5 @@
 #include "internal/scene/SceneManager.hpp"
+#include "base/camera/CameraManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/Scene.hpp"
@@ -11,10 +12,10 @@ namespace Base
 
   SceneManager::SceneManager( //
     EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
-    ParticleManager *particleManager //
+    ParticleManager *particleManager, CameraManager *cameraManager //
     )
     : _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
-      _particleManager(particleManager)
+      _particleManager(particleManager), _cameraManager(cameraManager)
   {
   }
 

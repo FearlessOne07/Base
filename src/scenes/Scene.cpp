@@ -28,14 +28,6 @@ namespace Base
     return _layerStack;
   }
 
-  void Scene::SetEntityManager(EntityManager *manager)
-  {
-    if (manager)
-    {
-      _state->entityManager = manager;
-    }
-  }
-
   void Scene::SetSystemManager(SystemManager *manager)
   {
     if (manager)
@@ -60,9 +52,22 @@ namespace Base
     }
   }
 
+  void Scene::SetCameraManager(CameraManager *manager)
+  {
+    if (manager)
+    {
+      _state->cameraManager = manager;
+    }
+  }
+
   EntityManager *Scene::GetEntityManager() const
   {
     return _state->entityManager;
+  }
+
+  CameraManager *Scene::GetCameraManager() const
+  {
+    return _state->cameraManager;
   }
 
   SystemManager *Scene::GetSystemManager() const
@@ -70,7 +75,7 @@ namespace Base
     return _state->systemManager;
   }
 
-  AssetManager *Scene::GetAssetManager()
+  AssetManager *Scene::GetAssetManager() const
   {
     return _state->assetManager;
   }

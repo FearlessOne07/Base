@@ -1,27 +1,21 @@
 #pragma once
 
+#include "internal/camera/Camera2DExt.hpp"
 #include "raylib.h"
-#include <cstdint>
 namespace Base
 {
   class CameraManager
   {
   public:
-    enum struct CameraMode : uint8_t
-    {
-      STATIC = 0,
-      BASIC_FOLLOW,
-      SMOOTH_FOLLOW
-    };
-
-  public:
+    CameraManager();
+    ~CameraManager();
     void Update(float dt);
     void BeginCameraMode();
     void EndCameraMode();
 
-    void SetCameraMode(CameraManager::CameraMode mode);
+    void SetCameraMode(Camera2DExt::CameraMode mode);
     void SetCameraOffset(Vector2 offset);
-    void SetCameraTarget(Vector2 offset);
+    void SetCameraTarget(Vector2 target);
     void SetCameraRotation(float rotation);
     void SetCameraZoom(float zoom);
 

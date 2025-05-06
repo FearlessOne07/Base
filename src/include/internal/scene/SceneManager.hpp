@@ -1,4 +1,5 @@
 #pragma once
+#include "base/camera/CameraManager.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/SceneData.hpp"
@@ -27,6 +28,7 @@ namespace Base
     SystemManager *_systemManager = nullptr;
     AssetManager *_assetManager = nullptr;
     ParticleManager *_particleManager = nullptr;
+    CameraManager *_cameraManager = nullptr;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
@@ -38,7 +40,7 @@ namespace Base
   public:
     SceneManager(                                                                             //
       EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
-      ParticleManager *particleManager                                                        //
+      ParticleManager *particleManager, CameraManager *cameraManager                          //
     );
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory);

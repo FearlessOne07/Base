@@ -7,6 +7,13 @@ namespace Base
   class Camera2DExt
   {
   public:
+    enum struct CameraMode : uint8_t
+    {
+      STATIC = 0,
+      BASIC_FOLLOW,
+      SMOOTH_FOLLOW
+    };
+
     // Base Raylib Camera
     Camera2D camera = {
       .offset = {0, 0},
