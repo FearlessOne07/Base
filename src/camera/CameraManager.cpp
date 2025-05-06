@@ -87,12 +87,11 @@ namespace Base
     {
       _shakeTimer -= dt;
 
-      // or keep your own time accumulato
       float intensity = (_shakeTimer / _shakeDuration) * _shakeIntensity; // fade out
 
       _shakeOffset.x = sinf(_shakeTimer * 20) * 10 * intensity;
-      _shakeOffset.y = cosf(_shakeTimer * 20 * 1.1f) * 10 * intensity;
-      _camera.camera.offset = (Vector2){_preShakeOffset.x + _shakeOffset.x, _preShakeOffset.x + _shakeOffset.y};
+      _shakeOffset.y = cosf(_shakeTimer * 20) * 10 * intensity;
+      _camera.camera.offset = {.x = _preShakeOffset.x + _shakeOffset.x, .y = _preShakeOffset.y + _shakeOffset.y};
     }
     else
     {
