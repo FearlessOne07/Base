@@ -54,25 +54,34 @@ namespace Base
             else
             {
               DrawRectangleLinesEx( //
-                {transcmp->position.x - abbcmp->positionOffset.x, transcmp->position.y - abbcmp->positionOffset.y,
-                 abbcmp->size.x, abbcmp->size.y},       //
+                {
+                  transcmp->position.x - abbcmp->positionOffset.x,
+                  transcmp->position.y - abbcmp->positionOffset.y,
+                  abbcmp->size.x,
+                  abbcmp->size.y,
+                },                                      //
                 abbcmp->nonFillThickness, abbcmp->color //
               );
             }
           }
-        }
-        else if (e->HasComponent<TextureComponent>())
-        {
-          auto *tcmp = e->GetComponent<TextureComponent>();
 
-          if (tcmp && transcmp)
+          if (e->HasComponent<TextureComponent>())
           {
-            DrawTexturePro( //
-              *tcmp->texture, tcmp->source,
-              {transcmp->position.x, transcmp->position.y, tcmp->source.width * tcmp->scale,
-               tcmp->source.height * tcmp->scale},
-              tcmp->origin, transcmp->rotation, WHITE //
-            );
+            auto *tcmp = e->GetComponent<TextureComponent>();
+
+            if (tcmp && transcmp)
+            {
+              DrawTexturePro( //
+                *tcmp->texture, tcmp->source,
+                {
+                  transcmp->position.x - abbcmp->positionOffset.x,
+                  transcmp->position.y - abbcmp->positionOffset.y,
+                  abbcmp->size.x,
+                  abbcmp->size.y,
+                },
+                {0, 0}, transcmp->rotation, WHITE //
+              );
+            }
           }
         }
       }
