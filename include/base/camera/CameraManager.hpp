@@ -8,13 +8,10 @@ namespace Base
   public:
     struct CameraShakeConfig
     {
-      float trauma = 0.f;
-      float traumaRecoverySpeed = 0.f;
-      float maxShakeOffset = 0.f;
-      float maxShakeAngle = 0.f;
-      float noiseSpeed = 0.f;
-      float noiseFrequency = 0.f;
-      float exponent = 0.f;
+      float trauma = 0.5;
+      float traumaMulitpyer = 5.f;
+
+      float shakeMagnitude = 10.f;
     };
 
   public:
@@ -35,7 +32,6 @@ namespace Base
     void Shake(CameraShakeConfig config);
 
   private:
-
   private:
     class CameraManagerImpl;
     CameraManagerImpl *_impl;

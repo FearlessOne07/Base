@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <algorithm>
+#include <cmath>
 
 namespace Base
 {
@@ -89,37 +90,25 @@ namespace Base
 
   void CameraManager::CameraManagerImpl::UpdateShake(float dt)
   {
-    if (_trauma > 0.f)
-    {
-      _trauma = std::max(0.0f, _trauma - _traumaRecoverySpeed * dt);
-    }
-    else
-    {
-      _camera.camera.offset = _preShakeOffset;
-      return;
-    }
-
     // Update time for noise animation
-    _time += dt * _noiseSpeed;
-
-    // Calculate shake amount based on trauma (using the exponent for non-linear effect)
-    float shake = std::pow(_trauma, _exponent);
+    _time += (float)std::pow(_trauma, 2) * dt * _traumaMulitpyer;
 
     // Get noise values for x, y and rotation
     int seed = GetRandomValue(1, 10000); // Random seed using Raylib's random
 
     _noise.SetSeed(seed + 1);
-    float offsetX = _maxShakeOffset * shake * _noise.GetNoise(_time * _noiseFrequency, 0.0f, 0.0f);
+    float offsetX = _noise.GetNoise(_time, 0.0f, 0.0f) * _shakeMagnitude;
 
     _noise.SetSeed(seed + 2);
-    float offsetY = _maxShakeOffset * shake * _noise.GetNoise(0.0f, _time * _noiseFrequency, 0.0f);
+    float offsetY = _noise.GetNoise(0.0f, _time, 0.0f) * _shakeMagnitude;
 
     _noise.SetSeed(seed + 3);
-    float rotation = _maxShakeAngle * shake * _noise.GetNoise(0.0f, 0.0f, _time * _noiseFrequency);
+    float rotation = _noise.GetNoise(0.0f, 0.0f, _time) * _shakeMagnitude;
 
     // Apply to camera
     _camera.camera.offset.x = offsetX + _preShakeOffset.x;
     _camera.camera.offset.y = offsetY + _preShakeOffset.y;
+    _camera.camera.rotation = rotation + _preShakeRotation;
   }
 
   void CameraManager::CameraManagerImpl::BeginCameraMode()
@@ -189,12 +178,8 @@ namespace Base
   {
     _trauma = std::min(_trauma + config.trauma, 1.0f);
 
-    _traumaRecoverySpeed = config.traumaRecoverySpeed;
-    _maxShakeOffset = config.maxShakeOffset;
-    _maxShakeAngle = config.maxShakeAngle;
-    _noiseSpeed = config.noiseSpeed;
-    _noiseFrequency = config.noiseFrequency;
-    _exponent = config.exponent;
+    _traumaMulitpyer = config.traumaMulitpyer;
+    _shakeMagnitude = config.shakeMagnitude;
 
     // Setup noise
     _noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);

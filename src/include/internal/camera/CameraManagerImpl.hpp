@@ -13,13 +13,10 @@ namespace Base
     // Shake Variables
     FastNoiseLite _noise;
 
-    float _trauma = 0.f;
-    float _traumaRecoverySpeed = 0.f;
-    float _maxShakeOffset = 0.f;
-    float _maxShakeAngle = 0.f;
-    float _noiseSpeed = 0.f;
-    float _noiseFrequency = 0.f;
-    float _exponent = 0.f;
+    float _trauma = 0.5;
+    float _traumaMulitpyer = 5.f;
+
+    float _shakeMagnitude = 10.f;
 
     float _time = 0.f;
     Vector2 _preShakeOffset = {0, 0};
