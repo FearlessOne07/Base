@@ -40,11 +40,11 @@ namespace Base
             }
             else if (abb1->shape == ColliderComponent::Shape::CIRCLE && abb2->shape == ColliderComponent::Shape::BOX)
             {
-              CircleVsBoxCollision(e1, e2, normal);
+              collision = CircleVsBoxCollision(e1, e2, normal);
             }
             else if (abb1->shape == ColliderComponent::Shape::BOX && abb2->shape == ColliderComponent::Shape::CIRCLE)
             {
-              CircleVsBoxCollision(e2, e1, normal);
+              collision = CircleVsBoxCollision(e2, e1, normal);
             }
 
             if (collision)
@@ -123,8 +123,16 @@ namespace Base
     auto *transCircle = circleEntity->GetComponent<TransformComponent>();
     auto *transBox = boxEntity->GetComponent<TransformComponent>();
 
-    float closestX = std::clamp(transCircle->position.x, transBox->position.x, transBox->position.x + colBox->size.x);
-    float closestY = std::clamp(transCircle->position.y, transBox->position.y, transBox->position.x + colBox->size.y);
+    Vector2 rectBoundsX = {
+      transBox->position.x - colBox->positionOffset.x,
+      transBox->position.x + colBox->size.x - colBox->positionOffset.x,
+    };
+    Vector2 rectBoundsY = {
+      transBox->position.y - colBox->positionOffset.y,
+      transBox->position.y + colBox->size.y - colBox->positionOffset.y,
+    };
+    float closestX = std::clamp(transCircle->position.x, rectBoundsX.x, rectBoundsX.y);
+    float closestY = std::clamp(transCircle->position.y, rectBoundsY.x, rectBoundsY.y);
 
     // Vector from closest point to circle center
     Vector2 difference = Vector2Subtract(transCircle->position, {closestX, closestY});
