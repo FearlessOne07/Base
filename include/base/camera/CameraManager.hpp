@@ -6,6 +6,18 @@ namespace Base
   class CameraManager
   {
   public:
+    struct CameraShakeConfig
+    {
+      float trauma = 0.f;
+      float traumaRecoverySpeed = 0.f;
+      float maxShakeOffset = 0.f;
+      float maxShakeAngle = 0.f;
+      float noiseSpeed = 0.f;
+      float noiseFrequency = 0.f;
+      float exponent = 0.f;
+    };
+
+  public:
     CameraManager();
     ~CameraManager();
     void Update(float dt);
@@ -20,12 +32,12 @@ namespace Base
 
     Vector2 GetScreenToWorld(Vector2 coordinate);
     Vector2 GetWorldToScreen(Vector2 coordinate);
-    void Shake(float duration, float intensity);
+    void Shake(CameraShakeConfig config);
+
+  private:
 
   private:
     class CameraManagerImpl;
     CameraManagerImpl *_impl;
-
-  private:
   };
 } // namespace Base

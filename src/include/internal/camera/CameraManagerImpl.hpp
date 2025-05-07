@@ -1,6 +1,7 @@
 #pragma once
 #include "base/camera/CameraManager.hpp"
 #include "internal/camera/Camera2DExt.hpp"
+#include "internal/utils/FastNoiseLite.hpp"
 
 namespace Base
 {
@@ -10,18 +11,26 @@ namespace Base
     Camera2DExt _camera = {};
 
     // Shake Variables
-    Vector2 _shakeOffset = {0, 0};
-    float _shakeIntensity = 0;
-    float _shakeDuration = 0;
-    float _shakeTimer = 0;
+    FastNoiseLite _noise;
+
+    float _trauma = 0.f;
+    float _traumaRecoverySpeed = 0.f;
+    float _maxShakeOffset = 0.f;
+    float _maxShakeAngle = 0.f;
+    float _noiseSpeed = 0.f;
+    float _noiseFrequency = 0.f;
+    float _exponent = 0.f;
+
+    float _time = 0.f;
     Vector2 _preShakeOffset = {0, 0};
 
   private:
     void BasicFollow(float dt);
     void SmoothFollow(float dt);
+    void UpdateShake(float dt);
 
   public:
-    void Shake(float duration, float intensity);
+    void Shake(CameraShakeConfig config);
     void Update(float dt);
     void BeginCameraMode();
     void EndCameraMode();

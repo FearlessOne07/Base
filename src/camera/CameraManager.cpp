@@ -62,9 +62,9 @@ namespace Base
     return _impl->GetWorldToScreen(coordinate);
   }
 
-  void CameraManager::Shake(float duration, float intensity)
+  void CameraManager::Shake(CameraShakeConfig config)
   {
-    _impl->Shake(duration, intensity);
+    _impl->Shake(config);
   }
 
   // Imple
@@ -83,21 +83,36 @@ namespace Base
       break;
     };
 
-    if (_shakeTimer > 0)
+    // Shake
+  }
+
+  void CameraManager::CameraManagerImpl::UpdateShake(float dt)
+  {
+    if (_trauma > 0.f)
     {
-      _shakeTimer -= dt;
-
-      float intensity = (_shakeTimer / _shakeDuration) * _shakeIntensity; // fade out
-
-      _shakeOffset.x = sinf(_shakeTimer * 20) * 10 * intensity;
-      _shakeOffset.y = cosf(_shakeTimer * 20) * 10 * intensity;
-      _camera.camera.offset = {.x = _preShakeOffset.x + _shakeOffset.x, .y = _preShakeOffset.y + _shakeOffset.y};
+      _trauma = std::max(0.0f, _trauma - _traumaRecoverySpeed * dt);
     }
     else
     {
-      _shakeTimer = 0;
       _camera.camera.offset = _preShakeOffset;
+      return;
     }
+
+    // Update time for noise animation
+    _time += dt * _noiseSpeed;
+
+    // Calculate shake amount based on trauma (using the exponent for non-linear effect)
+    float shake = std::pow(_trauma, _exponent);
+
+    // Get noise values for x, y and rotation
+    float offsetX = _maxShakeOffset * shake * _noise.GetNoise(_time * _noiseFrequency, 0.0f, 0.0f);
+    float offsetY = _maxShakeOffset * shake * _noise.GetNoise(0.0f, _time * _noiseFrequency, 0.0f);
+    float rotation = _maxShakeAngle * shake * _noise.GetNoise(0.0f, 0.0f, _time * _noiseFrequency);
+
+    // Apply to camera
+
+    _camera.camera.offset.x = offsetX + _preShakeOffset.x;
+    _camera.camera.offset.y = offsetY + _preShakeOffset.y;
   }
 
   void CameraManager::CameraManagerImpl::BeginCameraMode()
@@ -113,6 +128,7 @@ namespace Base
   void CameraManager::CameraManagerImpl::SetCameraOffset(Vector2 offset)
   {
     _camera.camera.offset = offset;
+    _preShakeOffset = offset;
   }
 
   void CameraManager::CameraManagerImpl::SetCameraMode(Camera2DExtMode mode)
@@ -162,14 +178,19 @@ namespace Base
     );
   }
 
-  void CameraManager::CameraManagerImpl::Shake(float duration, float intensity)
+  void CameraManager::CameraManagerImpl::Shake(CameraShakeConfig config)
   {
-    if (_shakeTimer == 0)
-    {
-      _shakeIntensity = intensity;
-      _shakeDuration = duration;
-      _shakeTimer = duration;
-      _preShakeOffset = _camera.camera.offset;
-    }
+    _trauma = std::min(_trauma + config.trauma, 1.0f);
+
+    _traumaRecoverySpeed = config.traumaRecoverySpeed;
+    _maxShakeOffset = config.maxShakeOffset;
+    _maxShakeAngle = config.maxShakeAngle;
+    _noiseSpeed = config.noiseSpeed;
+    _noiseFrequency = config.noiseFrequency;
+    _exponent = config.exponent;
+
+    // Setup noise
+    _noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    _noise.SetSeed(GetRandomValue(1, 10000)); // Random seed using Raylib's random
   }
 } // namespace Base
