@@ -23,6 +23,7 @@ namespace Base
 
     float _time = 0.f;
     Vector2 _preShakeOffset = {0, 0};
+    float _preShakeRotation = 0;
 
   private:
     void BasicFollow(float dt);

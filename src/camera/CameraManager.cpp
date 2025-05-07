@@ -84,6 +84,7 @@ namespace Base
     };
 
     // Shake
+    UpdateShake(dt);
   }
 
   void CameraManager::CameraManagerImpl::UpdateShake(float dt)
@@ -105,12 +106,18 @@ namespace Base
     float shake = std::pow(_trauma, _exponent);
 
     // Get noise values for x, y and rotation
+    int seed = GetRandomValue(1, 10000); // Random seed using Raylib's random
+
+    _noise.SetSeed(seed + 1);
     float offsetX = _maxShakeOffset * shake * _noise.GetNoise(_time * _noiseFrequency, 0.0f, 0.0f);
+
+    _noise.SetSeed(seed + 2);
     float offsetY = _maxShakeOffset * shake * _noise.GetNoise(0.0f, _time * _noiseFrequency, 0.0f);
+
+    _noise.SetSeed(seed + 3);
     float rotation = _maxShakeAngle * shake * _noise.GetNoise(0.0f, 0.0f, _time * _noiseFrequency);
 
     // Apply to camera
-
     _camera.camera.offset.x = offsetX + _preShakeOffset.x;
     _camera.camera.offset.y = offsetY + _preShakeOffset.y;
   }
@@ -191,6 +198,5 @@ namespace Base
 
     // Setup noise
     _noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    _noise.SetSeed(GetRandomValue(1, 10000)); // Random seed using Raylib's random
   }
 } // namespace Base
