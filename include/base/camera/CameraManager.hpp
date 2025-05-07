@@ -8,10 +8,11 @@ namespace Base
   public:
     struct CameraShakeConfig
     {
-      float trauma = 0.5;
-      float traumaMulitpyer = 5.f;
-
-      float shakeMagnitude = 10.f;
+      float trauma = 0.f;
+      float traumaDecay = 0.f;
+      float frequency = 0.f;
+      float shakeMagnitude = 0.f;
+      float shakeDuration = 0.f;
     };
 
   public:

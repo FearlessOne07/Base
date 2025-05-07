@@ -4,7 +4,6 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <algorithm>
-#include <cmath>
 
 namespace Base
 {
@@ -90,25 +89,56 @@ namespace Base
 
   void CameraManager::CameraManagerImpl::UpdateShake(float dt)
   {
-    // Update time for noise animation
-    _time += (float)std::pow(_trauma, 2) * dt * _traumaMulitpyer;
+    if (!_isShaking || _trauma <= 0.0f)
+    {
+      // Reset camera offset to pre-shake values if no trauma
+      if (_trauma <= 0.0f && _isShaking)
+      {
+        _camera.camera.offset = _preShakeOffset;
+        _isShaking = false;
+      }
+      return;
+    }
 
-    // Get noise values for x, y and rotation
-    int seed = GetRandomValue(1, 10000); // Random seed using Raylib's random
+    // Update duration if it's not indefinite (0)
+    if (_shakeDuration > 0)
+    {
+      _shakeDuration -= dt;
+      if (_shakeDuration <= 0)
+      {
+        // Force trauma to zero when duration ends
+        _trauma = 0.0f;
+        _camera.camera.offset = _preShakeOffset;
+        _isShaking = false;
+        return;
+      }
+    }
+
+    // Decay trauma over time
+    _trauma = std::max(0.0f, _trauma - _traumaDecay * dt);
+
+    // The intensity of shake should be proportional to the square of trauma
+    // This gives a more natural feel to the decay
+    float intensity = _trauma * _trauma;
+
+    // Update time for noise animation - scaled by frequency
+    _time += dt * _frequency;
+
+    // Get noise values for x and y
+    int seed = 12345; // Fixed seed for more predictable results
 
     _noise.SetSeed(seed + 1);
-    float offsetX = _noise.GetNoise(_time, 0.0f, 0.0f) * _shakeMagnitude;
+    float noiseX = _noise.GetNoise(_time, 0.0f, 0.0f);
 
     _noise.SetSeed(seed + 2);
-    float offsetY = _noise.GetNoise(0.0f, _time, 0.0f) * _shakeMagnitude;
+    float noiseY = _noise.GetNoise(0.0f, _time, 0.0f);
 
-    _noise.SetSeed(seed + 3);
-    float rotation = _noise.GetNoise(0.0f, 0.0f, _time) * _shakeMagnitude;
+    // Apply shake to camera with intensity factored in
+    float offsetX = noiseX * _shakeMagnitude * intensity;
+    float offsetY = noiseY * _shakeMagnitude * intensity;
 
-    // Apply to camera
     _camera.camera.offset.x = offsetX + _preShakeOffset.x;
     _camera.camera.offset.y = offsetY + _preShakeOffset.y;
-    _camera.camera.rotation = rotation + _preShakeRotation;
   }
 
   void CameraManager::CameraManagerImpl::BeginCameraMode()
@@ -177,11 +207,14 @@ namespace Base
   void CameraManager::CameraManagerImpl::Shake(CameraShakeConfig config)
   {
     _trauma = std::min(_trauma + config.trauma, 1.0f);
-
-    _traumaMulitpyer = config.traumaMulitpyer;
+    _traumaDecay = config.traumaDecay;
+    _frequency = config.frequency;
     _shakeMagnitude = config.shakeMagnitude;
+    _shakeDuration = config.shakeDuration;
+    _isShaking = true;
 
     // Setup noise
     _noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    _noise.SetFrequency(_frequency / 100.0f); // Scale the frequency appropriately
   }
 } // namespace Base
