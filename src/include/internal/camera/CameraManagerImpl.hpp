@@ -23,6 +23,8 @@ namespace Base
     bool _isShaking = false; // Is shake active
     Vector2 _preShakeOffset = {0, 0};
     float _preShakeRotation = 0;
+    float _initialTrauma = 0.f;
+    float _initialDuration = 0.f;
 
   private:
     void BasicFollow(float dt);

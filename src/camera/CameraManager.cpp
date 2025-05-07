@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <algorithm>
+#include <cmath>
 
 namespace Base
 {
@@ -115,17 +116,17 @@ namespace Base
     }
 
     // Decay trauma over time
-    _trauma = std::max(0.0f, _trauma - _traumaDecay * dt);
+    _trauma = _initialTrauma * (_shakeDuration / _initialDuration);
 
     // The intensity of shake should be proportional to the square of trauma
     // This gives a more natural feel to the decay
-    float intensity = _trauma * _trauma;
+    auto intensity = (float)std::pow(_trauma, 3);
 
     // Update time for noise animation - scaled by frequency
     _time += dt * _frequency;
 
     // Get noise values for x and y
-    int seed = 12345; // Fixed seed for more predictable results
+    int seed = 0x1345425; // Fixed seed for more predictable results
 
     _noise.SetSeed(seed + 1);
     float noiseX = _noise.GetNoise(_time, 0.0f, 0.0f);
@@ -206,7 +207,7 @@ namespace Base
 
   void CameraManager::CameraManagerImpl::Shake(CameraShakeConfig config)
   {
-    _trauma = std::min(_trauma + config.trauma, 1.0f);
+    _initialTrauma = std::min(_trauma + config.trauma, 1.0f);
     _traumaDecay = config.traumaDecay;
     _frequency = config.frequency;
     _shakeMagnitude = config.shakeMagnitude;
