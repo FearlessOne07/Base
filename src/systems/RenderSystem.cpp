@@ -74,39 +74,15 @@ namespace Base
               DrawTexturePro( //
                 *tcmp->texture, tcmp->source,
                 {
-                  transcmp->position.x - abbcmp->positionOffset.x,
-                  transcmp->position.y - abbcmp->positionOffset.y,
+                  transcmp->position.x,
+                  transcmp->position.y,
                   abbcmp->size.x,
                   abbcmp->size.y,
                 },
-                {0, 0}, transcmp->rotation, WHITE //
+                abbcmp->positionOffset, transcmp->rotation, WHITE //
               );
             }
           }
-        }
-      }
-    }
-
-    // ABB + Texture
-    std::vector<std::shared_ptr<Entity>> entities_tcmp_abb =
-      entitymanager->Query<ColliderComponent, TextureComponent>();
-    for (std::shared_ptr<Entity> &e : entities_tcmp_abb)
-    {
-      if (e)
-      {
-        auto *tcmp = e->GetComponent<TextureComponent>();
-        auto *abbcmp = e->GetComponent<ColliderComponent>();
-        auto *transcmp = e->GetComponent<TransformComponent>();
-
-        if (tcmp && abbcmp && !abbcmp->draw)
-        {
-          DrawTexturePro( //
-            *tcmp->texture, tcmp->source,
-            {transcmp->position.x, transcmp->position.y, tcmp->source.width * tcmp->scale,
-             tcmp->source.height * tcmp->scale},
-            tcmp->origin, 0,
-            WHITE //
-          );
         }
       }
     }

@@ -6,6 +6,7 @@
 #include "base/signals/SignalManager.hpp"
 #include "raylib.h"
 #include "raymath.h"
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -27,6 +28,7 @@ namespace Base
             auto *abb1 = e1->GetComponent<ColliderComponent>();
             auto *abb2 = e2->GetComponent<ColliderComponent>();
             bool collision = false;
+            Vector2 normal = {0, 0};
 
             if (abb1->shape == ColliderComponent::Shape::BOX && abb2->shape == ColliderComponent::Shape::BOX)
             {
@@ -36,10 +38,19 @@ namespace Base
             {
               collision = CircleVsCircleCollision(e1, e2);
             }
+            else if (abb1->shape == ColliderComponent::Shape::CIRCLE && abb2->shape == ColliderComponent::Shape::BOX)
+            {
+              CircleVsBoxCollision(e1, e2, normal);
+            }
+            else if (abb1->shape == ColliderComponent::Shape::BOX && abb2->shape == ColliderComponent::Shape::CIRCLE)
+            {
+              CircleVsBoxCollision(e2, e1, normal);
+            }
 
             if (collision)
             {
               std::shared_ptr<EntityCollisionSignal> event = std::make_shared<EntityCollisionSignal>();
+              event->collisionNormal = normal;
 
               if ( //
                 (abb1->HasTypeFlag(ColliderComponent::Type::HITBOX) &&
@@ -101,5 +112,33 @@ namespace Base
     Vector2 position2 = trans2->position - abb2->positionOffset;
 
     return CheckCollisionCircles(position1, abb1->radius, position2, abb2->radius);
+  }
+
+  bool EntityCollisionSystem::CircleVsBoxCollision(                                               //
+    std::shared_ptr<Entity> &circleEntity, std::shared_ptr<Entity> &boxEntity, Vector2 &outNormal //
+  )
+  {
+    auto *colCircle = circleEntity->GetComponent<ColliderComponent>();
+    auto *colBox = boxEntity->GetComponent<ColliderComponent>();
+    auto *transCircle = circleEntity->GetComponent<TransformComponent>();
+    auto *transBox = boxEntity->GetComponent<TransformComponent>();
+
+    float closestX = std::clamp(transCircle->position.x, transBox->position.x, transBox->position.x + colBox->size.x);
+    float closestY = std::clamp(transCircle->position.y, transBox->position.y, transBox->position.x + colBox->size.y);
+
+    // Vector from closest point to circle center
+    Vector2 difference = Vector2Subtract(transCircle->position, {closestX, closestY});
+    float distanceSq = Vector2LengthSqr(difference);
+
+    if (distanceSq < colCircle->radius * colCircle->radius)
+    {
+      float distance = sqrtf(distanceSq);
+      if (distance != 0)
+        outNormal = Vector2Scale(difference, 1.0f / distance); // Normalize
+      else
+        outNormal = {.x = 0.0f, .y = -1.0f}; // Arbitrary normal if center is exactly at the corner
+      return true;
+    }
+    return false;
   }
 } // namespace Base
