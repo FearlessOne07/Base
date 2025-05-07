@@ -11,14 +11,15 @@ namespace Base
     Camera2DExt _camera = {};
 
     // Shake Variables
-    // Shake Variables
     FastNoiseLite _noise;
     float _trauma = 0.0f;
-    float _traumaDecay = 2.0f;     // Default decay rate
-    float _frequency = 10.0f;      // Default frequency
-    float _shakeMagnitude = 10.0f; // Default magnitude
+    float _traumaMultiplyer = 2.0f;
+    float _frequency = 10.0f;
+    float _shakeMagnitude = 10.0f;
+    float _rotationMagnitude = 0.f;
     float _time = 0.0f;
-    float _shakeDuration = 0.0f; // Duration counter
+    float _shakeDuration = 0.0f;
+    int _seed = 0;
 
     bool _isShaking = false; // Is shake active
     Vector2 _preShakeOffset = {0, 0};
