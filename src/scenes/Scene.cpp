@@ -100,4 +100,14 @@ namespace Base
   {
     _layerStack.OnInputEvent(event);
   }
+
+  void Scene::Update(float dt)
+  {
+    _layerStack.Update(dt);
+  }
+
+  void Scene::Render()
+  {
+    _layerStack.Render();
+  }
 } // namespace Base

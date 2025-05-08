@@ -23,6 +23,8 @@ namespace Base
     void SetCameraManager(CameraManager *);
     void ResetSceneTransition();
     void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
+    void Render();
+    void Update(float dt);
 
     struct SceneState
     {
@@ -40,9 +42,7 @@ namespace Base
   public:
     Scene();
     virtual ~Scene() = default;
-    virtual void Update(float dt) = 0;
     virtual void Enter(SceneData sceneData = SceneData()) = 0;
-    virtual void Render() = 0;
     virtual void Exit() = 0;
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
 
