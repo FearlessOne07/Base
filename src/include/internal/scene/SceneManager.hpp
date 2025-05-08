@@ -32,6 +32,7 @@ namespace Base
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
+    std::type_index _startScene = typeid(nullptr);
 
     void PushScene(std::type_index sceneID, const SceneData &sceneData = SceneData());
     void ReplaceScene(std::type_index sceneId, const SceneData &sceneData = SceneData());

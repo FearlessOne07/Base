@@ -18,7 +18,6 @@ namespace Base
       _particleManager(particleManager), _cameraManager(cameraManager)
   {
   }
-
   void SceneManager::PushScene(std::type_index scene, const SceneData &sceneData)
   {
     if (!_scenes.empty())
@@ -93,6 +92,16 @@ namespace Base
     }
     else if (!_scenes.empty())
     {
+
+      if (_scenes.empty() && _startScene != std::type_index(typeid(nullptr)))
+      {
+        PushScene(_startScene);
+      }
+      else if (_scenes.empty() && _startScene == std::type_index(typeid(nullptr)))
+      {
+        THROW_BASE_RUNTIME_ERROR("No starting scene specified");
+      }
+
       // Update Current Scene
       _scenes.top()->Update(dt);
 
@@ -145,7 +154,7 @@ namespace Base
       _factories.insert({sceneID, std::move(factory)});
       if (startScene)
       {
-        PushScene(sceneID);
+        _startScene = sceneID;
       }
     }
     else
