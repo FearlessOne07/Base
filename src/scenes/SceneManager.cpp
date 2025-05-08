@@ -82,18 +82,7 @@ namespace Base
   {
     if (_scenes.empty() && !_factories.empty())
     {
-      std::type_index first = typeid(0);
-      for (auto &[id, factory] : _factories)
-      {
-        first = id;
-        break;
-      }
-      PushScene(first);
-    }
-    else if (!_scenes.empty())
-    {
-
-      if (_scenes.empty() && _startScene != std::type_index(typeid(nullptr)))
+      if (_startScene != std::type_index(typeid(nullptr)))
       {
         PushScene(_startScene);
       }
@@ -101,7 +90,9 @@ namespace Base
       {
         THROW_BASE_RUNTIME_ERROR("No starting scene specified");
       }
-
+    }
+    else if (!_scenes.empty())
+    {
       // Update Current Scene
       _scenes.top()->Update(dt);
 

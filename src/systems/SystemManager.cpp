@@ -1,6 +1,7 @@
 #include "base/systems/SystemManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/systems/System.hpp"
+#include <cstdlib>
 #include <memory>
 #include <utility>
 namespace Base
@@ -46,11 +47,34 @@ namespace Base
       }
     }
   }
+
+  void SystemManager::SuspendAllSystems()
+  {
+    for (auto &[id, system] : _systems)
+    {
+      if (system->IsActive())
+      {
+        system->Suspend();
+      }
+    }
+  }
+
+  void SystemManager::UnsuspendSuspendedSystems()
+  {
+    for (auto &[id, system] : _systems)
+    {
+      if (system->IsActive() && system->IsSuspended())
+      {
+        system->UnSuspend();
+      }
+    }
+  }
+
   void SystemManager::Update(float dt)
   {
     for (auto &[id, system] : _systems)
     {
-      if (id != _renderSystemID && system->IsActive())
+      if (id != _renderSystemID && system->IsActive() && !system->IsSuspended())
       {
         system->Update(dt, _entityManager);
       }

@@ -9,6 +9,7 @@ namespace Base
   {
   private:
     bool _isActive = false;
+    bool _isSupsended = false;
 
     // For the system to register events
     virtual void Start();
@@ -25,6 +26,9 @@ namespace Base
     void Activate();
     void Deactivate();
     bool IsActive() const;
+    bool IsSuspended();
+    void UnSuspend();
+    void Suspend();
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
   };
 } // namespace Base

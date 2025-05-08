@@ -29,6 +29,8 @@ namespace Base
     }
 
     void DeactivateActiveSystems();
+    void SuspendAllSystems();
+    void UnsuspendSuspendedSystems();
     void Render();
     void OnInputEvent(std::shared_ptr<InputEvent> &event);
   };

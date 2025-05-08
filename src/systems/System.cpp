@@ -17,6 +17,21 @@ namespace Base
     return _isActive;
   }
 
+  bool System::IsSuspended()
+  {
+    return _isSupsended;
+  }
+
+  void System::UnSuspend()
+  {
+    _isSupsended = false;
+  }
+
+  void System::Suspend()
+  {
+    _isSupsended = true;
+  }
+
   void System::Start()
   {
   }
