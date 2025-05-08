@@ -110,6 +110,7 @@ namespace Base
         // Force trauma to zero when duration ends
         _trauma = 0.0f;
         _camera.camera.offset = _preShakeOffset;
+        _camera.camera.rotation = _preShakeRotation;
         _isShaking = false;
         return;
       }
@@ -212,23 +213,27 @@ namespace Base
 
   void CameraManager::CameraManagerImpl::Shake(CameraShakeConfig config)
   {
-    if (!_isShaking)
+    _isShaking = true;
+    if (config.additiveTrauma)
     {
-      _isShaking = true;
       _trauma = std::min(_trauma + config.trauma, 1.0f);
-      _traumaMultiplyer = config.traumaMultiplyer;
-      _frequency = config.frequency;
-      _shakeMagnitude = config.shakeMagnitude;
-      _rotationMagnitude = config.rotationMagnitude;
-      _isShaking = true;
-
-      _shakeDuration = config.duration;
-      _initialDuration = _shakeDuration;
-
-      // Setup noise
-      _noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-      _noise.SetFrequency(_frequency / 100.0f); // Scale the frequency appropriately
-      _seed = GetRandomValue(-1507525927, 1507525927);
     }
+    else
+    {
+      _trauma = config.trauma;
+    }
+    _traumaMultiplyer = config.traumaMultiplyer;
+    _frequency = config.frequency;
+    _shakeMagnitude = config.shakeMagnitude;
+    _rotationMagnitude = config.rotationMagnitude;
+    _isShaking = true;
+
+    _shakeDuration = config.duration;
+    _initialDuration = _shakeDuration;
+
+    // Setup noise
+    _noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    _noise.SetFrequency(_frequency / 100.0f); // Scale the frequency appropriately
+    _seed = GetRandomValue(-1507525927, 1507525927);
   }
 } // namespace Base
