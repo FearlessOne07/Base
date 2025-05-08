@@ -46,7 +46,7 @@ namespace Base
   public:
     GameImpl() = default;
     void Init(int width, int height, const char *title, int fps = 0);
-    void RegisterScene(std::type_index sceneID, FactoryCallBack factory);
+    void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);
     void RegisterSystem(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem);
     void Run();
   };

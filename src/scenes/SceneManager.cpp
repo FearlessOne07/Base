@@ -4,7 +4,7 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
-#include <iostream>
+#include "base/util/Exception.hpp"
 #include <utility>
 
 namespace Base
@@ -24,10 +24,19 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene
-      _scenes.top()->Exit();
+      _scenes.top()->Suspend();
     }
     // Push new scen to the stack and enter it
-    _scenes.push(_factories.at(scene)());
+
+    if (_factories.contains(scene))
+    {
+      _scenes.push(_factories.at(scene)());
+    }
+    else
+    {
+      THROW_BASE_RUNTIME_ERROR("Specified Scene is not registered");
+    }
+
     _scenes.top()->SetEntityManager(_entityManager);
     _scenes.top()->SetParticleManager(_particleManager);
     _scenes.top()->SetAssetManager(_assetManager);
@@ -48,7 +57,7 @@ namespace Base
     // Enter the scene below it if there is one
     if (!_scenes.empty())
     {
-      _scenes.top()->Enter();
+      _scenes.top()->Resume();
     }
   }
 
@@ -97,7 +106,6 @@ namespace Base
       {
         if (sceneTrans.request == SceneRequest::QUIT)
         {
-          std::cout << "Quiting!\n";
           // Quit if the scene requests to quite the game
           _quitCallBack();
         }
@@ -130,11 +138,15 @@ namespace Base
     }
   }
 
-  void SceneManager::RegisterScene(std::type_index sceneID, FactoryCallBack factory)
+  void SceneManager::RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene)
   {
     if (_factories.find(sceneID) == _factories.end())
     {
       _factories.insert({sceneID, std::move(factory)});
+      if (startScene)
+      {
+        PushScene(sceneID);
+      }
     }
     else
     {

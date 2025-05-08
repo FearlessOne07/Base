@@ -17,13 +17,16 @@ namespace Base
     Game(Game &game) = delete;
     Game &operator=(Game &game) = delete;
 
-    template <typename T> void RegisterScene()
+    template <typename T> void RegisterScene(bool startScene = false)
     {
       // Check if T is a derivative of Base::Scene
       if (std::is_base_of<Scene, T>())
       {
         auto sceneID = std::type_index(typeid(T));
-        RegisterSceneImpl(sceneID, std::move([]() -> std::unique_ptr<Scene> { return std::make_unique<T>(); }));
+        RegisterSceneImpl( //
+          sceneID, std::move([]() -> std::unique_ptr<Scene> { return std::make_unique<T>(); }),
+          startScene //
+        );
       }
       else
       {
@@ -52,7 +55,7 @@ namespace Base
 
     // Pointer To Game Implementation
     GameImpl *_impl = nullptr;
-    void RegisterSceneImpl(std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory);
+    void RegisterSceneImpl(std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory, bool startScene);
     void RegisterSystemImpl(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem);
   };
 } // namespace Base

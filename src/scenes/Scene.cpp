@@ -110,4 +110,12 @@ namespace Base
   {
     _layerStack.Render();
   }
+
+  void Scene::Resume()
+  {
+  }
+
+  void Scene::Suspend()
+  {
+  }
 } // namespace Base

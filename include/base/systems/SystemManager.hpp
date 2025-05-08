@@ -19,7 +19,7 @@ namespace Base
   private: // Methods
     SystemManager(EntityManager *entityManager);
     void _activateSystem(std::type_index);
-    void RegisterSystem(std::type_index, std::shared_ptr<System> system, bool isRenderSystem = false);
+    void RegisterSystem(std::type_index, std::shared_ptr<System> system, bool isRenderSystem);
     void Update(float dt);
 
   public:

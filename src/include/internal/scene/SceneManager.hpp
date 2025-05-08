@@ -43,7 +43,7 @@ namespace Base
       ParticleManager *particleManager, CameraManager *cameraManager                          //
     );
     SceneManager() = default;
-    void RegisterScene(std::type_index sceneID, FactoryCallBack factory);
+    void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);
     void Update(float dt);
     void Render();
 

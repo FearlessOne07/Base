@@ -44,6 +44,8 @@ namespace Base
     virtual ~Scene() = default;
     virtual void Enter(SceneData sceneData = SceneData()) = 0;
     virtual void Exit() = 0;
+    virtual void Resume();
+    virtual void Suspend();
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
 
     [[nodiscard]] EntityManager *GetEntityManager() const;

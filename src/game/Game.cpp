@@ -133,13 +133,13 @@ namespace Base
     _running = false;
   }
 
-  void Game::GameImpl::RegisterScene(std::type_index sceneID, FactoryCallBack factory)
+  void Game::GameImpl::RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene)
   {
-    _scenemanager.RegisterScene(sceneID, std::move(factory));
+    _scenemanager.RegisterScene(sceneID, std::move(factory), startScene);
   }
 
-  void Game::GameImpl::RegisterSystem(                                                    //
-    std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem = false //
+  void Game::GameImpl::RegisterSystem(                                            //
+    std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem //
   )
   {
     _systemmanager.RegisterSystem(systemID, std::move(system), isRenderSystem);
@@ -166,12 +166,14 @@ namespace Base
     _impl->Init(width, height, title, fps);
   }
 
-  void Game::RegisterSceneImpl(std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory)
+  void Game::RegisterSceneImpl(                                                               //
+    std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory, bool startScene //
+  )
   {
-    _impl->RegisterScene(sceneID, std::move(factory));
+    _impl->RegisterScene(sceneID, std::move(factory), startScene);
   }
 
-  void Game::RegisterSystemImpl(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem = false)
+  void Game::RegisterSystemImpl(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem)
   {
     _impl->RegisterSystem(systemID, std::move(system), isRenderSystem);
   }
