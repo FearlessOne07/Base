@@ -119,9 +119,7 @@ namespace Base
     // Decay trauma over time
     float timeLeft = _shakeDuration / _initialDuration;
 
-    _trauma = Lerp(_trauma, 0, 1.f - timeLeft);
-
-    float trauma = _trauma * _traumaMultiplyer;
+    float trauma = _trauma * _traumaMultiplyer * timeLeft;
 
     // This gives a more natural feel to the decay
     float intensity = (trauma * trauma * trauma);
