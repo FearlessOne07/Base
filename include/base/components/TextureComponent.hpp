@@ -9,5 +9,6 @@ namespace Base
   {
     std::shared_ptr<Texture> texture;
     Rectangle source = {0, 0, 0, 0};
+    Vector2 targetSize = {0, 0};
   };
 } // namespace Base

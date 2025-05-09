@@ -64,24 +64,22 @@ namespace Base
               );
             }
           }
-
-          if (e->HasComponent<TextureComponent>())
+        }
+        if (e->HasComponent<TextureComponent>())
+        {
+          auto *tcmp = e->GetComponent<TextureComponent>();
+          if (tcmp && transcmp)
           {
-            auto *tcmp = e->GetComponent<TextureComponent>();
-
-            if (tcmp && transcmp)
-            {
-              DrawTexturePro( //
-                *tcmp->texture, tcmp->source,
-                {
-                  transcmp->position.x,
-                  transcmp->position.y,
-                  abbcmp->size.x,
-                  abbcmp->size.y,
-                },
-                abbcmp->positionOffset, transcmp->rotation, WHITE //
-              );
-            }
+            DrawTexturePro( //
+              *tcmp->texture, tcmp->source,
+              {
+                transcmp->position.x,
+                transcmp->position.y,
+                tcmp->targetSize.x,
+                tcmp->targetSize.y,
+              },
+              {tcmp->targetSize.x / 2, tcmp->targetSize.y / 2}, transcmp->rotation, WHITE //
+            );
           }
         }
       }
