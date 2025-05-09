@@ -1,5 +1,6 @@
 #include "base/systems/EntityCollisionSystem.hpp"
 #include "base/components/ColliderComponent.hpp"
+#include "base/components/RigidBodyComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/signals/EntityCollisionSignal.hpp"
@@ -36,7 +37,7 @@ namespace Base
             }
             else if (abb1->shape == ColliderComponent::Shape::CIRCLE && abb2->shape == ColliderComponent::Shape::CIRCLE)
             {
-              collision = CircleVsCircleCollision(e1, e2);
+              collision = CircleVsCircleCollision(e1, e2, normal);
             }
             else if (abb1->shape == ColliderComponent::Shape::CIRCLE && abb2->shape == ColliderComponent::Shape::BOX)
             {
@@ -101,9 +102,12 @@ namespace Base
     return CheckCollisionRecs(rect1, rect2);
   }
 
-  bool EntityCollisionSystem::CircleVsCircleCollision(std::shared_ptr<Entity> &e1, std::shared_ptr<Entity> &e2)
+  bool EntityCollisionSystem::CircleVsCircleCollision(                           //
+    std::shared_ptr<Entity> &e1, std::shared_ptr<Entity> &e2, Vector2 &outNormal //
+  )
   {
     auto *abb1 = e1->GetComponent<ColliderComponent>();
+    auto rbcmp1 = e1->GetComponent<RigidBodyComponent>();
     auto *abb2 = e2->GetComponent<ColliderComponent>();
     auto *trans1 = e1->GetComponent<TransformComponent>();
     auto *trans2 = e2->GetComponent<TransformComponent>();
@@ -111,6 +115,7 @@ namespace Base
     Vector2 position1 = trans1->position - abb1->positionOffset;
     Vector2 position2 = trans2->position - abb2->positionOffset;
 
+    outNormal = Vector2Normalize(rbcmp1->velocity);
     return CheckCollisionCircles(position1, abb1->radius, position2, abb2->radius);
   }
 
