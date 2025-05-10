@@ -5,11 +5,12 @@ namespace Base
 {
   class UILabel : public UIElement
   {
-  public:
-    std::string text = "";
-    float fontSize = 12;
+    std::string _text = "";
+    float _fontSize = 12;
 
+  public:
     void SetText(const std::string &text);
+    void SetFontSize(float size);
     const std::string &GetText() const;
 
     void Render() override;

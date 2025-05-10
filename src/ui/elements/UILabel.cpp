@@ -15,8 +15,23 @@ namespace Base
     {
       font = GetFontDefault();
     }
-    this->text = text;
-    _size = MeasureTextEx(font, text.c_str(), fontSize, 1);
+    _text = text;
+    _size = MeasureTextEx(font, text.c_str(), _fontSize, 1);
+  }
+
+  void UILabel::SetFontSize(float size)
+  {
+    Font font;
+    if (_font)
+    {
+      font = *_font;
+    }
+    else
+    {
+      font = GetFontDefault();
+    }
+    _fontSize = size;
+    _size = MeasureTextEx(font, _text.c_str(), _fontSize, 1);
   }
 
   void UILabel::Render()
@@ -31,6 +46,6 @@ namespace Base
       font = GetFontDefault();
     }
 
-    DrawTextEx(font, text.c_str(), _position, fontSize, 1, WHITE);
+    DrawTextEx(font, _text.c_str(), _position, _fontSize, 1, WHITE);
   }
 } // namespace Base
