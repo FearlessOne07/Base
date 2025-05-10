@@ -34,7 +34,9 @@ namespace Base
       }
 
       _elementIds.emplace_back(lowerid);
-      _elements.emplace_back();
+      _elements.emplace_back(std::make_shared<T>());
+
+      return std::static_pointer_cast<T>(_elements.back());
     }
 
     template <typename T> std::shared_ptr<T> GetElement(const std::string &id)
@@ -50,7 +52,7 @@ namespace Base
       if (auto it = std::ranges::find(_elementIds, lowerid); it != _elementIds.end())
       {
         int index = static_cast<int>(std::distance(_elementIds.begin(), it));
-        return _elements[index];
+        return std::static_pointer_cast<T>(_elements[index]);
       }
       else
       {
