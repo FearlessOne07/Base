@@ -14,7 +14,6 @@ namespace Base
     Vector2 _size = {0, 0};
 
   public:
-    UIElement(std::shared_ptr<Font> font);
     void SetPosition(Vector2 position);
     void GetPosition() const;
     void SetFont(std::shared_ptr<Font> &);

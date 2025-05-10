@@ -17,10 +17,6 @@ namespace Base
     _position = position;
   }
 
-  UIElement::UIElement(std::shared_ptr<Font> font) : _font(std::move(font))
-  {
-  }
-
   void UIElement::Update(float dt)
   {
   }
