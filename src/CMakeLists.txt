@@ -5,6 +5,10 @@ set(SRC
   "./entities/EntityManager.cpp"
   "./entities/Entity.cpp"
 
+  "./ui/UILayer.cpp"
+  "./ui/UIManager.cpp"
+  "./ui/UIElement.cpp"
+
   "./scenes/SceneManager.cpp"
   "./scenes/Scene.cpp"
   "./scenes/SceneLayerStack.cpp"
