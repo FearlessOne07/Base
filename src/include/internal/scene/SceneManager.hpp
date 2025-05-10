@@ -3,6 +3,7 @@
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/SceneData.hpp"
+#include "base/ui/UIManager.hpp"
 #include "internal/input/InputListener.hpp"
 #include <functional>
 #include <memory>
@@ -29,6 +30,7 @@ namespace Base
     AssetManager *_assetManager = nullptr;
     ParticleManager *_particleManager = nullptr;
     CameraManager *_cameraManager = nullptr;
+    UIManager *_uiManager = nullptr;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
@@ -41,7 +43,7 @@ namespace Base
   public:
     SceneManager(                                                                             //
       EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
-      ParticleManager *particleManager, CameraManager *cameraManager                          //
+      ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager    //
     );
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);

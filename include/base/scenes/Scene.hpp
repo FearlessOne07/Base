@@ -3,6 +3,7 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/SceneLayerStack.hpp"
 #include "base/scenes/SceneTransition.hpp"
+#include "base/ui/UIManager.hpp"
 #include <memory>
 #include <typeindex>
 
@@ -21,6 +22,7 @@ namespace Base
     void SetAssetManager(AssetManager *);
     void SetSystemManager(SystemManager *);
     void SetCameraManager(CameraManager *);
+    void SetUIManager(UIManager *);
     void ResetSceneTransition();
     void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
     void Render();
@@ -34,6 +36,7 @@ namespace Base
       AssetManager *assetManager = nullptr;
       SystemManager *systemManager = nullptr;
       CameraManager *cameraManager = nullptr;
+      UIManager *uiManager = nullptr;
     };
 
     std::unique_ptr<SceneState> _state;
@@ -53,6 +56,7 @@ namespace Base
     [[nodiscard]] ParticleManager *GetParticleManager() const;
     [[nodiscard]] AssetManager *GetAssetManager() const;
     [[nodiscard]] CameraManager *GetCameraManager() const;
+    [[nodiscard]] UIManager *GetUIManager() const;
     [[nodiscard]] SceneLayerStack &GetLayerStack();
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())

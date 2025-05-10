@@ -7,9 +7,11 @@ namespace Base
   class Scene;
   class SceneLayer
   {
-  protected:
     friend class SceneLayerStack;
     Scene *_owner = nullptr;
+
+  protected:
+    Scene *GetOwner();
 
   public:
     virtual void Update(float dt) = 0;

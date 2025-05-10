@@ -4,6 +4,7 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
+#include "base/ui/UIManager.hpp"
 #include "base/util/Exception.hpp"
 #include <utility>
 
@@ -12,10 +13,10 @@ namespace Base
 
   SceneManager::SceneManager( //
     EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
-    ParticleManager *particleManager, CameraManager *cameraManager //
+    ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager //
     )
     : _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
-      _particleManager(particleManager), _cameraManager(cameraManager)
+      _particleManager(particleManager), _cameraManager(cameraManager), _uiManager(uiManager)
   {
   }
   void SceneManager::PushScene(std::type_index scene, const SceneData &sceneData)
@@ -41,6 +42,7 @@ namespace Base
     _scenes.top()->SetAssetManager(_assetManager);
     _scenes.top()->SetSystemManager(_systemManager);
     _scenes.top()->SetCameraManager(_cameraManager);
+    _scenes.top()->SetUIManager(_uiManager);
     _scenes.top()->Enter(sceneData);
   }
 

@@ -44,6 +44,14 @@ namespace Base
     }
   }
 
+  void Scene::SetUIManager(UIManager *manager)
+  {
+    if (manager)
+    {
+      _state->uiManager = manager;
+    }
+  }
+
   void Scene::SetParticleManager(ParticleManager *manager)
   {
     if (manager)
@@ -90,6 +98,11 @@ namespace Base
   ParticleManager *Scene::GetParticleManager() const
   {
     return _state->particleManager;
+  }
+
+  UIManager *Scene::GetUIManager() const
+  {
+    return _state->uiManager;
   }
 
   Scene::Scene() : _layerStack(this), _state(std::make_unique<SceneState>())
