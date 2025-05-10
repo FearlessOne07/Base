@@ -8,7 +8,6 @@
 #include <memory>
 #include <string>
 #include <type_traits>
-#include <unordered_map>
 #include <vector>
 namespace Base
 {
@@ -62,6 +61,7 @@ namespace Base
     void RemoveElement(const std::string &id);
     void OnInputEvent(std::shared_ptr<InputEvent> &event);
     void Render();
+    void Update(float dt);
   };
 
 } // namespace Base

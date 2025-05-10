@@ -35,4 +35,12 @@ namespace Base
       THROW_BASE_RUNTIME_ERROR("Element " + id + " isn't registerd in layer");
     }
   }
+
+  void UILayer::Update(float dt)
+  {
+    for (auto &element : _elements)
+    {
+      element->Update(dt);
+    }
+  }
 } // namespace Base

@@ -65,4 +65,12 @@ namespace Base
     }
     _layers.at(lowerID).Render();
   }
+
+  void UIManager::Update(float dt)
+  {
+    for (auto &[id, layer] : _layers)
+    {
+      layer.Update(dt);
+    }
+  }
 } // namespace Base

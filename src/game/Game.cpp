@@ -92,6 +92,8 @@ namespace Base
 
       _scenemanager.Update(dt);
 
+      _uimanager.Update(dt);
+
       _cameraManager.Update(dt);
 
       _systemmanager.Update(dt);
