@@ -15,8 +15,10 @@ namespace Base
 
   public:
     void SetPosition(Vector2 position);
-    void GetPosition() const;
-    void SetFont(std::shared_ptr<Font> &);
+    void SetFont(const std::shared_ptr<Font> &);
+    Vector2 GetPosition() const;
+    Vector2 GetSize() const;
+
     virtual void Render() = 0;
     virtual void OnInputEvent(std::shared_ptr<InputEvent> &event);
     virtual void Update(float dt);

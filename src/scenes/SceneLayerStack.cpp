@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <ranges>
 
 #include "base/scenes/SceneLayerStack.hpp"
@@ -36,4 +37,15 @@ namespace Base
       _layer->Render();
     }
   }
+
+  void SceneLayerStack::DetachLayers()
+  {
+    for (auto &_layer : _layers)
+    {
+      _layer->OnDetach();
+    }
+    _layers.clear();
+    _layerIds.clear();
+  }
+
 } // namespace Base

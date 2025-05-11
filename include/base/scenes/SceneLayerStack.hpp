@@ -14,9 +14,13 @@ namespace Base
   {
 
   private:
+    friend class Scene;
     std::vector<std::shared_ptr<SceneLayer>> _layers;
     std::vector<std::type_index> _layerIds;
     Scene *_owner = nullptr;
+
+    // Methods
+    void DetachLayers();
 
   public:
     SceneLayerStack(Scene *owner);
@@ -35,28 +39,6 @@ namespace Base
         else
         {
           THROW_BASE_RUNTIME_ERROR("Scene layer already attached");
-        }
-      }
-      else
-      {
-        THROW_BASE_RUNTIME_ERROR("T must be a derivative of SceneLayer");
-      }
-    }
-
-    template <typename T> void DetachLayer()
-    {
-      if (std::is_base_of_v<SceneLayer, T>)
-      {
-        auto id = std::type_index(typeid(T));
-        if (auto it = std::ranges::find(_layerIds, id); it == _layerIds.end())
-        {
-          int index = static_cast<int>(std::distance(_layerIds.begin(), it));
-          _layerIds.erase(it);
-          _layers.erase(_layers.begin() + index);
-        }
-        else
-        {
-          THROW_BASE_RUNTIME_ERROR("Scene layer does not exist");
         }
       }
       else

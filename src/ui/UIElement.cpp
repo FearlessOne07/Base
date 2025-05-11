@@ -1,10 +1,8 @@
-#include <utility>
-
 #include "base/ui/UIElement.hpp"
 
 namespace Base
 {
-  void UIElement::SetFont(std::shared_ptr<Font> &font)
+  void UIElement::SetFont(const std::shared_ptr<Font> &font)
   {
     if (font)
     {
@@ -17,6 +15,15 @@ namespace Base
     _position = position;
   }
 
+  Vector2 UIElement::GetPosition() const
+  {
+    return _position;
+  }
+
+  Vector2 UIElement::GetSize() const
+  {
+    return _size;
+  }
   void UIElement::Update(float dt)
   {
   }

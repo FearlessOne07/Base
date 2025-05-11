@@ -51,7 +51,7 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene and pop it off the stack
-      _scenes.top()->Exit();
+      _scenes.top()->_exit();
       _scenes.pop();
     }
 

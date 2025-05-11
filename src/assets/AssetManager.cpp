@@ -95,6 +95,32 @@ namespace Base
     }
   }
 
+  template <> std::shared_ptr<Font> AssetManager::LoadAsset<Font>(const fs::path &path)
+  {
+    if (fs::exists(path))
+    {
+      std::string name = path.stem().string();
+      std::string fullpath = path.string();
+
+      if (_assets.find(name) == _assets.end())
+      {
+        _assets[name] = std::make_shared<Font>(LoadFontEx(fullpath.c_str(), 512, nullptr, 0));
+        return std::static_pointer_cast<Font>(_assets.at(name));
+      }
+      else
+      {
+        std::stringstream error;
+        error << "Repeated loading of font '" << name << "'";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+    } else
+    {
+      std::stringstream error;
+      error << "Cannot find font file'" << path.string() << "'";
+      THROW_BASE_RUNTIME_ERROR(error.str());
+    }
+  }
+
   template <> std::shared_ptr<Texture> AssetManager::GetAsset<Texture>(const std::string &name)
   {
 
@@ -129,6 +155,18 @@ namespace Base
     return std::static_pointer_cast<Sound>(_assets.at(name));
   }
 
+  template <> std::shared_ptr<Font> AssetManager::GetAsset<Font>(const std::string &name)
+  {
+
+    if (_assets.find(name) == _assets.end())
+    {
+      std::stringstream error;
+      error << "Font '" << name << "' does not exist";
+      THROW_BASE_RUNTIME_ERROR(error.str());
+    }
+    return std::static_pointer_cast<Font>(_assets.at(name));
+  }
+
   template <> void AssetManager::UnloadAsset<Texture>(const std::string &name)
   {
     if (_assets.find(name) != _assets.end())
@@ -143,6 +181,7 @@ namespace Base
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
+
   template <> void AssetManager::UnloadAsset<Music>(const std::string &name)
   {
     if (_assets.find(name) != _assets.end())
@@ -169,6 +208,21 @@ namespace Base
     {
       std::stringstream error;
       error << "Sound '" << name << "' does not exist";
+      THROW_BASE_RUNTIME_ERROR(error.str());
+    }
+  }
+
+  template <> void AssetManager::UnloadAsset<Font>(const std::string &name)
+  {
+    if (_assets.find(name) != _assets.end())
+    {
+      UnloadFont(*std::static_pointer_cast<Font>(_assets.at(name)));
+      _assets.erase(name);
+    }
+    else
+    {
+      std::stringstream error;
+      error << "Font '" << name << "' does not exist";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }

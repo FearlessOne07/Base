@@ -24,9 +24,12 @@ namespace Base
     void SetCameraManager(CameraManager *);
     void SetUIManager(UIManager *);
     void ResetSceneTransition();
-    void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
     void Render();
     void Update(float dt);
+    void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
+
+    // Template Methods
+    void _exit();
 
     struct SceneState
     {

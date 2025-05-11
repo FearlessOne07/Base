@@ -3,8 +3,7 @@
 #include "base/game/RenderContextSingleton.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
 #include "raylib.h"
-#include <ios>
-#include <iostream>
+#include "raymath.h"
 #include <memory>
 
 namespace Base
@@ -36,6 +35,15 @@ namespace Base
       }
     }
   }
+
+  void UIButton::SetColors(Color hoverColor, Color activeColor, Color normalColor, Color textColor)
+  {
+    _textColor = textColor;
+    _hoverColor = hoverColor;
+    _activeColor = activeColor;
+    _normalColor = normalColor;
+  }
+
   void UIButton::SetText(const std::string &text)
   {
     Font font;
@@ -83,9 +91,10 @@ namespace Base
     {
       font = GetFontDefault();
     }
-    DrawRectangleRec({_position.x, _position.y, _size.x, _size.y}, WHITE);
-    DrawTextEx(font, _text.c_str(), {_position.x + _padding.x, _position.y + _padding.y}, _fontSize, 1, BLACK);
+    DrawRectangleRec({_position.x, _position.y, _size.x, _size.y}, _color);
+    DrawTextEx(font, _text.c_str(), {_position.x + _padding.x, _position.y + _padding.y}, _fontSize, 1, _textColor);
   }
+
   void UIButton::SetPadding(Vector2 padding)
   {
     _padding = padding;
@@ -103,6 +112,16 @@ namespace Base
     else
     {
       _isHovered = false;
+    }
+
+    // Update Colors
+    if (_isHovered)
+    {
+      _color = _hoverColor;
+    }
+    else
+    {
+      _color = _normalColor;
     }
   }
 } // namespace Base

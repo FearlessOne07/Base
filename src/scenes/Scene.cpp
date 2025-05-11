@@ -131,4 +131,11 @@ namespace Base
   void Scene::Suspend()
   {
   }
+
+  // Temmplate Methods
+  void Scene::_exit()
+  {
+    _layerStack.DetachLayers();
+    Exit();
+  }
 } // namespace Base
