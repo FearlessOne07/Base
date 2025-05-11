@@ -5,7 +5,7 @@ namespace Base
 {
   class UILabel : public UIElement
   {
-    std::string _text = "";
+    std::string _text = "Label";
     float _fontSize = 12;
 
   public:

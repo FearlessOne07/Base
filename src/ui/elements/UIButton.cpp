@@ -1,0 +1,100 @@
+#include "base/ui/elements/UIButton.hpp"
+#include "base/game/RenderContext.hpp"
+#include "base/game/RenderContextSingleton.hpp"
+#include "base/input/Events/MouseButtonEvent.hpp"
+#include "raylib.h"
+#include <memory>
+
+namespace Base
+{
+
+  void UIButton::OnInputEvent(std::shared_ptr<InputEvent> &event)
+  {
+    if (auto mouseEvent = std::dynamic_pointer_cast<Base::MouseButtonEvent>(event))
+    {
+      if (                                                                                                            //
+        mouseEvent->action == Base::InputEvent::Action::HELD && mouseEvent->button == MOUSE_BUTTON_LEFT && _isHovered //
+      )
+      {
+        _isActive = true;
+      }
+      else if ( //
+        mouseEvent->action == Base::InputEvent::Action::RELEASED && mouseEvent->button == MOUSE_BUTTON_LEFT &&
+        _isActive //
+      )
+      {
+        onClick();
+        _isActive = false;
+      }
+    }
+  }
+  void UIButton::SetText(const std::string &text)
+  {
+    Font font;
+    if (_font)
+    {
+      font = *_font;
+    }
+    else
+    {
+      font = GetFontDefault();
+    }
+    _text = text;
+    _size = MeasureTextEx(font, text.c_str(), _fontSize, 1);
+
+    _size.x += _padding.x * 2;
+    _size.y += _padding.y * 2;
+  }
+
+  void UIButton::SetFontSize(float size)
+  {
+    Font font;
+    if (_font)
+    {
+      font = *_font;
+    }
+    else
+    {
+      font = GetFontDefault();
+    }
+    _fontSize = size;
+    _size = MeasureTextEx(font, _text.c_str(), _fontSize, 1);
+
+    _size.x += _padding.x * 2;
+    _size.y += _padding.y * 2;
+  }
+
+  void UIButton::Render()
+  {
+    Font font;
+    if (_font)
+    {
+      font = *_font;
+    }
+    else
+    {
+      font = GetFontDefault();
+    }
+    DrawRectangleRec({_position.x, _position.y, _size.x, _size.y}, WHITE);
+    DrawTextEx(font, _text.c_str(), {_position.x - _padding.x, _position.y - _padding.y}, _fontSize, 1, WHITE);
+  }
+  void UIButton::SetPadding(Vector2 padding)
+  {
+    _padding = padding;
+  }
+
+  void UIButton::Update(float dt)
+  {
+    const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
+    Vector2 mousePos = rd->mousePosition;
+
+    if (CheckCollisionPointRec(mousePos, {_position.x, _position.y, _size.x, _size.y}))
+    {
+      _isHovered = true;
+    }
+    else
+    {
+      _isHovered = false;
+    }
+  }
+} // namespace Base

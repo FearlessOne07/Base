@@ -9,6 +9,7 @@ set(SRC
   "./ui/UIManager.cpp"
   "./ui/UIElement.cpp"
   "./ui/elements/UILabel.cpp"
+  "./ui/elements/UIButton.cpp"
 
   "./scenes/SceneManager.cpp"
   "./scenes/Scene.cpp"
