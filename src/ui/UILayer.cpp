@@ -8,6 +8,11 @@ namespace Base
     for (auto &element : _elements)
     {
       element->OnInputEvent(event);
+
+      if (event->isHandled)
+      {
+        break;
+      }
     }
   }
   void UILayer::Render()

@@ -10,6 +10,10 @@ namespace Base
     for (auto &[id, layer] : _layers)
     {
       layer.OnInputEvent(event);
+      if (event->isHandled)
+      {
+        break;
+      }
     }
   }
 

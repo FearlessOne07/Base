@@ -3,6 +3,8 @@
 #include "base/game/RenderContextSingleton.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
 #include "raylib.h"
+#include <ios>
+#include <iostream>
 #include <memory>
 
 namespace Base
@@ -17,6 +19,7 @@ namespace Base
       )
       {
         _isActive = true;
+        event->isHandled = true;
       }
       else if ( //
         mouseEvent->action == Base::InputEvent::Action::RELEASED && mouseEvent->button == MOUSE_BUTTON_LEFT &&
@@ -24,6 +27,11 @@ namespace Base
       )
       {
         onClick();
+        _isActive = false;
+        event->isHandled = true;
+      }
+      else
+      {
         _isActive = false;
       }
     }
@@ -76,7 +84,7 @@ namespace Base
       font = GetFontDefault();
     }
     DrawRectangleRec({_position.x, _position.y, _size.x, _size.y}, WHITE);
-    DrawTextEx(font, _text.c_str(), {_position.x - _padding.x, _position.y - _padding.y}, _fontSize, 1, WHITE);
+    DrawTextEx(font, _text.c_str(), {_position.x + _padding.x, _position.y + _padding.y}, _fontSize, 1, BLACK);
   }
   void UIButton::SetPadding(Vector2 padding)
   {

@@ -9,7 +9,7 @@ namespace Base
   {
   private:
     bool _isHovered = false;
-    bool _isActive = true;
+    bool _isActive = false;
     std::string _text = "Button";
     float _fontSize = 12;
     Vector2 _padding = {10, 10};
