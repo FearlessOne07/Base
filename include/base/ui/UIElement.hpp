@@ -8,12 +8,24 @@ namespace Base
 {
   class UIElement
   {
+  public:
+    enum class AnchorPoint : uint8_t
+    {
+      CENTER = 0,
+      TOP_LEFT,
+      TOP_RIGHT,
+      BOTTOM_LEFT,
+      BOTTOM_RIGHT,
+    };
+
   protected:
     std::shared_ptr<Font> _font = nullptr;
     Vector2 _position = {0, 0};
     Vector2 _size = {0, 0};
+    AnchorPoint _anchorPoint = AnchorPoint::TOP_LEFT;
 
   public:
+    void SetAnchorPoint(AnchorPoint anchorPoint);
     void SetPosition(Vector2 position);
     void SetFont(const std::shared_ptr<Font> &);
     Vector2 GetPosition() const;
