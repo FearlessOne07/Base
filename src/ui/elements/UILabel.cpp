@@ -34,6 +34,11 @@ namespace Base
     _size = MeasureTextEx(font, _text.c_str(), _fontSize, 1);
   }
 
+  void UILabel::SetTextColor(Color color)
+  {
+    _textColor = color;
+  }
+
   void UILabel::Render()
   {
     Font font;
@@ -46,6 +51,6 @@ namespace Base
       font = GetFontDefault();
     }
 
-    DrawTextEx(font, _text.c_str(), _position, _fontSize, 1, WHITE);
+    DrawTextEx(font, _text.c_str(), _position, _fontSize, 1, _textColor);
   }
 } // namespace Base
