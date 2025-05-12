@@ -11,18 +11,18 @@
 
 namespace Base
 {
-  class SignalManager
+  class SignalBus
   {
     using SignalHandler = std::function<void(const std::shared_ptr<Signal> &)>;
 
   private:
-    static SignalManager *_instance;
+    static SignalBus *_instance;
 
   private:
     std::unordered_map<std::type_index, std::vector<SignalHandler>> _handlers = {};
 
   public:
-    static SignalManager *GetInstance();
+    static SignalBus *GetInstance();
 
     template <typename T> void SubscribeSignal(const SignalHandler &handler)
     {

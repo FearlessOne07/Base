@@ -1,19 +1,19 @@
-#include "base/signals/SignalManager.hpp"
+#include "base/signals/SignalBus.hpp"
 #include <typeindex>
 
 namespace Base
 {
-  SignalManager *SignalManager::_instance = nullptr;
-  SignalManager *SignalManager::GetInstance()
+  SignalBus *SignalBus::_instance = nullptr;
+  SignalBus *SignalBus::GetInstance()
   {
     if (!_instance)
     {
-      _instance = new SignalManager;
+      _instance = new SignalBus;
     }
     return _instance;
   }
 
-  void SignalManager::BroadCastSignal(const std::shared_ptr<Signal> &event)
+  void SignalBus::BroadCastSignal(const std::shared_ptr<Signal> &event)
   {
     auto handlerId = std::type_index(typeid(*(event)));
     auto it = _handlers.find(handlerId);

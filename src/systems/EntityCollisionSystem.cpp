@@ -4,7 +4,7 @@
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/signals/EntityCollisionSignal.hpp"
-#include "base/signals/SignalManager.hpp"
+#include "base/signals/SignalBus.hpp"
 #include "raylib.h"
 #include "raymath.h"
 #include <algorithm>
@@ -60,7 +60,7 @@ namespace Base
               {
                 event->hittBoxEntity = e1;
                 event->hurtBoxEntity = e2;
-                SignalManager::GetInstance()->BroadCastSignal(event);
+                SignalBus::GetInstance()->BroadCastSignal(event);
               }
               else if ( //
                 (abb2->HasTypeFlag(ColliderComponent::Type::HITBOX) &&
@@ -69,7 +69,7 @@ namespace Base
               {
                 event->hittBoxEntity = e2;
                 event->hurtBoxEntity = e1;
-                SignalManager::GetInstance()->BroadCastSignal(event);
+                SignalBus::GetInstance()->BroadCastSignal(event);
               }
             }
           }

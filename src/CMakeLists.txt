@@ -34,7 +34,7 @@ set(SRC
 
   "./input/InputManager.cpp"
 
-  "./signals/SignalManager.cpp"
+  "./signals/SignalBus.cpp"
 
   "./assets/AssetManager.cpp"
 
