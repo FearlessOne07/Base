@@ -16,33 +16,7 @@ namespace Base
 
   void UIElement::SetPosition(Vector2 position)
   {
-    switch (_anchorPoint)
-    {
-    case AnchorPoint::TOP_LEFT: {
-      _position = position;
-      break;
-    }
-    case AnchorPoint::TOP_RIGHT: {
-      _position.x = position.x - _size.x;
-      _position.y = position.y;
-      break;
-    }
-    case AnchorPoint::CENTER: {
-      _position.x = position.x - _size.x / 2;
-      _position.y = position.y - _size.y / 2;
-      break;
-    }
-    case AnchorPoint::BOTTOM_LEFT: {
-      _position.x = position.x;
-      _position.y = position.y - _size.y;
-      break;
-    }
-    case AnchorPoint::BOTTOM_RIGHT: {
-      _position.x = position.x - _size.x;
-      _position.y = position.y - _size.y;
-      break;
-    }
-    }
+    _setPosition = position;
   }
 
   Vector2 UIElement::GetPosition() const
@@ -54,6 +28,44 @@ namespace Base
   {
     return _size;
   }
+
+  void UIElement::_update(float dt)
+  {
+    UpdatePosition();
+    Update(dt);
+  }
+
+  void UIElement::UpdatePosition()
+  {
+    switch (_anchorPoint)
+    {
+    case AnchorPoint::TOP_LEFT: {
+      _position = _setPosition;
+      break;
+    }
+    case AnchorPoint::TOP_RIGHT: {
+      _position.x = _setPosition.x - _size.x;
+      _position.y = _setPosition.y;
+      break;
+    }
+    case AnchorPoint::CENTER: {
+      _position.x = _setPosition.x - _size.x / 2;
+      _position.y = _setPosition.y - _size.y / 2;
+      break;
+    }
+    case AnchorPoint::BOTTOM_LEFT: {
+      _position.x = _setPosition.x;
+      _position.y = _setPosition.y - _size.y;
+      break;
+    }
+    case AnchorPoint::BOTTOM_RIGHT: {
+      _position.x = _setPosition.x - _size.x;
+      _position.y = _setPosition.y - _size.y;
+      break;
+    }
+    }
+  }
+
   void UIElement::Update(float dt)
   {
   }

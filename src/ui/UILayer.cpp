@@ -45,7 +45,7 @@ namespace Base
   {
     for (auto &element : _elements)
     {
-      element->Update(dt);
+      element->_update(dt);
     }
   }
 } // namespace Base
