@@ -39,6 +39,7 @@ set(SRC
   "./assets/AssetManager.cpp"
 
   "./tween/TweenManager.cpp"
+  "./tween/TweenManager.cpp"
 
   "./util/Exception.cpp"
 )
