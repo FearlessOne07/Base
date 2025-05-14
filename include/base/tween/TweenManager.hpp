@@ -15,7 +15,8 @@ namespace Base
   public:
     void Update(float dt);
 
-    template <typename T> void AddTween(T *target, T startValue, T endValue, float duration)
+    template <typename T>
+    void AddTween(void *target, std::function<void(T)> setter, T startValue, T endValue, float duration)
     {
       if (std::is_arithmetic_v<T> && !std::is_same_v<T, bool>)
       {
@@ -23,7 +24,7 @@ namespace Base
           _tweens, [target](const std::unique_ptr<ITween> &t) { return t->GetTarget() == target; } //
         );
         _tweens.erase(dead.begin(), dead.end());
-        _tweens.emplace_back(std::make_unique<Tween<T>>(target, startValue, endValue, duration));
+        _tweens.emplace_back(std::make_unique<Tween<T>>(target, setter, startValue, endValue, duration));
       }
     }
   };
