@@ -30,7 +30,7 @@ namespace Base
     {
       _timer += dt;
 
-      float lifePoint = std::clamp<float>(1.f - (_timer / _duration), 0, 1);
+      float lifePoint = std::clamp<float>(_timer / _duration, 0, 1);
 
       if (_setter && _target)
       {
