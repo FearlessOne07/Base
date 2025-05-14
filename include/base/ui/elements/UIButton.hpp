@@ -1,5 +1,6 @@
 #pragma once
 #include "base/ui/UIElement.hpp"
+#include "base/util/AntagonisticFunction.hpp"
 #include "raylib.h"
 #include <functional>
 #include <string>
@@ -9,7 +10,6 @@ namespace Base
   class UIButton : public UIElement
   {
   private:
-    bool _isHovered = false;
     bool _isActive = false;
     std::string _text = "Button";
     float _fontSize = 12;
@@ -20,6 +20,12 @@ namespace Base
     Color _activeColor = GRAY;
     Color _textColor = BLACK;
     Color _color = _normalColor;
+
+    bool _isHovered = false;
+    bool _firstHover = false;
+
+  public:
+    AntagonisticFunction onHover;
 
   public:
     std::function<void()> onClick = nullptr;

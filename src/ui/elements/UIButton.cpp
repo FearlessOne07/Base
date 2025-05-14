@@ -108,20 +108,38 @@ namespace Base
     if (CheckCollisionPointRec(mousePos, {_position.x, _position.y, _size.x, _size.y}))
     {
       _isHovered = true;
+
+      if (!_firstHover)
+      {
+        _firstHover = true;
+      }
     }
     else
     {
       _isHovered = false;
+      if (_firstHover)
+      {
+        _firstHover = false;
+      }
     }
 
     // Update Colors
     if (_isHovered)
     {
       _color = _hoverColor;
+
+      if (onHover && _firstHover)
+      {
+        onHover.agonist();
+      }
     }
     else
     {
       _color = _normalColor;
+      if (onHover && !_firstHover)
+      {
+        onHover.agonist();
+      }
     }
   }
 } // namespace Base
