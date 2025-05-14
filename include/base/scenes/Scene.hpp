@@ -3,6 +3,7 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/SceneLayerStack.hpp"
 #include "base/scenes/SceneTransition.hpp"
+#include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include <memory>
 #include <typeindex>
@@ -23,6 +24,7 @@ namespace Base
     void SetSystemManager(SystemManager *);
     void SetCameraManager(CameraManager *);
     void SetUIManager(UIManager *);
+    void SetTweenManager(TweenManager *);
     void ResetSceneTransition();
     void Render();
     void Update(float dt);
@@ -40,6 +42,7 @@ namespace Base
       SystemManager *systemManager = nullptr;
       CameraManager *cameraManager = nullptr;
       UIManager *uiManager = nullptr;
+      TweenManager *tweenManager = nullptr;
     };
 
     std::unique_ptr<SceneState> _state;
@@ -60,6 +63,7 @@ namespace Base
     [[nodiscard]] AssetManager *GetAssetManager() const;
     [[nodiscard]] CameraManager *GetCameraManager() const;
     [[nodiscard]] UIManager *GetUIManager() const;
+    [[nodiscard]] TweenManager *GetTweenManager() const;
     [[nodiscard]] SceneLayerStack &GetLayerStack();
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())

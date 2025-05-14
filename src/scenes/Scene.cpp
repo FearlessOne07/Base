@@ -75,6 +75,14 @@ namespace Base
     }
   }
 
+  void Scene::SetTweenManager(TweenManager *manager)
+  {
+    if (manager)
+    {
+      _state->tweenManager = manager;
+    }
+  }
+
   EntityManager *Scene::GetEntityManager() const
   {
     return _state->entityManager;
@@ -103,6 +111,11 @@ namespace Base
   UIManager *Scene::GetUIManager() const
   {
     return _state->uiManager;
+  }
+
+  TweenManager *Scene::GetTweenManager() const
+  {
+    return _state->tweenManager;
   }
 
   Scene::Scene() : _layerStack(this), _state(std::make_unique<SceneState>())

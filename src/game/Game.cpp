@@ -32,9 +32,9 @@ namespace Base
 
     // Init Systems
     _particleManager.Init();
-    _scenemanager.SetQuitCallBack([this]() { this->Quit(); });
+    _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
 
-    _inpMan.RegisterListener(&_scenemanager);
+    _inpMan.RegisterListener(&_sceneManager);
 
     // Initialize render context
     auto windowWidth = static_cast<float>(GetScreenWidth());
@@ -90,15 +90,17 @@ namespace Base
 
       _inpMan.PollAndDispatch();
 
-      _scenemanager.Update(dt);
+      _sceneManager.Update(dt);
 
-      _uimanager.Update(dt);
+      _uiManager.Update(dt);
 
       _cameraManager.Update(dt);
 
-      _systemmanager.Update(dt);
+      _systemManager.Update(dt);
 
       _particleManager.Update(dt);
+
+      _tweenManager.Update(dt);
 
       // Post Update
       _entityManager.RemoveDeadEntities();
@@ -107,7 +109,7 @@ namespace Base
       // Begin rendering of Scenes
       BeginTextureMode(_renderTexture);
       ClearBackground(BLACK);
-      _scenemanager.Render();
+      _sceneManager.Render();
       EndTextureMode();
 
       // Draw Render texture to the Screen
@@ -137,14 +139,14 @@ namespace Base
 
   void Game::GameImpl::RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene)
   {
-    _scenemanager.RegisterScene(sceneID, std::move(factory), startScene);
+    _sceneManager.RegisterScene(sceneID, std::move(factory), startScene);
   }
 
   void Game::GameImpl::RegisterSystem(                                            //
     std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem //
   )
   {
-    _systemmanager.RegisterSystem(systemID, std::move(system), isRenderSystem);
+    _systemManager.RegisterSystem(systemID, std::move(system), isRenderSystem);
   }
 
   // Game Class

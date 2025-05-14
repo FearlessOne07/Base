@@ -13,10 +13,11 @@ namespace Base
 
   SceneManager::SceneManager( //
     EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
-    ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager //
+    ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager, TweenManager *tweenManager //
     )
     : _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
-      _particleManager(particleManager), _cameraManager(cameraManager), _uiManager(uiManager)
+      _particleManager(particleManager), _cameraManager(cameraManager), _uiManager(uiManager),
+      _tweenManager(tweenManager)
   {
   }
   void SceneManager::PushScene(std::type_index scene, const SceneData &sceneData)
@@ -43,6 +44,7 @@ namespace Base
     _scenes.top()->SetSystemManager(_systemManager);
     _scenes.top()->SetCameraManager(_cameraManager);
     _scenes.top()->SetUIManager(_uiManager);
+    _scenes.top()->SetTweenManager(_tweenManager);
     _scenes.top()->Enter(sceneData);
   }
 

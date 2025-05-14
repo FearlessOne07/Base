@@ -38,6 +38,8 @@ set(SRC
 
   "./assets/AssetManager.cpp"
 
+  "./tween/TweenManager.cpp"
+
   "./util/Exception.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
