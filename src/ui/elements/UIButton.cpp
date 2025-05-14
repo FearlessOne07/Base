@@ -3,7 +3,6 @@
 #include "base/game/RenderContextSingleton.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
 #include "raylib.h"
-#include "raymath.h"
 #include <memory>
 
 namespace Base
@@ -105,41 +104,31 @@ namespace Base
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
     Vector2 mousePos = rd->mousePosition;
 
-    if (CheckCollisionPointRec(mousePos, {_position.x, _position.y, _size.x, _size.y}))
-    {
-      _isHovered = true;
+    bool isCurrentlyHovered = CheckCollisionPointRec(mousePos, {_position.x, _position.y, _size.x, _size.y});
 
-      if (!_firstHover)
+    if (isCurrentlyHovered && !_isHovered)
+    {
+      // Mouse just entered the button
+      if (onHover)
       {
-        _firstHover = true;
+        onHover.flex();
       }
     }
-    else
+    else if (!isCurrentlyHovered && _isHovered)
     {
-      _isHovered = false;
-      if (_firstHover)
+      // Mouse just exited the button
+      if (onHover)
       {
-        _firstHover = false;
+        onHover.relax();
       }
     }
 
-    // Update Colors
-    if (_isHovered)
-    {
-      _color = _hoverColor;
+    _isHovered = isCurrentlyHovered;
+    _color = _isHovered ? _hoverColor : _normalColor;
+  }
 
-      if (onHover && _firstHover)
-      {
-        onHover.agonist();
-      }
-    }
-    else
-    {
-      _color = _normalColor;
-      if (onHover && !_firstHover)
-      {
-        onHover.agonist();
-      }
-    }
+  float UIButton::GetFontSize() const
+  {
+    return _fontSize;
   }
 } // namespace Base

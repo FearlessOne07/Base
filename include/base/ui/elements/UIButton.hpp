@@ -36,5 +36,7 @@ namespace Base
     void OnInputEvent(std::shared_ptr<InputEvent> &event) override;
     void Render() override;
     void Update(float dt) override;
+
+    float GetFontSize() const;
   };
 } // namespace Base

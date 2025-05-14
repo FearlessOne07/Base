@@ -1,15 +1,14 @@
 #include <functional>
-#include <optional>
 namespace Base
 {
   struct AntagonisticFunction
   {
-    std::function<void()> agonist = nullptr;
-    std::function<void()> antagonist = nullptr;
+    std::function<void()> flex = nullptr;
+    std::function<void()> relax = nullptr;
 
     operator bool()
     {
-      return !agonist && !antagonist;
+      return flex && relax;
     }
   };
 } // namespace Base
