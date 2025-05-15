@@ -42,6 +42,7 @@ set(SRC
   "./tween/ITween.cpp"
 
   "./util/Exception.cpp"
+  "./util/Easings.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 
