@@ -1,10 +1,9 @@
 #include "base/components/InputComponent.hpp"
-#include "base/ui/elements/UIButton.hpp"
 #include <utility>
 
 namespace Base
 {
-  void InputComponent::BindKeyDown(int key, AntagonisticFunction action)
+  void InputComponent::BindKeyDown(int key, std::function<void()> action)
   {
     if (keyDownBinds.find(key) == keyDownBinds.end())
     {
@@ -35,7 +34,7 @@ namespace Base
     }
   }
 
-  void InputComponent::BindMouseButtonDown(int key, AntagonisticFunction action)
+  void InputComponent::BindMouseButtonDown(int key, std::function<void()> action)
   {
     if (mouseDownBinds.find(key) == mouseDownBinds.end())
     {

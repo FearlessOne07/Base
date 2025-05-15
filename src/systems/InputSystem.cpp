@@ -26,7 +26,6 @@ namespace Base
       OnMouseButtonEvent(mouseEvent);
     }
   }
-
   void InputSystem::OnKeyEvent(const std::shared_ptr<KeyEvent> &event)
   {
     for (auto &e : _entities)
@@ -54,12 +53,8 @@ namespace Base
         {
           if (event->key == key)
           {
-            action.flex();
+            action();
             event->isHandled = true;
-          }
-          else
-          {
-            action.relax();
           }
         }
       }
@@ -104,12 +99,8 @@ namespace Base
         {
           if (event->button == key)
           {
-            action.flex();
+            action();
             event->isHandled = true;
-          }
-          else
-          {
-            action.relax();
           }
         }
       }
