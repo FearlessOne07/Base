@@ -54,8 +54,12 @@ namespace Base
         {
           if (event->key == key)
           {
-            action();
+            action.flex();
             event->isHandled = true;
+          }
+          else
+          {
+            action.relax();
           }
         }
       }
@@ -100,8 +104,12 @@ namespace Base
         {
           if (event->button == key)
           {
-            action();
+            action.flex();
             event->isHandled = true;
+          }
+          else
+          {
+            action.relax();
           }
         }
       }

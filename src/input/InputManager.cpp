@@ -1,12 +1,22 @@
 #include "internal/input/InputManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
+#include "base/signals/SceneChangedSignal.hpp"
+#include "base/signals/SignalBus.hpp"
 #include "raylib.h"
 #include <algorithm>
 #include <memory>
 
 namespace Base
 {
+  void InputManager::Init()
+  {
+    auto bus = SignalBus::GetInstance();
+    bus->SubscribeSignal<SceneChangedSignal>([this](const std::shared_ptr<Signal> &signal) {
+      this->ResetInput(signal); //
+    });
+  }
+
   void InputManager::PollAndDispatch()
   {
     // Track key state
@@ -117,15 +127,13 @@ namespace Base
     {
       if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(_lastEvent))
       {
+        keyEvent = std::static_pointer_cast<KeyEvent>(_lastEvent);
+        if (keyEvent->isHandled && keyEvent->action == KeyEvent::Action::PRESSED)
         {
-          keyEvent = std::static_pointer_cast<KeyEvent>(_lastEvent);
-          if (keyEvent->isHandled && keyEvent->action == KeyEvent::Action::PRESSED)
-          {
-            std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
-            event->key = keyEvent->key;
-            event->action = KeyEvent::Action::RELEASED;
-            DispatchEvent(event);
-          }
+          std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
+          event->key = keyEvent->key;
+          event->action = KeyEvent::Action::RELEASED;
+          DispatchEvent(event);
         }
       }
       else if (auto mouseEvent = std::dynamic_pointer_cast<MouseButtonEvent>(_lastEvent))
@@ -146,6 +154,31 @@ namespace Base
   void InputManager::RegisterListener(InputListener *listener)
   {
     _listenrs.push_back(listener);
+  }
+
+  void InputManager::ResetInput(const std::shared_ptr<Signal> &sig)
+  {
+
+    if (std::dynamic_pointer_cast<SceneChangedSignal>(sig))
+    {
+      for (auto it = _heldKeys.begin(); it != _heldKeys.end();)
+      {
+        std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
+        event->key = it->first;
+        event->action = InputEvent::Action::RELEASED;
+        DispatchEvent(event);
+        it = _heldKeys.erase(it);
+      }
+
+      for (auto it = _heldMouseBtns.begin(); it != _heldMouseBtns.end();)
+      {
+        std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
+        event->button = it->first;
+        event->action = InputEvent::Action::RELEASED;
+        DispatchEvent(event);
+        it = _heldKeys.erase(it);
+      }
+    }
   }
 
   void InputManager::DispatchEvent(std::shared_ptr<InputEvent> event)

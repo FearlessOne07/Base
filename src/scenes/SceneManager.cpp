@@ -4,8 +4,11 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
+#include "base/signals/SceneChangedSignal.hpp"
+#include "base/signals/SignalBus.hpp"
 #include "base/ui/UIManager.hpp"
 #include "base/util/Exception.hpp"
+#include <memory>
 #include <utility>
 
 namespace Base
@@ -55,6 +58,10 @@ namespace Base
       // Exit the current scene and pop it off the stack
       _scenes.top()->_exit();
       _scenes.pop();
+
+      auto bus = SignalBus::GetInstance();
+      std::shared_ptr<SceneChangedSignal> sig = std::make_shared<SceneChangedSignal>();
+      bus->BroadCastSignal(sig);
     }
 
     // Enter the scene below it if there is one
@@ -69,8 +76,12 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene and pop it
-      _scenes.top()->Exit();
+      _scenes.top()->_exit();
       _scenes.pop();
+
+      auto bus = SignalBus::GetInstance();
+      std::shared_ptr<SceneChangedSignal> sig = std::make_shared<SceneChangedSignal>();
+      bus->BroadCastSignal(sig);
     }
 
     // Push the new scene
