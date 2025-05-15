@@ -20,10 +20,12 @@ namespace Base
   {
     return _state->sceneTransition;
   }
+
   void Scene::ResetSceneTransition()
   {
     _state->sceneTransition = {.request = SceneRequest::NONE, .sceneID = typeid(-1)};
   }
+
   SceneLayerStack &Scene::GetLayerStack()
   {
     return _layerStack;
@@ -60,6 +62,7 @@ namespace Base
       _state->particleManager = manager;
     }
   }
+
   void Scene::SetEntityManager(EntityManager *manager)
   {
     if (manager)
@@ -87,6 +90,11 @@ namespace Base
   void Scene::SetClearColor(Color color)
   {
     _state->clearColor = color;
+  }
+
+  Color Scene::GetClearColor() const
+  {
+    return _state->clearColor;
   }
 
   EntityManager *Scene::GetEntityManager() const

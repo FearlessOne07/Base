@@ -60,6 +60,7 @@ namespace Base
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
 
     void SetClearColor(Color color);
+    Color GetClearColor() const;
 
     [[nodiscard]] EntityManager *GetEntityManager() const;
     [[nodiscard]] SystemManager *GetSystemManager() const;
