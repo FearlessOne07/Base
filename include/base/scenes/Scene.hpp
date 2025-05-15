@@ -5,6 +5,7 @@
 #include "base/scenes/SceneTransition.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
+#include "raylib.h"
 #include <memory>
 #include <typeindex>
 
@@ -43,6 +44,7 @@ namespace Base
       CameraManager *cameraManager = nullptr;
       UIManager *uiManager = nullptr;
       TweenManager *tweenManager = nullptr;
+      Color clearColor = BLACK;
     };
 
     std::unique_ptr<SceneState> _state;
@@ -56,6 +58,8 @@ namespace Base
     virtual void Resume();
     virtual void Suspend();
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
+
+    void SetClearColor(Color color);
 
     [[nodiscard]] EntityManager *GetEntityManager() const;
     [[nodiscard]] SystemManager *GetSystemManager() const;

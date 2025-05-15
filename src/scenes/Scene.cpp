@@ -1,6 +1,7 @@
 #include "base/scenes/Scene.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/SceneData.hpp"
+#include "raylib.h"
 #include <memory>
 
 namespace Base
@@ -83,6 +84,11 @@ namespace Base
     }
   }
 
+  void Scene::SetClearColor(Color color)
+  {
+    _state->clearColor = color;
+  }
+
   EntityManager *Scene::GetEntityManager() const
   {
     return _state->entityManager;
@@ -134,6 +140,7 @@ namespace Base
 
   void Scene::Render()
   {
+    ClearBackground(_state->clearColor);
     _layerStack.Render();
   }
 
