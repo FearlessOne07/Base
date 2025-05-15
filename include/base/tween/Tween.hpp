@@ -3,11 +3,14 @@
 #include "raymath.h"
 #include <algorithm>
 #include <functional>
+#include <utility>
 
 namespace Base
 {
   template <typename T> struct Tween : public ITween
   {
+    using EasingFunction = std::function<float(float)>;
+
   private:
     void *_target = nullptr;
     std::function<void(T)> _setter = nullptr;
@@ -16,21 +19,27 @@ namespace Base
 
     float _duration = 0.f;
     float _timer = 0.f;
+    EasingFunction _easingFunction = nullptr;
 
   public:
-    Tween(                                         //
-      void *target, std::function<void(T)> setter, //
-      T startValue, T endValue,
-      float duration //
+    Tween(                                                                              //
+      void *target, std::function<void(T)> setter,                                      //
+      T startValue, T endValue, float duration, EasingFunction easingFunction = nullptr //
       )
-      : _target(target), _setter(setter), _startValue(startValue), _endValue(endValue), _duration(duration)
+      : _target(target), _setter(setter), _startValue(startValue), _endValue(endValue), _duration(duration),
+        _easingFunction(std::move(easingFunction))
     {
     }
+
     void Update(float dt) override
     {
       _timer += dt;
 
       float lifePoint = std::clamp<float>(_timer / _duration, 0, 1);
+      if (_easingFunction)
+      {
+        lifePoint = _easingFunction(lifePoint);
+      }
 
       if (_setter && _target)
       {
