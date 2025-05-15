@@ -28,6 +28,10 @@ namespace Base
     if (!_scenes.empty())
     {
       // Exit the current scene
+      auto bus = SignalBus::GetInstance();
+      std::shared_ptr<SceneChangedSignal> sig = std::make_shared<SceneChangedSignal>();
+      bus->BroadCastSignal(sig);
+
       _scenes.top()->Suspend();
     }
     // Push new scen to the stack and enter it

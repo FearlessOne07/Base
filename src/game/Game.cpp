@@ -31,6 +31,7 @@ namespace Base
     _running = true;
 
     // Init Systems
+    _inpMan.Init();
     _particleManager.Init();
     _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
 

@@ -26,6 +26,7 @@ namespace Base
       OnMouseButtonEvent(mouseEvent);
     }
   }
+
   void InputSystem::OnKeyEvent(const std::shared_ptr<KeyEvent> &event)
   {
     for (auto &e : _entities)

@@ -176,7 +176,7 @@ namespace Base
         event->button = it->first;
         event->action = InputEvent::Action::RELEASED;
         DispatchEvent(event);
-        it = _heldKeys.erase(it);
+        it = _heldMouseBtns.erase(it);
       }
     }
   }
