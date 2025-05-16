@@ -1,6 +1,6 @@
 #include "base/util/Easings.hpp"
 
-namespace Base::Easing
+namespace Base::Easings
 {
   float EaseInCubic(float t)
   {

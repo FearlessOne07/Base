@@ -6,8 +6,8 @@ namespace Base
   {
     for (auto it = _tweens.begin(); it != _tweens.end();)
     {
-      (*it)->Update(dt);
-      if ((*it)->IsFinished())
+      it->second->Update(dt);
+      if (it->second->IsFinished())
       {
         it = _tweens.erase(it);
       }

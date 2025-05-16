@@ -1,5 +1,5 @@
 #pragma once
-
+#include "TweenKey.hpp"
 #include "base/tween/ITween.hpp"
 #include "base/tween/Tween.hpp"
 #include "base/util/Easings.hpp"
@@ -7,7 +7,8 @@
 #include <functional>
 #include <memory>
 #include <type_traits>
-#include <vector>
+#include <unordered_map>
+
 namespace Base
 {
   class TweenManager
@@ -21,26 +22,25 @@ namespace Base
     };
 
   private:
-    std::vector<std::unique_ptr<ITween>> _tweens = {};
+    std::unordered_map<TweenKey, std::unique_ptr<ITween>> _tweens = {};
 
   public:
     void Update(float dt);
 
     template <typename T>
     void AddTween( //
-      void *target, std::function<void(T)> setter, T startValue, T endValue, float duration,
+      const TweenKey &key, std::function<void(T)> setter, T startValue, T endValue, float duration,
       EasingType type = EasingType::EASE_OUT //
     )
     {
       if (std::is_arithmetic_v<T> && !std::is_same_v<T, bool>)
       {
-        auto dead = std::ranges::remove_if(
-          _tweens, [target](const std::unique_ptr<ITween> &t) { return t->GetTarget() == target; } //
-        );
-        _tweens.erase(dead.begin(), dead.end());
+        if (_tweens.find(key) != _tweens.end())
+        {
+          _tweens.erase(key);
+        }
 
         std::function<float(float)> easingFunction = nullptr;
-
         switch (type)
         {
         case EasingType::EASE_IN:
@@ -53,8 +53,8 @@ namespace Base
           easingFunction = Easings::EaseInOutCubic;
           break;
         }
-        _tweens.emplace_back(
-          std::make_unique<Tween<T>>(target, setter, startValue, endValue, duration, easingFunction));
+        _tweens[key] =
+          std::make_unique<Tween<T>>(key.objectPtr, setter, startValue, endValue, duration, easingFunction);
       }
     }
   };
