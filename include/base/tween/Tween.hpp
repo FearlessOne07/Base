@@ -12,7 +12,7 @@ namespace Base
     using EasingFunction = std::function<float(float)>;
 
   private:
-    void *_target = nullptr;
+    const void *_target = nullptr;
     std::function<void(T)> _setter = nullptr;
     T _startValue = 0;
     T _endValue = 0;
@@ -23,7 +23,7 @@ namespace Base
 
   public:
     Tween(                                                                              //
-      void *target, std::function<void(T)> setter,                                      //
+      const void *target, std::function<void(T)> setter,                                //
       T startValue, T endValue, float duration, EasingFunction easingFunction = nullptr //
       )
       : _target(target), _setter(setter), _startValue(startValue), _endValue(endValue), _duration(duration),
@@ -47,7 +47,7 @@ namespace Base
       }
     }
 
-    void *GetTarget() const override
+    const void *GetTarget() const override
     {
       return _target;
     }
