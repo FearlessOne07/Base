@@ -2,6 +2,7 @@
 
 #include "base/particles/ParticleEmitter.hpp"
 #include "raylib.h"
+#include <memory>
 namespace Base
 {
   class Particle
@@ -31,6 +32,10 @@ namespace Base
 
     // Polygon
     int sideNumber = 3;
+
+    // Texture
+    std::shared_ptr<Texture> texture = nullptr;
+    Rectangle textureSource = {0, 0, 0, 0};
 
     // Rotation
     float rotationSpeed = 0.f;

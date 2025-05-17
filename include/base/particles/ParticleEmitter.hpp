@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <raylib.h>
 namespace Base
 {
@@ -53,6 +54,10 @@ namespace Base
     float particleStartRadius = 10.f;
     float particleEndRadius = 0.f;
     int particleSideNumber = 3;
+
+    // Texture
+    std::shared_ptr<Texture> particleTexture = nullptr;
+    Rectangle particleTextureSource = {0, 0, 0, 0};
 
     float particleRotationSpeed = 0.f;
 

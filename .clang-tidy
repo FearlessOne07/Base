@@ -1,3 +1,0 @@
-Checks: "-*,modernize-*,performance-*,bugprone-*"
-WarningsAsErrors: "bugprone-*"
-FormatStyle: file

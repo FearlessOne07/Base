@@ -75,10 +75,23 @@ namespace Base
         particle->sideNumber = emitter.particleSideNumber;
       }
     }
-    else if (particle->shape == ParticleEmitter::ParticleShape::RECT)
+    else if ( //
+      particle->shape == ParticleEmitter::ParticleShape::RECT ||
+      particle->shape == ParticleEmitter::ParticleShape::TEXTURE //
+    )
     {
       particle->startSize = emitter.particleStartSize;
       particle->endSize = emitter.particleEndSize;
+
+      if (particle->shape == ParticleEmitter::ParticleShape::TEXTURE)
+      {
+        if (!emitter.particleTexture)
+        {
+          THROW_BASE_RUNTIME_ERROR("Texture not provided for textured particle emitter");
+        }
+        particle->texture = emitter.particleTexture;
+        particle->textureSource = emitter.particleTextureSource;
+      }
     }
     // Position
 
@@ -234,18 +247,38 @@ namespace Base
           DrawCircleV(particle->position, radius, color);
         }
       }
-      else if (particle->shape == ParticleEmitter::ParticleShape::RECT)
+      else if ( //
+        particle->shape == ParticleEmitter::ParticleShape::RECT ||
+        particle->shape == ParticleEmitter::ParticleShape::TEXTURE //
+      )
       {
         Vector2 size = Vector2Lerp(particle->startSize, particle->endSize, lifePoint);
-        DrawRectanglePro( //
-          {
-            particle->position.x,
-            particle->position.y,
-            size.x,
-            size.y,
-          },
-          {size.x / 2, size.y / 2}, particle->rotation, color //
-        );
+
+        if (particle->shape == ParticleEmitter::ParticleShape::RECT)
+        {
+          DrawRectanglePro( //
+            {
+              particle->position.x,
+              particle->position.y,
+              size.x,
+              size.y,
+            },
+            {size.x / 2, size.y / 2}, particle->rotation, color //
+          );
+        }
+        else if (particle->shape == ParticleEmitter::ParticleShape::TEXTURE)
+        {
+          DrawTexturePro( //
+            *particle->texture, particle->textureSource,
+            {
+              particle->position.x,
+              particle->position.y,
+              size.x,
+              size.y,
+            },
+            {size.x / 2, size.y / 2}, particle->rotation, color //
+          );
+        }
       }
     }
   }
