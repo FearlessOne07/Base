@@ -2,6 +2,7 @@
 #include "base/assets/AssetManager.hpp"
 #include "base/audio/signals/PlaySoundSignal.hpp"
 #include "internal/audio/SoundInstance.hpp"
+#include <atomic>
 #include <portaudio.h>
 #include <vector>
 
