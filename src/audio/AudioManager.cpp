@@ -51,6 +51,29 @@ namespace Base
 
     memset(outputBuffer, 0, framesPerBuffer * 2 * sizeof(int16_t));
 
+
+    // Process queued sounds
+    size_t read = _this->_readIndex.load();
+    while (read != _this->_writeIndex.load(std::memory_order_acquire))
+    {
+      auto signal = _this->_pendingSignals[read];
+      if (signal)
+      {
+        auto sound = _this->_assetManager->GetAsset<Sound>(signal->soundName);
+        SoundInstance instance(sound);
+        instance.SetVolume(std::clamp(signal->soundVolume, 0.f, 1.f));
+        instance.SetPan(std::clamp(signal->soundPan, -1.f, 1.f));
+        instance.Play();
+        _this->_sounds.emplace_back(std::move(instance));
+
+        _this->_pendingSignals[read] = nullptr; // Clear the slot
+      } 
+      read = (read + 1) % MAX_PENDING_SIGNALS;
+    }
+    _this->_readIndex.store(read);
+
+
+
     if (_this->_sounds.size() != 0)
     {
       for (size_t frame = 0; frame < framesPerBuffer; frame++)
@@ -67,26 +90,24 @@ namespace Base
           }
           else
           {
-            out[frame * 2] = 0;
-            out[frame * 2 + 1] = 0;
             it = _this->_sounds.erase(it);
           }
         }
       }
-    }
+    } 
     return paContinue;
   }
 
   void AudioManager::PlaySound(const std::shared_ptr<PlaySoundSignal> &signal)
   {
-    std::shared_ptr<Sound> sound = _assetManager->GetAsset<Sound>(signal->soundName);
-    SoundInstance instance = SoundInstance(sound);
-    signal->soundPan = std::clamp<float>(signal->soundPan, -1.f, 1.f);
-    signal->soundVolume = std::clamp<float>(signal->soundVolume, 0.f, 1.f);
-    instance.SetVolume(signal->soundVolume);
-    instance.SetPan(signal->soundPan);
-    instance.Play();
-    _sounds.emplace_back(instance);
+    size_t write = _writeIndex.load();
+    size_t nextWrite = (write + 1) % MAX_PENDING_SIGNALS;
+
+    if (nextWrite != _readIndex.load())
+    {
+      _pendingSignals[write] = signal;
+      _writeIndex.store(nextWrite, std::memory_order_release);
+    }
   }
 
   bool AudioManager::AllSoundsDone()

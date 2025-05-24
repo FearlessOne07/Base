@@ -14,6 +14,11 @@ namespace Base
     std::vector<SoundInstance> _sounds;
     AssetManager *_assetManager;
 
+    static constexpr int MAX_PENDING_SIGNALS = 64; // Maximum number of pending signals
+    std::array<std::shared_ptr<PlaySoundSignal>, MAX_PENDING_SIGNALS> _pendingSignals;
+    std::atomic<int> _readIndex;
+    std::atomic<int> _writeIndex;
+
   public:
     static int AudioCallBack( //
       const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer,
