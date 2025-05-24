@@ -8,8 +8,8 @@ namespace Base
   {
   public:
     std::string soundName;
-    float soundVolume = 0.f;
-    float soundPan = 0.f;
+    float soundVolume = 1.f;
+    float soundPan = 0.5f;
   };
 } // namespace Base
 // namespace Base
