@@ -11,11 +11,11 @@ namespace Base
   {
   private:
     PaStream *_audioStream;
-    std::vector<SoundInstance> _sounds;
+    std::vector<std::shared_ptr<SoundInstance>> _sounds;
     AssetManager *_assetManager;
 
-    static constexpr int MAX_PENDING_SIGNALS = 64; // Maximum number of pending signals
-    std::array<std::shared_ptr<PlaySoundSignal>, MAX_PENDING_SIGNALS> _pendingSignals;
+    static constexpr int MAX_PENDING_SOUNDS = 64; // Maximum number of pending signals
+    std::array<std::shared_ptr<SoundInstance>, MAX_PENDING_SOUNDS> _pendingSounds;
     std::atomic<int> _readIndex;
     std::atomic<int> _writeIndex;
 

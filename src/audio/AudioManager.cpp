@@ -11,17 +11,55 @@ namespace Base
   void AudioManager::Init()
   {
     Pa_Initialize();
-    Pa_OpenDefaultStream( //
-      &_audioStream, 0, 2, paInt16, 44100, 256, AudioManager::AudioCallBack,
-      this //
-    );
 
-    if (Pa_StartStream(_audioStream) != paNoError)
+    PaStreamParameters outputParams{};
+    outputParams.channelCount = 2;
+    outputParams.sampleFormat = paInt16;
+    outputParams.hostApiSpecificStreamInfo = nullptr;
+
+#ifdef _WIN32
+    // Use WASAPI on Windows
+    int wasapiApiIndex = -1;
+    for (int i = 0; i < Pa_GetHostApiCount(); ++i)
     {
-      THROW_BASE_RUNTIME_ERROR("Failed to initialise audio stream");
+      const PaHostApiInfo *info = Pa_GetHostApiInfo(i);
+      if (info->type == paWASAPI)
+      {
+        wasapiApiIndex = i;
+        break;
+      }
     }
 
-    // Resgister Events
+    if (wasapiApiIndex == -1)
+    {
+      THROW_BASE_RUNTIME_ERROR("WASAPI not available.");
+    }
+
+    PaDeviceIndex deviceIndex = Pa_GetHostApiInfo(wasapiApiIndex)->defaultOutputDevice;
+#else
+    // Use default output device on Linux/macOS
+    PaDeviceIndex deviceIndex = Pa_GetDefaultOutputDevice();
+#endif
+
+    if (deviceIndex == paNoDevice)
+    {
+      THROW_BASE_RUNTIME_ERROR("No default output device.");
+    }
+
+    const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(deviceIndex);
+    outputParams.device = deviceIndex;
+    outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency;
+
+    PaError err = Pa_OpenStream(&_audioStream, nullptr, &outputParams, 44100,
+                                64, // adjust for latency
+                                paClipOff, AudioCallBack, this);
+
+    if (err != paNoError || Pa_StartStream(_audioStream) != paNoError)
+    {
+      THROW_BASE_RUNTIME_ERROR("Failed to initialize audio stream.");
+    }
+
+    // Register Events
     auto bus = Base::SignalBus::GetInstance();
     bus->SubscribeSignal<PlaySoundSignal>([this](std::shared_ptr<Signal> signal) {
       if (auto playSoundSig = std::static_pointer_cast<PlaySoundSignal>(signal))
@@ -51,28 +89,19 @@ namespace Base
 
     memset(outputBuffer, 0, framesPerBuffer * 2 * sizeof(int16_t));
 
-
     // Process queued sounds
     size_t read = _this->_readIndex.load();
     while (read != _this->_writeIndex.load(std::memory_order_acquire))
     {
-      auto signal = _this->_pendingSignals[read];
-      if (signal)
+      auto sound = _this->_pendingSounds[read];
+      if (sound)
       {
-        auto sound = _this->_assetManager->GetAsset<Sound>(signal->soundName);
-        SoundInstance instance(sound);
-        instance.SetVolume(std::clamp(signal->soundVolume, 0.f, 1.f));
-        instance.SetPan(std::clamp(signal->soundPan, -1.f, 1.f));
-        instance.Play();
-        _this->_sounds.emplace_back(std::move(instance));
-
-        _this->_pendingSignals[read] = nullptr; // Clear the slot
-      } 
-      read = (read + 1) % MAX_PENDING_SIGNALS;
+        _this->_sounds.emplace_back(std::move(sound));
+        _this->_pendingSounds[read] = nullptr; // Clear the slot
+      }
+      read = (read + 1) % MAX_PENDING_SOUNDS;
     }
     _this->_readIndex.store(read);
-
-
 
     if (_this->_sounds.size() != 0)
     {
@@ -80,10 +109,10 @@ namespace Base
       {
         for (auto it = _this->_sounds.begin(); it != _this->_sounds.end();)
         {
-          SoundInstance &sound = *it;
-          if (sound.IsPlaying())
+          std::shared_ptr<SoundInstance> &sound = *it;
+          if (sound->IsPlaying())
           {
-            auto soundFrame = sound.GetNextFrame();
+            auto soundFrame = sound->GetNextFrame();
             out[frame * 2] += soundFrame[0];
             out[frame * 2 + 1] += soundFrame[1];
             it++;
@@ -94,18 +123,23 @@ namespace Base
           }
         }
       }
-    } 
+    }
     return paContinue;
   }
 
   void AudioManager::PlaySound(const std::shared_ptr<PlaySoundSignal> &signal)
   {
     size_t write = _writeIndex.load();
-    size_t nextWrite = (write + 1) % MAX_PENDING_SIGNALS;
+    size_t nextWrite = (write + 1) % MAX_PENDING_SOUNDS;
 
     if (nextWrite != _readIndex.load())
     {
-      _pendingSignals[write] = signal;
+      auto sound = _assetManager->GetAsset<Sound>(signal->soundName);
+      std::shared_ptr<SoundInstance> instance = std::make_shared<SoundInstance>(sound);
+      instance->SetVolume(std::clamp(signal->soundVolume, 0.f, 1.f));
+      instance->SetPan(std::clamp(signal->soundPan, -1.f, 1.f));
+      instance->Play();
+      _pendingSounds[write] = std::move(instance);
       _writeIndex.store(nextWrite, std::memory_order_release);
     }
   }
