@@ -85,6 +85,7 @@ namespace Base
     signal->soundVolume = std::clamp<float>(signal->soundVolume, 0.f, 1.f);
     instance.SetVolume(signal->soundVolume);
     instance.SetPan(signal->soundPan);
+    instance.Play();
     _sounds.emplace_back(instance);
   }
 

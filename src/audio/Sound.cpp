@@ -1,4 +1,5 @@
 #include "base/audio/Sound.hpp"
+#include <cstdint>
 
 namespace Base
 {
@@ -20,5 +21,10 @@ namespace Base
       frame[1] = 0;
     }
     return frame;
+  }
+
+  uint64_t Sound::GetFrameCount()
+  {
+    return _frameCount;
   }
 } // namespace Base
