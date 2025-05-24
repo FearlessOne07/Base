@@ -1,3 +1,10 @@
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#define NOGDI  // Excludes GDI (Graphics Device Interface)
+#define NOUSER // Excludes USER APIs
+#endif         // WIN32
+
 #include "base/assets/AssetManager.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/util/Exception.hpp"
