@@ -2,3 +2,7 @@
 	path = vendor/raylib
 	url = https://github.com/raysan5/raylib
 	branch = master
+[submodule "vendor/portaudio"]
+	path = vendor/portaudio
+	url = https://github.com/PortAudio/portaudio.git
+	branch = master

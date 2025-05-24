@@ -49,11 +49,13 @@ add_library("${PROJECT_NAME}" "${SRC}")
 target_link_libraries("${PROJECT_NAME}"
   PUBLIC
     raylib
+    portaudio
 )
 
 target_link_directories("${PROJECT_NAME}"
   PRIVATE
     "${ROOT_BASE_DIR}/build/vendor/raylib"
+    "${ROOT_BASE_DIR}/build/vendor/portaudio"
 )
 
 target_include_directories("${PROJECT_NAME}"

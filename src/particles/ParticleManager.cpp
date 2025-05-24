@@ -127,6 +127,7 @@ namespace Base
     particle->rotationSpeed = emitter.particleRotationSpeed;
     _activeParticles.emplace_back(particle);
   }
+
   void ParticleManager::ParticleManagerImpl::Update(float dt)
   {
     // Emitters

@@ -23,9 +23,27 @@ set(HEADER_DEST_DIR "${ROOT_BASE_DIR}/include")
 
 message(STATUS "Base headers location ${ROOT_BASE_DIR}/include")
 
+# Enable Wayland backend in GLFW
+set(GLFW_BUILD_WAYLAND ON CACHE BOOL "Build GLFW with Wayland support")
+
+# Disable X11 backend in GLFW
+set(GLFW_BUILD_X11 OFF CACHE BOOL "Do not build GLFW with X11 support")
+
+# Set the graphics API (assuming this is a custom variable)
+set(GRAPHICS GRAPHICS_API_OPENGL_43 CACHE STRING "Select the graphics API")
+
+# Disable RAylib Audio Support
+set(CUSTOMIZE_BUILD ON CACHE BOOL "Allow Build Customizatio")
+set(SUPPORT_MODULE_RAUDIO OFF CACHE BOOL "Disable audio device support in raylib")
+
 add_subdirectory(
   "./vendor/raylib/"
 )
+
+add_subdirectory(
+  "./vendor/portaudio/"
+)
+
 add_subdirectory(
   "./src"
 )
