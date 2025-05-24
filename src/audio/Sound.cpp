@@ -1,9 +1,11 @@
 #include "base/audio/Sound.hpp"
 #include <algorithm>
+#include <cmath>
+
 namespace Base
 {
-
   Sound::Sound(std::vector<int16_t> data, uint8_t channels, uint64_t frameCount)
+    : _data(data), _channels(channels), _frameCount(frameCount)
   {
   }
 

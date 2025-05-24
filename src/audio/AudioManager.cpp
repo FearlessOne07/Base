@@ -3,7 +3,7 @@
 #include "base/audio/signals/PlaySoundSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Exception.hpp"
-#include "raylib.h"
+#include <cstring>
 #include <memory>
 #include <string>
 namespace Base
