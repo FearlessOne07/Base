@@ -6,3 +6,7 @@
 	path = vendor/portaudio
 	url = https://github.com/PortAudio/portaudio.git
 	branch = master
+[submodule "vendor/miniaudio"]
+	path = vendor/miniaudio
+	url = https://github.com/mackron/miniaudio.git
+	branch = master

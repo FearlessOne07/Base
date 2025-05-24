@@ -1,4 +1,5 @@
 #include "base/ui/UILayer.hpp"
+#include "base/util/Strings.hpp"
 #include <ranges>
 
 namespace Base
@@ -26,9 +27,7 @@ namespace Base
   void UILayer::RemoveElement(const std::string &id)
   {
 
-    std::string lowerid = id;
-    std::ranges::transform(id, lowerid.begin(), [](char c) { return std::tolower(c); });
-
+    std::string lowerid = Base::Strings::ToLower(id);
     if (auto it = std::ranges::find(_elementIds, lowerid); it != _elementIds.end())
     {
       int index = static_cast<int>(std::distance(_elementIds.begin(), it));

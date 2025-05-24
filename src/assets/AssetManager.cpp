@@ -1,9 +1,12 @@
 #include "base/assets/AssetManager.hpp"
+#include "base/audio/Sound.hpp"
 #include "base/util/Exception.hpp"
+#include "base/util/Strings.hpp"
 #include <filesystem>
 #include <memory>
 #include <raylib.h>
 #include <sstream>
+#include <vector>
 
 namespace Base
 {
@@ -15,11 +18,47 @@ namespace Base
     }
   }
 
+  std::shared_ptr<Sound> AssetManager::LoadSound(const std::filesystem::path &path)
+  {
+    ma_result result;
+    ma_decoder decoder;
+    ma_decoder_config config = ma_decoder_config_init(ma_format_s16, 2, 44100);
+    std::string file = path.string();
+    result = ma_decoder_init_file(file.c_str(), &config, &decoder);
+
+    uint64_t frameCount = 0;
+    std::vector<int16_t> data;
+    uint8_t channels = 0;
+
+    if (result != MA_SUCCESS)
+    {
+      THROW_BASE_RUNTIME_ERROR("Error Reading audio file " + path.string());
+      ma_decoder_uninit(&decoder);
+    }
+
+    ma_uint64 maxFrames = decoder.outputSampleRate * 60;
+    channels = decoder.outputChannels;
+    data.resize(maxFrames * channels);
+
+    result = ma_decoder_read_pcm_frames( //
+      &decoder, data.data(), maxFrames,
+      (ma_uint64 *)&frameCount //
+    );
+    ma_decoder_uninit(&decoder);
+
+    if (result != MA_SUCCESS)
+    {
+      THROW_BASE_RUNTIME_ERROR("Failed to decode sound" + path.string());
+    }
+
+    return std::make_shared<Sound>(data, channels, frameCount);
+  }
+
   template <> std::shared_ptr<Texture> AssetManager::LoadAsset<Texture>(const fs::path &path)
   {
     if (fs::exists(path))
     {
-      std::string name = path.stem().string();
+      std::string name = Base::Strings::ToLower(path.stem().string());
       std::string fullpath = path.string();
       if (_assets.find(name) == _assets.end())
       {
@@ -41,43 +80,16 @@ namespace Base
     }
   }
 
-  template <> std::shared_ptr<Music> AssetManager::LoadAsset<Music>(const fs::path &path)
-  {
-    if (fs::exists(path))
-    {
-      std::string name = path.stem().string();
-      std::string fullpath = path.string();
-
-      if (_assets.find(name) == _assets.end())
-      {
-        _assets[name] = std::make_shared<Music>(LoadMusicStream(fullpath.c_str()));
-        return std::static_pointer_cast<Music>(_assets.at(name));
-      }
-      else
-      {
-        std::stringstream error;
-        error << "Repeated loading of music stream'" << name << "'";
-        THROW_BASE_RUNTIME_ERROR(error.str());
-      }
-    }
-    else
-    {
-      std::stringstream error;
-      error << "Cannot find music file '" << path.string() << "'";
-      THROW_BASE_RUNTIME_ERROR(error.str());
-    }
-  }
-
   template <> std::shared_ptr<Sound> AssetManager::LoadAsset<Sound>(const fs::path &path)
   {
     if (fs::exists(path))
     {
-      std::string name = path.stem().string();
+      std::string name = Base::Strings::ToLower(path.stem().string());
       std::string fullpath = path.string();
 
       if (_assets.find(name) == _assets.end())
       {
-        _assets[name] = std::make_shared<Sound>(LoadSound(fullpath.c_str()));
+        _assets[name] = LoadSound(fullpath.c_str());
         return std::static_pointer_cast<Sound>(_assets.at(name));
       }
       else
@@ -99,7 +111,7 @@ namespace Base
   {
     if (fs::exists(path))
     {
-      std::string name = path.stem().string();
+      std::string name = Base::Strings::ToLower(path.stem().string());
       std::string fullpath = path.string();
 
       if (_assets.find(name) == _assets.end())
@@ -113,7 +125,8 @@ namespace Base
         error << "Repeated loading of font '" << name << "'";
         THROW_BASE_RUNTIME_ERROR(error.str());
       }
-    } else
+    }
+    else
     {
       std::stringstream error;
       error << "Cannot find font file'" << path.string() << "'";
@@ -121,9 +134,10 @@ namespace Base
     }
   }
 
-  template <> std::shared_ptr<Texture> AssetManager::GetAsset<Texture>(const std::string &name)
+  template <> std::shared_ptr<Texture> AssetManager::GetAsset<Texture>(const std::string &assetName)
   {
 
+    std::string name = Base::Strings::ToLower(assetName);
     if (_assets.find(name) == _assets.end())
     {
       std::stringstream error;
@@ -133,19 +147,9 @@ namespace Base
     return std::static_pointer_cast<Texture>(_assets.at(name));
   }
 
-  template <> std::shared_ptr<Music> AssetManager::GetAsset<Music>(const std::string &name)
+  template <> std::shared_ptr<Sound> AssetManager::GetAsset<Sound>(const std::string &assetName)
   {
-    if (_assets.find(name) == _assets.end())
-    {
-      std::stringstream error;
-      error << "Music Stream '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
-    }
-    return std::static_pointer_cast<Music>(_assets.at(name));
-  }
-
-  template <> std::shared_ptr<Sound> AssetManager::GetAsset<Sound>(const std::string &name)
-  {
+    std::string name = Base::Strings::ToLower(assetName);
     if (_assets.find(name) == _assets.end())
     {
       std::stringstream error;
@@ -155,9 +159,9 @@ namespace Base
     return std::static_pointer_cast<Sound>(_assets.at(name));
   }
 
-  template <> std::shared_ptr<Font> AssetManager::GetAsset<Font>(const std::string &name)
+  template <> std::shared_ptr<Font> AssetManager::GetAsset<Font>(const std::string &assetName)
   {
-
+    std::string name = Base::Strings::ToLower(assetName);
     if (_assets.find(name) == _assets.end())
     {
       std::stringstream error;
@@ -167,8 +171,9 @@ namespace Base
     return std::static_pointer_cast<Font>(_assets.at(name));
   }
 
-  template <> void AssetManager::UnloadAsset<Texture>(const std::string &name)
+  template <> void AssetManager::UnloadAsset<Texture>(const std::string &assetName)
   {
+    std::string name = Base::Strings::ToLower(assetName);
     if (_assets.find(name) != _assets.end())
     {
       UnloadTexture(*std::static_pointer_cast<Texture>(_assets.at(name)));
@@ -182,26 +187,11 @@ namespace Base
     }
   }
 
-  template <> void AssetManager::UnloadAsset<Music>(const std::string &name)
+  template <> void AssetManager::UnloadAsset<Sound>(const std::string &assetName)
   {
+    std::string name = Base::Strings::ToLower(assetName);
     if (_assets.find(name) != _assets.end())
     {
-      UnloadMusicStream(*std::static_pointer_cast<Music>(_assets.at(name)));
-      _assets.erase(name);
-    }
-    else
-    {
-      std::stringstream error;
-      error << "Music Stream '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
-    }
-  }
-
-  template <> void AssetManager::UnloadAsset<Sound>(const std::string &name)
-  {
-    if (_assets.find(name) != _assets.end())
-    {
-      UnloadSound(*std::static_pointer_cast<Sound>(_assets.at(name)));
       _assets.erase(name);
     }
     else
@@ -212,8 +202,9 @@ namespace Base
     }
   }
 
-  template <> void AssetManager::UnloadAsset<Font>(const std::string &name)
+  template <> void AssetManager::UnloadAsset<Font>(const std::string &assetName)
   {
+    std::string name = Base::Strings::ToLower(assetName);
     if (_assets.find(name) != _assets.end())
     {
       UnloadFont(*std::static_pointer_cast<Font>(_assets.at(name)));

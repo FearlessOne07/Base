@@ -1,5 +1,6 @@
 #pragma once
 #include "base/assets/AssetManager.hpp"
+#include "base/audio/AudioManager.hpp"
 #include "base/camera/CameraManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/game/Game.hpp"
@@ -30,6 +31,7 @@ namespace Base
     float _gameHeight = 0.f;
 
   private: // Systems
+    AudioManager _audioMan = AudioManager();
     InputManager _inpMan = InputManager();
     EntityManager _entityManager = EntityManager();
     AssetManager _assetManager = AssetManager();

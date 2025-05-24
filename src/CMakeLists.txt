@@ -5,6 +5,9 @@ set(SRC
   "./entities/EntityManager.cpp"
   "./entities/Entity.cpp"
 
+  "./audio/Sound.cpp"
+  "./audio/AudioManager.cpp"
+
   "./ui/UILayer.cpp"
   "./ui/UIManager.cpp"
   "./ui/UIElement.cpp"
@@ -43,12 +46,14 @@ set(SRC
 
   "./util/Exception.cpp"
   "./util/Easings.cpp"
+  "./util/Strings.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 
 target_link_libraries("${PROJECT_NAME}"
   PUBLIC
     raylib
+  PRIVATE
     portaudio
 )
 
@@ -58,8 +63,13 @@ target_link_directories("${PROJECT_NAME}"
     "${ROOT_BASE_DIR}/build/vendor/portaudio"
 )
 
+target_compile_definitions("${PROJECT_NAME}"
+  PRIVATE
+    MINIAUDIO_IMPLEMENTATION
+)
 target_include_directories("${PROJECT_NAME}"
   PRIVATE
     "${ROOT_BASE_DIR}/src/include/"
     "${ROOT_BASE_DIR}/include/"
+    "${ROOT_BASE_DIR}/vendor/miniaudio/"
 )

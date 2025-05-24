@@ -7,11 +7,15 @@
 namespace Base
 {
   namespace fs = std::filesystem;
+  class Sound;
   class AssetManager
   {
   private:
     std::unordered_map<std::string, fs::path> _paths;
     std::unordered_map<std::string, std::shared_ptr<void>> _assets;
+
+  private:
+    std::shared_ptr<Sound> LoadSound(const std::filesystem::path &);
 
   public:
     template <typename T> std::shared_ptr<T> LoadAsset(const fs::path &);

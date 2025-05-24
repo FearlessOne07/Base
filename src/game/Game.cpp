@@ -31,6 +31,8 @@ namespace Base
     _running = true;
 
     // Init Systems
+    _audioMan.Init();
+    _audioMan.SetAssetManager(&_assetManager);
     _inpMan.Init();
     _particleManager.Init();
     _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
@@ -129,6 +131,7 @@ namespace Base
 
   void Game::GameImpl::End()
   {
+    _audioMan.DeInit();
     UnloadRenderTexture(_renderTexture);
     CloseWindow();
   }

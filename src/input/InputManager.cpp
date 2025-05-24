@@ -1,7 +1,7 @@
 #include "internal/input/InputManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
-#include "base/signals/SceneChangedSignal.hpp"
+#include "base/scenes/signals/SceneChangedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "raylib.h"
 #include <algorithm>

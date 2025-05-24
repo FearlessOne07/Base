@@ -4,7 +4,7 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
-#include "base/signals/SceneChangedSignal.hpp"
+#include "base/scenes/signals/SceneChangedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/ui/UIManager.hpp"
 #include "base/util/Exception.hpp"

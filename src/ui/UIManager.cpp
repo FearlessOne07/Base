@@ -1,6 +1,6 @@
 #include "base/ui/UIManager.hpp"
 #include "base/util/Exception.hpp"
-#include <algorithm>
+#include "base/util/Strings.hpp"
 
 namespace Base
 {
@@ -20,9 +20,7 @@ namespace Base
   UILayer &UIManager::AddLayer(const std::string &layerID)
   {
 
-    std::string lowerID = layerID;
-    std::ranges::transform(layerID, lowerID.begin(), [](char c) { return std::tolower(c); });
-
+    std::string lowerID = Base::Strings::ToLower(layerID);
     if (_layers.contains(lowerID))
     {
       THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " already exists");
@@ -34,9 +32,7 @@ namespace Base
 
   UILayer &UIManager::GetLayer(const std::string &layerID)
   {
-    std::string lowerID = layerID;
-    std::ranges::transform(layerID, lowerID.begin(), [](char c) { return std::tolower(c); });
-
+    std::string lowerID = Base::Strings::ToLower(layerID);
     if (!_layers.contains(lowerID))
     {
       THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " doesnot exist");
@@ -47,9 +43,7 @@ namespace Base
 
   void UIManager::RemoveLayer(const std::string &layerID)
   {
-    std::string lowerID = layerID;
-    std::ranges::transform(layerID, lowerID.begin(), [](char c) { return std::tolower(c); });
-
+    std::string lowerID = Base::Strings::ToLower(layerID);
     if (!_layers.contains(lowerID))
     {
       THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " does not exist");
@@ -59,10 +53,7 @@ namespace Base
 
   void UIManager::RenderLayer(const std::string &layerID)
   {
-
-    std::string lowerID = layerID;
-    std::ranges::transform(layerID, lowerID.begin(), [](char c) { return std::tolower(c); });
-
+    std::string lowerID = Base::Strings::ToLower(layerID);
     if (!_layers.contains(lowerID))
     {
       THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " does not exist");

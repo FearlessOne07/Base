@@ -3,7 +3,7 @@
 #include "base/components/RigidBodyComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
-#include "base/signals/EntityCollisionSignal.hpp"
+#include "base/entities/signals/EntityCollisionSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "raylib.h"
 #include "raymath.h"
