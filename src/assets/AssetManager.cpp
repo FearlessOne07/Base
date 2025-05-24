@@ -56,10 +56,12 @@ namespace Base
 
     if (result != MA_SUCCESS)
     {
-      THROW_BASE_RUNTIME_ERROR("Failed to decode sound" + path.string());
+      THROW_BASE_RUNTIME_ERROR(                                                                    //
+        "Failed to decode sound" + path.string() + "\n Supportted formmats are WAV, MP3 and, FLAC" //
+      );
     }
 
-    return std::make_shared<Sound>(data, channels, frameCount);
+    return std::make_shared<Sound>(data, frameCount);
   }
 
   template <> std::shared_ptr<Texture> AssetManager::LoadAsset<Texture>(const fs::path &path)

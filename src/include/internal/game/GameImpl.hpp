@@ -1,6 +1,5 @@
 #pragma once
 #include "base/assets/AssetManager.hpp"
-#include "base/audio/AudioManager.hpp"
 #include "base/camera/CameraManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/game/Game.hpp"
@@ -8,6 +7,7 @@
 #include "base/systems/SystemManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
+#include "internal/audio/AudioManager.hpp"
 #include "internal/input/InputManager.hpp"
 #include "internal/scene/SceneManager.hpp"
 #include "raylib.h"

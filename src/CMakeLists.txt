@@ -7,6 +7,7 @@ set(SRC
 
   "./audio/Sound.cpp"
   "./audio/AudioManager.cpp"
+  "./audio/SoundInstance.cpp"
 
   "./ui/UILayer.cpp"
   "./ui/UIManager.cpp"
@@ -67,6 +68,7 @@ target_compile_definitions("${PROJECT_NAME}"
   PRIVATE
     MINIAUDIO_IMPLEMENTATION
 )
+
 target_include_directories("${PROJECT_NAME}"
   PRIVATE
     "${ROOT_BASE_DIR}/src/include/"

@@ -1,9 +1,8 @@
 #pragma once
-#include "Sound.hpp"
 #include "base/assets/AssetManager.hpp"
-#include <memory>
+#include "base/audio/signals/PlaySoundSignal.hpp"
+#include "internal/audio/SoundInstance.hpp"
 #include <portaudio.h>
-#include <string>
 #include <vector>
 
 namespace Base
@@ -12,7 +11,7 @@ namespace Base
   {
   private:
     PaStream *_audioStream;
-    std::vector<std::shared_ptr<Sound>> _sounds;
+    std::vector<SoundInstance> _sounds;
     AssetManager *_assetManager;
 
   public:
@@ -25,7 +24,7 @@ namespace Base
   public:
     void Init();
     void SetAssetManager(AssetManager *assetManager);
-    void PlaySound(const std::string &soundName);
+    void PlaySound(const std::shared_ptr<PlaySoundSignal> &signal);
     bool AllSoundsDone();
     void DeInit();
   };

@@ -1,11 +1,11 @@
 
-#include "base/audio/AudioManager.hpp"
+#include "internal/audio/AudioManager.hpp"
 #include "base/audio/signals/PlaySoundSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Exception.hpp"
+#include <algorithm>
 #include <cstring>
 #include <memory>
-#include <string>
 namespace Base
 {
   void AudioManager::Init()
@@ -26,7 +26,7 @@ namespace Base
     bus->SubscribeSignal<PlaySoundSignal>([this](std::shared_ptr<Signal> signal) {
       if (auto playSoundSig = std::static_pointer_cast<PlaySoundSignal>(signal))
       {
-        PlaySound(playSoundSig->soundName);
+        PlaySound(playSoundSig);
       }
     });
   }
@@ -57,10 +57,10 @@ namespace Base
       {
         for (auto it = _this->_sounds.begin(); it != _this->_sounds.end();)
         {
-          std::shared_ptr<Sound> &sound = *it;
-          if (sound->IsPlaying())
+          SoundInstance &sound = *it;
+          if (sound.IsPlaying())
           {
-            auto soundFrame = sound->GetNextFrame();
+            auto soundFrame = sound.GetNextFrame();
             out[frame * 2] += soundFrame[0];
             out[frame * 2 + 1] += soundFrame[1];
             it++;
@@ -69,7 +69,6 @@ namespace Base
           {
             out[frame * 2] = 0;
             out[frame * 2 + 1] = 0;
-            sound->Reset();
             it = _this->_sounds.erase(it);
           }
         }
@@ -78,14 +77,15 @@ namespace Base
     return paContinue;
   }
 
-  void AudioManager::PlaySound(const std::string &soundName)
+  void AudioManager::PlaySound(const std::shared_ptr<PlaySoundSignal> &signal)
   {
-    std::shared_ptr<Sound> sound = _assetManager->GetAsset<Sound>(soundName);
-    if (std::ranges::find(_sounds, sound) == _sounds.end())
-    {
-      sound->Play();
-      _sounds.push_back(sound);
-    }
+    std::shared_ptr<Sound> sound = _assetManager->GetAsset<Sound>(signal->soundName);
+    SoundInstance instance = SoundInstance(sound);
+    signal->soundPan = std::clamp<float>(signal->soundPan, -1.f, 1.f);
+    signal->soundVolume = std::clamp<float>(signal->soundVolume, 0.f, 1.f);
+    instance.SetVolume(signal->soundVolume);
+    instance.SetPan(signal->soundPan);
+    _sounds.emplace_back(instance);
   }
 
   bool AudioManager::AllSoundsDone()
