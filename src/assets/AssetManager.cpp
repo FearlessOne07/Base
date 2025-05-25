@@ -25,12 +25,16 @@ namespace Base
       _paths[name] = std::move(path);
     }
   }
+  void AssetManager::SetSampleRate(uint64_t sampleRate)
+  {
+    _sampleRate = sampleRate;
+  }
 
   std::shared_ptr<Sound> AssetManager::LoadSound(const std::filesystem::path &path)
   {
     ma_result result;
     ma_decoder decoder;
-    ma_decoder_config config = ma_decoder_config_init(ma_format_s16, 2, 44100);
+    ma_decoder_config config = ma_decoder_config_init(ma_format_s16, 2, _sampleRate);
     std::string file = path.string();
     result = ma_decoder_init_file(file.c_str(), &config, &decoder);
 

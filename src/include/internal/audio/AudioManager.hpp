@@ -14,6 +14,7 @@ namespace Base
     PaStream *_audioStream;
     std::vector<std::shared_ptr<SoundInstance>> _sounds;
     AssetManager *_assetManager;
+    uint64_t _sampleRate = 48000;
 
     static constexpr int MAX_PENDING_SOUNDS = 64; // Maximum number of pending signals
     std::array<std::shared_ptr<SoundInstance>, MAX_PENDING_SOUNDS> _pendingSounds;

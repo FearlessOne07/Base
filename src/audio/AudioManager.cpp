@@ -66,7 +66,7 @@ namespace Base
     outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency;
 
     PaError err = Pa_OpenStream(                                                       //
-      &_audioStream, nullptr, &outputParams, 44100, 64, paClipOff, AudioCallBack, this //
+      &_audioStream, nullptr, &outputParams, _sampleRate, 64, paClipOff, AudioCallBack, this //
     );
 
     if (err != paNoError || Pa_StartStream(_audioStream) != paNoError)
@@ -86,9 +86,10 @@ namespace Base
 
   void AudioManager::SetAssetManager(AssetManager *assetManager)
   {
-    if (assetManager)
+    if (assetManager && !_assetManager)
     {
       _assetManager = assetManager;
+      _assetManager->SetSampleRate(_sampleRate);
     }
   }
 

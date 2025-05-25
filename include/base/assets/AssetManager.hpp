@@ -14,6 +14,9 @@ namespace Base
     std::unordered_map<std::string, fs::path> _paths;
     std::unordered_map<std::string, std::shared_ptr<void>> _assets;
 
+    // Sound Settings
+    uint64_t _sampleRate = 48000;
+
   private:
     std::shared_ptr<Sound> LoadSound(const std::filesystem::path &);
 
@@ -23,5 +26,7 @@ namespace Base
     template <typename T> void UnloadAsset(const std::string &);
 
     void AddPath(std::string &name, fs::path path);
+
+    void SetSampleRate(uint64_t sampleRate);
   };
 } // namespace Base
