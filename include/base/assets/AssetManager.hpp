@@ -1,4 +1,5 @@
 #pragma once
+#include "base/audio/AudioStream.hpp"
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -19,6 +20,7 @@ namespace Base
 
   private:
     std::shared_ptr<Sound> LoadSound(const std::filesystem::path &);
+    std::shared_ptr<AudioStream> LoadAudioStream(const std::filesystem::path &);
 
   public:
     template <typename T> std::shared_ptr<T> LoadAsset(const fs::path &);

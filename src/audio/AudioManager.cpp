@@ -65,7 +65,7 @@ namespace Base
     outputParams.device = deviceIndex;
     outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency;
 
-    PaError err = Pa_OpenStream(                                                       //
+    PaError err = Pa_OpenStream(                                                             //
       &_audioStream, nullptr, &outputParams, _sampleRate, 64, paClipOff, AudioCallBack, this //
     );
 
@@ -106,8 +106,8 @@ namespace Base
     memset(outputBuffer, 0, framesPerBuffer * 2 * sizeof(int16_t));
 
     // Process queued sounds
-    size_t read = _this->_readIndex.load();
-    while (read != _this->_writeIndex.load(std::memory_order_acquire))
+    size_t read = _this->_soundReadIndex.load();
+    while (read != _this->_soundWriteIndex.load(std::memory_order_acquire))
     {
       auto sound = _this->_pendingSounds[read];
       if (sound)
@@ -117,8 +117,22 @@ namespace Base
       }
       read = (read + 1) % MAX_PENDING_SOUNDS;
     }
-    _this->_readIndex.store(read);
+    _this->_soundReadIndex.store(read);
 
+    read = _this->_streamReadIndex.load();
+    while (read != _this->_streamWriteIndex.load(std::memory_order_acquire))
+    {
+      auto stream = _this->_pendingStreams[read];
+      if (stream)
+      {
+        _this->_streams.emplace_back(std::move(stream));
+        _this->_pendingSounds[read] = nullptr; // Clear the slot
+      }
+      read = (read + 1) % MAX_PENDING_STREAMS;
+    }
+    _this->_streamReadIndex.store(read);
+
+    // Mix Sounds
     if (_this->_sounds.size() != 0)
     {
       for (size_t frame = 0; frame < framesPerBuffer; frame++)
@@ -140,15 +154,40 @@ namespace Base
         }
       }
     }
+
+    // mix Streams
+    if (_this->_streams.size() != 0)
+    {
+      for (size_t frame = 0; frame < framesPerBuffer; frame++)
+      {
+        for (auto it = _this->_streams.begin(); it != _this->_streams.end();)
+        {
+          std::shared_ptr<AudioStream> &stream = *it;
+          if (stream->IsPlaying())
+          {
+            auto streamFrame = stream->GetNextFrame();
+            out[frame * 2] += streamFrame[0];
+            out[frame * 2 + 1] += streamFrame[1];
+            it++;
+          }
+          else
+          {
+            it = _this->_streams.erase(it);
+          }
+        }
+      }
+    }
+
+    // Continue
     return paContinue;
   }
 
   void AudioManager::PlaySound(const std::shared_ptr<PlaySoundSignal> &signal)
   {
-    size_t write = _writeIndex.load();
+    size_t write = _soundWriteIndex.load();
     size_t nextWrite = (write + 1) % MAX_PENDING_SOUNDS;
 
-    if (nextWrite != _readIndex.load())
+    if (nextWrite != _streamReadIndex.load())
     {
       auto sound = _assetManager->GetAsset<Sound>(signal->soundName);
       std::shared_ptr<SoundInstance> instance = std::make_shared<SoundInstance>(sound);
@@ -156,7 +195,24 @@ namespace Base
       instance->SetPan(std::clamp(signal->soundPan, -1.f, 1.f));
       instance->Play();
       _pendingSounds[write] = std::move(instance);
-      _writeIndex.store(nextWrite, std::memory_order_release);
+      _soundWriteIndex.store(nextWrite, std::memory_order_release);
+    }
+  }
+
+  void AudioManager::PlayStream(const std::shared_ptr<PlayAudioStreamSignal> &signal)
+  {
+    size_t write = _streamWriteIndex.load();
+    size_t nextWrite = (write + 1) % MAX_PENDING_SOUNDS;
+
+    if (nextWrite != _streamReadIndex.load())
+    {
+      auto stream = _assetManager->GetAsset<AudioStream>(signal->streamName);
+      stream->SetVolume(std::clamp(signal->streamVolume, 0.f, 1.f));
+      stream->SetPan(std::clamp(signal->streamPan, -1.f, 1.f));
+      stream->SetLoop(signal->loopStream);
+      stream->Play();
+      _pendingStreams[write] = std::move(stream);
+      _streamWriteIndex.store(nextWrite, std::memory_order_release);
     }
   }
 

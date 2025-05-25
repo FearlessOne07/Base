@@ -8,6 +8,7 @@ set(SRC
   "./audio/Sound.cpp"
   "./audio/AudioManager.cpp"
   "./audio/SoundInstance.cpp"
+  "./audio/AudioStream.cpp"
 
   "./ui/UILayer.cpp"
   "./ui/UIManager.cpp"

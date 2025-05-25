@@ -47,7 +47,7 @@ namespace Base
     if (_currentFrame < _sound->GetFrameCount())
     {
       frame = _sound->GetFrame(_currentFrame);
-      float angle = _pan * PI / 2.f;
+      float angle = _pan * (PI / 2.f);
       float leftPan = std::cos(angle);
       float rightPan = std::sin(angle);
 
