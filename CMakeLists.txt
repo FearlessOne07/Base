@@ -45,5 +45,9 @@ add_subdirectory(
 )
 
 add_subdirectory(
+  "./vendor/miniaudio"
+)
+
+add_subdirectory(
   "./src"
 )

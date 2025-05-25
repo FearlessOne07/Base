@@ -1,4 +1,3 @@
-#include "base/audio/AudioStream.hpp"
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -7,6 +6,7 @@
 #endif         // WIN32
 
 #include "base/assets/AssetManager.hpp"
+#include "base/audio/AudioStream.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
@@ -75,7 +75,7 @@ namespace Base
   {
     ma_result result;
     ma_decoder decoder;
-    ma_decoder_config config = ma_decoder_config_init(ma_format_s16, 2, _sampleRate);
+    ma_decoder_config config = ma_decoder_config_init(ma_format_s16, 2, 0);
     std::string file = path.string();
     result = ma_decoder_init_file(file.c_str(), &config, &decoder);
 
@@ -87,7 +87,7 @@ namespace Base
       ma_decoder_uninit(&decoder);
     }
 
-    return std::make_shared<AudioStream>(decoder);
+    return std::make_shared<AudioStream>(decoder, decoder.outputSampleRate, _sampleRate);
   }
 
   template <> std::shared_ptr<Texture> AssetManager::LoadAsset<Texture>(const fs::path &path)
@@ -152,7 +152,7 @@ namespace Base
 
       if (_assets.find(name) == _assets.end())
       {
-        _assets[name] = LoadSound(fullpath.c_str());
+        _assets[name] = LoadAudioStream(fullpath.c_str());
         return std::static_pointer_cast<AudioStream>(_assets.at(name));
       }
       else
@@ -222,6 +222,18 @@ namespace Base
     return std::static_pointer_cast<Sound>(_assets.at(name));
   }
 
+  template <> std::shared_ptr<AudioStream> AssetManager::GetAsset<AudioStream>(const std::string &assetName)
+  {
+    std::string name = Base::Strings::ToLower(assetName);
+    if (_assets.find(name) == _assets.end())
+    {
+      std::stringstream error;
+      error << "Sound '" << name << "' does not exist";
+      THROW_BASE_RUNTIME_ERROR(error.str());
+    }
+    return std::static_pointer_cast<AudioStream>(_assets.at(name));
+  }
+
   template <> std::shared_ptr<Font> AssetManager::GetAsset<Font>(const std::string &assetName)
   {
     std::string name = Base::Strings::ToLower(assetName);
@@ -261,6 +273,21 @@ namespace Base
     {
       std::stringstream error;
       error << "Sound '" << name << "' does not exist";
+      THROW_BASE_RUNTIME_ERROR(error.str());
+    }
+  }
+
+  template <> void AssetManager::UnloadAsset<AudioStream>(const std::string &assetName)
+  {
+    std::string name = Base::Strings::ToLower(assetName);
+    if (_assets.find(name) != _assets.end())
+    {
+      _assets.erase(name);
+    }
+    else
+    {
+      std::stringstream error;
+      error << "Font '" << name << "' does not exist";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cstring>
 #include <memory>
+
 namespace Base
 {
   void AudioManager::Init()
@@ -82,6 +83,13 @@ namespace Base
         PlaySound(playSoundSig);
       }
     });
+
+    bus->SubscribeSignal<PlayAudioStreamSignal>([this](std::shared_ptr<Signal> signal) {
+      if (auto playStreamSig = std::static_pointer_cast<PlayAudioStreamSignal>(signal))
+      {
+        PlayStream(playStreamSig);
+      }
+    });
   }
 
   void AudioManager::SetAssetManager(AssetManager *assetManager)
@@ -123,10 +131,10 @@ namespace Base
     while (read != _this->_streamWriteIndex.load(std::memory_order_acquire))
     {
       auto stream = _this->_pendingStreams[read];
-      if (stream)
+      if (stream && std::ranges::find(_this->_streams, stream) == _this->_streams.end())
       {
         _this->_streams.emplace_back(std::move(stream));
-        _this->_pendingSounds[read] = nullptr; // Clear the slot
+        _this->_pendingStreams[read] = nullptr; // Clear the slot
       }
       read = (read + 1) % MAX_PENDING_STREAMS;
     }
@@ -187,7 +195,7 @@ namespace Base
     size_t write = _soundWriteIndex.load();
     size_t nextWrite = (write + 1) % MAX_PENDING_SOUNDS;
 
-    if (nextWrite != _streamReadIndex.load())
+    if (nextWrite != _soundReadIndex.load())
     {
       auto sound = _assetManager->GetAsset<Sound>(signal->soundName);
       std::shared_ptr<SoundInstance> instance = std::make_shared<SoundInstance>(sound);
@@ -202,7 +210,7 @@ namespace Base
   void AudioManager::PlayStream(const std::shared_ptr<PlayAudioStreamSignal> &signal)
   {
     size_t write = _streamWriteIndex.load();
-    size_t nextWrite = (write + 1) % MAX_PENDING_SOUNDS;
+    size_t nextWrite = (write + 1) % MAX_PENDING_STREAMS;
 
     if (nextWrite != _streamReadIndex.load())
     {

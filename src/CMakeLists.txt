@@ -57,6 +57,7 @@ target_link_libraries("${PROJECT_NAME}"
     raylib
   PRIVATE
     portaudio
+    miniaudio
 )
 
 target_link_directories("${PROJECT_NAME}"
@@ -65,14 +66,10 @@ target_link_directories("${PROJECT_NAME}"
     "${ROOT_BASE_DIR}/build/vendor/portaudio"
 )
 
-target_compile_definitions("${PROJECT_NAME}"
-  PRIVATE
-    MINIAUDIO_IMPLEMENTATION
-)
-
 target_include_directories("${PROJECT_NAME}"
+  PUBLIC
+    "${ROOT_BASE_DIR}/vendor/miniaudio/"
   PRIVATE
     "${ROOT_BASE_DIR}/src/include/"
     "${ROOT_BASE_DIR}/include/"
-    "${ROOT_BASE_DIR}/vendor/miniaudio/"
 )
