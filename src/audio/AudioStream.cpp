@@ -13,6 +13,7 @@ namespace Base
   {
     _resampledBuffer.resize(_dataBufferFrameCount * 2);
     _toResampleBuffer.resize(_dataBufferFrameCount * 2);
+
     // Initialize resampler config
     ma_resampler_config resamplerConfig = ma_resampler_config_init(       //
       ma_format_s16,                                                      // sample format
@@ -49,11 +50,6 @@ namespace Base
       uint64_t readFrames = 0;
 
       ma_decoder_read_pcm_frames(&_decoder, _toResampleBuffer.data(), _dataBufferFrameCount, (ma_uint64 *)&readFrames);
-      uint64_t toRead = _dataBufferFrameCount;
-      ma_resampler_process_pcm_frames( //
-        &_resampler, _toResampleBuffer.data(), (ma_uint64 *)&toRead, _resampledBuffer.data(),
-        (ma_uint64 *)&toRead //
-      );
 
       if (readFrames < _dataBufferFrameCount)
       {
@@ -68,14 +64,15 @@ namespace Base
           ma_decoder_read_pcm_frames(                                                   //
             &_decoder, _toResampleBuffer.data() + readFrames * 2, framesToRead, nullptr //
           );
-          ma_resampler_process_pcm_frames( //
-            &_resampler, _toResampleBuffer.data() + readFrames * 2, (ma_uint64 *)&framesToRead,
-            _resampledBuffer.data() + readFrames * 2,
-            (ma_uint64 *)&framesToRead //
-          );
         }
       }
     }
+
+    ma_uint64 toResamlpe = _dataBufferFrameCount;
+
+    ma_resampler_process_pcm_frames(                                                           //
+      &_resampler, _toResampleBuffer.data(), &toResamlpe, _resampledBuffer.data(), &toResamlpe //
+    );
 
     frame = {_resampledBuffer[_currentFrame * 2], _resampledBuffer[_currentFrame * 2 + 1]};
     float angle = _pan * (PI / 2.f);
