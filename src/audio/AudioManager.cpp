@@ -1,4 +1,3 @@
-
 #include "internal/audio/AudioManager.hpp"
 #include "base/audio/signals/PlaySoundSignal.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -36,9 +35,25 @@ namespace Base
     }
 
     PaDeviceIndex deviceIndex = Pa_GetHostApiInfo(wasapiApiIndex)->defaultOutputDevice;
-#else
-    // Use default output device on Linux/macOS
-    PaDeviceIndex deviceIndex = Pa_GetDefaultOutputDevice();
+#elif defined(__linux__)
+    // Use PulseAudio on LInux
+    int pulseApiIndex = -1;
+    for (int i = 0; i < Pa_GetHostApiCount(); ++i)
+    {
+      const PaHostApiInfo *info = Pa_GetHostApiInfo(i);
+      if (info->type == paPulseAudio)
+      {
+        pulseApiIndex = i;
+        break;
+      }
+    }
+
+    if (pulseApiIndex == -1)
+    {
+      THROW_BASE_RUNTIME_ERROR("PulseAudio not available.");
+    }
+
+    PaDeviceIndex deviceIndex = Pa_GetHostApiInfo(pulseApiIndex)->defaultOutputDevice;
 #endif
 
     if (deviceIndex == paNoDevice)
@@ -50,9 +65,9 @@ namespace Base
     outputParams.device = deviceIndex;
     outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency;
 
-    PaError err = Pa_OpenStream(&_audioStream, nullptr, &outputParams, 44100,
-                                64, // adjust for latency
-                                paClipOff, AudioCallBack, this);
+    PaError err = Pa_OpenStream(                                                       //
+      &_audioStream, nullptr, &outputParams, 44100, 64, paClipOff, AudioCallBack, this //
+    );
 
     if (err != paNoError || Pa_StartStream(_audioStream) != paNoError)
     {

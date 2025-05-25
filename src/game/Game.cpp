@@ -14,6 +14,11 @@ namespace Base
 {
   void Game::GameImpl::Init(int width, int height, const char *title, int fps)
   {
+
+    // Init Audio
+    _audioMan.Init();
+    _audioMan.SetAssetManager(&_assetManager);
+
     // Initialize Raylib
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, title);
@@ -31,8 +36,6 @@ namespace Base
     _running = true;
 
     // Init Systems
-    _audioMan.Init();
-    _audioMan.SetAssetManager(&_assetManager);
     _inpMan.Init();
     _particleManager.Init();
     _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
