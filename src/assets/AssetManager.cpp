@@ -87,10 +87,6 @@ namespace Base
       ma_decoder_uninit(&decoder);
     }
 
-    if (decoder.outputSampleRate != 48000)
-    {
-      THROW_BASE_RUNTIME_ERROR("Audio Streams must have a sample rate of 48000Hz");
-    }
     return std::make_shared<AudioStream>(decoder, decoder.outputSampleRate, _sampleRate);
   }
 

@@ -58,17 +58,20 @@ target_link_libraries("${PROJECT_NAME}"
   PRIVATE
     portaudio
     miniaudio
+    samplerate
 )
 
 target_link_directories("${PROJECT_NAME}"
   PRIVATE
     "${ROOT_BASE_DIR}/build/vendor/raylib"
     "${ROOT_BASE_DIR}/build/vendor/portaudio"
+    "${ROOT_BASE_DIR}/build/vendor/libsamplerate"
 )
 
 target_include_directories("${PROJECT_NAME}"
   PUBLIC
     "${ROOT_BASE_DIR}/vendor/miniaudio/"
+    "${ROOT_BASE_DIR}/vendor/libsamplerate/include"
   PRIVATE
     "${ROOT_BASE_DIR}/src/include/"
     "${ROOT_BASE_DIR}/include/"

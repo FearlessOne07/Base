@@ -10,3 +10,7 @@
 	path = vendor/miniaudio
 	url = https://github.com/mackron/miniaudio.git
 	branch = master
+[submodule "vendor/libsamplerate"]
+	path = vendor/libsamplerate
+	url = https://github.com/libsndfile/libsamplerate.git
+	branch = master

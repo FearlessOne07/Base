@@ -49,5 +49,9 @@ add_subdirectory(
 )
 
 add_subdirectory(
+  "./vendor/libsamplerate/"
+)
+
+add_subdirectory(
   "./src"
 )
