@@ -23,6 +23,7 @@ set(HEADER_DEST_DIR "${ROOT_BASE_DIR}/include")
 
 message(STATUS "Base headers location ${ROOT_BASE_DIR}/include")
 
+### RAYLIB OPTIONS
 # Enable Wayland backend in GLFW
 set(GLFW_BUILD_WAYLAND ON CACHE BOOL "Build GLFW with Wayland support")
 
@@ -36,6 +37,14 @@ set(GRAPHICS GRAPHICS_API_OPENGL_43 CACHE STRING "Select the graphics API")
 set(CUSTOMIZE_BUILD ON CACHE BOOL "Allow Build Customizatio")
 set(SUPPORT_MODULE_RAUDIO OFF CACHE BOOL "Disable audio device support in raylib")
 
+## LIBSAMPLE RATE OPTIONS
+set(LIBSAMPLERATE_TESTS OFF CACHE  BOOL "Remove libsamplerate tests")
+
+## MINAUDIO OPTIONS
+set(MINIAUDIO_NO_EXTRA_NODES ON CACHE BOOL "Do not build extra node graph nodes")
+set(MINIAUDIO_NO_LIBVORBIS ON CACHE BOOL "Disable miniaudio_libvorbis")
+set(MINIAUDIO_NO_LIBOPUS ON CACHE BOOL "Disable miniaudio_libopus")
+
 add_subdirectory(
   "./vendor/raylib/"
 )
@@ -43,6 +52,7 @@ add_subdirectory(
 add_subdirectory(
   "./vendor/portaudio/"
 )
+
 
 add_subdirectory(
   "./vendor/miniaudio"

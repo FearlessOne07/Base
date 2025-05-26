@@ -14,6 +14,7 @@ namespace Base
   private:
     ma_decoder _decoder;
     SRC_STATE *_srcState;
+    SRC_DATA _srcData;
     uint64_t _dataBufferFrameCount = 2048;
     uint64_t _defaultSampleRate = 0;
     uint64_t _targetSampleRate = 0;

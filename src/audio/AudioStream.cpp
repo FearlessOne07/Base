@@ -74,7 +74,9 @@ namespace Base
     std::array<int16_t, 2> frame = {0, 0};
 
     if (!_isPlaying)
+    {
       return frame;
+    }
 
     // Check if we need to switch to the next buffer
     if (_currentFrame >= _resampledFrameCount)
@@ -144,11 +146,10 @@ namespace Base
 
       if (bufferToFill == -1)
       {
-        // Both buffers are ready, wait a bit
         continue;
       }
 
-      // Clear the buffer we're about to fill
+      // Clear the buffer to about to fill
       memset(_resampledBuffers[bufferToFill].data(), 0, _resampledBuffers[bufferToFill].size() * sizeof(float));
 
       // Read frames from decoder
@@ -179,25 +180,24 @@ namespace Base
       ConvertInt16ToFloat(_tempInt16Buffer.data(), _toResampleBuffer.data(), readFrames);
 
       // Set up SRC_DATA for this conversion
-      SRC_DATA srcData;
-      srcData.data_in = _toResampleBuffer.data();
-      srcData.data_out = _resampledBuffers[bufferToFill].data();
-      srcData.input_frames = readFrames;
-      srcData.output_frames = _outputFrameCount;
-      srcData.src_ratio = _srcRatio;
-      srcData.end_of_input = _lastBufferRound ? 1 : 0;
+      _srcData.data_in = _toResampleBuffer.data();
+      _srcData.data_out = _resampledBuffers[bufferToFill].data();
+      _srcData.input_frames = readFrames;
+      _srcData.output_frames = _outputFrameCount;
+      _srcData.src_ratio = _srcRatio;
+      _srcData.end_of_input = _lastBufferRound ? 1 : 0;
 
       // Perform sample rate conversion
-      int error = src_process(_srcState, &srcData);
+      int error = src_process(_srcState, &_srcData);
       if (error)
       {
         THROW_BASE_RUNTIME_ERROR("Sample rate conversion failed: " + std::string(src_strerror(error)));
       }
 
       // Store how many frames we actually got
-      _bufferedFrameCount[bufferToFill] = srcData.output_frames_gen;
+      _bufferedFrameCount[bufferToFill] = _srcData.output_frames_gen;
 
-      if (srcData.output_frames_gen == 0 && _lastBufferRound)
+      if (_srcData.output_frames_gen == 0 && _lastBufferRound)
       {
         _isPlaying = false;
         _lastBufferRound = false;
