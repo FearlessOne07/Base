@@ -2,8 +2,10 @@
 #include "base/audio/signals/PlaySoundSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Exception.hpp"
+#include "portaudio.h"
 #include <algorithm>
 #include <cstring>
+#include <iostream>
 #include <memory>
 
 namespace Base
@@ -17,8 +19,10 @@ namespace Base
     outputParams.sampleFormat = paInt16;
     outputParams.hostApiSpecificStreamInfo = nullptr;
 
+    int preferredSampleRate[] = {48000, 44100};
+
 #ifdef _WIN32
-    // Use WASAPI on Windows
+    // Use PulseAudio on LInux
     int wasapiApiIndex = -1;
     for (int i = 0; i < Pa_GetHostApiCount(); ++i)
     {
@@ -30,13 +34,36 @@ namespace Base
       }
     }
 
-    if (wasapiApiIndex == -1)
+    PaDeviceIndex deviceIndex = Pa_GetHostApiInfo(wasapiApiIndex)->defaultOutputDevice;
+
+    if (deviceIndex == paNoDevice)
     {
-      THROW_BASE_RUNTIME_ERROR("WASAPI not available.");
+      THROW_BASE_RUNTIME_ERROR("No default WASAPI output device.");
     }
 
-    PaDeviceIndex deviceIndex = Pa_GetHostApiInfo(wasapiApiIndex)->defaultOutputDevice;
+    const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(deviceIndex);
+    outputParams.device = deviceIndex;
+    outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency; // ← prioritize low latency
+
+    std::vector<int> preferredRates = {48000, 44100, 96000}; // Prefer 48k first
+    bool supported = false;
+
+    for (int rate : preferredRates)
+    {
+      if (Pa_IsFormatSupported(nullptr, &outputParams, rate) == paFormatIsSupported)
+      {
+        _sampleRate = rate;
+        supported = true;
+        break;
+      }
+    }
+
+    if (!supported)
+    {
+      THROW_BASE_RUNTIME_ERROR("Neither 48000 Hz nor 44100 Hz supported with WASAPI and paInt16.");
+    }
 #elif defined(__linux__)
+
     // Use PulseAudio on LInux
     int pulseApiIndex = -1;
     for (int i = 0; i < Pa_GetHostApiCount(); ++i)
@@ -49,22 +76,36 @@ namespace Base
       }
     }
 
-    if (pulseApiIndex == -1)
-    {
-      THROW_BASE_RUNTIME_ERROR("PulseAudio not available.");
-    }
-
     PaDeviceIndex deviceIndex = Pa_GetHostApiInfo(pulseApiIndex)->defaultOutputDevice;
-#endif
 
     if (deviceIndex == paNoDevice)
     {
-      THROW_BASE_RUNTIME_ERROR("No default output device.");
+      THROW_BASE_RUNTIME_ERROR("No default PulseAudio output device.");
     }
 
     const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(deviceIndex);
     outputParams.device = deviceIndex;
-    outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency;
+    outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency; // ← prioritize low latency
+
+    std::vector<int> preferredRates = {48000, 44100, 96000}; // Prefer 48k first
+    bool supported = false;
+
+    for (int rate : preferredRates)
+    {
+      if (Pa_IsFormatSupported(nullptr, &outputParams, rate) == paFormatIsSupported)
+      {
+        _sampleRate = rate;
+        supported = true;
+        break;
+      }
+    }
+
+    if (!supported)
+    {
+      THROW_BASE_RUNTIME_ERROR("Neither 48000 Hz nor 44100 Hz supported with PulseAudio and paInt16.");
+    }
+
+#endif
 
     PaError err = Pa_OpenStream(                                                             //
       &_audioStream, nullptr, &outputParams, _sampleRate, 64, paClipOff, AudioCallBack, this //
@@ -74,6 +115,8 @@ namespace Base
     {
       THROW_BASE_RUNTIME_ERROR("Failed to initialize audio stream.");
     }
+
+    std::cout << "Audio Stream opened: \n Sample Rate: " << _sampleRate << "\n";
 
     // Register Events
     auto bus = Base::SignalBus::GetInstance();
@@ -107,7 +150,6 @@ namespace Base
     void *userData //
   )
   {
-
     int16_t *out = static_cast<int16_t *>(outputBuffer);
     AudioManager *_this = static_cast<AudioManager *>(userData);
 
@@ -185,7 +227,6 @@ namespace Base
         }
       }
     }
-
     // Continue
     return paContinue;
   }

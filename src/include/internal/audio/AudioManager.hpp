@@ -14,7 +14,7 @@ namespace Base
   private:
     PaStream *_audioStream;
     AssetManager *_assetManager;
-    uint64_t _sampleRate = 44100;
+    uint64_t _sampleRate = 96000;
 
     std::vector<std::shared_ptr<SoundInstance>> _sounds;
     std::vector<std::shared_ptr<AudioStream>> _streams;
