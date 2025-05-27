@@ -1,4 +1,5 @@
 #include "base/signals/SignalBus.hpp"
+#include <future>
 #include <typeindex>
 
 namespace Base
@@ -15,15 +16,18 @@ namespace Base
 
   void SignalBus::BroadCastSignal(const std::shared_ptr<Signal> &event)
   {
-    auto handlerId = std::type_index(typeid(*(event)));
-    auto it = _handlers.find(handlerId);
 
-    if (it != _handlers.end())
-    {
-      for (SignalHandler &handler : _handlers[handlerId])
+    std::future<void> future = std::async(std::launch::async, [this, event]() {
+      auto handlerId = std::type_index(typeid(*event));
+      auto it = _handlers.find(handlerId);
+
+      if (it != _handlers.end())
       {
-        handler(event);
+        for (const SignalHandler &handler : it->second)
+        {
+          handler(event); // called synchronously inside the async block
+        }
       }
-    }
+    });
   }
 } // namespace Base
