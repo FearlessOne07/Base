@@ -8,6 +8,11 @@ namespace Base
     _color = color;
   }
 
+  void UIPanel::SetSize(Vector2 size)
+  {
+    _size = size;
+  }
+
   void UIPanel::Render()
   {
     DrawRectangleRounded({_position.x, _position.y, _size.x, _size.y}, 5, 100, _color);

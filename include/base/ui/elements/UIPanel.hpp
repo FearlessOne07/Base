@@ -1,5 +1,6 @@
 #pragma once
 #include "base/ui/UIElement.hpp"
+#include "raylib.h"
 namespace Base
 {
   class UIPanel : public UIElement
@@ -10,5 +11,6 @@ namespace Base
   public:
     void SetColor(Color color);
     void Render() override;
+    void SetSize(Vector2 size);
   };
 } // namespace Base
