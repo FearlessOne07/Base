@@ -38,7 +38,7 @@ set(CUSTOMIZE_BUILD ON CACHE BOOL "Allow Build Customizatio")
 set(SUPPORT_MODULE_RAUDIO OFF CACHE BOOL "Disable audio device support in raylib")
 
 ## LIBSAMPLE RATE OPTIONS
-set(LIBSAMPLERATE_TESTS OFF CACHE  BOOL "Remove libsamplerate tests")
+set(BUILD_TESTING OFF CACHE  BOOL "Remove libsamplerate tests")
 
 ## MINAUDIO OPTIONS
 set(MINIAUDIO_NO_EXTRA_NODES ON CACHE BOOL "Do not build extra node graph nodes")

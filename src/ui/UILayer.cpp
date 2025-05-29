@@ -47,4 +47,33 @@ namespace Base
       element->_update(dt);
     }
   }
+
+  void UILayer::Hide()
+  {
+    for (auto &element : _elements)
+    {
+      if (element->OnHide)
+      {
+        element->OnHide();
+      }
+    }
+    _isHidden = true;
+  }
+
+  void UILayer::Show()
+  {
+    for (auto &element : _elements)
+    {
+      if (element->OnShow)
+      {
+        element->OnShow();
+      }
+    }
+    _isHidden = false;
+  }
+
+  bool UILayer::IsHidden() const
+  {
+    return _isHidden;
+  }
 } // namespace Base

@@ -9,6 +9,7 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+
 namespace Base
 {
   class UILayer
@@ -16,6 +17,7 @@ namespace Base
   private:
     std::vector<std::string> _elementIds;
     std::vector<std::shared_ptr<UIElement>> _elements;
+    bool _isHidden = false;
 
   public:
     template <typename T> std::shared_ptr<T> AddElement(const std::string &id)
@@ -64,6 +66,9 @@ namespace Base
     void OnInputEvent(std::shared_ptr<InputEvent> &event);
     void Render();
     void Update(float dt);
+    bool IsHidden() const;
+    void Hide();
+    void Show();
   };
 
 } // namespace Base

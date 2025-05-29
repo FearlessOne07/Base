@@ -6,5 +6,9 @@ namespace Base
   {
   private:
     Color _color = WHITE;
+
+  public:
+    void SetColor(Color color);
+    void Render() override;
   };
 } // namespace Base

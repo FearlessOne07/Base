@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base/input/InputEvent.hpp"
+#include <functional>
 #include <memory>
 #include <raylib.h>
 
@@ -44,5 +45,8 @@ namespace Base
     virtual void Update(float dt);
     virtual void Render() = 0;
     virtual void OnInputEvent(std::shared_ptr<InputEvent> &event);
+
+    std::function<void()> OnShow = nullptr;
+    std::function<void()> OnHide = nullptr;
   };
 } // namespace Base
