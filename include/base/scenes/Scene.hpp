@@ -1,6 +1,7 @@
 #pragma once
 #include "base/camera/CameraManager.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneLayerStack.hpp"
 #include "base/scenes/SceneTransition.hpp"
 #include "base/tween/TweenManager.hpp"
@@ -26,6 +27,7 @@ namespace Base
     void SetCameraManager(CameraManager *);
     void SetUIManager(UIManager *);
     void SetTweenManager(TweenManager *);
+    void SetRenderer(Renderer *);
     void ResetSceneTransition();
     void Render();
     void Update(float dt);
@@ -37,6 +39,7 @@ namespace Base
     struct SceneState
     {
       SceneTransition sceneTransition = SceneTransition();
+      Renderer *renderer = nullptr;
       EntityManager *entityManager = nullptr;
       ParticleManager *particleManager = nullptr;
       AssetManager *assetManager = nullptr;
@@ -62,6 +65,7 @@ namespace Base
     void SetClearColor(Color color);
     Color GetClearColor() const;
 
+    [[nodiscard]] Renderer *GetRenderer() const;
     [[nodiscard]] EntityManager *GetEntityManager() const;
     [[nodiscard]] SystemManager *GetSystemManager() const;
     [[nodiscard]] ParticleManager *GetParticleManager() const;

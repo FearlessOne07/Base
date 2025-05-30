@@ -2,6 +2,7 @@
 #include "base/camera/CameraManager.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneData.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
@@ -26,6 +27,7 @@ namespace Base
   private:
     QuitCallBack _quitCallBack = nullptr;
     std::unordered_map<std::type_index, FactoryCallBack> _factories;
+    Renderer *_renderer = nullptr;
     EntityManager *_entityManager = nullptr;
     SystemManager *_systemManager = nullptr;
     AssetManager *_assetManager = nullptr;
@@ -43,8 +45,8 @@ namespace Base
     void PopScene();
 
   public:
-    SceneManager(                                                                             //
-      EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
+    SceneManager(                                                                                                 //
+      Renderer *renderer, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
       ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager,
       TweenManager *tweenManager //
     );

@@ -4,13 +4,13 @@
 #include "base/entities/EntityManager.hpp"
 #include "base/game/Game.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/renderer/Renderer.hpp"
 #include "base/systems/SystemManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "internal/audio/AudioManager.hpp"
 #include "internal/input/InputManager.hpp"
 #include "internal/scene/SceneManager.hpp"
-#include "raylib.h"
 #include <functional>
 #include <memory>
 
@@ -26,12 +26,12 @@ namespace Base
 
   private:
     bool _running = false;
-    RenderTexture _renderTexture;
     float _gameWidth = 0.f;
     float _gameHeight = 0.f;
 
   private: // Systems
     AudioManager _audioMan = AudioManager();
+    Renderer _renderer = Renderer();
     InputManager _inpMan = InputManager();
     EntityManager _entityManager = EntityManager();
     AssetManager _assetManager = AssetManager();
@@ -41,7 +41,7 @@ namespace Base
     TweenManager _tweenManager = TweenManager();
     SystemManager _systemManager = SystemManager(&_entityManager);
     SceneManager _sceneManager = SceneManager( //
-      &_entityManager, &_systemManager, &_assetManager, &_particleManager, &_cameraManager, &_uiManager,
+      &_renderer, &_entityManager, &_systemManager, &_assetManager, &_particleManager, &_cameraManager, &_uiManager,
       &_tweenManager //
     );
 

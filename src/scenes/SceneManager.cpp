@@ -15,10 +15,10 @@ namespace Base
 {
 
   SceneManager::SceneManager( //
-    EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
+    Renderer *renderer, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
     ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager, TweenManager *tweenManager //
     )
-    : _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
+    : _renderer(renderer), _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
       _particleManager(particleManager), _cameraManager(cameraManager), _uiManager(uiManager),
       _tweenManager(tweenManager)
   {
@@ -45,6 +45,7 @@ namespace Base
       THROW_BASE_RUNTIME_ERROR("Specified Scene is not registered");
     }
 
+    _scenes.top()->SetRenderer(_renderer);
     _scenes.top()->SetEntityManager(_entityManager);
     _scenes.top()->SetParticleManager(_particleManager);
     _scenes.top()->SetAssetManager(_assetManager);

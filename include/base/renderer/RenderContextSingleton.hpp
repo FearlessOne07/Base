@@ -1,5 +1,6 @@
 #pragma once
-#include "Game.hpp"
+#include "base/game/Game.hpp"
+
 namespace Base
 {
   struct RenderContext;

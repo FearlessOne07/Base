@@ -1,10 +1,9 @@
 #include "base/game/Game.hpp"
-#include "base/game/RenderContext.hpp"
-#include "base/game/RenderContextSingleton.hpp"
+#include "base/renderer/RenderContext.hpp"
+#include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/systems/System.hpp"
 #include "internal/game/GameImpl.hpp"
-#include "internal/input/InputManager.hpp"
 #include "raylib.h"
 #include <algorithm>
 #include <memory>
@@ -29,10 +28,12 @@ namespace Base
       SetTargetFPS(fps);
     }
 
+    // Init Renderer
+    _renderer.Init(width, height);
+
     // Initialise Render Texture
-    _renderTexture = LoadRenderTexture(width, height);
-    _gameWidth = static_cast<float>(_renderTexture.texture.width);
-    _gameHeight = static_cast<float>(_renderTexture.texture.height);
+    _gameWidth = static_cast<float>(width);
+    _gameHeight = static_cast<float>(height);
     _running = true;
 
     // Init Systems
@@ -112,20 +113,10 @@ namespace Base
       _entityManager.RemoveDeadEntities();
       _inpMan.PostUpdate();
 
-      // Begin rendering of Scenes
-      BeginTextureMode(_renderTexture);
-      ClearBackground(BLACK);
-      _sceneManager.Render();
-      EndTextureMode();
-
-      // Draw Render texture to the Screen
-      BeginDrawing();
-      ClearBackground(BLACK);
-      DrawTexturePro( //
-        _renderTexture.texture, {0, 0, _gameWidth, -_gameHeight},
-        {(float)marginX, (float)marginY, _gameWidth * scale, _gameHeight * scale}, {0, 0}, 0.f, WHITE //
-      );
-      EndDrawing();
+      // Render
+      _renderer.RenderLayers();
+      _renderer.CompositeLayers();
+      _renderer.Render();
     }
 
     // Cleanup
@@ -135,7 +126,6 @@ namespace Base
   void Game::GameImpl::End()
   {
     _audioMan.DeInit();
-    UnloadRenderTexture(_renderTexture);
     CloseWindow();
   }
 

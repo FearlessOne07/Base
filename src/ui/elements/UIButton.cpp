@@ -1,7 +1,7 @@
 #include "base/ui/elements/UIButton.hpp"
-#include "base/game/RenderContext.hpp"
-#include "base/game/RenderContextSingleton.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
+#include "base/renderer/RenderContext.hpp"
+#include "base/renderer/RenderContextSingleton.hpp"
 #include "raylib.h"
 #include <memory>
 

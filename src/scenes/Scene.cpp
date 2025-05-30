@@ -1,5 +1,6 @@
 #include "base/scenes/Scene.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneData.hpp"
 #include "raylib.h"
 #include <memory>
@@ -29,6 +30,14 @@ namespace Base
   SceneLayerStack &Scene::GetLayerStack()
   {
     return _layerStack;
+  }
+
+  void Scene::SetRenderer(Renderer *manager)
+  {
+    if (manager)
+    {
+      _state->renderer = manager;
+    }
   }
 
   void Scene::SetSystemManager(SystemManager *manager)
@@ -95,6 +104,11 @@ namespace Base
   Color Scene::GetClearColor() const
   {
     return _state->clearColor;
+  }
+
+  Renderer *Scene::GetRenderer() const
+  {
+    return _state->renderer;
   }
 
   EntityManager *Scene::GetEntityManager() const

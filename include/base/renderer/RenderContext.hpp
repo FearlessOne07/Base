@@ -3,7 +3,6 @@
 
 namespace Base
 {
-
   struct RenderContext
   {
     float gameWidth = 0.f;

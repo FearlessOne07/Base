@@ -1,9 +1,12 @@
 set(SRC
   "./game/Game.cpp"
-  "./game/RenderContextSingleton.cpp"
 
   "./entities/EntityManager.cpp"
   "./entities/Entity.cpp"
+
+  "./renderer/RenderContextSingleton.cpp"
+  "./renderer/Renderer.cpp"
+  "./renderer/RenderLayer.cpp"
 
   "./audio/Sound.cpp"
   "./audio/AudioManager.cpp"
