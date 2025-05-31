@@ -1,4 +1,5 @@
 #include "base/renderer/RenderLayer.hpp"
+#include "base/renderer/ShaderBuffer.hpp"
 #include "base/scenes/Scene.hpp"
 #include "raylib.h"
 #include <algorithm>
@@ -10,14 +11,11 @@ namespace Base
     : _position(position), _size(size), _renderFunction(renderFunction), _ownerScene(ownerScene)
   {
     _renderTexture = LoadRenderTexture(_size.x, _size.y);
-    _ping = LoadRenderTexture(_size.x, _size.y);
-    _pong = LoadRenderTexture(_size.x, _size.y);
   }
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
     : _position(other._position), _size(other._size), _renderFunction(std::move(other._renderFunction)),
-      _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _shaderChain(std::move(other._shaderChain)),
-      _ping(other._ping), _pong(other._pong)
+      _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _shaderChain(std::move(other._shaderChain))
   {
     other._renderTexture.id = 0;
   }
@@ -31,14 +29,6 @@ namespace Base
       {
         UnloadRenderTexture(_renderTexture);
       }
-      if (_ping.id != 0)
-      {
-        UnloadRenderTexture(_ping);
-      }
-      if (_pong.id != 0)
-      {
-        UnloadRenderTexture(_pong);
-      }
 
       _position = other._position;
       _size = other._size;
@@ -46,12 +36,8 @@ namespace Base
       _ownerScene = other._ownerScene;
       _renderTexture = other._renderTexture;
       _shaderChain = std::move(other._shaderChain);
-      _pong = other._pong;
-      _ping = other._ping;
 
       other._renderTexture.id = 0;
-      other._ping.id = 0;
-      other._pong.id = 0;
     }
     return *this;
   }
@@ -61,9 +47,8 @@ namespace Base
     UnloadRenderTexture(_renderTexture);
   }
 
-  void RenderLayer::Render()
+  void RenderLayer::Render(ShaderBuffer &shaderBuffer)
   {
-    EnsureTexture();
     BeginTextureMode(_renderTexture);
     ClearBackground(BLANK);
     _renderFunction();
@@ -75,7 +60,7 @@ namespace Base
     }
 
     RenderTexture2D *input = &_renderTexture;
-    RenderTexture2D *output = &_ping;
+    RenderTexture2D *output = &shaderBuffer.ping;
 
     for (size_t i = 0; i < _shaderChain.size(); ++i)
     {

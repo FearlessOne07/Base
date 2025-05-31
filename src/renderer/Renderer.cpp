@@ -46,6 +46,8 @@ namespace Base
   void Renderer::Init(int width, int height)
   {
     _renderTexture = LoadRenderTexture(width, height);
+    _shaderBuffer.ping = LoadRenderTexture(width, height);
+    _shaderBuffer.pong = LoadRenderTexture(width, height);
 
     auto bus = SignalBus::GetInstance();
 
@@ -73,6 +75,7 @@ namespace Base
 
   void Renderer::DeInit()
   {
+    _renderLayers.clear();
     UnloadRenderTexture(_renderTexture);
   }
 
@@ -81,7 +84,7 @@ namespace Base
     // Begin rendering of Scenes
     for (auto &layer : _renderLayers.at(_currentScene))
     {
-      layer.Render();
+      layer.Render(_shaderBuffer);
     }
   }
 

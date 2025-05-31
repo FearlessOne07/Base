@@ -1,4 +1,5 @@
 #pragma once
+#include "base/renderer/ShaderBuffer.hpp"
 #include "raylib.h"
 #include <functional>
 #include <memory>
@@ -16,9 +17,6 @@ namespace Base
     const Scene *_ownerScene = nullptr;
 
     // Shaders
-    bool _shaderBuffersInitialized = false;
-    RenderTexture _ping;
-    RenderTexture _pong;
     std::vector<std::shared_ptr<Shader>> _shaderChain;
 
   public:
@@ -26,7 +24,7 @@ namespace Base
     RenderLayer(RenderLayer &&other) noexcept;
     RenderLayer &operator=(RenderLayer &&other) noexcept;
     ~RenderLayer();
-    void Render();
+    void Render(ShaderBuffer &);
     const RenderTexture *GetTexture() const;
     void SetShaderChain(const std::vector<std::shared_ptr<Shader>> &);
     Vector2 GetSize() const;
