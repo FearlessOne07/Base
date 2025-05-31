@@ -13,14 +13,16 @@
 
 namespace Base
 {
-  void Renderer::InitLayer(                                                                       //
+  RenderLayer *Renderer::InitLayer(                                                               //
     const Scene *ownerScene, Vector2 position, Vector2 size, std::function<void()> renderFunction //
   )
   {
     if (_renderLayers.contains(ownerScene))
     {
       _renderLayers.at(ownerScene).emplace_back(ownerScene, position, size, renderFunction);
+      return &_renderLayers.at(ownerScene).back();
     }
+    return nullptr;
   }
 
   void Renderer::SetCurrentScene(const Scene *scene)

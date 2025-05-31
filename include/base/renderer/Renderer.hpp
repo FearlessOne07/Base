@@ -27,7 +27,9 @@ namespace Base
     void RemoveSceneLayers(const Scene *scene);
 
   public:
-    void InitLayer(const Scene *ownerScene, Vector2 position, Vector2 size, std::function<void()> renderFunction);
+    RenderLayer *InitLayer(                                                                         //
+      const Scene *ownerScene, Vector2 position, Vector2 size, std::function<void()> renderFunction //
+    );
     void SetClearColor();
   };
 } // namespace Base

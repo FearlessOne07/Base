@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base/input/InputEvent.hpp"
+#include "base/renderer/RenderLayer.hpp"
 #include <memory>
 namespace Base
 {
@@ -9,6 +10,7 @@ namespace Base
   {
     friend class SceneLayerStack;
     Scene *_owner = nullptr;
+    RenderLayer *_renderLayer = nullptr;
 
   private:
     void _onAttach();
@@ -16,6 +18,7 @@ namespace Base
 
   protected:
     Scene *GetOwner();
+    RenderLayer *GetRenderLayer();
 
   public:
     virtual void Update(float dt) = 0;

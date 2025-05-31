@@ -116,6 +116,32 @@ namespace Base
     }
   }
 
+  template <> std::shared_ptr<Shader> AssetManager::LoadAsset<Shader>(const fs::path &path)
+  {
+    if (fs::exists(path))
+    {
+      std::string name = Base::Strings::ToLower(path.stem().string());
+      std::string fullpath = path.string();
+      if (_assets.find(name) == _assets.end())
+      {
+        _assets[name] = std::make_shared<Shader>(LoadShader(nullptr, fullpath.c_str()));
+        return std::static_pointer_cast<Shader>(_assets.at(name));
+      }
+      else
+      {
+        std::stringstream error;
+        error << "Repeated loading of shader '" << name << "'";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+    }
+    else
+    {
+      std::stringstream error;
+      error << "Cannot find shader file '" << path.string() << "'";
+      THROW_BASE_RUNTIME_ERROR(error.str());
+    }
+  }
+
   template <> std::shared_ptr<Sound> AssetManager::LoadAsset<Sound>(const fs::path &path)
   {
     if (fs::exists(path))
@@ -210,6 +236,19 @@ namespace Base
     return std::static_pointer_cast<Texture>(_assets.at(name));
   }
 
+  template <> std::shared_ptr<Shader> AssetManager::GetAsset<Shader>(const std::string &assetName)
+  {
+
+    std::string name = Base::Strings::ToLower(assetName);
+    if (_assets.find(name) == _assets.end())
+    {
+      std::stringstream error;
+      error << "Shader '" << name << "' does not exist";
+      THROW_BASE_RUNTIME_ERROR(error.str());
+    }
+    return std::static_pointer_cast<Shader>(_assets.at(name));
+  }
+
   template <> std::shared_ptr<Sound> AssetManager::GetAsset<Sound>(const std::string &assetName)
   {
     std::string name = Base::Strings::ToLower(assetName);
@@ -273,6 +312,22 @@ namespace Base
     {
       std::stringstream error;
       error << "Sound '" << name << "' does not exist";
+      THROW_BASE_RUNTIME_ERROR(error.str());
+    }
+  }
+
+  template <> void AssetManager::UnloadAsset<Shader>(const std::string &assetName)
+  {
+    std::string name = Base::Strings::ToLower(assetName);
+    if (_assets.find(name) != _assets.end())
+    {
+      UnloadShader(*std::static_pointer_cast<Shader>(_assets.at(name)));
+      _assets.erase(name);
+    }
+    else
+    {
+      std::stringstream error;
+      error << "Shader '" << name << "' does not exist";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }

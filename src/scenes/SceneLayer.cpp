@@ -9,10 +9,15 @@ namespace Base
     return _owner;
   }
 
+  RenderLayer *SceneLayer::GetRenderLayer()
+  {
+    return _renderLayer;
+  }
+
   void SceneLayer::_onAttach()
   {
     auto rd = Base::RenderContextSingleton::GetInstance();
-    GetOwner()->GetRenderer()->InitLayer(                                               //
+    _renderLayer = GetOwner()->GetRenderer()->InitLayer(                                //
       GetOwner(), {0, 0}, {rd->gameWidth, rd->gameHeight}, [this]() { this->Render(); } //
     );
 
