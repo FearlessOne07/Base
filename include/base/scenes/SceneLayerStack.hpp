@@ -34,7 +34,7 @@ namespace Base
           _layerIds.push_back(id);
           _layers.emplace_back(std::make_shared<T>());
           _layers.back()->_owner = _owner;
-          _layers.back()->OnAttach();
+          _layers.back()->_onAttach();
         }
         else
         {

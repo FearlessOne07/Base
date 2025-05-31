@@ -4,7 +4,10 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
-#include "base/scenes/signals/SceneChangedSignal.hpp"
+#include "base/scenes/signals/ScenePoppedSignal.hpp"
+#include "base/scenes/signals/ScenePushedSignal.hpp"
+#include "base/scenes/signals/SceneResumedSignal.hpp"
+#include "base/scenes/signals/SceneSuspendedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/ui/UIManager.hpp"
 #include "base/util/Exception.hpp"
@@ -13,7 +16,6 @@
 
 namespace Base
 {
-
   SceneManager::SceneManager( //
     Renderer *renderer, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
     ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager, TweenManager *tweenManager //
@@ -23,19 +25,21 @@ namespace Base
       _tweenManager(tweenManager)
   {
   }
+
   void SceneManager::PushScene(std::type_index scene, const SceneData &sceneData)
   {
+    auto bus = SignalBus::GetInstance();
     if (!_scenes.empty())
     {
-      // Exit the current scene
-      auto bus = SignalBus::GetInstance();
-      std::shared_ptr<SceneChangedSignal> sig = std::make_shared<SceneChangedSignal>();
+      std::shared_ptr<SceneSuspendedSignal> sig = std::make_shared<SceneSuspendedSignal>();
+      sig->scene = _scenes.top().get();
       bus->BroadCastSignal(sig);
 
+      // Supspend the current scene
       _scenes.top()->Suspend();
     }
-    // Push new scen to the stack and enter it
 
+    // Push new scen to the stack and enter it
     if (_factories.contains(scene))
     {
       _scenes.push(_factories.at(scene)());
@@ -44,6 +48,10 @@ namespace Base
     {
       THROW_BASE_RUNTIME_ERROR("Specified Scene is not registered");
     }
+
+    std::shared_ptr<ScenePushedSignal> sig = std::make_shared<ScenePushedSignal>();
+    sig->scene = _scenes.top().get();
+    bus->BroadCastSignal(sig);
 
     _scenes.top()->SetRenderer(_renderer);
     _scenes.top()->SetEntityManager(_entityManager);
@@ -58,18 +66,23 @@ namespace Base
 
   void SceneManager::PopScene()
   {
+    auto bus = SignalBus::GetInstance();
     if (!_scenes.empty())
     {
+      // Broadcast Scene Popped Signal
+      std::shared_ptr<ScenePoppedSignal> sig = std::make_shared<ScenePoppedSignal>();
+      sig->scene = _scenes.top().get();
+      bus->BroadCastSignal(sig);
+
       // Exit the current scene and pop it off the stack
       _scenes.top()->_exit();
       _scenes.pop();
-
-      auto bus = SignalBus::GetInstance();
-      std::shared_ptr<SceneChangedSignal> sig = std::make_shared<SceneChangedSignal>();
-      bus->BroadCastSignal(sig);
     }
 
     // Enter the scene below it if there is one
+    std::shared_ptr<SceneResumedSignal> sig = std::make_shared<SceneResumedSignal>();
+    sig->scene = _scenes.top().get();
+    bus->BroadCastSignal(sig);
     if (!_scenes.empty())
     {
       _scenes.top()->Resume();
@@ -80,13 +93,15 @@ namespace Base
   {
     if (!_scenes.empty())
     {
+
+      auto bus = SignalBus::GetInstance();
+      std::shared_ptr<ScenePoppedSignal> sig = std::make_shared<ScenePoppedSignal>();
+      sig->scene = _scenes.top().get();
+      bus->BroadCastSignal(sig);
+
       // Exit the current scene and pop it
       _scenes.top()->_exit();
       _scenes.pop();
-
-      auto bus = SignalBus::GetInstance();
-      std::shared_ptr<SceneChangedSignal> sig = std::make_shared<SceneChangedSignal>();
-      bus->BroadCastSignal(sig);
     }
 
     // Push the new scene

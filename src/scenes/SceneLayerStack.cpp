@@ -42,7 +42,7 @@ namespace Base
   {
     for (auto &_layer : _layers)
     {
-      _layer->OnDetach();
+      _layer->_onDetach();
     }
     _layers.clear();
     _layerIds.clear();

@@ -10,6 +10,10 @@ namespace Base
     friend class SceneLayerStack;
     Scene *_owner = nullptr;
 
+  private:
+    void _onAttach();
+    void _onDetach();
+
   protected:
     Scene *GetOwner();
 

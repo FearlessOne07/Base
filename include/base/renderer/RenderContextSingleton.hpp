@@ -1,5 +1,6 @@
 #pragma once
 #include "base/game/Game.hpp"
+#include "base/renderer/RenderContext.hpp"
 
 namespace Base
 {

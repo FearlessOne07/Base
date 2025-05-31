@@ -2,25 +2,82 @@
 #include "base/renderer/RenderContext.hpp"
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/renderer/RenderLayer.hpp"
+#include "base/scenes/Scene.hpp"
+#include "base/scenes/signals/ScenePoppedSignal.hpp"
+#include "base/scenes/signals/ScenePushedSignal.hpp"
+#include "base/scenes/signals/SceneResumedSignal.hpp"
+#include "base/signals/SignalBus.hpp"
 #include "raylib.h"
+#include <memory>
 #include <ranges>
 
 namespace Base
 {
-  void Renderer::InitLayer(Vector2 position, Vector2 size, std::function<void()> renderFunction)
+  void Renderer::InitLayer(                                                                       //
+    const Scene *ownerScene, Vector2 position, Vector2 size, std::function<void()> renderFunction //
+  )
   {
-    _renderLayers.emplace_back(position, size, renderFunction);
+    if (_renderLayers.contains(ownerScene))
+    {
+      _renderLayers.at(ownerScene).emplace_back(ownerScene, position, size, renderFunction);
+    }
+  }
+
+  void Renderer::SetCurrentScene(const Scene *scene)
+  {
+    _currentScene = scene;
+
+    if (!_renderLayers.contains(_currentScene))
+    {
+      _renderLayers[_currentScene];
+    }
+  }
+
+  void Renderer::RemoveSceneLayers(const Scene *scene)
+  {
+    if (_renderLayers.contains(scene))
+    {
+      _renderLayers.erase(scene);
+    }
   }
 
   void Renderer::Init(int width, int height)
   {
     _renderTexture = LoadRenderTexture(width, height);
+
+    auto bus = SignalBus::GetInstance();
+
+    bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
+      if (auto popped = std::dynamic_pointer_cast<ScenePoppedSignal>(signal))
+      {
+        this->RemoveSceneLayers(popped->scene);
+      }
+    });
+
+    bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> signal) {
+      if (auto pushed = std::dynamic_pointer_cast<ScenePushedSignal>(signal))
+      {
+        this->SetCurrentScene(pushed->scene);
+      }
+    });
+
+    bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> signal) {
+      if (auto pushed = std::dynamic_pointer_cast<SceneResumedSignal>(signal))
+      {
+        this->SetCurrentScene(pushed->scene);
+      }
+    });
+  }
+
+  void Renderer::DeInit()
+  {
+    UnloadRenderTexture(_renderTexture);
   }
 
   void Renderer::RenderLayers()
   {
     // Begin rendering of Scenes
-    for (auto layer : _renderLayers)
+    for (auto &layer : _renderLayers.at(_currentScene))
     {
       layer.Render();
     }
@@ -29,7 +86,8 @@ namespace Base
   void Renderer::CompositeLayers()
   {
     BeginTextureMode(_renderTexture);
-    for (auto &layer : std::ranges::reverse_view(_renderLayers))
+    ClearBackground(_currentScene->GetClearColor());
+    for (auto &layer : std::ranges::reverse_view(_renderLayers.at(_currentScene)))
     {
       DrawTexturePro( //
         layer.GetTexture()->texture, {0, 0, layer.GetSize().x, layer.GetSize().y},
@@ -48,7 +106,7 @@ namespace Base
     BeginDrawing();
     ClearBackground(BLACK);
     DrawTexturePro( //
-      _renderTexture.texture, {0, 0, rd->gameWidth, -rd->gameHeight},
+      _renderTexture.texture, {0, 0, rd->gameWidth, rd->gameHeight},
       {(float)rd->marginX, (float)rd->marginY, rd->gameWidth * rd->scale, rd->gameHeight * rd->scale}, {0, 0}, 0.f,
       WHITE //
     );

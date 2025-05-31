@@ -1,5 +1,4 @@
 #include "base/renderer/RenderContextSingleton.hpp"
-#include "base/renderer/RenderContext.hpp"
 
 namespace Base
 {

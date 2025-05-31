@@ -1,7 +1,7 @@
 #include "internal/input/InputManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
-#include "base/scenes/signals/SceneChangedSignal.hpp"
+#include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "raylib.h"
 #include <algorithm>
@@ -12,7 +12,7 @@ namespace Base
   void InputManager::Init()
   {
     auto bus = SignalBus::GetInstance();
-    bus->SubscribeSignal<SceneChangedSignal>([this](const std::shared_ptr<Signal> &signal) {
+    bus->SubscribeSignal<ScenePushedSignal>([this](const std::shared_ptr<Signal> &signal) {
       this->ResetInput(signal); //
     });
   }
@@ -159,7 +159,7 @@ namespace Base
   void InputManager::ResetInput(const std::shared_ptr<Signal> &sig)
   {
 
-    if (std::dynamic_pointer_cast<SceneChangedSignal>(sig))
+    if (std::dynamic_pointer_cast<ScenePushedSignal>(sig))
     {
       for (auto it = _heldKeys.begin(); it != _heldKeys.end();)
       {
