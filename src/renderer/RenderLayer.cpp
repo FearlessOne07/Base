@@ -17,7 +17,7 @@ namespace Base
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
     : _position(other._position), _size(other._size), _renderFunction(std::move(other._renderFunction)),
-      _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _shaderChain(std::move(other._shaderChain)),
+      _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _shaderChain(other._shaderChain),
       _ping(other._ping), _pong(other._pong)
   {
     other._renderTexture.id = 0;
@@ -48,7 +48,7 @@ namespace Base
       _renderFunction = std::move(other._renderFunction);
       _ownerScene = other._ownerScene;
       _renderTexture = other._renderTexture;
-      _shaderChain = std::move(other._shaderChain);
+      _shaderChain = other._shaderChain;
       _pong = other._pong;
       _ping = other._ping;
 
@@ -83,8 +83,6 @@ namespace Base
 
     for (auto &[shaderName, pass] : _shaderChain)
     {
-      BeginTextureMode(*output);
-      ClearBackground(BLANK);
 
       auto shaderMan = _ownerScene->GetShaderManager();
       if (pass.HasDirty())
@@ -96,12 +94,14 @@ namespace Base
         pass.ClearDirty();
       }
 
+      BeginTextureMode(*output);
+      ClearBackground(BLANK);
       shaderMan->ActivateShader(shaderName);
       DrawTexturePro(                              //
         input->texture, {0, 0, _size.x, -_size.y}, //
         {0, 0, _size.x, _size.y}, {0, 0}, 0, WHITE //
       );
-      _ownerScene->GetShaderManager()->DeactivateCurrentShader();
+      shaderMan->DeactivateCurrentShader();
       EndTextureMode();
 
       std::swap(input, output); // Ping-pong

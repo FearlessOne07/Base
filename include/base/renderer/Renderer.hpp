@@ -3,6 +3,7 @@
 #include "base/renderer/RenderLayer.hpp"
 #include "base/renderer/ShaderBuffer.hpp"
 #include "raylib.h"
+#include <deque>
 #include <functional>
 #include <unordered_map>
 #include <vector>
@@ -14,7 +15,7 @@ namespace Base
     friend class Game;
 
   private:
-    std::unordered_map<const Scene *, std::vector<RenderLayer>> _renderLayers;
+    std::unordered_map<const Scene *, std::deque<RenderLayer>> _renderLayers;
     RenderTexture2D _renderTexture;
     const Scene *_currentScene = nullptr;
 

@@ -20,7 +20,6 @@ namespace Base
   void ShaderPass::SetUniformValue(const std::string &uniformName, UniformValue value)
   {
     _uniformValues[uniformName] = value;
-
     if (std::ranges::find(_dirty, uniformName) == _dirty.end())
     {
       _dirty.push_back(uniformName);

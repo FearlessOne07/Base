@@ -1,5 +1,4 @@
 #include "base/shaders/ShaderManager.hpp"
-#include "base/renderer/RenderContextSingleton.hpp"
 #include "raylib.h"
 
 namespace Base
@@ -12,15 +11,12 @@ namespace Base
   void ShaderManager::ActivateShader(const std::string &shaderName)
   {
     Shader *shader = GetShader(shaderName);
-    _activeShader = shader;
-    //
-    BeginShaderMode(*_activeShader);
+    BeginShaderMode(*shader);
   }
 
   void ShaderManager::DeactivateCurrentShader()
   {
     EndShaderMode();
-    _activeShader = nullptr;
   }
 
   Shader *ShaderManager::GetShader(const std::string &shaderName)
