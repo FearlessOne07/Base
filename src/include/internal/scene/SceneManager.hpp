@@ -4,6 +4,7 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneData.hpp"
+#include "base/shaders/ShaderManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "internal/input/InputListener.hpp"
@@ -35,6 +36,7 @@ namespace Base
     CameraManager *_cameraManager = nullptr;
     UIManager *_uiManager = nullptr;
     TweenManager *_tweenManager = nullptr;
+    ShaderManager *_shaderManager = nullptr;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
@@ -47,8 +49,8 @@ namespace Base
   public:
     SceneManager(                                                                                                 //
       Renderer *renderer, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
-      ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager,
-      TweenManager *tweenManager //
+      ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager, TweenManager *tweenManager,
+      ShaderManager *shaderManager //
     );
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);

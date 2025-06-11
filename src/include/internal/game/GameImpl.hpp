@@ -5,6 +5,7 @@
 #include "base/game/Game.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/renderer/Renderer.hpp"
+#include "base/shaders/ShaderManager.hpp"
 #include "base/systems/SystemManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
@@ -39,10 +40,11 @@ namespace Base
     ParticleManager _particleManager = ParticleManager();
     UIManager _uiManager = UIManager();
     TweenManager _tweenManager = TweenManager();
+    ShaderManager _shaderManager = ShaderManager(&_assetManager);
     SystemManager _systemManager = SystemManager(&_entityManager);
     SceneManager _sceneManager = SceneManager( //
       &_renderer, &_entityManager, &_systemManager, &_assetManager, &_particleManager, &_cameraManager, &_uiManager,
-      &_tweenManager //
+      &_tweenManager, &_shaderManager //
     );
 
   private: // Methods

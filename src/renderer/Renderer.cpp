@@ -77,14 +77,17 @@ namespace Base
   {
     _renderLayers.clear();
     UnloadRenderTexture(_renderTexture);
+    UnloadRenderTexture(_shaderBuffer.ping);
+    UnloadRenderTexture(_shaderBuffer.pong);
   }
 
   void Renderer::RenderLayers()
   {
     // Begin rendering of Scenes
-    for (auto &layer : _renderLayers.at(_currentScene))
+    auto &layers = _renderLayers.at(_currentScene);
+    for (auto &layer : layers)
     {
-      layer.Render(_shaderBuffer);
+      layer.Render();
     }
   }
 
@@ -92,7 +95,9 @@ namespace Base
   {
     BeginTextureMode(_renderTexture);
     ClearBackground(_currentScene->GetClearColor());
-    for (auto &layer : std::ranges::reverse_view(_renderLayers.at(_currentScene)))
+
+    auto layers = std::ranges::reverse_view(_renderLayers.at(_currentScene));
+    for (auto &layer : layers)
     {
       DrawTexturePro( //
         layer.GetTexture()->texture, {0, 0, layer.GetSize().x, layer.GetSize().y},

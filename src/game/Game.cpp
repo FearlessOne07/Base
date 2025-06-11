@@ -126,6 +126,7 @@ namespace Base
   void Game::GameImpl::End()
   {
     _audioMan.DeInit();
+    _renderer.DeInit();
     CloseWindow();
   }
 

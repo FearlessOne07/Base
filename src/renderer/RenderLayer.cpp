@@ -1,7 +1,7 @@
 #include "base/renderer/RenderLayer.hpp"
-#include "base/renderer/ShaderBuffer.hpp"
 #include "base/scenes/Scene.hpp"
 #include "raylib.h"
+#include "rlgl.h"
 #include <algorithm>
 #include <utility>
 
@@ -11,13 +11,18 @@ namespace Base
     : _position(position), _size(size), _renderFunction(renderFunction), _ownerScene(ownerScene)
   {
     _renderTexture = LoadRenderTexture(_size.x, _size.y);
+    _ping = LoadRenderTexture(_size.x, _size.y);
+    _pong = LoadRenderTexture(_size.x, _size.y);
   }
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
     : _position(other._position), _size(other._size), _renderFunction(std::move(other._renderFunction)),
-      _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _shaderChain(std::move(other._shaderChain))
+      _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _shaderChain(std::move(other._shaderChain)),
+      _ping(other._ping), _pong(other._pong)
   {
     other._renderTexture.id = 0;
+    other._ping.id = 0;
+    other._pong.id = 0;
   }
 
   RenderLayer &RenderLayer::operator=(RenderLayer &&other) noexcept
@@ -29,6 +34,14 @@ namespace Base
       {
         UnloadRenderTexture(_renderTexture);
       }
+      if (_ping.id != 0)
+      {
+        UnloadRenderTexture(_ping);
+      }
+      if (_pong.id != 0)
+      {
+        UnloadRenderTexture(_pong);
+      }
 
       _position = other._position;
       _size = other._size;
@@ -36,8 +49,12 @@ namespace Base
       _ownerScene = other._ownerScene;
       _renderTexture = other._renderTexture;
       _shaderChain = std::move(other._shaderChain);
+      _pong = other._pong;
+      _ping = other._ping;
 
       other._renderTexture.id = 0;
+      other._ping.id = 0;
+      other._pong.id = 0;
     }
     return *this;
   }
@@ -45,34 +62,46 @@ namespace Base
   RenderLayer::~RenderLayer()
   {
     UnloadRenderTexture(_renderTexture);
+    UnloadRenderTexture(_ping);
+    UnloadRenderTexture(_pong);
   }
 
-  void RenderLayer::Render(ShaderBuffer &shaderBuffer)
+  void RenderLayer::Render()
   {
     BeginTextureMode(_renderTexture);
     ClearBackground(BLANK);
     _renderFunction();
     EndTextureMode();
 
-    if (_shaderChain.empty())
+    if (_shaderChain.Empty())
     {
       return;
     }
 
     RenderTexture2D *input = &_renderTexture;
-    RenderTexture2D *output = &shaderBuffer.ping;
+    RenderTexture2D *output = &_ping;
 
-    for (size_t i = 0; i < _shaderChain.size(); ++i)
+    for (auto &[shaderName, pass] : _shaderChain)
     {
       BeginTextureMode(*output);
       ClearBackground(BLANK);
 
-      BeginShaderMode(*_shaderChain[i]);
+      auto shaderMan = _ownerScene->GetShaderManager();
+      if (pass.HasDirty())
+      {
+        for (auto &uniform : pass.GetDirty())
+        {
+          shaderMan->SetUniform(shaderName, uniform.c_str(), pass.GetUniformValue(uniform));
+        }
+        pass.ClearDirty();
+      }
+
+      shaderMan->ActivateShader(shaderName);
       DrawTexturePro(                              //
         input->texture, {0, 0, _size.x, -_size.y}, //
         {0, 0, _size.x, _size.y}, {0, 0}, 0, WHITE //
       );
-      EndShaderMode();
+      _ownerScene->GetShaderManager()->DeactivateCurrentShader();
       EndTextureMode();
 
       std::swap(input, output); // Ping-pong
@@ -85,9 +114,9 @@ namespace Base
     EndTextureMode();
   }
 
-  void RenderLayer::SetShaderChain(const std::vector<std::shared_ptr<Shader>> &chain)
+  ShaderChain *RenderLayer::GetShaderChain()
   {
-    _shaderChain = std::move(chain);
+    return &_shaderChain;
   }
 
   const RenderTexture *RenderLayer::GetTexture() const

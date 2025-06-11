@@ -18,11 +18,12 @@ namespace Base
 {
   SceneManager::SceneManager( //
     Renderer *renderer, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
-    ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager, TweenManager *tweenManager //
+    ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager, TweenManager *tweenManager,
+    ShaderManager *shaderManager //
     )
     : _renderer(renderer), _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
       _particleManager(particleManager), _cameraManager(cameraManager), _uiManager(uiManager),
-      _tweenManager(tweenManager)
+      _tweenManager(tweenManager), _shaderManager(shaderManager)
   {
   }
 
@@ -55,6 +56,7 @@ namespace Base
 
     _scenes.top()->SetRenderer(_renderer);
     _scenes.top()->SetEntityManager(_entityManager);
+    _scenes.top()->SetShaderManager(_shaderManager);
     _scenes.top()->SetParticleManager(_particleManager);
     _scenes.top()->SetAssetManager(_assetManager);
     _scenes.top()->SetSystemManager(_systemManager);

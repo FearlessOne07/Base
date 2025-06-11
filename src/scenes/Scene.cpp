@@ -40,6 +40,14 @@ namespace Base
     }
   }
 
+  void Scene::SetShaderManager(ShaderManager *manager)
+  {
+    if (manager)
+    {
+      _state->shaderManager = manager;
+    }
+  }
+
   void Scene::SetSystemManager(SystemManager *manager)
   {
     if (manager)
@@ -109,6 +117,11 @@ namespace Base
   Renderer *Scene::GetRenderer() const
   {
     return _state->renderer;
+  }
+
+  ShaderManager *Scene::GetShaderManager() const
+  {
+    return _state->shaderManager;
   }
 
   EntityManager *Scene::GetEntityManager() const

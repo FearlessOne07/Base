@@ -4,6 +4,7 @@
 #include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneLayerStack.hpp"
 #include "base/scenes/SceneTransition.hpp"
+#include "base/shaders/ShaderManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "raylib.h"
@@ -28,6 +29,7 @@ namespace Base
     void SetUIManager(UIManager *);
     void SetTweenManager(TweenManager *);
     void SetRenderer(Renderer *);
+    void SetShaderManager(ShaderManager *);
     void ResetSceneTransition();
     void Render();
     void Update(float dt);
@@ -47,6 +49,7 @@ namespace Base
       CameraManager *cameraManager = nullptr;
       UIManager *uiManager = nullptr;
       TweenManager *tweenManager = nullptr;
+      ShaderManager *shaderManager = nullptr;
       Color clearColor = BLACK;
     };
 
@@ -73,6 +76,7 @@ namespace Base
     [[nodiscard]] CameraManager *GetCameraManager() const;
     [[nodiscard]] UIManager *GetUIManager() const;
     [[nodiscard]] TweenManager *GetTweenManager() const;
+    [[nodiscard]] ShaderManager *GetShaderManager() const;
     [[nodiscard]] SceneLayerStack &GetLayerStack();
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())
