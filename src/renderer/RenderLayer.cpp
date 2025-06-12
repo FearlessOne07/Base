@@ -3,12 +3,13 @@
 #include "raylib.h"
 #include "rlgl.h"
 #include <algorithm>
+#include <ranges>
 #include <utility>
 
 namespace Base
 {
-  RenderLayer::RenderLayer(const Scene *ownerScene, Vector2 position, Vector2 size, RenderFunction renderFunction)
-    : _position(position), _size(size), _renderFunction(renderFunction), _ownerScene(ownerScene)
+  RenderLayer::RenderLayer(const Scene *ownerScene, Vector2 position, Vector2 size)
+    : _position(position), _size(size), _ownerScene(ownerScene)
   {
     _renderTexture = LoadRenderTexture(_size.x, _size.y);
     _ping = LoadRenderTexture(_size.x, _size.y);
@@ -16,7 +17,7 @@ namespace Base
   }
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
-    : _position(other._position), _size(other._size), _renderFunction(std::move(other._renderFunction)),
+    : _position(other._position), _size(other._size), _renderFunctions(std::move(other._renderFunctions)),
       _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _shaderChain(other._shaderChain),
       _ping(other._ping), _pong(other._pong)
   {
@@ -45,7 +46,7 @@ namespace Base
 
       _position = other._position;
       _size = other._size;
-      _renderFunction = std::move(other._renderFunction);
+      _renderFunctions = std::move(other._renderFunctions);
       _ownerScene = other._ownerScene;
       _renderTexture = other._renderTexture;
       _shaderChain = other._shaderChain;
@@ -70,7 +71,11 @@ namespace Base
   {
     BeginTextureMode(_renderTexture);
     ClearBackground(BLANK);
-    _renderFunction();
+    auto functions = std::ranges::reverse_view(_renderFunctions);
+    for (auto &function : functions)
+    {
+      function();
+    }
     EndTextureMode();
 
     if (_shaderChain.Empty())
@@ -132,5 +137,10 @@ namespace Base
   Vector2 RenderLayer::GetPosition() const
   {
     return _position;
+  }
+
+  void RenderLayer::AddRenderFunction(const RenderFunction &function)
+  {
+    _renderFunctions.emplace_back(std::move(function));
   }
 } // namespace Base

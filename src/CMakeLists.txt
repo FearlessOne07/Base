@@ -9,9 +9,9 @@ set(SRC
   "./renderer/RenderLayer.cpp"
 
   "./audio/Sound.cpp"
+  "./audio/AudioStream.cpp"
   "./audio/AudioManager.cpp"
   "./audio/SoundInstance.cpp"
-  "./audio/AudioStream.cpp"
 
   "./ui/UILayer.cpp"
   "./ui/UIManager.cpp"

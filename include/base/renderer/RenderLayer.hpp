@@ -1,7 +1,9 @@
 #pragma once
 #include "base/shaders/ShaderChain.hpp"
 #include "raylib.h"
+#include <deque>
 #include <functional>
+#include <vector>
 namespace Base
 {
   class Scene;
@@ -10,7 +12,7 @@ namespace Base
     using RenderFunction = std::function<void()>;
     // Rendering
     RenderTexture _renderTexture;
-    RenderFunction _renderFunction;
+    std::deque<RenderFunction> _renderFunctions;
 
     // Spec
     Vector2 _position = {0, 0};
@@ -26,7 +28,7 @@ namespace Base
     ShaderChain _shaderChain;
 
   public:
-    RenderLayer(const Scene *ownerScene, Vector2 position, Vector2 size, RenderFunction renderFunction);
+    RenderLayer(const Scene *ownerScene, Vector2 position, Vector2 size);
     RenderLayer(RenderLayer &&other) noexcept;
     RenderLayer &operator=(RenderLayer &&other) noexcept;
     ~RenderLayer();
@@ -35,5 +37,6 @@ namespace Base
     ShaderChain *GetShaderChain();
     Vector2 GetSize() const;
     Vector2 GetPosition() const;
+    void AddRenderFunction(const RenderFunction &);
   };
 } // namespace Base

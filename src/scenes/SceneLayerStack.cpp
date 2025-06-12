@@ -47,5 +47,4 @@ namespace Base
     _layers.clear();
     _layerIds.clear();
   }
-
 } // namespace Base

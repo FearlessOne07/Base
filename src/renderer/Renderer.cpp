@@ -10,16 +10,17 @@
 #include "raylib.h"
 #include <memory>
 #include <ranges>
+#include <utility>
 
 namespace Base
 {
-  RenderLayer *Renderer::InitLayer(                                                               //
-    const Scene *ownerScene, Vector2 position, Vector2 size, std::function<void()> renderFunction //
+  RenderLayer *Renderer::InitLayer(                         //
+    const Scene *ownerScene, Vector2 position, Vector2 size //
   )
   {
     if (_renderLayers.contains(ownerScene))
     {
-      _renderLayers.at(ownerScene).emplace_back(ownerScene, position, size, renderFunction);
+      _renderLayers.at(ownerScene).emplace_back(ownerScene, position, size);
       return &_renderLayers.at(ownerScene).back();
     }
     return nullptr;
@@ -50,7 +51,6 @@ namespace Base
     _shaderBuffer.pong = LoadRenderTexture(width, height);
 
     auto bus = SignalBus::GetInstance();
-
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
       if (auto popped = std::dynamic_pointer_cast<ScenePoppedSignal>(signal))
       {
@@ -99,10 +99,11 @@ namespace Base
     auto layers = std::ranges::reverse_view(_renderLayers.at(_currentScene));
     for (auto &layer : layers)
     {
+      auto rd = RenderContextSingleton::GetInstance();
       DrawTexturePro( //
         layer.GetTexture()->texture, {0, 0, layer.GetSize().x, layer.GetSize().y},
-        {layer.GetPosition().x, layer.GetPosition().y, layer.GetSize().x, layer.GetSize().y}, //
-        {0, 0}, 0, WHITE                                                                      //
+        {layer.GetPosition().x, layer.GetPosition().y, rd->gameWidth, rd->gameHeight}, //
+        {0, 0}, 0, WHITE                                                               //
       );
     }
     EndTextureMode();

@@ -1,8 +1,8 @@
 #pragma once
 #include "SceneLayer.hpp"
+#include "base/renderer/RenderLayer.hpp"
 #include "base/util/Exception.hpp"
 #include <algorithm>
-#include <iterator>
 #include <memory>
 #include <type_traits>
 #include <typeindex>
@@ -24,7 +24,7 @@ namespace Base
 
   public:
     SceneLayerStack(Scene *owner);
-    template <typename T> void AttachLayer()
+    template <typename T> T *AttachLayer()
     {
       if (std::is_base_of_v<SceneLayer, T>)
       {
@@ -35,6 +35,7 @@ namespace Base
           _layers.emplace_back(std::make_shared<T>());
           _layers.back()->_owner = _owner;
           _layers.back()->_onAttach();
+          return std::static_pointer_cast<T>(_layers.back()).get();
         }
         else
         {

@@ -26,5 +26,7 @@ namespace Base
     virtual void OnAttach() = 0;
     virtual void OnDetach() = 0;
     virtual void OnInputEvent(std::shared_ptr<InputEvent> &event) {};
+
+    void SetRenderLayer(RenderLayer *);
   };
 } // namespace Base

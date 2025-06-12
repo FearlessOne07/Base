@@ -16,15 +16,17 @@ namespace Base
 
   void SignalBus::BroadCastSignal(const std::shared_ptr<Signal> &event)
   {
-    auto handlerId = std::type_index(typeid(*event));
-    auto it = _handlers.find(handlerId);
+    std::future<void> future = std::async(std::launch::async, [this, event]() {
+      auto handlerId = std::type_index(typeid(*event));
+      auto it = _handlers.find(handlerId);
 
-    if (it != _handlers.end())
-    {
-      for (const SignalHandler &handler : it->second)
+      if (it != _handlers.end())
       {
-        handler(event); // called synchronously inside the async block
+        for (const SignalHandler &handler : it->second)
+        {
+          handler(event); // called synchronously inside the async block
+        }
       }
-    }
+    });
   }
 } // namespace Base
