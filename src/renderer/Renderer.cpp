@@ -10,7 +10,6 @@
 #include "raylib.h"
 #include <memory>
 #include <ranges>
-#include <utility>
 
 namespace Base
 {

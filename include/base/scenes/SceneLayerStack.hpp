@@ -24,7 +24,7 @@ namespace Base
 
   public:
     SceneLayerStack(Scene *owner);
-    template <typename T> T *AttachLayer()
+    template <typename T> T *AttachLayer(RenderLayer *renderLayer)
     {
       if (std::is_base_of_v<SceneLayer, T>)
       {
@@ -34,7 +34,7 @@ namespace Base
           _layerIds.push_back(id);
           _layers.emplace_back(std::make_shared<T>());
           _layers.back()->_owner = _owner;
-          _layers.back()->_onAttach();
+          _layers.back()->_onAttach(renderLayer);
           return std::static_pointer_cast<T>(_layers.back()).get();
         }
         else

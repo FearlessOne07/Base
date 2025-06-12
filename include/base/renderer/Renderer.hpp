@@ -4,9 +4,8 @@
 #include "base/renderer/ShaderBuffer.hpp"
 #include "raylib.h"
 #include <deque>
-#include <functional>
 #include <unordered_map>
-#include <vector>
+
 namespace Base
 {
   class Scene;

@@ -13,7 +13,7 @@ namespace Base
     RenderLayer *_renderLayer = nullptr;
 
   private:
-    void _onAttach();
+    void _onAttach(RenderLayer *renderlayer);
     void _onDetach();
 
   protected:
@@ -26,7 +26,5 @@ namespace Base
     virtual void OnAttach() = 0;
     virtual void OnDetach() = 0;
     virtual void OnInputEvent(std::shared_ptr<InputEvent> &event) {};
-
-    void SetRenderLayer(RenderLayer *);
   };
 } // namespace Base

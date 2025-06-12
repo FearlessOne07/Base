@@ -13,20 +13,15 @@ namespace Base
     return _renderLayer;
   }
 
-  void SceneLayer::_onAttach()
+  void SceneLayer::_onAttach(RenderLayer *renderLayer)
   {
+    _renderLayer = renderLayer;
+    _renderLayer->AddRenderFunction([this]() { this->Render(); });
     OnAttach();
   }
 
   void SceneLayer::_onDetach()
   {
     OnDetach();
-  }
-  
-// TODO: Make Attach do this
-  void SceneLayer::SetRenderLayer(RenderLayer *layer)
-  {
-    _renderLayer = layer;
-    layer->AddRenderFunction([this]() { this->Render(); });
   }
 } // namespace Base

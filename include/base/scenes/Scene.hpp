@@ -56,6 +56,13 @@ namespace Base
     std::unique_ptr<SceneState> _state;
     SceneLayerStack _layerStack;
 
+    // Getters
+    [[nodiscard]] Renderer *GetRenderer() const;
+
+  protected:
+    void SetClearColor(Color color);
+    RenderLayer *AddRenderLayer(Vector2 size);
+
   public:
     Scene();
     virtual ~Scene() = default;
@@ -65,10 +72,7 @@ namespace Base
     virtual void Suspend();
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
 
-    void SetClearColor(Color color);
     Color GetClearColor() const;
-
-    [[nodiscard]] Renderer *GetRenderer() const;
     [[nodiscard]] EntityManager *GetEntityManager() const;
     [[nodiscard]] SystemManager *GetSystemManager() const;
     [[nodiscard]] ParticleManager *GetParticleManager() const;

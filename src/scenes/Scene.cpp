@@ -21,7 +21,6 @@ namespace Base
   {
     return _state->sceneTransition;
   }
-
   void Scene::ResetSceneTransition()
   {
     _state->sceneTransition = {.request = SceneRequest::NONE, .sceneID = typeid(-1)};
@@ -193,4 +192,10 @@ namespace Base
     _layerStack.DetachLayers();
     Exit();
   }
+
+  RenderLayer *Scene::AddRenderLayer(Vector2 size)
+  {
+    return GetRenderer()->InitLayer(this, {0, 0}, size);
+  }
+
 } // namespace Base
