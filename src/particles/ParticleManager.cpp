@@ -85,7 +85,7 @@ namespace Base
 
       if (particle->shape == ParticleEmitter::ParticleShape::TEXTURE)
       {
-        if (!emitter.particleTexture)
+        if (!emitter.particleTexture.Get())
         {
           THROW_BASE_RUNTIME_ERROR("Texture not provided for textured particle emitter");
         }
@@ -270,7 +270,7 @@ namespace Base
         else if (particle->shape == ParticleEmitter::ParticleShape::TEXTURE)
         {
           DrawTexturePro( //
-            *particle->texture, particle->textureSource,
+            *particle->texture.Get()->GetRaylibTexture(), particle->textureSource,
             {
               particle->position.x,
               particle->position.y,

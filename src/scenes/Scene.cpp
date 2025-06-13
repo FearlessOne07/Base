@@ -7,7 +7,6 @@
 
 namespace Base
 {
-
   void Scene::_setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data)
   {
     _state->sceneTransition = {

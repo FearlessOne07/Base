@@ -2,9 +2,9 @@
 
 namespace Base
 {
-  void UIElement::SetFont(const std::shared_ptr<Font> &font)
+  void UIElement::SetFont(const AssetHandle<BaseFont> &font)
   {
-    if (font)
+    if (font.Get())
     {
       _font = font;
     }

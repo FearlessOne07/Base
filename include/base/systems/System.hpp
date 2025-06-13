@@ -5,6 +5,7 @@
 namespace Base
 {
   class EntityManager;
+  class Scene;
   class System
   {
   private:
@@ -20,7 +21,7 @@ namespace Base
     virtual ~System() = default;
 
     // Update Function
-    virtual void Update(float dt, EntityManager *entityManager) = 0;
+    virtual void Update(float dt, EntityManager *entityManager, const Scene *currentScene) = 0;
 
   public: // Implemented
     void Activate();

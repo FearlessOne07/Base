@@ -1,7 +1,8 @@
 #pragma once
+#include "base/assets/AssetHandle.hpp"
+#include "base/textures/Texture.hpp"
 #include <cstdint>
 #include <functional>
-#include <memory>
 #include <raylib.h>
 namespace Base
 {
@@ -56,7 +57,8 @@ namespace Base
     int particleSideNumber = 3;
 
     // Texture
-    std::shared_ptr<Texture> particleTexture = nullptr;
+    AssetHandle<Texture> particleTexture;
+    ;
     Rectangle particleTextureSource = {0, 0, 0, 0};
 
     float particleRotationSpeed = 0.f;

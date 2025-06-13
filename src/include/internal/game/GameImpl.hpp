@@ -3,6 +3,7 @@
 #include "base/camera/CameraManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/game/Game.hpp"
+#include "base/game/GameConfig.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/renderer/Renderer.hpp"
 #include "base/shaders/ShaderManager.hpp"
@@ -54,7 +55,7 @@ namespace Base
 
   public:
     GameImpl() = default;
-    void Init(int width, int height, const char *title, int fps = 0);
+    void Init(GameConfig config);
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);
     void RegisterSystem(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem);
     void Run();

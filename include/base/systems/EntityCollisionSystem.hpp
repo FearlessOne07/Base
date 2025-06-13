@@ -16,6 +16,6 @@ namespace Base
     );
 
   public:
-    void Update(float dt, EntityManager *entityManager) override;
+    void Update(float dt, EntityManager *entityManager,const Scene *) override;
   };
 } // namespace Base

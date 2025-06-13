@@ -1,4 +1,5 @@
 #pragma once
+#include "base/game/GameConfig.hpp"
 #include "base/util/Exception.hpp"
 #include <functional>
 #include <memory>
@@ -47,7 +48,7 @@ namespace Base
         THROW_BASE_RUNTIME_ERROR("Type Must be a derivative if the System class");
       }
     };
-    void Init(int width, int height, const char *title, int fps = 0);
+    void Init(GameConfig gameConig = GameConfig());
     void Run();
 
   private:

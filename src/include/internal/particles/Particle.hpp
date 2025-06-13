@@ -1,8 +1,8 @@
 #pragma once
 
+#include "base/assets/AssetHandle.hpp"
 #include "base/particles/ParticleEmitter.hpp"
 #include "raylib.h"
-#include <memory>
 namespace Base
 {
   class Particle
@@ -34,7 +34,7 @@ namespace Base
     int sideNumber = 3;
 
     // Texture
-    std::shared_ptr<Texture> texture = nullptr;
+    AssetHandle<Texture> texture;
     Rectangle textureSource = {0, 0, 0, 0};
 
     // Rotation

@@ -12,6 +12,6 @@ namespace Base
     void HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager);
 
   public:
-    void Update(float dt, EntityManager *entityManager) override;
+    void Update(float dt, EntityManager *entityManager,const Scene *) override;
   };
 } // namespace Base

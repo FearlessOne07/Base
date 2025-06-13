@@ -1,26 +1,30 @@
 #include "base/shaders/ShaderChain.hpp"
+#include "base/assets/AssetHandle.hpp"
 #include "base/util/Exception.hpp"
 
 namespace Base
 {
 
-  void ShaderChain::SetShaderUniform(const std::string &shaderName, const std::string &uniformName, UniformValue value)
+  void ShaderChain::SetShaderUniform( //
+    AssetHandle<Shader> shaderHandle, const std::string &uniformName,
+    UniformValue value //
+  )
   {
-    if (_shaderPasses.contains(shaderName))
+    if (_shaderPasses.contains(shaderHandle))
     {
-      _shaderPasses.at(shaderName).SetUniformValue(uniformName, value);
+      _shaderPasses.at(shaderHandle).SetUniformValue(uniformName, value);
     }
     else
     {
-      THROW_BASE_RUNTIME_ERROR("Shader " + shaderName + " not defined in shaderchain");
+      THROW_BASE_RUNTIME_ERROR("Shader not defined in shaderchain");
     }
   }
 
-  void ShaderChain::AddShaderPass(const std::string &shaderName)
+  void ShaderChain::AddShaderPass(AssetHandle<Shader> shaderHandle)
   {
-    if (!_shaderPasses.contains(shaderName))
+    if (!_shaderPasses.contains(shaderHandle))
     {
-      _shaderPasses.insert({shaderName, ShaderPass()});
+      _shaderPasses.insert({shaderHandle, ShaderPass()});
     }
   }
 

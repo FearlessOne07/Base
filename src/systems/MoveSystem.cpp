@@ -15,7 +15,7 @@
 
 namespace Base
 {
-  void MoveSystem::Update(float dt, EntityManager *entitymanager)
+  void MoveSystem::Update(float dt, EntityManager *entitymanager,const Scene * currentScene)
   {
     std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<RigidBodyComponent>();
 

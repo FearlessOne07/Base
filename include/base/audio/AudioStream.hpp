@@ -1,4 +1,5 @@
 #pragma once
+#include "base/assets/BaseAsset.hpp"
 #include <array>
 #include <atomic>
 #include <cstdint>
@@ -9,7 +10,7 @@
 
 namespace Base
 {
-  class AudioStream
+  class AudioStream : public BaseAsset
   {
   private:
     ma_decoder _decoder;

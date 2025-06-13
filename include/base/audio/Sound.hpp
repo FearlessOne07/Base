@@ -1,4 +1,5 @@
 #pragma once
+#include "base/assets/BaseAsset.hpp"
 #include <array>
 #include <cstdint>
 #include <vector>
@@ -6,7 +7,7 @@
 namespace Base
 {
 
-  class Sound
+  class Sound : public BaseAsset
   {
   private:
     // Data

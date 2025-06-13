@@ -1,5 +1,8 @@
 #include "base/shaders/ShaderManager.hpp"
+#include "base/assets/AssetHandle.hpp"
 #include "raylib.h"
+#include <iterator>
+#include <memory>
 
 namespace Base
 {
@@ -8,9 +11,9 @@ namespace Base
   {
   }
 
-  void ShaderManager::ActivateShader(const std::string &shaderName)
+  void ShaderManager::ActivateShader(AssetHandle<Shader> shaderHandle)
   {
-    Shader *shader = GetShader(shaderName);
+    std::shared_ptr<Shader> shader = GetShader(shaderHandle);
     BeginShaderMode(*shader);
   }
 
@@ -19,23 +22,22 @@ namespace Base
     EndShaderMode();
   }
 
-  Shader *ShaderManager::GetShader(const std::string &shaderName)
+  std::shared_ptr<Shader> ShaderManager::GetShader(AssetHandle<Shader> shaderHandle)
   {
-    if (_shaderCache.contains(shaderName))
+    if (auto it = std::ranges::find(_shaderCache, shaderHandle); it != _shaderCache.end())
     {
-      return _shaderCache.at(shaderName);
+      return _shaderCache[(int)std::distance(_shaderCache.begin(), it)].Get();
     }
     else
     {
-      Shader *shader = _assetManager->GetAsset<Shader>(shaderName).get();
-      _shaderCache.insert({shaderName, shader});
-      return shader;
+      _shaderCache.push_back(shaderHandle);
+      return shaderHandle.Get();
     }
   }
 
-  void ShaderManager::SetUniform(const std::string &shaderName, const std::string &name, const UniformValue &value)
+  void ShaderManager::SetUniform(AssetHandle<Shader> shaderHandle, const std::string &name, const UniformValue &value)
   {
-    Shader *shader = GetShader(shaderName);
+    std::shared_ptr<Shader> shader = GetShader(shaderHandle);
     if (!shader)
       return;
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "base/assets/AssetHandle.hpp"
 #include "base/camera/CameraManager.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/renderer/Renderer.hpp"
@@ -7,6 +8,8 @@
 #include "base/shaders/ShaderManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
+#include "base/util/Exception.hpp"
+#include "base/util/Strings.hpp"
 #include "raylib.h"
 #include <memory>
 #include <typeindex>
@@ -30,10 +33,12 @@ namespace Base
     void SetTweenManager(TweenManager *);
     void SetRenderer(Renderer *);
     void SetShaderManager(ShaderManager *);
+    void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
     void ResetSceneTransition();
+
+    // Core
     void Render();
     void Update(float dt);
-    void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
 
     // Template Methods
     void _exit();
@@ -55,8 +60,9 @@ namespace Base
 
     std::unique_ptr<SceneState> _state;
     SceneLayerStack _layerStack;
+    std::unordered_map<std::string, AssetHandle<void>> _assets;
 
-    // Getters
+    // Private Getters
     [[nodiscard]] Renderer *GetRenderer() const;
 
   protected:
@@ -86,6 +92,30 @@ namespace Base
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())
     {
       _setSceneTransition(typeid(T), request, data);
+    }
+
+    // Asset Management
+    template <typename T> AssetHandle<T> GetAsset(const std::string &name) const
+    {
+      if (_assets.contains(name))
+      {
+        return AssetHandle<T>::Cast(_assets.at(name));
+      }
+      else
+      {
+        THROW_BASE_RUNTIME_ERROR("Asset " + name + " not loaded");
+      }
+    }
+
+    template <typename T> AssetHandle<T> GetGlobalAsset(const std::string &name)
+    {
+      return GetAssetManager()->GetAsset<T>(name);
+    }
+
+    template <typename T> void LoadAsset(const fs::path &path)
+    {
+      std::string name = Base::Strings::ToLower(path.stem().string());
+      _assets[name] = GetAssetManager()->LoadAsset<T>(path, false);
     }
   };
 } // namespace Base

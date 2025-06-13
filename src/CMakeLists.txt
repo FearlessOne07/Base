@@ -46,6 +46,7 @@ set(SRC
   "./signals/SignalBus.cpp"
 
   "./assets/AssetManager.cpp"
+  "./assets/BaseAsset.cpp"  
 
   "./tween/TweenManager.cpp"
   "./tween/ITween.cpp"
@@ -53,6 +54,7 @@ set(SRC
   "./util/Exception.cpp"
   "./util/Easings.cpp"
   "./util/Strings.cpp"
+  "./util/UUID.cpp"
 
   "./shaders/ShaderManager.cpp"
   "./shaders/ShaderPass.cpp"

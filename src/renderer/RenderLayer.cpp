@@ -86,7 +86,7 @@ namespace Base
     RenderTexture2D *input = &_renderTexture;
     RenderTexture2D *output = &_ping;
 
-    for (auto &[shaderName, pass] : _shaderChain)
+    for (auto &[shaderHandle, pass] : _shaderChain)
     {
 
       auto shaderMan = _ownerScene->GetShaderManager();
@@ -94,14 +94,14 @@ namespace Base
       {
         for (auto &uniform : pass.GetDirty())
         {
-          shaderMan->SetUniform(shaderName, uniform.c_str(), pass.GetUniformValue(uniform));
+          shaderMan->SetUniform(shaderHandle, uniform.c_str(), pass.GetUniformValue(uniform));
         }
         pass.ClearDirty();
       }
 
       BeginTextureMode(*output);
       ClearBackground(BLANK);
-      shaderMan->ActivateShader(shaderName);
+      shaderMan->ActivateShader(shaderHandle);
       DrawTexturePro(                              //
         input->texture, {0, 0, _size.x, -_size.y}, //
         {0, 0, _size.x, _size.y}, {0, 0}, 0, WHITE //
@@ -141,6 +141,5 @@ namespace Base
 
   void RenderLayer::AddRenderFunction(const RenderFunction &function)
   {
-    _renderFunctions.emplace_back(std::move(function));
-  }
+    _renderFunctions.emplace_back(std::move(function)); }
 } // namespace Base

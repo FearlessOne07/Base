@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ShaderPass.hpp"
+#include "base/assets/AssetHandle.hpp"
 #include "base/shaders/UniformValue.hpp"
 #include <string>
 #include <unordered_map>
@@ -12,21 +13,21 @@ namespace Base
     friend class RenderLayer;
 
   private:
-    std::unordered_map<std::string, ShaderPass> _shaderPasses;
+    std::unordered_map<AssetHandle<Shader>, ShaderPass> _shaderPasses;
     // Iterator
-    inline std::unordered_map<std::string, ShaderPass>::iterator begin()
+    inline std::unordered_map<AssetHandle<Shader>, ShaderPass>::iterator begin()
     {
       return _shaderPasses.begin();
     }
 
-    inline std::unordered_map<std::string, ShaderPass>::iterator end()
+    inline std::unordered_map<AssetHandle<Shader>, ShaderPass>::iterator end()
     {
       return _shaderPasses.end();
     }
 
   public:
-    void SetShaderUniform(const std::string &shaderName, const std::string &uniformName, UniformValue value);
-    void AddShaderPass(const std::string &shaderName);
+    void SetShaderUniform(AssetHandle<Shader> shaderHandle, const std::string &uniformName, UniformValue value);
+    void AddShaderPass(AssetHandle<Shader> shaderHandle);
     bool Empty() const;
   };
 } // namespace Base

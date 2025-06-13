@@ -1,6 +1,8 @@
 #pragma once
 
+#include "base/assets/AssetHandle.hpp"
 #include "base/input/InputEvent.hpp"
+#include "base/textures/Font.hpp"
 #include <functional>
 #include <memory>
 #include <raylib.h>
@@ -22,7 +24,7 @@ namespace Base
     };
 
   protected:
-    std::shared_ptr<Font> _font = nullptr;
+    AssetHandle<BaseFont> _font;
     Vector2 _position = {0, 0};
     Vector2 _setPosition = {0, 0};
 
@@ -38,7 +40,7 @@ namespace Base
   public:
     void SetAnchorPoint(AnchorPoint anchorPoint);
     void SetPosition(Vector2 position);
-    void SetFont(const std::shared_ptr<Font> &);
+    void SetFont(const AssetHandle<BaseFont> &);
     Vector2 GetPosition() const;
     Vector2 GetSize() const;
 

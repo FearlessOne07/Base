@@ -1,3 +1,5 @@
+
+#include "base/scenes/signals/SceneResumedSignal.hpp"
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -5,9 +7,17 @@
 #define NOUSER // Excludes USER APIs
 #endif         // WIN32
 
+#include "base/assets/AssetHandle.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/audio/AudioStream.hpp"
 #include "base/audio/Sound.hpp"
+#include "base/scenes/Scene.hpp"
+#include "base/scenes/signals/ScenePoppedSignal.hpp"
+#include "base/scenes/signals/ScenePushedSignal.hpp"
+#include "base/shaders/Shader.hpp"
+#include "base/signals/SignalBus.hpp"
+#include "base/textures/Font.hpp"
+#include "base/textures/Texture.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
 #include <filesystem>
@@ -19,16 +29,100 @@
 
 namespace Base
 {
-  void AssetManager::AddPath(std::string &name, fs::path path)
+  void AssetManager::Init()
   {
-    if (_paths.find(name) == _paths.end())
-    {
-      _paths[name] = std::move(path);
-    }
+    auto bus = SignalBus::GetInstance();
+    bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
+      auto scenePopped = std::static_pointer_cast<ScenePoppedSignal>(signal);
+      UnloadScene(scenePopped->scene);
+    });
+
+    bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig) {
+      auto scenePushed = std::static_pointer_cast<ScenePushedSignal>(sig);
+      SetCurrentScene(scenePushed->scene);
+    });
+
+    bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> sig) {
+      auto sceneResumed = std::static_pointer_cast<SceneResumedSignal>(sig);
+      SetCurrentScene(sceneResumed->scene);
+    });
   }
-  void AssetManager::SetSampleRate(uint64_t sampleRate)
+
+  void AssetManager::Deinit()
+  {
+    if (!_sceneAssets.empty())
+    {
+      for (auto &[scene, assets] : _sceneAssets)
+      {
+        for (auto &[name, asset] : assets)
+        {
+          if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))
+          {
+            UnloadTexture(*it->GetRaylibTexture());
+          }
+          else if (auto it = std::dynamic_pointer_cast<Shader>(asset.asset))
+          {
+            UnloadShader(*it);
+          }
+          else if (auto it = std::dynamic_pointer_cast<BaseFont>(asset.asset))
+          {
+            UnloadFont(*it->GetRaylibFont());
+          }
+        }
+      }
+    }
+    _sceneAssets.clear();
+
+    for (auto &[name, asset] : _globalAssets)
+    {
+      if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))
+      {
+        UnloadTexture(*it->GetRaylibTexture());
+      }
+      else if (auto it = std::dynamic_pointer_cast<Shader>(asset.asset))
+      {
+        UnloadShader(*it);
+      }
+      else if (auto it = std::dynamic_pointer_cast<BaseFont>(asset.asset))
+      {
+        UnloadFont(*it->GetRaylibFont());
+      }
+    }
+
+    _globalAssets.clear();
+  }
+  void AssetManager::SetCurrentScene(const Scene *scene)
+  {
+    if (_sceneAssets.find(scene) == _sceneAssets.end())
+    {
+      _sceneAssets[scene];
+    }
+    _currentScene = scene;
+  }
+
+  void AssetManager::SetAudioSampleRate(uint64_t sampleRate)
   {
     _sampleRate = sampleRate;
+  }
+
+  void AssetManager::UnloadScene(const Scene *scene)
+  {
+    for (auto &[name, asset] : _sceneAssets[scene])
+    {
+      if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))
+      {
+        UnloadTexture(*it->GetRaylibTexture());
+      }
+      else if (auto it = std::dynamic_pointer_cast<Shader>(asset.asset))
+      {
+        UnloadShader(*it);
+      }
+      else if (auto it = std::dynamic_pointer_cast<BaseFont>(asset.asset))
+      {
+        UnloadFont(*it->GetRaylibFont());
+      }
+    }
+    _sceneAssets.erase(scene);
   }
 
   std::shared_ptr<Sound> AssetManager::LoadSound(const std::filesystem::path &path)
@@ -67,7 +161,6 @@ namespace Base
         "Failed to decode sound" + path.string() //
       );
     }
-
     return std::make_shared<Sound>(data, frameCount);
   }
 
@@ -86,26 +179,57 @@ namespace Base
       );
       ma_decoder_uninit(&decoder);
     }
-
     return std::make_shared<AudioStream>(decoder, decoder.outputSampleRate, _sampleRate);
   }
 
-  template <> std::shared_ptr<Texture> AssetManager::LoadAsset<Texture>(const fs::path &path)
+  template <> AssetHandle<Texture> AssetManager::LoadAsset<Texture>(const fs::path &path, bool global)
   {
     if (fs::exists(path))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
       std::string fullpath = path.string();
-      if (_assets.find(name) == _assets.end())
+
+      if (global)
       {
-        _assets[name] = std::make_shared<Texture>(LoadTexture(fullpath.c_str()));
-        return std::static_pointer_cast<Texture>(_assets.at(name));
+        if (_globalAssets.find(name) == _globalAssets.end())
+        {
+          auto texture = std::make_shared<Texture>(LoadTexture(fullpath.c_str()));
+          AssetHandle<Texture> handle(texture);
+          _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(texture)};
+          return handle;
+        }
+        else
+        {
+          std::stringstream error;
+          error << "Repeated loading of global texture '" << name << "'";
+          THROW_BASE_RUNTIME_ERROR(error.str());
+        }
       }
       else
       {
-        std::stringstream error;
-        error << "Repeated loading of texture '" << name << "'";
-        THROW_BASE_RUNTIME_ERROR(error.str());
+        if (_currentScene)
+        {
+          if (_sceneAssets.at(_currentScene).find(name) == _sceneAssets.at(_currentScene).end())
+          {
+            auto texture = std::make_shared<Texture>(LoadTexture(fullpath.c_str()));
+            AssetHandle<Texture> handle(texture);
+            _sceneAssets[_currentScene][name] = {
+              static_cast<AssetHandle<void>>(handle),
+              static_pointer_cast<BaseAsset>(texture),
+            };
+            return handle;
+          }
+          else
+          {
+            std::stringstream error;
+            error << "Repeated loading of scene-local texture '" << name << "'";
+            THROW_BASE_RUNTIME_ERROR(error.str());
+          }
+        }
+        else
+        {
+          THROW_BASE_RUNTIME_ERROR("Invalid Scene reference in AssetManager");
+        }
       }
     }
     else
@@ -116,250 +240,362 @@ namespace Base
     }
   }
 
-  template <> std::shared_ptr<Shader> AssetManager::LoadAsset<Shader>(const fs::path &path)
-  {
-    if (fs::exists(path))
-    {
-      std::string name = Base::Strings::ToLower(path.stem().string());
-      std::string fullpath = path.string();
-      if (_assets.find(name) == _assets.end())
-      {
-        _assets[name] = std::make_shared<Shader>(LoadShader(nullptr, fullpath.c_str()));
-        return std::static_pointer_cast<Shader>(_assets.at(name));
-      }
-      else
-      {
-        std::stringstream error;
-        error << "Repeated loading of shader '" << name << "'";
-        THROW_BASE_RUNTIME_ERROR(error.str());
-      }
-    }
-    else
-    {
-      std::stringstream error;
-      error << "Cannot find shader file '" << path.string() << "'";
-      THROW_BASE_RUNTIME_ERROR(error.str());
-    }
-  }
-
-  template <> std::shared_ptr<Sound> AssetManager::LoadAsset<Sound>(const fs::path &path)
+  template <> AssetHandle<BaseShader> AssetManager::LoadAsset<BaseShader>(const fs::path &path, bool global)
   {
     if (fs::exists(path))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
       std::string fullpath = path.string();
 
-      if (_assets.find(name) == _assets.end())
+      if (global)
       {
-        _assets[name] = LoadSound(fullpath.c_str());
-        return std::static_pointer_cast<Sound>(_assets.at(name));
+        if (_globalAssets.find(name) == _globalAssets.end())
+        {
+          auto shader = std::make_shared<BaseShader>(LoadShader(nullptr, fullpath.c_str()));
+          AssetHandle<BaseShader> handle(shader);
+          _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(shader)};
+          return handle;
+        }
+        else
+        {
+          std::stringstream error;
+          error << "Repeated loading of global texture '" << name << "'";
+          THROW_BASE_RUNTIME_ERROR(error.str());
+        }
       }
       else
       {
-        std::stringstream error;
-        error << "Repeated loading of sound '" << name << "'";
-        THROW_BASE_RUNTIME_ERROR(error.str());
+        if (_currentScene)
+        {
+          if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
+          {
+            auto shader = std::make_shared<BaseShader>(LoadShader(nullptr, fullpath.c_str()));
+            AssetHandle<BaseShader> handle(shader);
+            _sceneAssets[_currentScene][name] = {
+              static_cast<AssetHandle<void>>(handle),
+              static_pointer_cast<BaseAsset>(shader),
+            };
+            return handle;
+          }
+          else
+          {
+            std::stringstream error;
+            error << "Repeated loading of scene-local texture '" << name << "'";
+            THROW_BASE_RUNTIME_ERROR(error.str());
+          }
+        }
+        else
+        {
+          THROW_BASE_RUNTIME_ERROR("Invalid Scene reference in AssetManager");
+        }
       }
     }
     else
     {
       std::stringstream error;
-      error << "Cannot find sound file'" << path.string() << "'";
+      error << "Cannot find teture file '" << path.string() << "'";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 
-  template <> std::shared_ptr<AudioStream> AssetManager::LoadAsset<AudioStream>(const fs::path &path)
+  template <> AssetHandle<Sound> AssetManager::LoadAsset<Sound>(const fs::path &path, bool global)
   {
     if (fs::exists(path))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
       std::string fullpath = path.string();
 
-      if (_assets.find(name) == _assets.end())
+      if (global)
       {
-        _assets[name] = LoadAudioStream(fullpath.c_str());
-        return std::static_pointer_cast<AudioStream>(_assets.at(name));
+        if (_globalAssets.find(name) == _globalAssets.end())
+        {
+          auto sound = LoadSound(fullpath.c_str());
+          AssetHandle<Sound> handle(sound);
+          _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(sound)};
+          return handle;
+        }
+        else
+        {
+          std::stringstream error;
+          error << "Repeated loading of global texture '" << name << "'";
+          THROW_BASE_RUNTIME_ERROR(error.str());
+        }
       }
       else
       {
-        std::stringstream error;
-        error << "Repeated loading of audio file '" << name << "'";
-        THROW_BASE_RUNTIME_ERROR(error.str());
+        if (_currentScene)
+        {
+          if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
+          {
+            auto sound = LoadSound(fullpath.c_str());
+            AssetHandle<Sound> handle(sound);
+            _sceneAssets[_currentScene][name] = {
+              static_cast<AssetHandle<void>>(handle),
+              static_pointer_cast<BaseAsset>(sound),
+            };
+            return handle;
+          }
+          else
+          {
+            std::stringstream error;
+            error << "Repeated loading of scene-local texture '" << name << "'";
+            THROW_BASE_RUNTIME_ERROR(error.str());
+          }
+        }
+        else
+        {
+          THROW_BASE_RUNTIME_ERROR("Invalid Scene reference in AssetManager");
+        }
       }
     }
     else
     {
       std::stringstream error;
-      error << "Cannot find audio file'" << path.string() << "'";
+      error << "Cannot find teture file '" << path.string() << "'";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 
-  template <> std::shared_ptr<Font> AssetManager::LoadAsset<Font>(const fs::path &path)
+  template <> AssetHandle<AudioStream> AssetManager::LoadAsset<AudioStream>(const fs::path &path, bool global)
   {
     if (fs::exists(path))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
       std::string fullpath = path.string();
 
-      if (_assets.find(name) == _assets.end())
+      if (global)
       {
-        _assets[name] = std::make_shared<Font>(LoadFontEx(fullpath.c_str(), 512, nullptr, 0));
-        return std::static_pointer_cast<Font>(_assets.at(name));
+        if (_globalAssets.find(name) == _globalAssets.end())
+        {
+          auto stream = LoadAudioStream(fullpath.c_str());
+          AssetHandle<AudioStream> handle(stream);
+          _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(stream)};
+          return handle;
+        }
+        else
+        {
+          std::stringstream error;
+          error << "Repeated loading of global texture '" << name << "'";
+          THROW_BASE_RUNTIME_ERROR(error.str());
+        }
       }
       else
       {
-        std::stringstream error;
-        error << "Repeated loading of font '" << name << "'";
-        THROW_BASE_RUNTIME_ERROR(error.str());
+        if (_currentScene)
+        {
+          if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
+          {
+            auto stream = LoadAudioStream(fullpath.c_str());
+            AssetHandle<AudioStream> handle(stream);
+            _sceneAssets[_currentScene][name] = {
+              static_cast<AssetHandle<void>>(handle),
+              static_pointer_cast<BaseAsset>(stream),
+            };
+            return handle;
+          }
+          else
+          {
+            std::stringstream error;
+            error << "Repeated loading of scene-local texture '" << name << "'";
+            THROW_BASE_RUNTIME_ERROR(error.str());
+          }
+        }
+        else
+        {
+          THROW_BASE_RUNTIME_ERROR("Invalid Scene reference in AssetManager");
+        }
       }
     }
     else
     {
       std::stringstream error;
-      error << "Cannot find font file'" << path.string() << "'";
+      error << "Cannot find teture file '" << path.string() << "'";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 
-  template <> std::shared_ptr<Texture> AssetManager::GetAsset<Texture>(const std::string &assetName)
+  template <> AssetHandle<BaseFont> AssetManager::LoadAsset<BaseFont>(const fs::path &path, bool global)
   {
-
-    std::string name = Base::Strings::ToLower(assetName);
-    if (_assets.find(name) == _assets.end())
+    if (fs::exists(path))
     {
-      std::stringstream error;
-      error << "Texture '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
-    }
-    return std::static_pointer_cast<Texture>(_assets.at(name));
-  }
+      std::string name = Base::Strings::ToLower(path.stem().string());
+      std::string fullpath = path.string();
 
-  template <> std::shared_ptr<Shader> AssetManager::GetAsset<Shader>(const std::string &assetName)
-  {
-
-    std::string name = Base::Strings::ToLower(assetName);
-    if (_assets.find(name) == _assets.end())
-    {
-      std::stringstream error;
-      error << "Shader '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
-    }
-    return std::static_pointer_cast<Shader>(_assets.at(name));
-  }
-
-  template <> std::shared_ptr<Sound> AssetManager::GetAsset<Sound>(const std::string &assetName)
-  {
-    std::string name = Base::Strings::ToLower(assetName);
-    if (_assets.find(name) == _assets.end())
-    {
-      std::stringstream error;
-      error << "Sound '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
-    }
-    return std::static_pointer_cast<Sound>(_assets.at(name));
-  }
-
-  template <> std::shared_ptr<AudioStream> AssetManager::GetAsset<AudioStream>(const std::string &assetName)
-  {
-    std::string name = Base::Strings::ToLower(assetName);
-    if (_assets.find(name) == _assets.end())
-    {
-      std::stringstream error;
-      error << "Sound '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
-    }
-    return std::static_pointer_cast<AudioStream>(_assets.at(name));
-  }
-
-  template <> std::shared_ptr<Font> AssetManager::GetAsset<Font>(const std::string &assetName)
-  {
-    std::string name = Base::Strings::ToLower(assetName);
-    if (_assets.find(name) == _assets.end())
-    {
-      std::stringstream error;
-      error << "Font '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
-    }
-    return std::static_pointer_cast<Font>(_assets.at(name));
-  }
-
-  template <> void AssetManager::UnloadAsset<Texture>(const std::string &assetName)
-  {
-    std::string name = Base::Strings::ToLower(assetName);
-    if (_assets.find(name) != _assets.end())
-    {
-      UnloadTexture(*std::static_pointer_cast<Texture>(_assets.at(name)));
-      _assets.erase(name);
+      if (global)
+      {
+        if (_globalAssets.find(name) == _globalAssets.end())
+        {
+          auto font = std::make_shared<BaseFont>(LoadFontEx(fullpath.c_str(), 512, nullptr, 0));
+          AssetHandle<BaseFont> handle(font);
+          _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(font)};
+          return handle;
+        }
+        else
+        {
+          std::stringstream error;
+          error << "Repeated loading of global texture '" << name << "'";
+          THROW_BASE_RUNTIME_ERROR(error.str());
+        }
+      }
+      else
+      {
+        if (_currentScene)
+        {
+          if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
+          {
+            auto font = std::make_shared<BaseFont>(LoadFontEx(fullpath.c_str(), 512, nullptr, 0));
+            AssetHandle<BaseFont> handle(font);
+            _sceneAssets[_currentScene][name] = {
+              static_cast<AssetHandle<void>>(handle),
+              static_pointer_cast<BaseAsset>(font),
+            };
+            return handle;
+          }
+          else
+          {
+            std::stringstream error;
+            error << "Repeated loading of scene-local texture '" << name << "'";
+            THROW_BASE_RUNTIME_ERROR(error.str());
+          }
+        }
+        else
+        {
+          THROW_BASE_RUNTIME_ERROR("Invalid Scene reference in AssetManager");
+        }
+      }
     }
     else
     {
       std::stringstream error;
-      error << "Texture '" << name << "' does not exist";
+      error << "Cannot find teture file '" << path.string() << "'";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 
-  template <> void AssetManager::UnloadAsset<Sound>(const std::string &assetName)
+  template <> AssetHandle<Texture> AssetManager::GetAsset<Texture>(const std::string &assetName, const Scene *scene)
   {
     std::string name = Base::Strings::ToLower(assetName);
-    if (_assets.find(name) != _assets.end())
+    if (scene)
     {
-      _assets.erase(name);
+      if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
+      {
+        std::stringstream error;
+        error << "Scene-local Texture '" << name << "' does not exist";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+      return AssetHandle<Texture>::Cast(_sceneAssets.at(scene).at(name).handle);
     }
     else
     {
-      std::stringstream error;
-      error << "Sound '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
+      if (_globalAssets.find(name) == _globalAssets.end())
+      {
+        std::stringstream error;
+        error << "Global Texture '" << name << "' does not exist";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+      return AssetHandle<Texture>::Cast(_sceneAssets.at(scene).at(name).handle);
     }
   }
 
-  template <> void AssetManager::UnloadAsset<Shader>(const std::string &assetName)
+  template <>
+  AssetHandle<BaseShader> AssetManager::GetAsset<BaseShader>(const std::string &assetName, const Scene *scene)
   {
     std::string name = Base::Strings::ToLower(assetName);
-    if (_assets.find(name) != _assets.end())
+    if (scene)
     {
-      UnloadShader(*std::static_pointer_cast<Shader>(_assets.at(name)));
-      _assets.erase(name);
+      if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
+      {
+        std::stringstream error;
+        error << "Scene-local Shader '" << name << "' does not exist";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+      return AssetHandle<BaseShader>::Cast(_sceneAssets.at(scene).at(name).handle);
     }
     else
     {
-      std::stringstream error;
-      error << "Shader '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
+      if (_globalAssets.find(name) == _globalAssets.end())
+      {
+        std::stringstream error;
+        error << "Global Shader '" << name << "' does not exist";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+      return AssetHandle<BaseShader>::Cast(_sceneAssets.at(scene).at(name).handle);
     }
   }
 
-  template <> void AssetManager::UnloadAsset<AudioStream>(const std::string &assetName)
+  template <> AssetHandle<Sound> AssetManager::GetAsset<Sound>(const std::string &assetName, const Scene *scene)
   {
     std::string name = Base::Strings::ToLower(assetName);
-    if (_assets.find(name) != _assets.end())
+    if (scene)
     {
-      _assets.erase(name);
+      if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
+      {
+        std::stringstream error;
+        error << "Scene-local Sound '" << name << "' does not exist";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+      return AssetHandle<Sound>::Cast(_sceneAssets.at(scene).at(name).handle);
     }
     else
     {
-      std::stringstream error;
-      error << "Font '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
+      if (_globalAssets.find(name) == _globalAssets.end())
+      {
+        std::stringstream error;
+        error << "Global Sound '" << name << "' does not exist";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+      return AssetHandle<Sound>::Cast(_sceneAssets.at(scene).at(name).handle);
     }
   }
 
-  template <> void AssetManager::UnloadAsset<Font>(const std::string &assetName)
+  template <>
+  AssetHandle<AudioStream> AssetManager::GetAsset<AudioStream>(const std::string &assetName, const Scene *scene)
   {
     std::string name = Base::Strings::ToLower(assetName);
-    if (_assets.find(name) != _assets.end())
+    if (scene)
     {
-      UnloadFont(*std::static_pointer_cast<Font>(_assets.at(name)));
-      _assets.erase(name);
+      if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
+      {
+        std::stringstream error;
+        error << "Scene-local AudioStream '" << name << "' does not exist";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+      return AssetHandle<AudioStream>::Cast(_sceneAssets.at(scene).at(name).handle);
     }
     else
     {
-      std::stringstream error;
-      error << "Font '" << name << "' does not exist";
-      THROW_BASE_RUNTIME_ERROR(error.str());
+      if (_globalAssets.find(name) == _globalAssets.end())
+      {
+        std::stringstream error;
+        error << "Global AudioStream '" << name << "' does not exist";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+      return AssetHandle<AudioStream>::Cast(_sceneAssets.at(scene).at(name).handle);
+    }
+  }
+
+  template <> AssetHandle<BaseFont> AssetManager::GetAsset<BaseFont>(const std::string &assetName, const Scene *scene)
+  {
+    std::string name = Base::Strings::ToLower(assetName);
+    if (scene)
+    {
+      if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
+      {
+        std::stringstream error;
+        error << "Scene-local Font '" << name << "' does not exist";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+      return AssetHandle<BaseFont>::Cast(_sceneAssets.at(scene).at(name).handle);
+    }
+    else
+    {
+      if (_globalAssets.find(name) == _globalAssets.end())
+      {
+        std::stringstream error;
+        error << "Global Font '" << name << "' does not exist";
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+      return AssetHandle<BaseFont>::Cast(_sceneAssets.at(scene).at(name).handle);
     }
   }
 } // namespace Base

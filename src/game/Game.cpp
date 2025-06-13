@@ -1,4 +1,5 @@
 #include "base/game/Game.hpp"
+#include "base/game/GameConfig.hpp"
 #include "base/renderer/RenderContext.hpp"
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
@@ -11,38 +12,45 @@
 
 namespace Base
 {
-  void Game::GameImpl::Init(int width, int height, const char *title, int fps)
+  void Game::GameImpl::Init(GameConfig config)
   {
-
     // Init Audio
     _audioMan.Init();
     _audioMan.SetAssetManager(&_assetManager);
 
     // Initialize Raylib
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(1280, 720, title);
+    if (config.ResizableWindow)
+    {
+      SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    }
+    if (config.Vsync)
+    {
+      SetConfigFlags(FLAG_VSYNC_HINT);
+    }
+    InitWindow(config.MinWindowSize.x, config.MinWindowSize.y, config.Title);
     SetExitKey(0);
     SetWindowMinSize(1280, 720);
-    if (fps > 0)
+    if (config.TargetFps > 0)
     {
-      SetTargetFPS(fps);
+      SetTargetFPS(config.TargetFps);
     }
 
     // Init Renderer
-    _renderer.Init(width, height);
+    _renderer.Init(config.Resolution.x, config.Resolution.y);
 
     // Initialise Render Texture
-    _gameWidth = static_cast<float>(width);
-    _gameHeight = static_cast<float>(height);
+    _gameWidth = static_cast<float>(config.Resolution.x);
+    _gameHeight = static_cast<float>(config.Resolution.y);
     _running = true;
 
     // Init Systems
     _inpMan.Init();
     _particleManager.Init();
     _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
-
     _inpMan.RegisterListener(&_sceneManager);
 
+    _assetManager.Init();
+    _systemManager.Init();
     // Initialize render context
     auto windowWidth = static_cast<float>(GetScreenWidth());
     auto windowHeight = static_cast<float>(GetScreenHeight());
@@ -125,6 +133,7 @@ namespace Base
 
   void Game::GameImpl::End()
   {
+    _assetManager.Deinit();
     _audioMan.DeInit();
     _renderer.DeInit();
     CloseWindow();
@@ -163,9 +172,9 @@ namespace Base
     _impl->Run();
   }
 
-  void Game::Init(int width, int height, const char *title, int fps)
+  void Game::Init(GameConfig config)
   {
-    _impl->Init(width, height, title, fps);
+    _impl->Init(config);
   }
 
   void Game::RegisterSceneImpl(                                                               //

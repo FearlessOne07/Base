@@ -7,9 +7,9 @@ namespace Base
   void UILabel::SetText(const std::string &text)
   {
     Font font;
-    if (_font)
+    if (_font.Get())
     {
-      font = *_font;
+      font = *_font.Get()->GetRaylibFont();
     }
     else
     {
@@ -22,9 +22,9 @@ namespace Base
   void UILabel::SetFontSize(float size)
   {
     Font font;
-    if (_font)
+    if (_font.Get())
     {
-      font = *_font;
+      font = *_font.Get()->GetRaylibFont();
     }
     else
     {
@@ -42,9 +42,9 @@ namespace Base
   void UILabel::Render()
   {
     Font font;
-    if (_font)
+    if (_font.Get())
     {
-      font = *_font;
+      font = *_font.Get()->GetRaylibFont();
     }
     else
     {

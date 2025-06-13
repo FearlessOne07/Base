@@ -10,7 +10,7 @@ namespace Base
   {
   }
 
-  void InputSystem::Update(float dt, EntityManager *entitymanager)
+  void InputSystem::Update(float dt, EntityManager *entitymanager,const Scene * currentScene)
   {
     _entities = entitymanager->Query<InputComponent>();
   }

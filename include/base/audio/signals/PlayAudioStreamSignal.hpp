@@ -1,13 +1,14 @@
 #pragma once
+#include "base/assets/AssetHandle.hpp"
+#include "base/audio/AudioStream.hpp"
 #include "base/signals/Signal.hpp"
-#include <string>
 
 namespace Base
 {
   class PlayAudioStreamSignal : public Signal
   {
   public:
-    std::string streamName;
+    AssetHandle<AudioStream> streamHandle;
     float streamVolume = 1.f;
     float streamPan = 0.5f;
     bool loopStream = false;

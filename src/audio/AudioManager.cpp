@@ -140,7 +140,7 @@ namespace Base
     if (assetManager && !_assetManager)
     {
       _assetManager = assetManager;
-      _assetManager->SetSampleRate(_sampleRate);
+      _assetManager->SetAudioSampleRate(_sampleRate);
     }
   }
 
@@ -238,7 +238,7 @@ namespace Base
 
     if (nextWrite != _soundReadIndex.load())
     {
-      auto sound = _assetManager->GetAsset<Sound>(signal->soundName);
+      auto sound = signal->soundHandle.Get();
       std::shared_ptr<SoundInstance> instance = std::make_shared<SoundInstance>(sound);
       instance->SetVolume(std::clamp(signal->soundVolume, 0.f, 1.f));
       instance->SetPan(std::clamp(signal->soundPan, -1.f, 1.f));
@@ -255,7 +255,7 @@ namespace Base
 
     if (nextWrite != _streamReadIndex.load())
     {
-      auto stream = _assetManager->GetAsset<AudioStream>(signal->streamName);
+      auto stream = signal->streamHandle.Get();
       stream->SetVolume(std::clamp(signal->streamVolume, 0.f, 1.f));
       stream->SetPan(std::clamp(signal->streamPan, -1.f, 1.f));
       stream->SetLoop(signal->loopStream);

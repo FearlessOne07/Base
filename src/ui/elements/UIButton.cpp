@@ -46,9 +46,9 @@ namespace Base
   void UIButton::SetText(const std::string &text)
   {
     Font font;
-    if (_font)
+    if (_font.Get())
     {
-      font = *_font;
+      font = *_font.Get()->GetRaylibFont();
     }
     else
     {
@@ -64,9 +64,9 @@ namespace Base
   void UIButton::SetFontSize(float size)
   {
     Font font;
-    if (_font)
+    if (_font.Get())
     {
-      font = *_font;
+      font = *_font.Get()->GetRaylibFont();
     }
     else
     {
@@ -82,9 +82,9 @@ namespace Base
   void UIButton::Render()
   {
     Font font;
-    if (_font)
+    if (_font.Get())
     {
-      font = *_font;
+      font = *_font.Get()->GetRaylibFont();
     }
     else
     {

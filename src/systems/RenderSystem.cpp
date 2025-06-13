@@ -10,7 +10,7 @@
 
 namespace Base
 {
-  void RenderSystem::Update(float dt, EntityManager *entitymanager)
+  void RenderSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
   {
     // Shape Component
     std::vector<std::shared_ptr<Entity>> entities_transcmp = entitymanager->Query<TransformComponent>();
@@ -71,7 +71,7 @@ namespace Base
           if (tcmp && transcmp)
           {
             DrawTexturePro( //
-              *tcmp->texture, tcmp->source,
+              *tcmp->texture.Get()->GetRaylibTexture(), tcmp->source,
               {
                 transcmp->position.x,
                 transcmp->position.y,
