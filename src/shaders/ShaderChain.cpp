@@ -1,12 +1,13 @@
 #include "base/shaders/ShaderChain.hpp"
 #include "base/assets/AssetHandle.hpp"
+#include "base/shaders/Shader.hpp"
 #include "base/util/Exception.hpp"
 
 namespace Base
 {
 
   void ShaderChain::SetShaderUniform( //
-    AssetHandle<Shader> shaderHandle, const std::string &uniformName,
+    AssetHandle<Base::BaseShader> shaderHandle, const std::string &uniformName,
     UniformValue value //
   )
   {
@@ -20,7 +21,7 @@ namespace Base
     }
   }
 
-  void ShaderChain::AddShaderPass(AssetHandle<Shader> shaderHandle)
+  void ShaderChain::AddShaderPass(AssetHandle<Base::BaseShader> shaderHandle)
   {
     if (!_shaderPasses.contains(shaderHandle))
     {
