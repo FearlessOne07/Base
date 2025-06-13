@@ -1,5 +1,7 @@
 #pragma once
 #include "raylib.h"
+#include <filesystem>
+#include <unordered_map>
 struct GameConfig
 {
   const char *Title = "New Game";
@@ -8,4 +10,5 @@ struct GameConfig
   int TargetFps = 0;
   bool Vsync = false;
   bool ResizableWindow = true;
+  std::unordered_map<std::string, std::filesystem::path> globalAssets = {};
 };

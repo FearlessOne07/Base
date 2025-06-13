@@ -10,4 +10,17 @@ namespace Base::Strings
     std::ranges::transform(string, lower.begin(), [](char c) { return std::tolower(c); });
     return lower;
   }
+
+  std::string Strip(const std::string &s)
+  {
+    auto start = std::find_if_not(s.begin(), s.end(), ::isspace);
+    auto end = std::find_if_not(s.rbegin(), s.rend(), ::isspace).base();
+
+    if (start >= end)
+    {
+      return "";
+    }
+
+    return std::string(start, end);
+  }
 } // namespace Base::Strings

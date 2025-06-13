@@ -184,10 +184,10 @@ namespace Base
 
   template <> AssetHandle<Texture> AssetManager::LoadAsset<Texture>(const fs::path &path, bool global)
   {
-    if (fs::exists(path))
+    if (fs::exists(Strings::Strip(path.string())))
     {
-      std::string name = Base::Strings::ToLower(path.stem().string());
-      std::string fullpath = path.string();
+      std::string name = Strings::ToLower(path.stem().string());
+      std::string fullpath = Strings::Strip(path.string());
 
       if (global)
       {
@@ -242,10 +242,10 @@ namespace Base
 
   template <> AssetHandle<BaseShader> AssetManager::LoadAsset<BaseShader>(const fs::path &path, bool global)
   {
-    if (fs::exists(path))
+    if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
-      std::string fullpath = path.string();
+      std::string fullpath = Strings::Strip(path.string());
 
       if (global)
       {
@@ -300,10 +300,10 @@ namespace Base
 
   template <> AssetHandle<Sound> AssetManager::LoadAsset<Sound>(const fs::path &path, bool global)
   {
-    if (fs::exists(path))
+    if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
-      std::string fullpath = path.string();
+      std::string fullpath = Strings::Strip(path.string());
 
       if (global)
       {
@@ -358,10 +358,10 @@ namespace Base
 
   template <> AssetHandle<AudioStream> AssetManager::LoadAsset<AudioStream>(const fs::path &path, bool global)
   {
-    if (fs::exists(path))
+    if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
-      std::string fullpath = path.string();
+      std::string fullpath = Strings::Strip(path.string());
 
       if (global)
       {
@@ -416,10 +416,10 @@ namespace Base
 
   template <> AssetHandle<BaseFont> AssetManager::LoadAsset<BaseFont>(const fs::path &path, bool global)
   {
-    if (fs::exists(path))
+    if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
-      std::string fullpath = path.string();
+      std::string fullpath = Strings::Strip(path.string());
 
       if (global)
       {
@@ -454,7 +454,7 @@ namespace Base
           else
           {
             std::stringstream error;
-            error << "Repeated loading of scene-local texture '" << name << "'";
+            error << "Repeated loading of scene-local font '" << name << "'";
             THROW_BASE_RUNTIME_ERROR(error.str());
           }
         }
@@ -467,7 +467,7 @@ namespace Base
     else
     {
       std::stringstream error;
-      error << "Cannot find teture file '" << path.string() << "'";
+      error << "Cannot find font file '" << path.string() << "'";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
@@ -493,7 +493,7 @@ namespace Base
         error << "Global Texture '" << name << "' does not exist";
         THROW_BASE_RUNTIME_ERROR(error.str());
       }
-      return AssetHandle<Texture>::Cast(_sceneAssets.at(scene).at(name).handle);
+      return AssetHandle<Texture>::Cast(_globalAssets.at(name).handle);
     }
   }
 
@@ -519,7 +519,7 @@ namespace Base
         error << "Global Shader '" << name << "' does not exist";
         THROW_BASE_RUNTIME_ERROR(error.str());
       }
-      return AssetHandle<BaseShader>::Cast(_sceneAssets.at(scene).at(name).handle);
+      return AssetHandle<BaseShader>::Cast(_globalAssets.at(name).handle);
     }
   }
 
@@ -544,7 +544,7 @@ namespace Base
         error << "Global Sound '" << name << "' does not exist";
         THROW_BASE_RUNTIME_ERROR(error.str());
       }
-      return AssetHandle<Sound>::Cast(_sceneAssets.at(scene).at(name).handle);
+      return AssetHandle<Sound>::Cast(_globalAssets.at(name).handle);
     }
   }
 
@@ -570,7 +570,7 @@ namespace Base
         error << "Global AudioStream '" << name << "' does not exist";
         THROW_BASE_RUNTIME_ERROR(error.str());
       }
-      return AssetHandle<AudioStream>::Cast(_sceneAssets.at(scene).at(name).handle);
+      return AssetHandle<AudioStream>::Cast(_globalAssets.at(name).handle);
     }
   }
 
@@ -595,7 +595,7 @@ namespace Base
         error << "Global Font '" << name << "' does not exist";
         THROW_BASE_RUNTIME_ERROR(error.str());
       }
-      return AssetHandle<BaseFont>::Cast(_sceneAssets.at(scene).at(name).handle);
+      return AssetHandle<BaseFont>::Cast(_globalAssets.at(name).handle);
     }
   }
 } // namespace Base

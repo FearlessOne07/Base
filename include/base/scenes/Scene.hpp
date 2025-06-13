@@ -64,6 +64,7 @@ namespace Base
 
     // Private Getters
     [[nodiscard]] Renderer *GetRenderer() const;
+    [[nodiscard]] AssetManager *GetAssetManager() const;
 
   protected:
     void SetClearColor(Color color);
@@ -82,7 +83,6 @@ namespace Base
     [[nodiscard]] EntityManager *GetEntityManager() const;
     [[nodiscard]] SystemManager *GetSystemManager() const;
     [[nodiscard]] ParticleManager *GetParticleManager() const;
-    [[nodiscard]] AssetManager *GetAssetManager() const;
     [[nodiscard]] CameraManager *GetCameraManager() const;
     [[nodiscard]] UIManager *GetUIManager() const;
     [[nodiscard]] TweenManager *GetTweenManager() const;
@@ -103,13 +103,8 @@ namespace Base
       }
       else
       {
-        THROW_BASE_RUNTIME_ERROR("Asset " + name + " not loaded");
+        return GetAssetManager()->GetAsset<T>(name);
       }
-    }
-
-    template <typename T> AssetHandle<T> GetGlobalAsset(const std::string &name)
-    {
-      return GetAssetManager()->GetAsset<T>(name);
     }
 
     template <typename T> void LoadAsset(const fs::path &path)

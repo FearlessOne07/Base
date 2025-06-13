@@ -4,10 +4,13 @@
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/systems/System.hpp"
+#include "base/util/Exception.hpp"
+#include "base/util/Strings.hpp"
 #include "internal/game/GameImpl.hpp"
 #include "raylib.h"
 #include <algorithm>
 #include <memory>
+#include <string>
 #include <utility>
 
 namespace Base
@@ -49,7 +52,42 @@ namespace Base
     _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
     _inpMan.RegisterListener(&_sceneManager);
 
+    // Load Global Assets
     _assetManager.Init();
+
+    if (config.globalAssets.size() > 0)
+    {
+      for (auto &[type, path] : config.globalAssets)
+      {
+        std::string assetType = Strings::ToLower(type);
+
+        if (assetType == "font")
+        {
+          _assetManager.LoadAsset<BaseFont>(path);
+        }
+        else if (assetType == "sound")
+        {
+          _assetManager.LoadAsset<Sound>(path);
+        }
+        else if (assetType == "audio-stream")
+        {
+          _assetManager.LoadAsset<AudioStream>(path);
+        }
+        else if (assetType == "shader")
+        {
+          _assetManager.LoadAsset<BaseShader>(path);
+        }
+        else if (assetType == "texture")
+        {
+          _assetManager.LoadAsset<Texture>(path);
+        }
+        else
+        {
+          THROW_BASE_RUNTIME_ERROR("Invalid Asset type speicfied in global assets");
+        }
+      }
+    }
+
     _systemManager.Init();
     // Initialize render context
     auto windowWidth = static_cast<float>(GetScreenWidth());
