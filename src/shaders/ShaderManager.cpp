@@ -1,13 +1,17 @@
 #include "base/shaders/ShaderManager.hpp"
 #include "base/assets/AssetHandle.hpp"
+#include "base/scenes/Scene.hpp"
+#include "base/scenes/signals/ScenePoppedSignal.hpp"
+#include "base/scenes/signals/ScenePushedSignal.hpp"
+#include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/shaders/Shader.hpp"
+#include "base/signals/SignalBus.hpp"
 #include "raylib.h"
 #include <iterator>
 #include <memory>
 
 namespace Base
 {
-
   ShaderManager::ShaderManager(AssetManager *assetManager) : _assetManager(assetManager)
   {
   }
@@ -18,6 +22,39 @@ namespace Base
     BeginShaderMode(*shader);
   }
 
+  void ShaderManager::Init()
+  {
+    auto bus = SignalBus::GetInstance();
+    bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig) {
+      auto scenePushed = std::static_pointer_cast<ScenePushedSignal>(sig);
+      UpdateCurrentScene(scenePushed->scene);
+    });
+
+    bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> sig) {
+      auto sceneResumed = std::static_pointer_cast<SceneResumedSignal>(sig);
+      UpdateCurrentScene(sceneResumed->scene);
+    });
+
+    bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
+      auto scenePopped = std::static_pointer_cast<ScenePoppedSignal>(signal);
+      ClearSceneShaderCache(scenePopped->scene);
+    });
+  }
+
+  void ShaderManager::UpdateCurrentScene(const Scene *scene)
+  {
+    if (!_shaderCache.contains(_currentScene))
+    {
+      _shaderCache[scene];
+    }
+    _currentScene = scene;
+  }
+
+  void ShaderManager::ClearSceneShaderCache(const Scene *scene)
+  {
+    _shaderCache.erase(scene);
+  }
+
   void ShaderManager::DeactivateCurrentShader()
   {
     EndShaderMode();
@@ -25,13 +62,18 @@ namespace Base
 
   std::shared_ptr<Shader> ShaderManager::GetShader(AssetHandle<Base::BaseShader> shaderHandle)
   {
-    if (auto it = std::ranges::find(_shaderCache, shaderHandle); it != _shaderCache.end())
+    if ( //
+      auto it = std::ranges::find(_shaderCache.at(_currentScene), shaderHandle);
+      it != _shaderCache.at(_currentScene).end() //
+    )
     {
-      return _shaderCache[(int)std::distance(_shaderCache.begin(), it)].Get()->GetRaylibShader();
+      return _shaderCache.at(_currentScene)[(int)std::distance(_shaderCache.at(_currentScene).begin(), it)]
+        .Get()
+        ->GetRaylibShader();
     }
     else
     {
-      _shaderCache.push_back(shaderHandle);
+      _shaderCache.at(_currentScene).push_back(shaderHandle);
       return shaderHandle.Get()->GetRaylibShader();
     }
   }
@@ -78,6 +120,14 @@ namespace Base
     {
       int v = std::get<int>(value);
       SetShaderValue(*shader, loc, &v, SHADER_UNIFORM_INT);
+    }
+  }
+
+  void ShaderManager::Update(float dt)
+  {
+    for (AssetHandle<BaseShader> handle : _shaderCache[_currentScene])
+    {
+      SetUniform(handle, "u_time", (float)GetTime());
     }
   }
 } // namespace Base

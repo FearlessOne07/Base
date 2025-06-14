@@ -55,6 +55,8 @@ namespace Base
     // Load Global Assets
     _assetManager.Init();
 
+    _shaderManager.Init();
+
     if (config.globalAssets.size() > 0)
     {
       for (auto &[type, path] : config.globalAssets)
@@ -154,6 +156,8 @@ namespace Base
       _particleManager.Update(dt);
 
       _tweenManager.Update(dt);
+
+      _shaderManager.Update(dt);
 
       // Post Update
       _entityManager.RemoveDeadEntities();

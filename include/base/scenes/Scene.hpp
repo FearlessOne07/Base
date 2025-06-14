@@ -1,5 +1,6 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
+#include "base/assets/AssetManager.hpp"
 #include "base/camera/CameraManager.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/renderer/Renderer.hpp"
@@ -8,19 +9,21 @@
 #include "base/shaders/ShaderManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
-#include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
 #include "raylib.h"
+#include <filesystem>
 #include <memory>
-#include <typeindex>
 
 namespace Base
 {
+
+  namespace fs = std::filesystem;
   class EntityManager;
   class SystemManager;
   class AssetManager;
   class Scene
   {
+
   private:
     friend class SceneManager;
     [[nodiscard]] SceneTransition GetSceneTransition() const;
