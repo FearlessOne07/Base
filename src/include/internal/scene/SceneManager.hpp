@@ -1,5 +1,4 @@
 #pragma once
-#include "base/camera/CameraManager.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/renderer/Renderer.hpp"
@@ -33,7 +32,6 @@ namespace Base
     SystemManager *_systemManager = nullptr;
     AssetManager *_assetManager = nullptr;
     ParticleManager *_particleManager = nullptr;
-    CameraManager *_cameraManager = nullptr;
     UIManager *_uiManager = nullptr;
     TweenManager *_tweenManager = nullptr;
     ShaderManager *_shaderManager = nullptr;
@@ -49,7 +47,7 @@ namespace Base
   public:
     SceneManager(                                                                                                 //
       Renderer *renderer, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
-      ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager, TweenManager *tweenManager,
+      ParticleManager *particleManager, UIManager *uiManager, TweenManager *tweenManager,
       ShaderManager *shaderManager //
     );
     SceneManager() = default;

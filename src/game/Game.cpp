@@ -47,9 +47,11 @@ namespace Base
     _running = true;
 
     // Init Systems
-    _inpMan.Init();
     _particleManager.Init();
     _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
+
+    //
+    _inpMan.Init();
     _inpMan.RegisterListener(&_sceneManager);
 
     // Load Global Assets
@@ -149,7 +151,7 @@ namespace Base
 
       _uiManager.Update(dt);
 
-      _cameraManager.Update(dt);
+      _renderer.Update(dt);
 
       _systemManager.Update(dt);
 

@@ -25,11 +25,6 @@ namespace Base
     _state->sceneTransition = {.request = SceneRequest::NONE, .sceneID = typeid(-1)};
   }
 
-  SceneLayerStack &Scene::GetLayerStack()
-  {
-    return _layerStack;
-  }
-
   void Scene::SetRenderer(Renderer *manager)
   {
     if (manager)
@@ -86,14 +81,6 @@ namespace Base
     }
   }
 
-  void Scene::SetCameraManager(CameraManager *manager)
-  {
-    if (manager)
-    {
-      _state->cameraManager = manager;
-    }
-  }
-
   void Scene::SetTweenManager(TweenManager *manager)
   {
     if (manager)
@@ -127,11 +114,6 @@ namespace Base
     return _state->entityManager;
   }
 
-  CameraManager *Scene::GetCameraManager() const
-  {
-    return _state->cameraManager;
-  }
-
   SystemManager *Scene::GetSystemManager() const
   {
     return _state->systemManager;
@@ -163,6 +145,11 @@ namespace Base
 
   void Scene::OnInputEvent(std::shared_ptr<InputEvent> event)
   {
+  }
+
+  void Scene::_OnInputEvent(std::shared_ptr<InputEvent> event)
+  {
+    OnInputEvent(event);
     _layerStack.OnInputEvent(event);
   }
 

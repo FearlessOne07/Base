@@ -1,5 +1,4 @@
 #include "internal/scene/SceneManager.hpp"
-#include "base/camera/CameraManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/scenes/Scene.hpp"
@@ -18,12 +17,12 @@ namespace Base
 {
   SceneManager::SceneManager( //
     Renderer *renderer, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
-    ParticleManager *particleManager, CameraManager *cameraManager, UIManager *uiManager, TweenManager *tweenManager,
+    ParticleManager *particleManager, UIManager *uiManager, TweenManager *tweenManager,
     ShaderManager *shaderManager //
     )
     : _renderer(renderer), _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
-      _particleManager(particleManager), _cameraManager(cameraManager), _uiManager(uiManager),
-      _tweenManager(tweenManager), _shaderManager(shaderManager)
+      _particleManager(particleManager), _uiManager(uiManager), _tweenManager(tweenManager),
+      _shaderManager(shaderManager)
   {
   }
 
@@ -60,7 +59,6 @@ namespace Base
     _scenes.top()->SetParticleManager(_particleManager);
     _scenes.top()->SetAssetManager(_assetManager);
     _scenes.top()->SetSystemManager(_systemManager);
-    _scenes.top()->SetCameraManager(_cameraManager);
     _scenes.top()->SetUIManager(_uiManager);
     _scenes.top()->SetTweenManager(_tweenManager);
     _scenes.top()->Enter(sceneData);
@@ -195,7 +193,7 @@ namespace Base
   {
     if (!_scenes.empty())
     {
-      _scenes.top()->OnInputEvent(event);
+      _scenes.top()->_OnInputEvent(event);
     }
   }
 } // namespace Base

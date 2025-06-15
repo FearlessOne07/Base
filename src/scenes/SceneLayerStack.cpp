@@ -1,4 +1,3 @@
-#include <cstddef>
 #include <ranges>
 
 #include "base/scenes/SceneLayerStack.hpp"

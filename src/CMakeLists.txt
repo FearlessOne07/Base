@@ -39,7 +39,7 @@ set(SRC
 
   "./particles/ParticleManager.cpp"
 
-  "./camera/CameraManager.cpp"
+  "./camera/Camera2DExt.cpp"
 
   "./input/InputManager.cpp"
 

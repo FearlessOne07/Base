@@ -90,6 +90,14 @@ namespace Base
     }
   }
 
+  void Renderer::Update(float dt)
+  {
+    auto &layers = _renderLayers.at(_currentScene);
+    for (auto &layer : layers)
+    {
+      layer.Update(dt);
+    }
+  }
   void Renderer::CompositeLayers()
   {
     BeginTextureMode(_renderTexture);

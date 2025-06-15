@@ -1,7 +1,6 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
 #include "base/assets/AssetManager.hpp"
-#include "base/camera/CameraManager.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneLayerStack.hpp"
@@ -31,7 +30,6 @@ namespace Base
     void SetParticleManager(ParticleManager *);
     void SetAssetManager(AssetManager *);
     void SetSystemManager(SystemManager *);
-    void SetCameraManager(CameraManager *);
     void SetUIManager(UIManager *);
     void SetTweenManager(TweenManager *);
     void SetRenderer(Renderer *);
@@ -54,7 +52,6 @@ namespace Base
       ParticleManager *particleManager = nullptr;
       AssetManager *assetManager = nullptr;
       SystemManager *systemManager = nullptr;
-      CameraManager *cameraManager = nullptr;
       UIManager *uiManager = nullptr;
       TweenManager *tweenManager = nullptr;
       ShaderManager *shaderManager = nullptr;
@@ -82,15 +79,15 @@ namespace Base
     virtual void Suspend();
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
 
+    void _OnInputEvent(std::shared_ptr<InputEvent> event);
+
     Color GetClearColor() const;
     [[nodiscard]] EntityManager *GetEntityManager() const;
     [[nodiscard]] SystemManager *GetSystemManager() const;
     [[nodiscard]] ParticleManager *GetParticleManager() const;
-    [[nodiscard]] CameraManager *GetCameraManager() const;
     [[nodiscard]] UIManager *GetUIManager() const;
     [[nodiscard]] TweenManager *GetTweenManager() const;
     [[nodiscard]] ShaderManager *GetShaderManager() const;
-    [[nodiscard]] SceneLayerStack &GetLayerStack();
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())
     {
@@ -114,6 +111,12 @@ namespace Base
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
       _assets[name] = GetAssetManager()->LoadAsset<T>(path, false);
+    }
+
+    // Layer Management
+    template <typename T> void AttachLayer(RenderLayer *renderLayer)
+    {
+      _layerStack.AttachLayer<T>(renderLayer);
     }
   };
 } // namespace Base

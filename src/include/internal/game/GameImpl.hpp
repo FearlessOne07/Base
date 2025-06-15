@@ -1,6 +1,5 @@
 #pragma once
 #include "base/assets/AssetManager.hpp"
-#include "base/camera/CameraManager.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/game/Game.hpp"
 #include "base/game/GameConfig.hpp"
@@ -37,15 +36,14 @@ namespace Base
     InputManager _inpMan = InputManager();
     EntityManager _entityManager = EntityManager();
     AssetManager _assetManager = AssetManager();
-    CameraManager _cameraManager = CameraManager();
     ParticleManager _particleManager = ParticleManager();
     UIManager _uiManager = UIManager();
     TweenManager _tweenManager = TweenManager();
     ShaderManager _shaderManager = ShaderManager(&_assetManager);
     SystemManager _systemManager = SystemManager(&_entityManager);
     SceneManager _sceneManager = SceneManager( //
-      &_renderer, &_entityManager, &_systemManager, &_assetManager, &_particleManager, &_cameraManager, &_uiManager,
-      &_tweenManager, &_shaderManager //
+      &_renderer, &_entityManager, &_systemManager, &_assetManager, &_particleManager, &_uiManager, &_tweenManager,
+      &_shaderManager //
     );
 
   private: // Methods

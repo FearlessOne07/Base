@@ -1,4 +1,5 @@
 #include "base/renderer/RenderLayer.hpp"
+#include "base/camera/Camera2DExt.hpp"
 #include "base/scenes/Scene.hpp"
 #include "raylib.h"
 #include "rlgl.h"
@@ -14,6 +15,8 @@ namespace Base
     _renderTexture = LoadRenderTexture(_size.x, _size.y);
     _ping = LoadRenderTexture(_size.x, _size.y);
     _pong = LoadRenderTexture(_size.x, _size.y);
+
+    _layerCamera = Camera2DExt();
   }
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
@@ -88,7 +91,6 @@ namespace Base
 
     for (auto &[shaderHandle, pass] : _shaderChain)
     {
-
       auto shaderMan = _ownerScene->GetShaderManager();
       if (pass.HasDirty())
       {
@@ -119,11 +121,6 @@ namespace Base
     EndTextureMode();
   }
 
-  ShaderChain *RenderLayer::GetShaderChain()
-  {
-    return &_shaderChain;
-  }
-
   const RenderTexture *RenderLayer::GetTexture() const
   {
     return &_renderTexture;
@@ -141,5 +138,66 @@ namespace Base
 
   void RenderLayer::AddRenderFunction(const RenderFunction &function)
   {
-    _renderFunctions.emplace_back(std::move(function)); }
+    _renderFunctions.emplace_back(std::move(function));
+  }
+
+  void RenderLayer::AddShaderPass(AssetHandle<Base::BaseShader> shaderHandle)
+  {
+    _shaderChain.AddShaderPass(shaderHandle);
+  }
+  void RenderLayer::SetShaderUniform(                                                              //
+    AssetHandle<Base::BaseShader> shaderHandle, const std::string &uniformName, UniformValue value //
+  )
+  {
+    _shaderChain.SetShaderUniform(shaderHandle, uniformName, value);
+  }
+
+  void RenderLayer::SetCameraMode(Camera2DExtMode mode)
+  {
+    _layerCamera.SetMode(mode);
+  }
+
+  void RenderLayer::SetCameraOffset(Vector2 offset)
+  {
+    _layerCamera.SetOffset(offset);
+  }
+
+  void RenderLayer::SetCameraTarget(Vector2 target)
+  {
+    _layerCamera.SetTarget(target);
+  }
+
+  void RenderLayer::SetCameraRotation(float rotation)
+  {
+    _layerCamera.SetRotation(rotation);
+  }
+
+  void RenderLayer::SetCameraZoom(float zoom)
+  {
+    _layerCamera.SetZoom(zoom);
+  }
+
+  void RenderLayer::ShakeCamera(const CameraShakeConfig &config)
+  {
+    _layerCamera.Shake(config);
+  }
+
+  Vector2 RenderLayer::GetScreenToWorld(Vector2 position) const
+  {
+    return _layerCamera.GetScreenToWorld(position);
+  };
+
+  void RenderLayer::BeginCamera()
+  {
+    _layerCamera.Begin();
+  }
+  void RenderLayer::EndCamera()
+  {
+    _layerCamera.End();
+  }
+
+  void RenderLayer::Update(float dt)
+  {
+    _layerCamera.Update(dt);
+  }
 } // namespace Base

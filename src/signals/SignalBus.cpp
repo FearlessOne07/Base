@@ -1,8 +1,8 @@
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Exception.hpp"
-#include <cstdlib>
 #include <future>
 #include <iostream>
+#include <ostream>
 #include <typeindex>
 
 namespace Base
@@ -19,24 +19,22 @@ namespace Base
 
   void SignalBus::BroadCastSignal(const std::shared_ptr<Signal> &event)
   {
-
-    std::future<void> futrue = std::async(std::launch::async, [this, event]() {
+    std::future<void> future = std::async([this, event]() {
       try
       {
         auto handlerId = std::type_index(typeid(*event));
         auto it = _handlers.find(handlerId);
-
         if (it != _handlers.end())
         {
           for (const SignalHandler &handler : it->second)
           {
-            handler(event); // called synchronously inside the async block
+            handler(event); // may throw
           }
         }
       }
-      catch (BaseException &e)
+      catch (const BaseException &e)
       {
-        std::cout << e.what();
+        std::cerr << e.what() << std::endl;
         std::abort();
       }
     });

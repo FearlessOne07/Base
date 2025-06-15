@@ -24,6 +24,7 @@ namespace Base
   private:
     void Init(int width, int height);
     void DeInit();
+    void Update(float dt);
     void RenderLayers();
     void CompositeLayers();
     void Render();
