@@ -45,7 +45,7 @@ namespace Base
 
   AudioStream::~AudioStream()
   {
-    // Stop the buffer thread first
+    // Stop the buffer thread
     _fillBuffers.store(false);
     if (_bufferThread.joinable())
     {
@@ -73,6 +73,7 @@ namespace Base
   {
     std::array<int16_t, 2> frame = {0, 0};
 
+    // If we are not playing, return silence
     if (!_isPlaying)
     {
       return frame;
@@ -149,7 +150,7 @@ namespace Base
         continue;
       }
 
-      // Clear the buffer to about to fill
+      // Clear the buffer to fill
       memset(_resampledBuffers[bufferToFill].data(), 0, _resampledBuffers[bufferToFill].size() * sizeof(float));
 
       // Read frames from decoder
@@ -160,6 +161,7 @@ namespace Base
       {
         if (_loop)
         {
+          // If looping, seek to front of decoder, and fill in missing frames
           uint64_t remainingFrames = _dataBufferFrameCount - readFrames;
           ma_decoder_seek_to_pcm_frame(&_decoder, 0);
           ma_decoder_read_pcm_frames(&_decoder, _tempInt16Buffer.data() + readFrames * 2, remainingFrames, nullptr);
@@ -167,11 +169,13 @@ namespace Base
         }
         else
         {
-          // Pad with silence if we didn't read enough
+          // If not, fill with silence
           memset( //
             _tempInt16Buffer.data() + readFrames * 2, 0,
             ((_dataBufferFrameCount - readFrames) * 2) * sizeof(int16_t) //
           );
+
+          // Mark last buffer round
           _lastBufferRound = true;
         }
       }
@@ -197,8 +201,10 @@ namespace Base
       // Store how many frames we actually got
       _bufferedFrameCount[bufferToFill] = _srcData.output_frames_gen;
 
+      // If last buffer round and no frames left
       if (_srcData.output_frames_gen == 0 && _lastBufferRound)
       {
+        // Mark as not playing
         _isPlaying = false;
         _lastBufferRound = false;
         break; // Exit the thread loop
@@ -242,6 +248,7 @@ namespace Base
 
   void AudioStream::Stop()
   {
+    // Reset stream state
     _isPlaying = false;
     _lastBufferRound = false;
     _currentFrame = 0;

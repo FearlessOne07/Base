@@ -8,13 +8,18 @@ namespace Base
 {
   void Camera2DExt::Shake(const CameraShakeConfig &config)
   {
+    // Mark camera as shaking
     _isShaking = true;
+
+    // If trouma is additive
     if (config.additiveTrauma)
     {
+      // Add and clamp to 1.0
       _trauma = std::min(_trauma + config.trauma, 1.0f);
     }
     else
     {
+      // Else, set trouma to new value
       _trauma = config.trauma;
     }
 
@@ -35,9 +40,10 @@ namespace Base
 
   void Camera2DExt::UpdateShake(float dt)
   {
+    // If camera isn't shaking or truam is 0
     if (!_isShaking || _trauma <= 0.0f)
     {
-      // Reset camera offset to pre-shake values if no trauma
+      // Reset camera offset to pre-shake values
       if (_trauma <= 0.0f && _isShaking)
       {
         _camera.offset = _preShakeOffset;
@@ -53,7 +59,7 @@ namespace Base
       _shakeDuration -= dt;
       if (_shakeDuration <= 0)
       {
-        // Force trauma to zero when duration ends
+        // Force trauma to zero when duration end reset offset and rotation
         _trauma = 0.0f;
         _camera.offset = _preShakeOffset;
         _camera.rotation = _preShakeRotation;
@@ -65,6 +71,7 @@ namespace Base
     // Decay trauma over time
     float timeLeft = _shakeDuration / _initialDuration;
 
+    // Scale truama by multiplyer and timeleft (tween)
     float trauma = _trauma * _traumaMultiplyer * timeLeft;
 
     // This gives a more natural feel to the decay
@@ -79,7 +86,8 @@ namespace Base
 
     _noise.SetSeed(_seed + 2);
     float noiseY = _noise.GetNoise(0.0f, _time, 0.0f);
-
+    
+    // Get noise value for roation
     _noise.SetSeed(_seed + 3);
     float noiseRot = _noise.GetNoise(0.0f, 0.0f, _time);
 
@@ -87,7 +95,8 @@ namespace Base
     float offsetX = noiseX * _shakeMagnitude * intensity;
     float offsetY = noiseY * _shakeMagnitude * intensity;
     float rotation = noiseRot * _rotationMagnitude * intensity;
-
+    
+    // Add offsets values
     _camera.offset.x = offsetX + _preShakeOffset.x;
     _camera.offset.y = offsetY + _preShakeOffset.y;
     _camera.rotation = rotation + _preShakeRotation;
@@ -118,12 +127,16 @@ namespace Base
 
   void Camera2DExt::SmoothFollow(float dt)
   {
+    // Get distance to target
     float distance = Vector2Distance(_target, _camera.target);
+    // Get speed factor and clamp to 0 - 1.0
     float speedFactor = distance / _maxFollowDistance;
-
     speedFactor = std::clamp<float>(speedFactor, 0, 1);
-
+    
+    // Get direction
     Vector2 velocity = Vector2Subtract(_target, _camera.target);
+
+    //  scale speed by distance left
     _camera.target = Vector2Add(                                                                ///
       _camera.target, Vector2Scale(Vector2Normalize(velocity), _cameraSpeed * speedFactor * dt) //
     );

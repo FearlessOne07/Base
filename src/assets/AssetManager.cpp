@@ -31,6 +31,8 @@ namespace Base
 {
   void AssetManager::Init()
   {
+
+    // Subscribe to SceneManager events
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
       auto scenePopped = std::static_pointer_cast<ScenePoppedSignal>(signal);
@@ -50,6 +52,7 @@ namespace Base
 
   void AssetManager::Deinit()
   {
+    // Unload Scene Assets Still in memory
     if (!_sceneAssets.empty())
     {
       for (auto &[scene, assets] : _sceneAssets)
@@ -73,6 +76,7 @@ namespace Base
     }
     _sceneAssets.clear();
 
+    // Unload Global Assets
     for (auto &[name, asset] : _globalAssets)
     {
       if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))
@@ -91,22 +95,28 @@ namespace Base
 
     _globalAssets.clear();
   }
+
   void AssetManager::SetCurrentScene(const Scene *scene)
   {
+    // If scene doesnt exist, it just been pushed
     if (_sceneAssets.find(scene) == _sceneAssets.end())
     {
+      // Create its asset list
       _sceneAssets[scene];
     }
+    // Update the pointer
     _currentScene = scene;
   }
 
   void AssetManager::SetAudioSampleRate(uint64_t sampleRate)
   {
+    // Called from audio manager to set Audio load-in sample rate
     _sampleRate = sampleRate;
   }
 
   void AssetManager::UnloadScene(const Scene *scene)
   {
+    // Unload a scene's if it is being popped
     for (auto &[name, asset] : _sceneAssets[scene])
     {
       if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))

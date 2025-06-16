@@ -50,15 +50,15 @@ namespace Base
     _particleManager.Init();
     _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
 
-    //
+    // Initialise InputManager
     _inpMan.Init();
     _inpMan.RegisterListener(&_sceneManager);
 
-    // Load Global Assets
-    _assetManager.Init();
-
+    // Initialise Shader Manager
     _shaderManager.Init();
 
+    // Load Global Assets
+    _assetManager.Init();
     if (config.globalAssets.size() > 0)
     {
       for (auto &[type, path] : config.globalAssets)
@@ -92,6 +92,8 @@ namespace Base
       }
     }
 
+    // Initialize Systems
+
     _systemManager.Init();
     // Initialize render context
     auto windowWidth = static_cast<float>(GetScreenWidth());
@@ -120,6 +122,8 @@ namespace Base
 
   void Game::GameImpl::Run()
   {
+
+    // Loop Wule the window is Open
     while (!WindowShouldClose() && _running)
     {
       // Update render context
@@ -145,6 +149,7 @@ namespace Base
       // Delta Time
       float dt = GetFrameTime();
 
+      // Update Managers
       _inpMan.PollAndDispatch();
 
       _sceneManager.Update(dt);
@@ -177,6 +182,8 @@ namespace Base
 
   void Game::GameImpl::End()
   {
+
+    // Deinitilize Systems
     _assetManager.Deinit();
     _audioMan.DeInit();
     _renderer.DeInit();
@@ -197,6 +204,7 @@ namespace Base
     std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem //
   )
   {
+    // Register a custom system
     _systemManager.RegisterSystem(systemID, std::move(system), isRenderSystem);
   }
 

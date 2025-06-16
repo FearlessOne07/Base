@@ -44,9 +44,13 @@ namespace Base
   std::array<int16_t, 2> SoundInstance::GetNextFrame()
   {
     std::array<int16_t, 2> frame;
+
+    // If sound hasn;t ended
     if (_currentFrame < _sound->GetFrameCount())
     {
+      // Get next frame from sound
       frame = _sound->GetFrame(_currentFrame);
+      // Ppaly pan / volume
       float angle = _pan * (PI / 2.f);
       float leftPan = std::cos(angle);
       float rightPan = std::sin(angle);
@@ -56,11 +60,15 @@ namespace Base
     }
     else
     {
+      // Else return silence
       frame[0] = 0;
       frame[1] = 0;
+
+      // Mark instance as done playing
       _isPlaying = false;
     }
 
+    /// Advance frame
     _currentFrame++;
     return frame;
   }
