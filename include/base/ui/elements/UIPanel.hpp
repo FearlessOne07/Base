@@ -11,6 +11,5 @@ namespace Base
   public:
     void SetColor(Color color);
     void Render() override;
-    void SetSize(Vector2 size);
   };
 } // namespace Base

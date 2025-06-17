@@ -33,9 +33,9 @@ namespace Base
     void SetColors(Color hoverColor, Color activeColor, Color normalColor, Color textColor);
     void SetFontSize(float);
     void SetPadding(Vector2 padding);
-    void OnInputEvent(std::shared_ptr<InputEvent> &event) override;
     void Render() override;
     void Update(float dt) override;
+    void OnInputEvent(std::shared_ptr<InputEvent> &event) override;
 
     float GetFontSize() const;
   };

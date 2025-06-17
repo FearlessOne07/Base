@@ -4,12 +4,15 @@
 
 namespace Base
 {
-
   void UIManager::OnInputEvent(std::shared_ptr<InputEvent> &event)
   {
     for (auto &[id, layer] : _layers)
     {
-      layer.OnInputEvent(event);
+      if (layer.IsVisible())
+      {
+        layer.OnInputEvent(event);
+      }
+
       if (event->isHandled)
       {
         break;
@@ -19,7 +22,6 @@ namespace Base
 
   UILayer &UIManager::AddLayer(const std::string &layerID)
   {
-
     std::string lowerID = Base::Strings::ToLower(layerID);
     if (_layers.contains(lowerID))
     {
@@ -53,12 +55,16 @@ namespace Base
 
   void UIManager::RenderLayer(const std::string &layerID)
   {
+
     std::string lowerID = Base::Strings::ToLower(layerID);
     if (!_layers.contains(lowerID))
     {
       THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " does not exist");
     }
-    _layers.at(lowerID).Render();
+    if (_layers.at(lowerID).IsVisible())
+    {
+      _layers.at(lowerID).Render();
+    }
   }
 
   void UIManager::Update(float dt)

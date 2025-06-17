@@ -1,7 +1,12 @@
 #include "base/ui/UIElement.hpp"
+#include "base/ui/UILayoutSettings.hpp"
 
 namespace Base
 {
+  UIElement::~UIElement()
+  {
+  }
+
   void UIElement::SetFont(const AssetHandle<BaseFont> &font)
   {
     if (font.Get())
@@ -9,14 +14,21 @@ namespace Base
       _font = font;
     }
   }
-  void UIElement::SetAnchorPoint(AnchorPoint anchorPoint)
-  {
-    _anchorPoint = anchorPoint;
-  }
 
   void UIElement::SetPosition(Vector2 position)
   {
     _setPosition = position;
+    _position = position;
+  }
+
+  void UIElement::SetSize(Vector2 size)
+  {
+    _size = size;
+  }
+
+  void UIElement::SetLayoutSettings(const UILayoutSettings &settings)
+  {
+    _layoutSettings = settings;
   }
 
   Vector2 UIElement::GetPosition() const
@@ -29,41 +41,32 @@ namespace Base
     return _size;
   }
 
-  void UIElement::_update(float dt)
+  const UILayoutSettings &UIElement::GetLayoutSettings() const
   {
-    UpdatePosition();
-    Update(dt);
+    return _layoutSettings;
   }
 
-  void UIElement::UpdatePosition()
+  void UIElement::Show()
   {
-    switch (_anchorPoint)
+    _isHidden = false;
+    if (_onShow)
     {
-    case AnchorPoint::TOP_LEFT: {
-      _position = _setPosition;
-      break;
+      _onShow();
     }
-    case AnchorPoint::TOP_RIGHT: {
-      _position.x = _setPosition.x - _size.x;
-      _position.y = _setPosition.y;
-      break;
+  }
+
+  void UIElement::Hide()
+  {
+    if (_onHide)
+    {
+      _onHide();
     }
-    case AnchorPoint::CENTER: {
-      _position.x = _setPosition.x - _size.x / 2;
-      _position.y = _setPosition.y - _size.y / 2;
-      break;
-    }
-    case AnchorPoint::BOTTOM_LEFT: {
-      _position.x = _setPosition.x;
-      _position.y = _setPosition.y - _size.y;
-      break;
-    }
-    case AnchorPoint::BOTTOM_RIGHT: {
-      _position.x = _setPosition.x - _size.x;
-      _position.y = _setPosition.y - _size.y;
-      break;
-    }
-    }
+    _isHidden = true;
+  }
+
+  bool UIElement::IsVisible() const
+  {
+    return !_isHidden;
   }
 
   void UIElement::Update(float dt)

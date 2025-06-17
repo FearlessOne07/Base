@@ -16,6 +16,7 @@ namespace Base
       }
     }
   }
+
   void UILayer::Render()
   {
     for (auto &element : std::ranges::reverse_view(_elements))
@@ -26,7 +27,6 @@ namespace Base
 
   void UILayer::RemoveElement(const std::string &id)
   {
-
     std::string lowerid = Base::Strings::ToLower(id);
     if (auto it = std::ranges::find(_elementIds, lowerid); it != _elementIds.end())
     {
@@ -44,7 +44,7 @@ namespace Base
   {
     for (auto &element : _elements)
     {
-      element->_update(dt);
+      element->Update(dt);
     }
   }
 
@@ -52,10 +52,7 @@ namespace Base
   {
     for (auto &element : _elements)
     {
-      if (element->OnHide)
-      {
-        element->OnHide();
-      }
+      element->Hide();
     }
     _isHidden = true;
   }
@@ -64,16 +61,13 @@ namespace Base
   {
     for (auto &element : _elements)
     {
-      if (element->OnShow)
-      {
-        element->OnShow();
-      }
+      element->Show();
     }
     _isHidden = false;
   }
 
-  bool UILayer::IsHidden() const
+  bool UILayer::IsVisible() const
   {
-    return _isHidden;
+    return !_isHidden;
   }
 } // namespace Base

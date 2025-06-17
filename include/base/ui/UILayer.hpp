@@ -2,6 +2,7 @@
 #include "base/input/InputEvent.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/util/Exception.hpp"
+#include "base/util/Strings.hpp"
 #include <algorithm>
 #include <cctype>
 #include <iterator>
@@ -27,8 +28,7 @@ namespace Base
         THROW_BASE_RUNTIME_ERROR("T must ba a derivative of UIElement");
       }
 
-      std::string lowerid = id;
-      std::ranges::transform(id, lowerid.begin(), [](char c) { return std::tolower(c); });
+      std::string lowerid = Base::Strings::ToLower(id);
 
       if (std::ranges::find(_elementIds, lowerid) != _elementIds.end())
       {
@@ -66,9 +66,8 @@ namespace Base
     void OnInputEvent(std::shared_ptr<InputEvent> &event);
     void Render();
     void Update(float dt);
-    bool IsHidden() const;
+    bool IsVisible() const;
     void Hide();
     void Show();
   };
-
 } // namespace Base

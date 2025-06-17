@@ -19,6 +19,7 @@ set(SRC
   "./ui/elements/UILabel.cpp"
   "./ui/elements/UIButton.cpp"
   "./ui/elements/UIPanel.cpp"
+  "./ui/elements/UIContainer.cpp"
 
   "./scenes/SceneManager.cpp"
   "./scenes/Scene.cpp"
@@ -46,7 +47,7 @@ set(SRC
   "./signals/SignalBus.cpp"
 
   "./assets/AssetManager.cpp"
-  "./assets/BaseAsset.cpp"  
+  "./assets/BaseAsset.cpp"
 
   "./tween/TweenManager.cpp"
   "./tween/ITween.cpp"
