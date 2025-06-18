@@ -1,4 +1,4 @@
-#include "System.hpp"
+#include "base/systems/System.hpp"
 #include "raylib.h"
 #include <memory>
 
@@ -16,6 +16,6 @@ namespace Base
     );
 
   public:
-    void Update(float dt, EntityManager *entityManager,const Scene *) override;
+    void Update(float dt, EntityManager *entityManager, const Scene *) override;
   };
 } // namespace Base

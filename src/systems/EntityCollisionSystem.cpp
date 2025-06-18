@@ -1,4 +1,4 @@
-#include "base/systems/EntityCollisionSystem.hpp"
+#include "internal/systems/EntityCollisionSystem.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/RigidBodyComponent.hpp"
 #include "base/components/TransformComponent.hpp"

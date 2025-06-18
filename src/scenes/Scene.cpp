@@ -2,6 +2,7 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneData.hpp"
+#include "base/systems/SystemManager.hpp"
 #include "raylib.h"
 #include <memory>
 
@@ -184,4 +185,23 @@ namespace Base
     return GetRenderer()->InitLayer(this, {0, 0}, size);
   }
 
+  void Scene::SuspendSystems()
+  {
+    GetSystemManager()->Suspend();
+  }
+
+  void Scene::UnsuspendSystems()
+  {
+    GetSystemManager()->Unsuspend();
+  }
+
+  void Scene::StartSystems()
+  {
+    GetSystemManager()->StartSystems();
+  }
+
+  void Scene::StopSystems()
+  {
+    GetSystemManager()->StopSystems();
+  }
 } // namespace Base

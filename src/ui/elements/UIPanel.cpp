@@ -8,6 +8,11 @@ namespace Base
     _color = color;
   }
 
+  Color UIPanel::GetColor() const
+  {
+    return _color;
+  }
+
   void UIPanel::Render()
   {
     DrawRectangleRec({_position.x, _position.y, _size.x, _size.y}, _color);

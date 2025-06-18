@@ -5,8 +5,14 @@
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/systems/System.hpp"
+#include "internal/systems/EntityCollisionSystem.hpp"
+#include "internal/systems/InputSystem.hpp"
+#include "internal/systems/MoveSystem.hpp"
+#include "internal/systems/RenderSystem.hpp"
 #include <memory>
+#include <typeindex>
 #include <utility>
+
 namespace Base
 {
   SystemManager::SystemManager(EntityManager *entityManager) : _entityManager(entityManager)
@@ -35,48 +41,19 @@ namespace Base
     }
   }
 
-  void SystemManager::_activateSystem(std::type_index systemID)
+  void SystemManager::Suspend()
   {
-    if (_systems.find(systemID) != _systems.end() && !_systems.at(systemID)->IsActive())
+    if (!_isSuspended)
     {
-      _systems.at(systemID)->Activate();
-    }
-    else
-    {
-      THROW_BASE_RUNTIME_ERROR("Specified system does not exsist");
+      _isSuspended = true;
     }
   }
 
-  void SystemManager::DeactivateActiveSystems()
+  void SystemManager::Unsuspend()
   {
-    for (auto &[id, system] : _systems)
+    if (_isSuspended)
     {
-      if (system->IsActive())
-      {
-        system->Deactivate();
-      }
-    }
-  }
-
-  void SystemManager::SuspendAllSystems()
-  {
-    for (auto &[id, system] : _systems)
-    {
-      if (system->IsActive())
-      {
-        system->Suspend();
-      }
-    }
-  }
-
-  void SystemManager::UnsuspendSuspendedSystems()
-  {
-    for (auto &[id, system] : _systems)
-    {
-      if (system->IsActive() && system->IsSuspended())
-      {
-        system->UnSuspend();
-      }
+      _isSuspended = false;
     }
   }
 
@@ -92,13 +69,23 @@ namespace Base
       auto sceneResumed = std::static_pointer_cast<SceneResumedSignal>(sig);
       UpdateCurrentScene(sceneResumed->scene);
     });
+
+    // Regiser Core Systems
+    std::shared_ptr<RenderSystem> _rSystem = std::make_shared<RenderSystem>();
+    std::shared_ptr<MoveSystem> _mvSystem = std::make_shared<MoveSystem>();
+    std::shared_ptr<InputSystem> _iSystem = std::make_shared<InputSystem>();
+    std::shared_ptr<EntityCollisionSystem> _ecSystem = std::make_shared<EntityCollisionSystem>();
+    RegisterSystem(std::type_index(typeid(RenderSystem)), _rSystem, true);
+    RegisterSystem(std::type_index(typeid(MoveSystem)), _mvSystem, false);
+    RegisterSystem(std::type_index(typeid(InputSystem)), _iSystem, false);
+    RegisterSystem(std::type_index(typeid(EntityCollisionSystem)), _ecSystem, false);
   }
 
   void SystemManager::Update(float dt)
   {
-    for (auto &[id, system] : _systems)
+    if (!_isSuspended)
     {
-      if (id != _renderSystemID && system->IsActive() && !system->IsSuspended())
+      for (auto &[id, system] : _systems)
       {
         system->Update(dt, _entityManager, _currentScene);
       }
@@ -109,10 +96,7 @@ namespace Base
   {
     if (_systems.find(_renderSystemID) != _systems.end())
     {
-      if (_systems.at(_renderSystemID)->IsActive())
-      {
-        _systems.at(_renderSystemID)->Update(0, _entityManager, _currentScene);
-      }
+      _systems.at(_renderSystemID)->Update(0, _entityManager, _currentScene);
     }
     else
     {
@@ -124,14 +108,27 @@ namespace Base
   {
     for (auto &[id, system] : _systems)
     {
-      if (system->IsActive())
+      system->OnInputEvent(event);
+      if (event->isHandled)
       {
-        system->OnInputEvent(event);
-        if (event->isHandled)
-        {
-          break;
-        }
+        break;
       }
     }
   };
+
+  void SystemManager::StartSystems()
+  {
+    for (auto &[id, system] : _systems)
+    {
+      system->Start();
+    }
+  }
+
+  void SystemManager::StopSystems()
+  {
+    for (auto &[id, system] : _systems)
+    {
+      system->Stop();
+    }
+  }
 } // namespace Base

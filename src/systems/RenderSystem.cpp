@@ -1,4 +1,4 @@
-#include "base/systems/RenderSystem.hpp"
+#include "internal/systems/RenderSystem.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/TextureComponent.hpp"

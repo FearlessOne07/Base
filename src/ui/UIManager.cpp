@@ -20,7 +20,7 @@ namespace Base
     }
   }
 
-  UILayer &UIManager::AddLayer(const std::string &layerID)
+  UILayer *UIManager::AddLayer(const std::string &layerID)
   {
     std::string lowerID = Base::Strings::ToLower(layerID);
     if (_layers.contains(lowerID))
@@ -29,10 +29,10 @@ namespace Base
     }
 
     _layers[lowerID] = UILayer();
-    return _layers.at(lowerID);
+    return &_layers.at(lowerID);
   }
 
-  UILayer &UIManager::GetLayer(const std::string &layerID)
+  UILayer *UIManager::GetLayer(const std::string &layerID)
   {
     std::string lowerID = Base::Strings::ToLower(layerID);
     if (!_layers.contains(lowerID))
@@ -40,7 +40,7 @@ namespace Base
       THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " doesnot exist");
     }
 
-    return _layers.at(lowerID);
+    return &_layers.at(lowerID);
   }
 
   void UIManager::RemoveLayer(const std::string &layerID)
@@ -61,10 +61,7 @@ namespace Base
     {
       THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " does not exist");
     }
-    if (_layers.at(lowerID).IsVisible())
-    {
-      _layers.at(lowerID).Render();
-    }
+    _layers.at(lowerID).Render();
   }
 
   void UIManager::Update(float dt)

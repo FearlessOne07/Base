@@ -2,36 +2,6 @@
 
 namespace Base
 {
-  void System::Activate()
-  {
-    Start();
-    _isActive = true;
-  }
-  void System::Deactivate()
-  {
-    Stop();
-    _isActive = false;
-  }
-  bool System::IsActive() const
-  {
-    return _isActive;
-  }
-
-  bool System::IsSuspended()
-  {
-    return _isSupsended;
-  }
-
-  void System::UnSuspend()
-  {
-    _isSupsended = false;
-  }
-
-  void System::Suspend()
-  {
-    _isSupsended = true;
-  }
-
   void System::Start()
   {
   }

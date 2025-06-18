@@ -118,5 +118,11 @@ namespace Base
     {
       _layerStack.AttachLayer<T>(renderLayer);
     }
+
+    // System Management
+    void SuspendSystems();
+    void UnsuspendSystems();
+    void StartSystems();
+    void StopSystems();
   };
 } // namespace Base

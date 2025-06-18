@@ -1,4 +1,4 @@
-#include "base/systems/InputSystem.hpp"
+#include "internal/systems/InputSystem.hpp"
 #include "base/components/InputComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
@@ -10,7 +10,7 @@ namespace Base
   {
   }
 
-  void InputSystem::Update(float dt, EntityManager *entitymanager,const Scene * currentScene)
+  void InputSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
   {
     _entities = entitymanager->Query<InputComponent>();
   }

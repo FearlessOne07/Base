@@ -8,10 +8,9 @@ namespace Base
   class Scene;
   class System
   {
-  private:
-    bool _isActive = false;
-    bool _isSupsended = false;
+    friend class SystemManager;
 
+  private:
     // For the system to register events
     virtual void Start();
     // For the system to unregister events
@@ -24,12 +23,6 @@ namespace Base
     virtual void Update(float dt, EntityManager *entityManager, const Scene *currentScene) = 0;
 
   public: // Implemented
-    void Activate();
-    void Deactivate();
-    bool IsActive() const;
-    bool IsSuspended();
-    void UnSuspend();
-    void Suspend();
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
   };
 } // namespace Base

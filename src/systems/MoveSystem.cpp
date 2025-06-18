@@ -1,4 +1,4 @@
-#include "base/systems/MoveSystem.hpp"
+#include "internal/systems/MoveSystem.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/GravityComponent.hpp"
 #include "base/components/ImpulseComponent.hpp"

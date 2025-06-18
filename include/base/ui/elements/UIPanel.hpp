@@ -10,6 +10,7 @@ namespace Base
 
   public:
     void SetColor(Color color);
+    Color GetColor() const;
     void Render() override;
   };
 } // namespace Base

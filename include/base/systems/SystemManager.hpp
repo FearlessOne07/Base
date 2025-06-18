@@ -18,24 +18,20 @@ namespace Base
     std::type_index _renderSystemID = typeid(nullptr);
 
     const Scene *_currentScene = nullptr;
+    bool _isSuspended = false;
 
   private: // Methods
     SystemManager(EntityManager *entityManager);
-    void _activateSystem(std::type_index);
     void RegisterSystem(std::type_index, std::shared_ptr<System> system, bool isRenderSystem);
     void Update(float dt);
     void Init();
     void UpdateCurrentScene(const Scene *scene);
 
   public:
-    template <typename T> void ActivatSystem()
-    {
-      _activateSystem(typeid(T));
-    }
-
-    void DeactivateActiveSystems();
-    void SuspendAllSystems();
-    void UnsuspendSuspendedSystems();
+    void Suspend();
+    void Unsuspend();
+    void StartSystems();
+    void StopSystems();
     void Render();
     void OnInputEvent(std::shared_ptr<InputEvent> &event);
   };
