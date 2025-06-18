@@ -19,7 +19,7 @@ namespace Base
     // Spec
     Camera2DExtMode _cameraMode;
     Vector2 _target = {0, 0};
-    float _maxFollowDistance = 0.f;
+    float _maxFollowDistance = 100.f;
     float _cameraSpeed = 0.f;
 
     // Shake Configs

@@ -1,11 +1,11 @@
-#pragma once 
+#pragma once
 #include <memory>
 
 namespace Base
 {
 
   class Entity;
-  struct   Component
+  struct Component
   {
 
     virtual ~Component() = default;

@@ -86,7 +86,7 @@ namespace Base
 
     _noise.SetSeed(_seed + 2);
     float noiseY = _noise.GetNoise(0.0f, _time, 0.0f);
-    
+
     // Get noise value for roation
     _noise.SetSeed(_seed + 3);
     float noiseRot = _noise.GetNoise(0.0f, 0.0f, _time);
@@ -95,7 +95,7 @@ namespace Base
     float offsetX = noiseX * _shakeMagnitude * intensity;
     float offsetY = noiseY * _shakeMagnitude * intensity;
     float rotation = noiseRot * _rotationMagnitude * intensity;
-    
+
     // Add offsets values
     _camera.offset.x = offsetX + _preShakeOffset.x;
     _camera.offset.y = offsetY + _preShakeOffset.y;
@@ -132,7 +132,7 @@ namespace Base
     // Get speed factor and clamp to 0 - 1.0
     float speedFactor = distance / _maxFollowDistance;
     speedFactor = std::clamp<float>(speedFactor, 0, 1);
-    
+
     // Get direction
     Vector2 velocity = Vector2Subtract(_target, _camera.target);
 

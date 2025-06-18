@@ -1,5 +1,4 @@
 #include "base/scenes/SceneLayer.hpp"
-#include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "raylib.h"
 

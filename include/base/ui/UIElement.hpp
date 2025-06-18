@@ -22,9 +22,6 @@ namespace Base
     Vector2 _size = {0, 0};
     bool _isHidden = false;
 
-    std::function<void()> _onShow = nullptr;
-    std::function<void()> _onHide = nullptr;
-
   protected:
     UILayoutSettings _layoutSettings;
     virtual void Update(float dt);
@@ -51,5 +48,7 @@ namespace Base
     bool IsVisible() const;
     virtual void Show();
     virtual void Hide();
+    std::function<void()> _onShow = nullptr;
+    std::function<void()> _onHide = nullptr;
   };
 } // namespace Base

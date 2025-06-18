@@ -33,7 +33,7 @@ namespace Base
 
   Vector2 UIElement::GetPosition() const
   {
-    return _position;
+    return _setPosition;
   }
 
   Vector2 UIElement::GetSize() const
