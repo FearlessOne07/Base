@@ -60,15 +60,15 @@ namespace Base
   void SystemManager::Init()
   {
     auto bus = SignalBus::GetInstance();
-    bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig) {
+    bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig)
+                                            {
       auto scenePushed = std::static_pointer_cast<ScenePushedSignal>(sig);
-      UpdateCurrentScene(scenePushed->scene);
-    });
+      UpdateCurrentScene(scenePushed->scene); });
 
-    bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> sig) {
+    bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> sig)
+                                             {
       auto sceneResumed = std::static_pointer_cast<SceneResumedSignal>(sig);
-      UpdateCurrentScene(sceneResumed->scene);
-    });
+      UpdateCurrentScene(sceneResumed->scene); });
 
     // Regiser Core Systems
     std::shared_ptr<RenderSystem> _rSystem = std::make_shared<RenderSystem>();
@@ -122,6 +122,7 @@ namespace Base
     {
       system->Start();
     }
+    _isSuspended = false;
   }
 
   void SystemManager::StopSystems()
@@ -130,5 +131,6 @@ namespace Base
     {
       system->Stop();
     }
+    _isSuspended = true;
   }
 } // namespace Base
