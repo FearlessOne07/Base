@@ -2,10 +2,11 @@
 
 #include "base/assets/AssetHandle.hpp"
 #include "base/particles/ParticleEmitter.hpp"
+#include "base/util/Pauseable.hpp"
 #include "raylib.h"
 namespace Base
 {
-  class Particle
+  class Particle : public Pauseable
   {
   public:
     bool isActive = false;

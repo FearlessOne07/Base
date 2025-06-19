@@ -177,6 +177,11 @@ namespace Base
     _layerCamera.SetZoom(zoom);
   }
 
+  void RenderLayer::SetCameraPauseMask(const std::bitset<8> &mask)
+  {
+    _layerCamera.SetPauseMask(mask);
+  }
+
   void RenderLayer::ShakeCamera(const CameraShakeConfig &config)
   {
     _layerCamera.Shake(config);
@@ -198,6 +203,12 @@ namespace Base
 
   void RenderLayer::Update(float dt)
   {
-    _layerCamera.Update(dt);
+
+    auto A = _ownerScene->GetPauseMask();
+    auto B = _layerCamera.GetPauseMask();
+    if (!(B.count() != 0 && (A & B) == B))
+    {
+      _layerCamera.Update(dt);
+    }
   }
 } // namespace Base

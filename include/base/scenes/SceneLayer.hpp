@@ -3,6 +3,7 @@
 #include "base/renderer/RenderLayer.hpp"
 #include "base/scenes/SceneTransition.hpp"
 #include "raylib.h"
+#include <bitset>
 #include <filesystem>
 #include <memory>
 
@@ -16,14 +17,19 @@ namespace Base
     Scene *_owner = nullptr;
     RenderLayer *_renderLayer = nullptr;
     Vector2 _size = {0, 0};
+    std::bitset<8> _pauseMask;
+    int _layerIndex = 0;
 
   private:
     void _onAttach(RenderLayer *renderlayer);
     void _onDetach();
+    void SetPauseMask(int index);
+    void SetLayerIndex(int index);
 
   protected:
     Scene *GetOwner();
     RenderLayer *GetRenderLayer();
+    const std::bitset<8> &GetPauseMask();
 
   public:
     virtual void Update(float dt) = 0;
@@ -45,6 +51,12 @@ namespace Base
     Vector2 GetScreenToWorld(Vector2 position) const;
     void BeginCamera();
     void EndCamera();
+    void SetCameraPauseMask();
+
+    // Pausing
+    void Pause();
+    void UnPause();
+    bool IsPaused();
 
     // Assets
     template <typename T> AssetHandle<T> GetAsset(const std::string &name) const;

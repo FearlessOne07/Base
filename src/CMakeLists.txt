@@ -56,6 +56,7 @@ set(SRC
   "./util/Easings.cpp"
   "./util/Strings.cpp"
   "./util/UUID.cpp"
+  "./util/Pauseable.cpp"
 
   "./shaders/ShaderManager.cpp"
   "./shaders/ShaderPass.cpp"

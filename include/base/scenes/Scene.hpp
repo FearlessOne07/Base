@@ -10,6 +10,7 @@
 #include "base/ui/UIManager.hpp"
 #include "base/util/Strings.hpp"
 #include "raylib.h"
+#include <bitset>
 #include <filesystem>
 #include <memory>
 
@@ -25,7 +26,6 @@ namespace Base
 
   private:
     friend class SceneManager;
-    [[nodiscard]] SceneTransition GetSceneTransition() const;
     void SetEntityManager(EntityManager *);
     void SetParticleManager(ParticleManager *);
     void SetAssetManager(AssetManager *);
@@ -65,6 +65,10 @@ namespace Base
     // Private Getters
     [[nodiscard]] Renderer *GetRenderer() const;
     [[nodiscard]] AssetManager *GetAssetManager() const;
+    [[nodiscard]] SceneTransition GetSceneTransition() const;
+
+    // Pause
+    std::bitset<8> _pauseMask;
 
   protected:
     void SetClearColor(Color color);
@@ -78,6 +82,9 @@ namespace Base
     virtual void Resume();
     virtual void Suspend();
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
+    void PauseMenu(int layerIndex);
+    void UnPauseMenu(int layerIndex);
+    bool IsMenuPaused(int layerIndex);
 
     void _OnInputEvent(std::shared_ptr<InputEvent> event);
 
@@ -124,5 +131,7 @@ namespace Base
     void UnsuspendSystems();
     void StartSystems();
     void StopSystems();
+
+    const std::bitset<8> &GetPauseMask() const;
   };
 } // namespace Base

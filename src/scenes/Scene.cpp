@@ -204,4 +204,25 @@ namespace Base
   {
     GetSystemManager()->StopSystems();
   }
+
+  void Scene::PauseMenu(int layerIndex)
+  {
+    _pauseMask.set(layerIndex);
+  }
+
+  void Scene::UnPauseMenu(int layerIndex)
+  {
+    _pauseMask.reset(layerIndex);
+  }
+
+  bool Scene::IsMenuPaused(int layerIndex)
+  {
+    return _pauseMask.test(layerIndex);
+  }
+
+  const std::bitset<8> &Scene::GetPauseMask() const
+  {
+    return _pauseMask;
+  }
+
 } // namespace Base

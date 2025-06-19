@@ -18,13 +18,15 @@ namespace Base
     std::vector<std::shared_ptr<SceneLayer>> _layers;
     std::vector<std::type_index> _layerIds;
     Scene *_owner = nullptr;
+    int _currentLayer = 0;
 
     // Methods
     void DetachLayers();
 
   public:
     SceneLayerStack(Scene *owner);
-    template <typename T> T *AttachLayer(RenderLayer *renderLayer)
+    template <typename T>
+    T *AttachLayer(RenderLayer *renderLayer)
     {
       if (std::is_base_of_v<SceneLayer, T>)
       {
@@ -34,7 +36,10 @@ namespace Base
           _layerIds.push_back(id);
           _layers.emplace_back(std::make_shared<T>());
           _layers.back()->_owner = _owner;
+          _layers.back()->SetPauseMask(_currentLayer);
+          _layers.back()->SetLayerIndex(_currentLayer);
           _layers.back()->_onAttach(renderLayer);
+          _currentLayer++;
           return std::static_pointer_cast<T>(_layers.back()).get();
         }
         else

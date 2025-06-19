@@ -12,6 +12,7 @@
 
 namespace Base
 {
+class Scene;
   class ParticleManager::ParticleManagerImpl
   {
   private:
@@ -21,6 +22,8 @@ namespace Base
     std::random_device _randomDevice;
     std::mt19937_64 _randomGenerator;
 
+    const Scene* _currentScene;
+
   private:
     void InitParticleFromEmitter(ParticleEmitter &emitter, Particle *particle);
 
@@ -29,5 +32,6 @@ namespace Base
     void Update(float dt);
     void Render();
     ParticleEmitter *AddEmitter();
+    void UpdateCurrentScene(const Scene* scene);
   };
 } // namespace Base

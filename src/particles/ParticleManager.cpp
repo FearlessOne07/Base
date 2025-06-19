@@ -1,9 +1,12 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/particles/ParticleEmitter.hpp"
+#include "base/scenes/signals/ScenePushedSignal.hpp"
+#include "base/signals/SignalBus.hpp"
 #include "base/util/Exception.hpp"
 #include "internal/particles/ParticleManagerImpl.hpp"
 #include "raylib.h"
 #include <algorithm>
+#include <memory>
 #include <random>
 #include <raymath.h>
 
@@ -43,11 +46,22 @@ namespace Base
   {
     _randomGenerator = std::mt19937_64(_randomGenerator());
     _activeParticles.reserve(MAX_PARTICLES);
+
+    auto bus = SignalBus::GetInstance();
+    bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig) {
+      auto scenePushed = std::static_pointer_cast<ScenePushedSignal>(sig);
+      UpdateCurrentScene(scenePushed->scene);
+    });
   }
 
+  void ParticleManager::ParticleManagerImpl::UpdateCurrentScene(const Scene *scene)
+  {
+    _currentScene = scene;
+  }
   void ParticleManager::ParticleManagerImpl::InitParticleFromEmitter(ParticleEmitter &emitter, Particle *particle)
   {
     // General
+    particle->SetPauseMask(emitter.GetPauseMask());
     particle->lifeTime = emitter.particleLifeTime;
     particle->lifeTimer = particle->lifeTime;
 
@@ -133,8 +147,16 @@ namespace Base
     // Emitters
     for (auto &emitter : _emitters)
     {
+      auto A = _currentScene->GetPauseMask();
+      auto B = emitter.GetPauseMask();
+      if (emitter.GetPauseMask().count() != 0 && (A & B) == B)
+      {
+        continue;
+      }
+
       if (emitter.isEmitting)
       {
+
         if (!emitter.burst)
         {
           if (                                                                            //
@@ -201,6 +223,12 @@ namespace Base
     // Particles
     for (auto particle : _activeParticles)
     {
+      auto A = _currentScene->GetPauseMask();
+      auto B = particle->GetPauseMask();
+      if (particle->GetPauseMask().count() != 0 && (A & B) == B)
+      {
+        continue;
+      }
       float lifePoint = 1.f - (particle->lifeTimer / particle->lifeTime);
       // Position
       particle->position += particle->direction * Lerp(particle->startSpeed, particle->endSpeed, lifePoint) * dt;

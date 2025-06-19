@@ -1,16 +1,15 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
 #include "base/textures/Texture.hpp"
+#include "base/util/Pauseable.hpp"
 #include <cstdint>
 #include <functional>
 #include <raylib.h>
 namespace Base
 {
-  class ParticleEmitter
+  class ParticleEmitter : public Pauseable
   {
   public:
-    ParticleEmitter() = default;
-
     enum struct ParticleShape : uint8_t
     {
       RECT = 0,
@@ -58,7 +57,7 @@ namespace Base
 
     // Texture
     AssetHandle<Texture> particleTexture;
-    ;
+
     Rectangle particleTextureSource = {0, 0, 0, 0};
 
     float particleRotationSpeed = 0.f;

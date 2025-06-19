@@ -14,6 +14,11 @@ namespace Base
     return _renderLayer;
   }
 
+  const std::bitset<8> &SceneLayer::GetPauseMask()
+  {
+    return _pauseMask;
+  }
+
   void SceneLayer::_onAttach(RenderLayer *renderLayer)
   {
     _renderLayer = renderLayer;
@@ -22,6 +27,30 @@ namespace Base
     OnAttach();
   }
 
+  void SceneLayer::SetPauseMask(int index)
+  {
+    _pauseMask.set(index);
+  }
+
+  void SceneLayer::Pause()
+  {
+    GetOwner()->PauseMenu(_layerIndex);
+  }
+
+  void SceneLayer::UnPause()
+  {
+    GetOwner()->UnPauseMenu(_layerIndex);
+  }
+
+  bool SceneLayer::IsPaused()
+  {
+    return GetOwner()->IsMenuPaused(_layerIndex);
+  }
+
+  void SceneLayer::SetLayerIndex(int index)
+  {
+    _layerIndex = index;
+  }
   void SceneLayer::_onDetach()
   {
     OnDetach();
@@ -47,6 +76,11 @@ namespace Base
       (GetMousePosition().y - marginY) / scale,
     };
   }
+  void SceneLayer::SetCameraPauseMask()
+  {
+    _renderLayer->SetCameraPauseMask(_pauseMask);
+  }
+
   void SceneLayer::SetCameraMode(Camera2DExtMode mode)
   {
     _renderLayer->SetCameraMode(mode);

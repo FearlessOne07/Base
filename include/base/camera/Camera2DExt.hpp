@@ -2,10 +2,11 @@
 #include "base/camera/CameraModes.hpp"
 #include "base/camera/CameraShakeConfig.hpp"
 #include "base/util/FastNoiseLite.hpp"
+#include "base/util/Pauseable.hpp"
 #include "raylib.h"
 namespace Base
 {
-  class Camera2DExt
+  class Camera2DExt : public Pauseable
   {
   private:
     // Base Raylib Camera
