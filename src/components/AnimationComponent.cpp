@@ -7,10 +7,10 @@ namespace Base
     return _currentFrame;
   }
 
-  AnimationComponent::AnimationComponent(int frameCount, Vector2 animationStartIndex, float duration, bool loop)
-    : _frameCount(frameCount), _animationStartIndex(animationStartIndex), _duration(duration), _loop(loop)
+  AnimationComponent::AnimationComponent(int frameCount, Vector2 animationStartIndex, float frameTime, bool loop)
+    : _frameCount(frameCount), _animationStartIndex(animationStartIndex), _frameTime(frameTime), _loop(loop)
   {
-    _timeBetweenFrames = _duration / (_frameCount - 1);
+    _currentFrame = _animationStartIndex.x;
   }
 
   bool AnimationComponent::IsLoop() const
@@ -20,12 +20,13 @@ namespace Base
 
   void AnimationComponent::Advance(float dt)
   {
-    if (_frameTimer < _timeBetweenFrames)
+    if (_frameTimer >= _frameTime)
     {
+      _frameTimer = 0;
       _currentFrame++;
-      if (_loop && _currentFrame >= _frameCount)
+      if (_loop && _currentFrame >= _animationStartIndex.x + _frameCount)
       {
-        _currentFrame = 0;
+        _currentFrame = _animationStartIndex.x;
       }
     }
     else

@@ -21,7 +21,7 @@ namespace Base
 
         if (!animcomp->IsDone())
         {
-          texcmp->source.x += (animcomp->GetCurrentFrame() * texcmp->source.width);
+          texcmp->source.x = (animcomp->GetCurrentFrame() * texcmp->source.width);
         }
         animcomp->Advance(dt);
       }

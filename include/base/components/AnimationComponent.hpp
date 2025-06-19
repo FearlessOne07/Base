@@ -8,10 +8,9 @@ namespace Base
   private:
     int _frameCount = 0;
     Vector2 _animationStartIndex{0, 0};
-    float _duration = 1.f;
     bool _loop = false;
     int _currentFrame = 0;
-    float _timeBetweenFrames = 0;
+    float _frameTime = 0;
     float _frameTimer = 0;
 
   public:
