@@ -32,11 +32,13 @@ set(SRC
   "./systems/RenderSystem.cpp"
   "./systems/InputSystem.cpp"
   "./systems/EntityCollisionSystem.cpp"
+  "./systems/AnimationSystem.cpp"
 
   "./components/Component.cpp"
   "./components/InputComponent.cpp"
   "./components/ColliderComponent.cpp"
   "./components/ImpulseComponent.cpp"
+  "./components/AnimationComponent.cpp"
 
   "./particles/ParticleManager.cpp"
 

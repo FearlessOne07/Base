@@ -37,7 +37,7 @@ namespace Base
       return _components.find(std::type_index(typeid(T))) != _components.end();
     }
 
-    template <typename T> T *AddComponent()
+    template <typename T, typename... Args> T *AddComponent(Args &&...args)
     {
       // Check if T is a derivative of Base::Component
       static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
@@ -49,7 +49,7 @@ namespace Base
       if (!HasComponent<T>())
       {
         // Create Component
-        std::unique_ptr<Component> comp = std::make_unique<T>();
+        std::unique_ptr<Component> comp = std::make_unique<T>(std::forward<Args>(args)...);
 
         // Set The component Owner
         comp->SetOwner(shared_from_this());

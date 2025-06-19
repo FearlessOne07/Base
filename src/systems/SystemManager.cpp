@@ -5,6 +5,7 @@
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/systems/System.hpp"
+#include "internal/systems/AnimationSystem.hpp"
 #include "internal/systems/EntityCollisionSystem.hpp"
 #include "internal/systems/InputSystem.hpp"
 #include "internal/systems/MoveSystem.hpp"
@@ -60,24 +61,26 @@ namespace Base
   void SystemManager::Init()
   {
     auto bus = SignalBus::GetInstance();
-    bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig)
-                                            {
+    bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig) {
       auto scenePushed = std::static_pointer_cast<ScenePushedSignal>(sig);
-      UpdateCurrentScene(scenePushed->scene); });
+      UpdateCurrentScene(scenePushed->scene);
+    });
 
-    bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> sig)
-                                             {
+    bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> sig) {
       auto sceneResumed = std::static_pointer_cast<SceneResumedSignal>(sig);
-      UpdateCurrentScene(sceneResumed->scene); });
+      UpdateCurrentScene(sceneResumed->scene);
+    });
 
     // Regiser Core Systems
     std::shared_ptr<RenderSystem> _rSystem = std::make_shared<RenderSystem>();
     std::shared_ptr<MoveSystem> _mvSystem = std::make_shared<MoveSystem>();
     std::shared_ptr<InputSystem> _iSystem = std::make_shared<InputSystem>();
     std::shared_ptr<EntityCollisionSystem> _ecSystem = std::make_shared<EntityCollisionSystem>();
+    std::shared_ptr<AnimationSystem> _animSystem = std::make_shared<AnimationSystem>();
     RegisterSystem(std::type_index(typeid(RenderSystem)), _rSystem, true);
     RegisterSystem(std::type_index(typeid(MoveSystem)), _mvSystem, false);
     RegisterSystem(std::type_index(typeid(InputSystem)), _iSystem, false);
+    RegisterSystem(std::type_index(typeid(AnimationSystem)), _animSystem, false);
     RegisterSystem(std::type_index(typeid(EntityCollisionSystem)), _ecSystem, false);
   }
 
