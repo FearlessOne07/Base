@@ -266,6 +266,7 @@ namespace Base
     {
       out[i] = static_cast<int16_t>(std::clamp<int32_t>(mixBuffer[i], (int32_t)INT16_MIN, (int32_t)INT16_MAX));
     }
+
     // Continue
     return paContinue;
   }

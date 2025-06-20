@@ -19,7 +19,7 @@ namespace Base
 
     // Initialize libsamplerate converter
     int error;
-    _srcState = src_new(SRC_SINC_MEDIUM_QUALITY, 2, &error); // 2 channels (stereo)
+    _srcState = src_new(SRC_SINC_BEST_QUALITY, 2, &error); // 2 channels (stereo)
     if (!_srcState)
     {
       THROW_BASE_RUNTIME_ERROR("Failed to initialize libsamplerate converter: " + std::string(src_strerror(error)));
