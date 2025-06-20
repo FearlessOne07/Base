@@ -4,6 +4,7 @@
 #include "base/util/Exception.hpp"
 #include "portaudio.h"
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
 #include <iostream>
 #include <memory>
@@ -196,6 +197,9 @@ namespace Base
     }
     _this->_streamReadIndex.store(read);
 
+    // Higher Res mixing buffer
+    std::vector<uint32_t> mixBuffer(framesPerBuffer * 2, 0);
+
     // Mix Sounds
     if (_this->_sounds.size() != 0)
     {
@@ -214,8 +218,8 @@ namespace Base
             auto soundFrame = sound->GetNextFrame();
 
             // Mix it in
-            out[frame * 2] += soundFrame[0];
-            out[frame * 2 + 1] += soundFrame[1];
+            mixBuffer[frame * 2] += soundFrame[0];
+            mixBuffer[frame * 2 + 1] += soundFrame[1];
             it++;
           }
           else
@@ -244,16 +248,23 @@ namespace Base
             auto streamFrame = stream->GetNextFrame();
 
             // Mix it in
-            out[frame * 2] += streamFrame[0];
-            out[frame * 2 + 1] += streamFrame[1];
+            mixBuffer[frame * 2] += streamFrame[0];
+            mixBuffer[frame * 2 + 1] += streamFrame[1];
             it++;
           }
           else
           {
+            // Stream isn't playing; remove it
             it = _this->_streams.erase(it);
           }
         }
       }
+    }
+
+    // Convert back to 16-bit with clipping protection
+    for (size_t i = 0; i < framesPerBuffer * 2; i++)
+    {
+      out[i] = static_cast<int16_t>(std::clamp<int32_t>(mixBuffer[i], (int32_t)INT16_MIN, (int32_t)INT16_MAX));
     }
     // Continue
     return paContinue;
@@ -310,7 +321,7 @@ namespace Base
 
       // Add stream to queue
       _pendingStreams[write] = std::move(stream);
-      
+
       // update stream write index
       _streamWriteIndex.store(nextWrite, std::memory_order_release);
     }

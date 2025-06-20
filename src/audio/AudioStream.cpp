@@ -15,11 +15,11 @@ namespace Base
   {
     // Calculate sample rate conversion ratio
     _srcRatio = static_cast<double>(_targetSampleRate) / static_cast<double>(_defaultSampleRate);
-    _outputFrameCount = static_cast<uint64_t>(_srcRatio * _dataBufferFrameCount) + 64; // Add padding for safety
+    _outputFrameCount = static_cast<uint64_t>(_srcRatio * _dataBufferFrameCount + 256); // Add padding for safety
 
     // Initialize libsamplerate converter
     int error;
-    _srcState = src_new(SRC_SINC_BEST_QUALITY, 2, &error); // 2 channels (stereo)
+    _srcState = src_new(SRC_SINC_MEDIUM_QUALITY, 2, &error); // 2 channels (stereo)
     if (!_srcState)
     {
       THROW_BASE_RUNTIME_ERROR("Failed to initialize libsamplerate converter: " + std::string(src_strerror(error)));
@@ -110,20 +110,17 @@ namespace Base
       }
     }
 
-    // Get current frame from resampled buffer
-    frame[0] = static_cast<int16_t>(_resampledBuffers[_currentBuffer][_currentFrame * 2] * 32767.0f);
-    frame[1] = static_cast<int16_t>(_resampledBuffers[_currentBuffer][_currentFrame * 2 + 1] * 32767.0f);
-
+    // Calculate pan
     float angle = _pan * (PI / 2.f);
     float leftPan = std::cos(angle);
     float rightPan = std::sin(angle);
 
     // Apply volume and panning
-    frame[0] = static_cast<int16_t>(frame[0] * _volume * leftPan);
-    frame[1] = static_cast<int16_t>(frame[1] * _volume * rightPan);
+    float left = _resampledBuffers[_currentBuffer][_currentFrame * 2] * _volume * leftPan;
+    float right = _resampledBuffers[_currentBuffer][_currentFrame * 2 + 1] * _volume * rightPan;
 
-    frame[0] = std::clamp<int16_t>(frame[0], INT16_MIN, INT16_MAX);
-    frame[1] = std::clamp<int16_t>(frame[1], INT16_MIN, INT16_MAX);
+    frame[0] = std::clamp<int16_t>(static_cast<int16_t>(left * 32767.0f), INT16_MIN, INT16_MAX);
+    frame[1] = std::clamp<int16_t>(static_cast<int16_t>(right * 32767.0f), INT16_MIN, INT16_MAX);
 
     _currentFrame++;
     return frame;
