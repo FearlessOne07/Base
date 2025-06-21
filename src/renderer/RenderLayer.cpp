@@ -9,12 +9,11 @@
 
 namespace Base
 {
-  RenderLayer::RenderLayer(const Scene *ownerScene, Vector2 position, Vector2 size)
-    : _position(position), _size(size), _ownerScene(ownerScene)
+  RenderLayer::RenderLayer(const Scene *ownerScene, Vector2 position, Vector2 size, Color clearColor)
+    : _position(position), _size(size), _ownerScene(ownerScene), _clearColor(clearColor)
   {
     _renderTexture = LoadRenderTexture(_size.x, _size.y);
     _ping = LoadRenderTexture(_size.x, _size.y);
-    _pong = LoadRenderTexture(_size.x, _size.y);
 
     _layerCamera = Camera2DExt();
   }
@@ -22,11 +21,10 @@ namespace Base
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
     : _position(other._position), _size(other._size), _renderFunctions(std::move(other._renderFunctions)),
       _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _shaderChain(other._shaderChain),
-      _ping(other._ping), _pong(other._pong)
+      _ping(other._ping)
   {
     other._renderTexture.id = 0;
     other._ping.id = 0;
-    other._pong.id = 0;
   }
 
   RenderLayer &RenderLayer::operator=(RenderLayer &&other) noexcept
@@ -42,10 +40,6 @@ namespace Base
       {
         UnloadRenderTexture(_ping);
       }
-      if (_pong.id != 0)
-      {
-        UnloadRenderTexture(_pong);
-      }
 
       _position = other._position;
       _size = other._size;
@@ -53,12 +47,10 @@ namespace Base
       _ownerScene = other._ownerScene;
       _renderTexture = other._renderTexture;
       _shaderChain = other._shaderChain;
-      _pong = other._pong;
       _ping = other._ping;
 
       other._renderTexture.id = 0;
       other._ping.id = 0;
-      other._pong.id = 0;
     }
     return *this;
   }
@@ -67,13 +59,12 @@ namespace Base
   {
     UnloadRenderTexture(_renderTexture);
     UnloadRenderTexture(_ping);
-    UnloadRenderTexture(_pong);
   }
 
   void RenderLayer::Render()
   {
     BeginTextureMode(_renderTexture);
-    ClearBackground(BLANK);
+    ClearBackground(_clearColor);
     auto functions = std::ranges::reverse_view(_renderFunctions);
     for (auto &function : functions)
     {
@@ -102,7 +93,7 @@ namespace Base
       }
 
       BeginTextureMode(*output);
-      ClearBackground(BLANK);
+      ClearBackground(_clearColor);
       shaderMan->ActivateShader(shaderHandle);
       DrawTexturePro(                              //
         input->texture, {0, 0, _size.x, -_size.y}, //
@@ -114,11 +105,14 @@ namespace Base
       std::swap(input, output); // Ping-pong
     }
 
-    BeginTextureMode(_renderTexture);
-    DrawTexturePro(                                                                                          //
-      input->texture, {0, 0, (float)_size.x, -(float)_size.y}, {0, 0, _size.x, _size.y}, {0, 0}, 0.0f, WHITE //
-    );
-    EndTextureMode();
+    if (input != &_renderTexture)
+    {
+      BeginTextureMode(_renderTexture);
+      DrawTexturePro(                                                                                          //
+        input->texture, {0, 0, (float)_size.x, -(float)_size.y}, {0, 0, _size.x, _size.y}, {0, 0}, 0.0f, WHITE //
+      );
+      EndTextureMode();
+    }
   }
 
   const RenderTexture *RenderLayer::GetTexture() const

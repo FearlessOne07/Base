@@ -13,13 +13,13 @@
 
 namespace Base
 {
-  RenderLayer *Renderer::InitLayer(                         //
-    const Scene *ownerScene, Vector2 position, Vector2 size //
+  RenderLayer *Renderer::InitLayer(                                           //
+    const Scene *ownerScene, Vector2 position, Vector2 size, Color clearColor //
   )
   {
     if (_renderLayers.contains(ownerScene))
     {
-      _renderLayers.at(ownerScene).emplace_back(ownerScene, position, size);
+      _renderLayers.at(ownerScene).emplace_back(ownerScene, position, size, clearColor);
       return &_renderLayers.at(ownerScene).back();
     }
     return nullptr;
@@ -102,7 +102,6 @@ namespace Base
   {
     BeginTextureMode(_renderTexture);
     ClearBackground(_currentScene->GetClearColor());
-
     auto layers = std::ranges::reverse_view(_renderLayers.at(_currentScene));
     for (auto &layer : layers)
     {

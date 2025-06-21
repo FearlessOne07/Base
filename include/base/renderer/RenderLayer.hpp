@@ -16,6 +16,7 @@ namespace Base
     // Rendering
     RenderTexture _renderTexture;
     std::deque<RenderFunction> _renderFunctions;
+    Color _clearColor = BLANK;
 
     // Camera
     Camera2DExt _layerCamera;
@@ -30,14 +31,13 @@ namespace Base
     // Shaders
     bool _shaderBuffersInitialized = false;
     RenderTexture _ping;
-    RenderTexture _pong;
     ShaderChain _shaderChain;
 
   private:
     void Update(float dt);
 
   public:
-    RenderLayer(const Scene *ownerScene, Vector2 position, Vector2 size);
+    RenderLayer(const Scene *ownerScene, Vector2 position, Vector2 size, Color clearColor);
     RenderLayer(RenderLayer &&other) noexcept;
     RenderLayer &operator=(RenderLayer &&other) noexcept;
     ~RenderLayer();

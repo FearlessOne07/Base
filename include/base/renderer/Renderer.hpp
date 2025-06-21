@@ -33,8 +33,8 @@ namespace Base
     void RemoveSceneLayers(const Scene *scene);
 
   public:
-    RenderLayer *InitLayer(                                   //
-      const Scene *ownerScene, Vector2 position, Vector2 size //
+    RenderLayer *InitLayer(                                                     //
+      const Scene *ownerScene, Vector2 position, Vector2 size, Color clearColor //
     );
     void SetClearColor();
   };

@@ -72,7 +72,7 @@ namespace Base
 
   protected:
     void SetClearColor(Color color);
-    RenderLayer *AddRenderLayer(Vector2 size);
+    RenderLayer *AddRenderLayer(Vector2 size, Color clearColor = BLANK);
 
   public:
     Scene();
