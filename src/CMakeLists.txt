@@ -20,6 +20,7 @@ set(SRC
   "./ui/elements/UIButton.cpp"
   "./ui/elements/UIPanel.cpp"
   "./ui/elements/UIContainer.cpp"
+  "./ui/elements/UITextureRect.cpp"
 
   "./scenes/SceneManager.cpp"
   "./scenes/Scene.cpp"

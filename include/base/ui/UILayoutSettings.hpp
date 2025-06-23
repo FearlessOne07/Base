@@ -17,17 +17,9 @@ namespace Base
     RIGHT,
   };
 
-  enum struct UIContainerSizing
-  {
-    FILL,
-    SHRINK
-  };
-
   struct UILayoutSettings
   {
     UIHAlignment hAlignment = UIHAlignment::LEFT;
     UIVAlignment vAlignment = UIVAlignment::TOP;
-    UIContainerSizing vSizing = UIContainerSizing::SHRINK;
-    UIContainerSizing hSizing = UIContainerSizing::SHRINK;
   };
 } // namespace Base

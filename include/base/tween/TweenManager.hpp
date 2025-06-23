@@ -3,7 +3,6 @@
 #include "base/tween/ITween.hpp"
 #include "base/tween/Tween.hpp"
 #include "base/util/Easings.hpp"
-#include <algorithm>
 #include <functional>
 #include <memory>
 #include <type_traits>

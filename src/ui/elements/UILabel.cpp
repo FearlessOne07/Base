@@ -17,6 +17,7 @@ namespace Base
     }
     _text = text;
     _currentSize = MeasureTextEx(font, text.c_str(), _fontSize, 1);
+    _baseSize = MeasureTextEx(font, text.c_str(), _fontSize, 1);
   }
 
   void UILabel::SetFontSize(float size)
