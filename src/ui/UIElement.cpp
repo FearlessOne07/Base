@@ -15,15 +15,22 @@ namespace Base
     }
   }
 
-  void UIElement::SetPosition(Vector2 position)
+  void UIElement::SetPosition(Vector2 position, bool base)
   {
-    _setPosition = position;
-    _position = position;
+    if (base)
+    {
+      _basePosition = position;
+    }
+    _currentPosition = position;
   }
 
-  void UIElement::SetSize(Vector2 size)
+  void UIElement::SetSize(Vector2 size, bool base)
   {
-    _size = size;
+    if (base)
+    {
+      _baseSize = size;
+    }
+    _currentSize = size;
   }
 
   void UIElement::SetLayoutSettings(const UILayoutSettings &settings)
@@ -33,12 +40,22 @@ namespace Base
 
   Vector2 UIElement::GetPosition() const
   {
-    return _setPosition;
+    return _currentPosition;
   }
 
   Vector2 UIElement::GetSize() const
   {
-    return _size;
+    return _currentSize;
+  }
+
+  Vector2 UIElement::GetBasePosition() const
+  {
+    return _basePosition;
+  }
+
+  Vector2 UIElement::GetBaseSize() const
+  {
+    return _baseSize;
   }
 
   const UILayoutSettings &UIElement::GetLayoutSettings() const

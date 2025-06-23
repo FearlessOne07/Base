@@ -15,6 +15,6 @@ namespace Base
 
   void UIPanel::Render()
   {
-    DrawRectangleRec({_position.x, _position.y, _size.x, _size.y}, _color);
+    DrawRectangleRec({_currentPosition.x, _currentPosition.y, _currentSize.x, _currentSize.y}, _color);
   }
 } // namespace Base

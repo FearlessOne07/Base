@@ -17,9 +17,12 @@ namespace Base
   protected:
     AssetHandle<BaseFont> _font;
 
-    Vector2 _position = {0, 0};
-    Vector2 _setPosition = {0, 0};
-    Vector2 _size = {0, 0};
+    Vector2 _basePosition = {0, 0};
+    Vector2 _currentPosition = {0, 0};
+
+    Vector2 _baseSize = {0, 0};
+    Vector2 _currentSize = {0, 0};
+
     bool _isHidden = false;
 
   protected:
@@ -31,13 +34,17 @@ namespace Base
 
     // Setters
     void SetLayoutSettings(const UILayoutSettings &settings);
-    void SetPosition(Vector2 position);
     void SetFont(const AssetHandle<BaseFont> &);
-    void SetSize(Vector2 size);
+
+    void SetPosition(Vector2 position, bool base = true);
+    void SetSize(Vector2 size, bool base = true);
 
     // Getters
     Vector2 GetPosition() const;
+    Vector2 GetBasePosition() const;
+
     Vector2 GetSize() const;
+    Vector2 GetBaseSize() const;
     const UILayoutSettings &GetLayoutSettings() const;
 
     // Core

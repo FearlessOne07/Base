@@ -10,5 +10,5 @@ struct GameConfig
   int TargetFps = 0;
   bool Vsync = false;
   bool ResizableWindow = true;
-  std::unordered_map<std::string, std::filesystem::path> globalAssets = {};
+  std::unordered_map<std::string, std::filesystem::path> GlobalAssets = {};
 };

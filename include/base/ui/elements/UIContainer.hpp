@@ -37,11 +37,12 @@ namespace Base
     std::vector<std::shared_ptr<UIElement>> _childElements;
 
     // Layout
-    AnchorPoint _anchorPoint = AnchorPoint::CENTER;
+    AnchorPoint _anchorPoint = AnchorPoint::TOP_LEFT;
     Layout _layout = Layout::VERTICAL;
     bool _dirty = false;
     Vector2 _padding = {0, 0};
     float _gapSize = 0;
+    bool _sizeCalculated = false;
 
   private:
     void LayoutVertical();

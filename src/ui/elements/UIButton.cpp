@@ -55,13 +55,12 @@ namespace Base
       font = GetFontDefault();
     }
     _text = text;
-    _size = MeasureTextEx(font, text.c_str(), _fontSize, 1);
-
-    _size.x += _padding.x * 2;
-    _size.y += _padding.y * 2;
+    _baseSize = MeasureTextEx(font, text.c_str(), _baseFontSize, 1);
+    _baseSize.x += _padding.x * 2;
+    _baseSize.y += _padding.y * 2;
   }
 
-  void UIButton::SetFontSize(float size)
+  void UIButton::SetFontSize(float size, bool base)
   {
     Font font;
     if (_font.Get())
@@ -72,11 +71,19 @@ namespace Base
     {
       font = GetFontDefault();
     }
-    _fontSize = size;
-    _size = MeasureTextEx(font, _text.c_str(), _fontSize, 1);
 
-    _size.x += _padding.x * 2;
-    _size.y += _padding.y * 2;
+    if (base)
+    {
+      _baseFontSize = size;
+      _baseSize = MeasureTextEx(font, _text.c_str(), _baseFontSize, 1);
+      _baseSize.x += _padding.x * 2;
+      _baseSize.y += _padding.y * 2;
+    }
+
+    _currentFontSize = size;
+    _currentSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
+    _currentSize.x += _padding.x * 2;
+    _currentSize.y += _padding.y * 2;
   }
 
   void UIButton::Render()
@@ -90,8 +97,15 @@ namespace Base
     {
       font = GetFontDefault();
     }
-    DrawRectangleRec({_position.x, _position.y, _size.x, _size.y}, _color);
-    DrawTextEx(font, _text.c_str(), {_position.x + _padding.x, _position.y + _padding.y}, _fontSize, 1, _textColor);
+    DrawRectangleRec({_currentPosition.x, _currentPosition.y, _currentSize.x, _currentSize.y}, _color);
+    DrawTextEx( //
+      font, _text.c_str(),
+      {
+        _currentPosition.x + _padding.x,
+        _currentPosition.y + _padding.y,
+      },
+      _currentFontSize, 1, _textColor //
+    );
   }
 
   void UIButton::SetPadding(Vector2 padding)
@@ -104,7 +118,8 @@ namespace Base
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
     Vector2 mousePos = rd->mousePosition;
 
-    bool isCurrentlyHovered = CheckCollisionPointRec(mousePos, {_position.x, _position.y, _size.x, _size.y});
+    bool isCurrentlyHovered =
+      CheckCollisionPointRec(mousePos, {_currentPosition.x, _currentPosition.y, _currentSize.x, _currentSize.y});
 
     if (isCurrentlyHovered && !_isHovered)
     {
@@ -129,6 +144,11 @@ namespace Base
 
   float UIButton::GetFontSize() const
   {
-    return _fontSize;
+    return _currentFontSize;
+  }
+
+  float UIButton::GetBaseFontSize() const
+  {
+    return _baseFontSize;
   }
 } // namespace Base

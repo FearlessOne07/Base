@@ -59,9 +59,9 @@ namespace Base
 
     // Load Global Assets
     _assetManager.Init();
-    if (config.globalAssets.size() > 0)
+    if (config.GlobalAssets.size() > 0)
     {
-      for (auto &[type, path] : config.globalAssets)
+      for (auto &[type, path] : config.GlobalAssets)
       {
         std::string assetType = Strings::ToLower(type);
 
