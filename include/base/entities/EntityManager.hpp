@@ -39,7 +39,7 @@ namespace Base
       std::vector<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> results = {};
       for (auto it = _entities.begin(); it != _entities.end(); it++)
       {
-        if ((it->item->HasComponent<Components>() && ...))
+        if ((it->item->HasComponent<Components>() && ...) && it->item->IsAlive())
         {
           results.emplace_back(it);
         }
