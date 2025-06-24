@@ -6,16 +6,16 @@
 #include "base/entities/EntityManager.hpp"
 #include "raylib.h"
 #include <memory>
-#include <vector>
 
 namespace Base
 {
   void RenderSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
   {
     // Shape Component
-    std::vector<std::shared_ptr<Entity>> entities_transcmp = entitymanager->Query<TransformComponent>();
-    for (std::shared_ptr<Entity> &e : entities_transcmp)
+    auto entities_transcmp = entitymanager->Query<TransformComponent>();
+    for (auto &item : entities_transcmp)
     {
+      auto e = item->item;
       if (e)
       {
         auto *transcmp = e->GetComponent<TransformComponent>();

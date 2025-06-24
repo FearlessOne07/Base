@@ -63,6 +63,13 @@ namespace Base
              rect.y + rect.height <= container.y + container.height;
     }
 
+    bool _fitsEntirelyCircle(Circle circle, Rectangle container)
+    {
+      return (circle.position.x - circle.radius) >= container.x && (circle.position.y - circle.radius) >= container.y &&
+             (circle.position.x + circle.radius) <= (container.x + container.width) &&
+             (circle.position.y + circle.radius) <= (container.y + container.height);
+    }
+
     void _search(ItemAreaType searchArea, std::list<T> &results)
     {
       // Check items at this level
@@ -70,35 +77,29 @@ namespace Base
       {
         if (std::holds_alternative<Rectangle>(area) && std::holds_alternative<Rectangle>(searchArea))
         {
-          if (                  //
-            CheckCollisionRecs( //
-              std::get<Rectangle>(area),
-              std::get<Rectangle>(searchArea) //
-              )                               //
-          )
+          if (CheckCollisionRecs(std::get<Rectangle>(area), std::get<Rectangle>(searchArea)))
           {
             results.push_back(item);
           }
         }
-        else if ( //
-          std::holds_alternative<Circle>(area),
-          std::holds_alternative<Rectangle>(searchArea) //
-        )
+        if (std::holds_alternative<Circle>(area) && std::holds_alternative<Circle>(searchArea))
+        {
+          Circle circle1 = std::get<Circle>(area);
+          Circle circle2 = std::get<Circle>(searchArea);
+          if (CheckCollisionCircles(circle1.position, circle1.radius, circle2.position, circle2.radius))
+          {
+            results.push_back(item);
+          }
+        }
+        else if (std::holds_alternative<Circle>(area), std::holds_alternative<Rectangle>(searchArea))
         {
           Circle circle = std::get<Circle>(area);
-          CheckCollisionCircleRec(                                          //
-            circle.position, circle.radius, std::get<Rectangle>(searchArea) //
-          );
+          CheckCollisionCircleRec(circle.position, circle.radius, std::get<Rectangle>(searchArea));
         }
-        else if ( //
-          std::holds_alternative<Circle>(searchArea),
-          std::holds_alternative<Rectangle>(area) //
-        )
+        else if (std::holds_alternative<Circle>(searchArea), std::holds_alternative<Rectangle>(area))
         {
           Circle circle = std::get<Circle>(searchArea);
-          if (CheckCollisionCircleRec(                                    //
-                circle.position, circle.radius, std::get<Rectangle>(area) //
-                ))
+          if (CheckCollisionCircleRec(circle.position, circle.radius, std::get<Rectangle>(area)))
           {
             results.push_back(item);
           }
@@ -162,10 +163,17 @@ namespace Base
         // the area)
         for (int i = 0; i < 4; i++)
         {
-
           if (std::holds_alternative<Rectangle>(area))
           {
             if (_fitsEntirelyRect(std::get<Rectangle>(area), _childAreas[i]))
+            {
+              insertedIntoChild = true;
+              return _children[i]->Insert(object, area);
+            }
+          }
+          else if (std::holds_alternative<Circle>(area))
+          {
+            if (_fitsEntirelyCircle(std::get<Circle>(area), _childAreas[i]))
             {
               insertedIntoChild = true;
               return _children[i]->Insert(object, area);
@@ -211,22 +219,6 @@ namespace Base
       std::list<T> results;
       _search(area, results);
       return results;
-    }
-
-    void Items(std::list<T> &list)
-    {
-      for (auto &[rect, item] : _layerItems)
-      {
-        list.push_back(item);
-      }
-
-      if (_divided)
-      {
-        for (int i = 0; i < 4; i++)
-        {
-          _children[i]->Items(list);
-        }
-      }
     }
 
     // Debug function to visualize the tree structure

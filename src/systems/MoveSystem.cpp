@@ -7,20 +7,20 @@
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/Entity.hpp"
 #include "base/entities/EntityManager.hpp"
+#include "base/util/Circle.hpp"
 #include "raylib.h"
 #include "raymath.h"
 #include <cmath>
 #include <memory>
-#include <vector>
 
 namespace Base
 {
-  void MoveSystem::Update(float dt, EntityManager *entitymanager,const Scene * currentScene)
+  void MoveSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
   {
-    std::vector<std::shared_ptr<Entity>> entities = entitymanager->Query<RigidBodyComponent>();
-
-    for (std::shared_ptr<Entity> &e : entities)
+    auto entities = entitymanager->Query<RigidBodyComponent>();
+    for (auto &item : entities)
     {
+      auto e = item->item;
       if (e)
       {
         auto *rbcmp = e->GetComponent<RigidBodyComponent>();
@@ -81,23 +81,25 @@ namespace Base
         {
           rbcmp->velocity.y = 0;
         }
+
         // Update Positions
         transcmp->position += rbcmp->velocity * dt;
+        entitymanager->UpdateEntity(item);
       }
     }
   }
 
   void MoveSystem::HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager)
   {
-    std::vector<std::shared_ptr<Entity>> entites = entityManager->Query<ColliderComponent>();
-
-    auto *abbcmp1 = e->GetComponent<ColliderComponent>();
     auto *mvcmp1 = e->GetComponent<MoveComponent>();
+    auto *abbcmp1 = e->GetComponent<ColliderComponent>();
     auto *transcmp1 = e->GetComponent<TransformComponent>();
     auto *rbcmp1 = e->GetComponent<RigidBodyComponent>();
+    auto entites = entityManager->QueryArea(Circle(transcmp1->position, 30));
 
-    for (std::shared_ptr<Entity> &e2 : entites)
+    for (auto &item : entites)
     {
+      auto e2 = item->item;
       if (         //
         e != e2 && //
         abbcmp1->HasTypeFlag(ColliderComponent::Type::COLLIDER) &&

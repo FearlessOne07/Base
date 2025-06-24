@@ -5,27 +5,30 @@
 #include "base/entities/EntityManager.hpp"
 #include "base/entities/signals/EntityCollisionSignal.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/util/Circle.hpp"
 #include "raylib.h"
 #include "raymath.h"
 #include <algorithm>
 #include <memory>
-#include <vector>
 
 namespace Base
 {
-  void EntityCollisionSystem::Update(float dt, EntityManager *entityManager,const Scene * currentScene)
+  void EntityCollisionSystem::Update(float dt, EntityManager *entityManager, const Scene *currentScene)
   {
-    std::vector<std::shared_ptr<Entity>> entities = entityManager->Query<Base::ColliderComponent>();
+    auto entities = entityManager->Query<Base::ColliderComponent>();
 
-    for (auto &e1 : entities)
+    for (auto &item1 : entities)
     {
-      for (auto &e2 : entities)
+      auto e1 = item1->item;
+      auto nearby = entityManager->QueryArea(Circle{e1->GetComponent<TransformComponent>()->position, 30});
+
+      for (auto &item2 : nearby)
       {
+        auto e2 = item2->item;
         if ((e1 != e2) && (e1->IsAlive() && e2->IsAlive()))
         {
           if (e1->HasComponent<ColliderComponent>() && e2->HasComponent<ColliderComponent>())
           {
-
             auto *abb1 = e1->GetComponent<ColliderComponent>();
             auto *abb2 = e2->GetComponent<ColliderComponent>();
             bool collision = false;

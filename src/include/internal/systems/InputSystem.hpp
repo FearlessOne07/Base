@@ -1,6 +1,7 @@
-#include "base/systems/System.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
+#include "base/systems/System.hpp"
+#include "base/util/QuadTreeContainer.hpp"
 #include <memory>
 #include <vector>
 
@@ -9,7 +10,7 @@ namespace Base
   class InputSystem : public System
   {
   private:
-    std::vector<std::shared_ptr<Entity>> _entities;
+    std::vector<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> _entities;
 
   private:
     void OnKeyEvent(const std::shared_ptr<KeyEvent> &event);
@@ -18,6 +19,6 @@ namespace Base
 
   public:
     void Start() override;
-    void Update(float dt, EntityManager *entityManager,const Scene *) override;
+    void Update(float dt, EntityManager *entityManager, const Scene *) override;
   };
 } // namespace Base

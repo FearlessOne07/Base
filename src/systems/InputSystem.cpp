@@ -29,8 +29,9 @@ namespace Base
 
   void InputSystem::OnKeyEvent(const std::shared_ptr<KeyEvent> &event)
   {
-    for (auto &e : _entities)
+    for (auto &item : _entities)
     {
+      auto e = item->item;
       if (event->isHandled)
       {
         break;
@@ -75,8 +76,9 @@ namespace Base
 
   void InputSystem::OnMouseButtonEvent(const std::shared_ptr<MouseButtonEvent> &event)
   {
-    for (auto &e : _entities)
+    for (auto &item : _entities)
     {
+      auto e = item->item;
       if (event->isHandled)
       {
         break;
