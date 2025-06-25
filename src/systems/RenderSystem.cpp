@@ -65,6 +65,7 @@ namespace Base
             }
           }
         }
+
         if (e->HasComponent<TextureComponent>())
         {
           auto *tcmp = e->GetComponent<TextureComponent>();

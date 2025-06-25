@@ -74,5 +74,10 @@ namespace Base
     {
       return _elements.cend();
     }
+
+    size_t Size() const
+    {
+      return _elements.size();
+    }
   };
 } // namespace Base

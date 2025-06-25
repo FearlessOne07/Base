@@ -91,12 +91,12 @@ namespace Base
             results.push_back(item);
           }
         }
-        else if (std::holds_alternative<Circle>(area), std::holds_alternative<Rectangle>(searchArea))
+        else if (std::holds_alternative<Circle>(area) && std::holds_alternative<Rectangle>(searchArea))
         {
           Circle circle = std::get<Circle>(area);
           CheckCollisionCircleRec(circle.position, circle.radius, std::get<Rectangle>(searchArea));
         }
-        else if (std::holds_alternative<Circle>(searchArea), std::holds_alternative<Rectangle>(area))
+        else if (std::holds_alternative<Circle>(searchArea) && std::holds_alternative<Rectangle>(area))
         {
           Circle circle = std::get<Circle>(searchArea);
           if (CheckCollisionCircleRec(circle.position, circle.radius, std::get<Rectangle>(area)))
@@ -137,16 +137,6 @@ namespace Base
 
     QuadTreeElementLocation<T> Insert(T object, ItemAreaType area)
     {
-      // If area doesn't intersect with this node's boundary, reject
-      if (std::holds_alternative<Rectangle>(area))
-      {
-        if (!CheckCollisionRecs(std::get<Rectangle>(area), _area))
-        {
-          exit(-1);
-          return {};
-        }
-      }
-
       // If we haven't subdivided and we're not at max depth and we have too many
       // items
       if (!_divided && _depth < MAX_DEPTH && _layerItems.size() >= MAX_ITEMS_PER_NODE)

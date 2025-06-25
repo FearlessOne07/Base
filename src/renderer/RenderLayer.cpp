@@ -197,7 +197,6 @@ namespace Base
 
   void RenderLayer::Update(float dt)
   {
-
     auto A = _ownerScene->GetPauseMask();
     auto B = _layerCamera.GetPauseMask();
     if (!(B.count() != 0 && (A & B) == B))

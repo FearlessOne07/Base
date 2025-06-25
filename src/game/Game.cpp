@@ -93,8 +93,8 @@ namespace Base
     }
 
     // Initialize Systems
-
     _systemManager.Init();
+
     // Initialize render context
     auto windowWidth = static_cast<float>(GetScreenWidth());
     auto windowHeight = static_cast<float>(GetScreenHeight());
@@ -122,7 +122,6 @@ namespace Base
 
   void Game::GameImpl::Run()
   {
-
     // Loop Wule the window is Open
     while (!WindowShouldClose() && _running)
     {
@@ -167,7 +166,7 @@ namespace Base
       _shaderManager.Update(dt);
 
       // Post Update
-      _entityManager.RemoveDeadEntities();
+      _entityManager.RemoveDeadEntities(); // <-- HERE
       _inpMan.PostUpdate();
 
       // Render

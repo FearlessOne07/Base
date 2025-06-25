@@ -59,31 +59,35 @@ namespace Base
 
   void EntityManager::AddEntity(std::shared_ptr<Entity> e)
   {
-    ItemAreaType area;
-    auto trancmp = e->GetComponent<TransformComponent>();
-    if (e->HasComponent<ColliderComponent>())
+
+    if (_entityPending)
     {
-      auto colcmp = e->GetComponent<ColliderComponent>();
-      if (colcmp->shape == ColliderComponent::Shape::CIRCLE)
+      _entityPending = false;
+      ItemAreaType area;
+      auto trancmp = e->GetComponent<TransformComponent>();
+      if (e->HasComponent<ColliderComponent>())
       {
-        area = Circle(trancmp->position, colcmp->radius);
+        auto colcmp = e->GetComponent<ColliderComponent>();
+        if (colcmp->shape == ColliderComponent::Shape::CIRCLE)
+        {
+          area = Circle(trancmp->position, colcmp->radius);
+        }
+        else if (colcmp->shape == ColliderComponent::Shape::BOX)
+        {
+          area = Rectangle{
+            trancmp->position.x - colcmp->positionOffset.x,
+            trancmp->position.y - colcmp->positionOffset.y,
+            colcmp->size.x,
+            colcmp->size.y,
+          };
+        }
       }
-      else if (colcmp->shape == ColliderComponent::Shape::BOX)
+      else
       {
-        area = Rectangle{
-          trancmp->position.x - colcmp->positionOffset.x,
-          trancmp->position.y - colcmp->positionOffset.y,
-          colcmp->size.x,
-          colcmp->size.y,
-        };
+        area = Rectangle{trancmp->position.x - 5, trancmp->position.y - 5, 10, 10};
       }
+      _entities.Insert(e, area);
     }
-    else
-    {
-      area = Rectangle{trancmp->position.x - 5, trancmp->position.y - 5, 10, 10};
-    }
-    _entities.Insert(e, area);
-    _entityPending = false;
   }
 
   const std::shared_ptr<Entity> EntityManager::GetEntity(size_t id)
