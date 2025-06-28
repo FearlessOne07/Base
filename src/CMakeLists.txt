@@ -7,6 +7,8 @@ set(SRC
   "./renderer/RenderContextSingleton.cpp"
   "./renderer/Renderer.cpp"
   "./renderer/RenderLayer.cpp"
+  
+  "./sprites/Sprite.cpp"
 
   "./audio/Sound.cpp"
   "./audio/AudioStream.cpp"
@@ -40,6 +42,7 @@ set(SRC
   "./components/ColliderComponent.cpp"
   "./components/ImpulseComponent.cpp"
   "./components/AnimationComponent.cpp"
+  "./components/SpriteComponent.cpp"
 
   "./particles/ParticleManager.cpp"
 

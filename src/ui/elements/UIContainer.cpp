@@ -23,26 +23,43 @@ namespace Base
 
   void UIContainer::LayoutVertical()
   {
-    float currentOffset = 0;
 
-    Vector2 newContainerSize = {0, 0};
-    for (auto &element : _childElements)
+    // AUTO GAP CALCULATION
+    if (_gapMode == GapMode::AUTO && !_childElements.empty())
     {
-      if (currentOffset == 0)
+      float totalElementHeight = 0;
+      for (const auto &element : _childElements)
       {
-        currentOffset += _padding.y;
+        totalElementHeight += element->GetBaseSize().y;
       }
-      else
-      {
-        currentOffset += _gapSize;
-      }
-      newContainerSize.x = std::max(newContainerSize.x, element->GetBaseSize().x);
-      currentOffset += element->GetBaseSize().y;
+
+      int gapCount = static_cast<int>(_childElements.size()) - 1;
+      float availableHeight = _baseSize.y - _padding.y * 2 - totalElementHeight;
+      _gapSize = gapCount > 0 ? std::max(0.0f, availableHeight / gapCount) : 0.0f;
     }
-    currentOffset += _padding.x;
-    newContainerSize.x += _padding.x * 2;
-    newContainerSize.y = currentOffset;
-    _baseSize = newContainerSize;
+
+    float currentOffset = 0;
+    if (_sizeMode == SizeMode::FIT)
+    {
+      Vector2 newContainerSize = {0, 0};
+      for (auto &element : _childElements)
+      {
+        if (currentOffset == 0)
+        {
+          currentOffset += _padding.y;
+        }
+        else
+        {
+          currentOffset += _gapSize;
+        }
+        newContainerSize.x = std::max(newContainerSize.x, element->GetBaseSize().x);
+        currentOffset += element->GetBaseSize().y;
+      }
+      currentOffset += _padding.x;
+      newContainerSize.x += _padding.x * 2;
+      newContainerSize.y = currentOffset;
+      _baseSize = newContainerSize;
+    }
     UpdatePosition();
 
     // Calculate Layout
@@ -83,26 +100,42 @@ namespace Base
 
   void UIContainer::LayoutHorizontal()
   {
-    float currentOffset = 0;
-
-    Vector2 newContainerSize = {0, 0};
-    for (auto &element : _childElements)
+    // AUTO GAP CALCULATION
+    if (_gapMode == GapMode::AUTO && !_childElements.empty())
     {
-      if (currentOffset == 0)
+      float totalElementWidth = 0;
+      for (const auto &element : _childElements)
       {
-        currentOffset += _padding.x;
+        totalElementWidth += element->GetBaseSize().x;
       }
-      else
-      {
-        currentOffset += _gapSize;
-      }
-      newContainerSize.y = std::max(newContainerSize.y, element->GetBaseSize().y);
-      currentOffset += element->GetBaseSize().x;
+
+      int gapCount = static_cast<int>(_childElements.size()) - 1;
+      float availableWidth = _baseSize.x - _padding.x * 2 - totalElementWidth;
+      _gapSize = gapCount > 0 ? std::max(0.0f, availableWidth / gapCount) : 0.0f;
     }
-    currentOffset += _padding.y;
-    newContainerSize.y += _padding.y * 2;
-    newContainerSize.x = currentOffset;
-    _baseSize = newContainerSize;
+
+    float currentOffset = 0;
+    if (_sizeMode == SizeMode::FIT)
+    {
+      Vector2 newContainerSize = {0, 0};
+      for (auto &element : _childElements)
+      {
+        if (currentOffset == 0)
+        {
+          currentOffset += _padding.x;
+        }
+        else
+        {
+          currentOffset += _gapSize;
+        }
+        newContainerSize.y = std::max(newContainerSize.y, element->GetBaseSize().y);
+        currentOffset += element->GetBaseSize().x;
+      }
+      currentOffset += _padding.y;
+      newContainerSize.y += _padding.y * 2;
+      newContainerSize.x = currentOffset;
+      _baseSize = newContainerSize;
+    }
     UpdatePosition();
 
     // Calculate Layout
@@ -201,6 +234,8 @@ namespace Base
     {
       element->Render();
     }
+
+    DrawRectangleLinesEx({_currentPosition.x, _currentPosition.y, _baseSize.x, _baseSize.y}, 3, RED);
   }
 
   void UIContainer::Hide()

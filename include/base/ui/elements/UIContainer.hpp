@@ -4,6 +4,7 @@
 #include "base/util/Strings.hpp"
 #include "raylib.h"
 #include <algorithm>
+#include <cstdint>
 #include <iterator>
 #include <memory>
 #include <string>
@@ -17,6 +18,18 @@ namespace Base
     {
       VERTICAL = 0,
       HORIZONTAL
+    };
+
+    enum struct SizeMode : uint8_t
+    {
+      FIXED = 0,
+      FIT
+    };
+
+    enum struct GapMode : uint8_t
+    {
+      FIXED = 0,
+      AUTO
     };
 
     enum AnchorPoint : uint8_t
@@ -42,8 +55,11 @@ namespace Base
     Layout _layout = Layout::VERTICAL;
     bool _dirty = false;
     Vector2 _padding = {0, 0};
-    float _gapSize = 0;
-    bool _sizeCalculated = false;
+
+    GapMode _gapMode = GapMode::FIXED;
+    float _gapSize = 10;
+
+    SizeMode _sizeMode = SizeMode::FIT;
 
   private:
     void LayoutVertical();
@@ -111,4 +127,4 @@ namespace Base
       }
     }
   };
-} // namespace Base
+} // namespace Bae

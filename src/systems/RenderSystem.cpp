@@ -1,7 +1,7 @@
 #include "internal/systems/RenderSystem.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
-#include "base/components/TextureComponent.hpp"
+#include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "raylib.h"
@@ -66,20 +66,15 @@ namespace Base
           }
         }
 
-        if (e->HasComponent<TextureComponent>())
+        if (e->HasComponent<SpriteComponent>())
         {
-          auto *tcmp = e->GetComponent<TextureComponent>();
-          if (tcmp && transcmp)
+          auto *sprtmp = e->GetComponent<SpriteComponent>();
+          if (sprtmp && transcmp)
           {
             DrawTexturePro( //
-              *tcmp->texture.Get()->GetRaylibTexture(), tcmp->source,
-              {
-                transcmp->position.x,
-                transcmp->position.y,
-                tcmp->targetSize.x,
-                tcmp->targetSize.y,
-              },
-              {tcmp->targetSize.x / 2, tcmp->targetSize.y / 2}, transcmp->rotation, WHITE //
+              *sprtmp->GetTexture().Get()->GetRaylibTexture(), sprtmp->GetTextureSourceRect(),
+              {transcmp->position.x, transcmp->position.y, sprtmp->GetTargetSize().x, sprtmp->GetTargetSize().y},
+              {sprtmp->GetTargetSize().x / 2, sprtmp->GetTargetSize().y / 2}, transcmp->rotation, WHITE //
             );
           }
         }

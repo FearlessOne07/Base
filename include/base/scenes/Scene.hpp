@@ -70,6 +70,8 @@ namespace Base
     // Pause
     std::bitset<8> _pauseMask;
 
+    // Scene Store
+
   protected:
     void SetClearColor(Color color);
     RenderLayer *AddRenderLayer(Vector2 size, Color clearColor = BLANK);

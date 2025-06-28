@@ -1,6 +1,6 @@
 #include "internal/systems/AnimationSystem.hpp"
 #include "base/components/AnimationComponent.hpp"
-#include "base/components/TextureComponent.hpp"
+#include "base/components/SpriteComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/util/Exception.hpp"
 #include <sstream>
@@ -13,14 +13,14 @@ namespace Base
 
     for (auto &e : entities_animcmp)
     {
-      if (e->item->HasComponent<TextureComponent>())
+      if (e->item->HasComponent<SpriteComponent>())
       {
-        auto *texcmp = e->item->GetComponent<TextureComponent>();
+        auto *sprtcmp = e->item->GetComponent<SpriteComponent>();
         auto animcomp = e->item->GetComponent<AnimationComponent>();
 
         if (!animcomp->IsDone())
         {
-          texcmp->source.x = (animcomp->GetCurrentFrame() * texcmp->source.width);
+          sprtcmp->SetSourceIndex({static_cast<float>(animcomp->GetCurrentFrame()), sprtcmp->GetSourceIndex().y});
         }
         animcomp->Advance(dt);
       }

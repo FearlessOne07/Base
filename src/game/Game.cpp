@@ -125,54 +125,58 @@ namespace Base
     // Loop Wule the window is Open
     while (!WindowShouldClose() && _running)
     {
-      // Update render context
-      auto windowWidth = static_cast<float>(GetScreenWidth());
-      auto windowHeight = static_cast<float>(GetScreenHeight());
-      float scale = std::min(             //
-        (float)windowWidth / _gameWidth,  //
-        (float)windowHeight / _gameHeight //
-      );
-      float marginX = (windowWidth - (_gameWidth * scale)) / 2;
-      float marginY = (windowHeight - (_gameHeight * scale)) / 2;
-      const RenderContext *rd = RenderContextSingleton::GetInstance();
-      RenderContext rendercontext = {
-        .gameWidth = _gameWidth,
-        .gameHeight = _gameHeight,
-        .marginX = (float)marginX,
-        .marginY = (float)marginY,
-        .scale = scale,
-        .mousePosition = {(GetMousePosition().x - marginX) / scale, (GetMousePosition().y - marginY) / scale},
-      };
-      RenderContextSingleton::UpdateInstance(&rendercontext);
+      if (!IsWindowMinimized())
+      {
+        // Update render context
+        auto windowWidth = static_cast<float>(GetScreenWidth());
+        auto windowHeight = static_cast<float>(GetScreenHeight());
+        float scale = std::min(             //
+          (float)windowWidth / _gameWidth,  //
+          (float)windowHeight / _gameHeight //
+        );
+        float marginX = (windowWidth - (_gameWidth * scale)) / 2;
+        float marginY = (windowHeight - (_gameHeight * scale)) / 2;
+        const RenderContext *rd = RenderContextSingleton::GetInstance();
+        RenderContext rendercontext = {
+          .gameWidth = _gameWidth,
+          .gameHeight = _gameHeight,
+          .marginX = (float)marginX,
+          .marginY = (float)marginY,
+          .scale = scale,
+          .mousePosition = {(GetMousePosition().x - marginX) / scale, (GetMousePosition().y - marginY) / scale},
+        };
+        RenderContextSingleton::UpdateInstance(&rendercontext);
 
-      // Delta Time
-      float dt = GetFrameTime();
+        // Delta Time
+        float dt = GetFrameTime();
 
-      // Update Managers
-      _inpMan.PollAndDispatch();
+        // Update Managers
+        _inpMan.PollAndDispatch();
 
-      _sceneManager.Update(dt);
+        _sceneManager.Update(dt);
 
-      _uiManager.Update(dt);
+        _uiManager.Update(dt);
 
-      _renderer.Update(dt);
+        _renderer.Update(dt);
 
-      _systemManager.Update(dt);
+        _systemManager.Update(dt);
 
-      _particleManager.Update(dt);
+        _particleManager.Update(dt);
 
-      _tweenManager.Update(dt);
+        _tweenManager.Update(dt);
 
-      _shaderManager.Update(dt);
+        _shaderManager.Update(dt);
 
-      // Post Update
-      _entityManager.RemoveDeadEntities(); // <-- HERE
-      _inpMan.PostUpdate();
+        // Post Update
+        _entityManager.RemoveDeadEntities(); // <-- HERE
+        _inpMan.PostUpdate();
 
-      // Render
-      _renderer.RenderLayers();
-      _renderer.CompositeLayers();
-      _renderer.Render();
+        // Render
+
+        _renderer.RenderLayers();
+        _renderer.CompositeLayers();
+        _renderer.Render();
+      }
     }
 
     // Cleanup
