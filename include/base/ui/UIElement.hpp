@@ -1,6 +1,7 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
 #include "base/input/InputEvent.hpp"
+#include "base/sprites/Sprite.hpp"
 #include "base/textures/Font.hpp"
 #include "base/ui/UILayoutSettings.hpp"
 #include <functional>
@@ -11,17 +12,33 @@ namespace Base
 {
   class UIElement
   {
+  public:
+    enum struct ElementSizeMode : uint8_t
+    {
+      FIXED = 0,
+      FIT
+    };
+
+    enum struct ContainerSizeMode : uint8_t
+    {
+      DEFAULT = 0,
+      FILL
+    };
+
     friend class UILayer;
     friend class UIContainer;
 
   protected:
     AssetHandle<BaseFont> _font;
+    Sprite _sprite;
 
     Vector2 _basePosition = {0, 0};
     Vector2 _currentPosition = {0, 0};
 
     Vector2 _baseSize = {0, 0};
     Vector2 _currentSize = {0, 0};
+    ElementSizeMode _elementSizeMode = ElementSizeMode::FIT;
+    ContainerSizeMode _containerSizeMode = ContainerSizeMode::DEFAULT;
 
     bool _isHidden = false;
 
@@ -38,6 +55,8 @@ namespace Base
 
     void SetPosition(Vector2 position, bool base = true);
     void SetSize(Vector2 size, bool base = true);
+    void SetContainterSizeMode(ContainerSizeMode sizeMode);
+    void SetElementSizeMode(ElementSizeMode sizeMode);
 
     // Getters
     Vector2 GetPosition() const;
@@ -45,6 +64,8 @@ namespace Base
 
     Vector2 GetSize() const;
     Vector2 GetBaseSize() const;
+    ContainerSizeMode GetContainerSizeMode() const;
+    ElementSizeMode GetElementSizeMode() const;
     const UILayoutSettings &GetLayoutSettings() const;
 
     // Core

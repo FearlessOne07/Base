@@ -55,9 +55,13 @@ namespace Base
       font = GetFontDefault();
     }
     _text = text;
-    _baseSize = MeasureTextEx(font, text.c_str(), _baseFontSize, 1);
-    _baseSize.x += _padding.x * 2;
-    _baseSize.y += _padding.y * 2;
+
+    if (_elementSizeMode == ElementSizeMode::FIT)
+    {
+      _baseSize = MeasureTextEx(font, text.c_str(), _baseFontSize, 1);
+      _baseSize.x += _padding.x * 2;
+      _baseSize.y += _padding.y * 2;
+    }
   }
 
   void UIButton::SetFontSize(float size, bool base)
@@ -97,7 +101,15 @@ namespace Base
     {
       font = GetFontDefault();
     }
-    DrawRectangleRec({_currentPosition.x, _currentPosition.y, _currentSize.x, _currentSize.y}, _color);
+
+    if (_sprite)
+    {
+    }
+    else
+    {
+      DrawRectangleRec({_currentPosition.x, _currentPosition.y, _currentSize.x, _currentSize.y}, _color);
+    }
+
     DrawTextEx( //
       font, _text.c_str(),
       {

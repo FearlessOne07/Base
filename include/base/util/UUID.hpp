@@ -6,11 +6,11 @@ namespace Base
   class UUID
   {
   private:
-    uint64_t _uuid;
+    uint64_t _uuid = 0;
 
   public:
     UUID();
-    UUID(const UUID &) = default;
+    UUID(int);
     operator uint64_t() const
     {
       return _uuid;

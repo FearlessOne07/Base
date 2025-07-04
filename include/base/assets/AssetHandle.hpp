@@ -12,7 +12,7 @@ namespace Base
     template <typename> friend class AssetHandle;
 
   private:
-    Base::UUID _uuid;
+    UUID _uuid = UUID(0);
     std::weak_ptr<T> _assetPointer;
 
   public:
@@ -50,9 +50,14 @@ namespace Base
       return handle;
     }
 
-    bool operator==(const AssetHandle<T> &other) const
+    inline bool operator==(const AssetHandle<T> &other) const
     {
       return other._uuid == _uuid;
+    }
+
+    inline operator bool()
+    {
+      return _uuid != 0;
     }
   };
 } // namespace Base

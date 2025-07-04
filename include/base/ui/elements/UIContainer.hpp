@@ -20,12 +20,6 @@ namespace Base
       HORIZONTAL
     };
 
-    enum struct SizeMode : uint8_t
-    {
-      FIXED = 0,
-      FIT
-    };
-
     enum struct GapMode : uint8_t
     {
       FIXED = 0,
@@ -59,8 +53,6 @@ namespace Base
     GapMode _gapMode = GapMode::FIXED;
     float _gapSize = 10;
 
-    SizeMode _sizeMode = SizeMode::FIT;
-
   private:
     void LayoutVertical();
     void LayoutHorizontal();
@@ -70,6 +62,7 @@ namespace Base
     // Layout
     void SetPadding(Vector2 padding);
     void SetGapSize(float gapSize);
+    void SetGapMode(GapMode gapMode);
     void SetLayout(Layout layout);
     void SetAnchorPoint(AnchorPoint anchorPoint);
 

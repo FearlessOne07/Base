@@ -26,5 +26,11 @@ namespace Base
     const Rectangle GetTextureSourceRect() const;
     const Vector2 GetTargetSize() const;
     const AssetHandle<Texture> &GetTexture() const;
+
+    // Converters
+    inline operator bool()
+    {
+      return _texture;
+    }
   };
 } // namespace Base

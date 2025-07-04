@@ -23,7 +23,6 @@ namespace Base
 
   void UIContainer::LayoutVertical()
   {
-
     // AUTO GAP CALCULATION
     if (_gapMode == GapMode::AUTO && !_childElements.empty())
     {
@@ -39,7 +38,7 @@ namespace Base
     }
 
     float currentOffset = 0;
-    if (_sizeMode == SizeMode::FIT)
+    if (_elementSizeMode == ElementSizeMode::FIT)
     {
       Vector2 newContainerSize = {0, 0};
       for (auto &element : _childElements)
@@ -115,7 +114,7 @@ namespace Base
     }
 
     float currentOffset = 0;
-    if (_sizeMode == SizeMode::FIT)
+    if (_elementSizeMode == ElementSizeMode::FIT)
     {
       Vector2 newContainerSize = {0, 0};
       for (auto &element : _childElements)
@@ -225,6 +224,11 @@ namespace Base
   void UIContainer::SetAnchorPoint(AnchorPoint anchorPoint)
   {
     _anchorPoint = anchorPoint;
+  }
+
+  void UIContainer::SetGapMode(UIContainer::GapMode gapmode)
+  {
+    _gapMode = gapmode;
   }
 
   void UIContainer::Render()

@@ -33,6 +33,16 @@ namespace Base
     _currentSize = size;
   }
 
+  void UIElement::SetContainterSizeMode(UIElement::ContainerSizeMode sizeMode)
+  {
+    _containerSizeMode = sizeMode;
+  }
+
+  void UIElement::SetElementSizeMode(UIElement::ElementSizeMode sizeMode)
+  {
+    _elementSizeMode = sizeMode;
+  }
+
   void UIElement::SetLayoutSettings(const UILayoutSettings &settings)
   {
     _layoutSettings = settings;
@@ -46,6 +56,16 @@ namespace Base
   Vector2 UIElement::GetSize() const
   {
     return _currentSize;
+  }
+
+  UIElement::ContainerSizeMode UIElement::GetContainerSizeMode() const
+  {
+    return _containerSizeMode;
+  }
+
+  UIElement::ElementSizeMode UIElement::GetElementSizeMode() const
+  {
+    return _elementSizeMode;
   }
 
   Vector2 UIElement::GetBasePosition() const

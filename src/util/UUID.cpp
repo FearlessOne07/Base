@@ -9,5 +9,6 @@ namespace Base
   static std::uniform_int_distribution<uint64_t> dist;
 
   UUID::UUID() : _uuid(dist(gen)) {};
-  
+  UUID::UUID(int id) : _uuid(id) {};
+
 } // namespace Base
