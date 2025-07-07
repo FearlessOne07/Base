@@ -52,6 +52,6 @@ namespace Base
       font = GetFontDefault();
     }
 
-    DrawTextEx(font, _text.c_str(), _currentPosition, _fontSize, 1, _textColor);
+    DrawTextEx(font, _text.c_str(), GetPosition(), _fontSize, 1, _textColor);
   }
 } // namespace Base

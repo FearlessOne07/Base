@@ -1,10 +1,37 @@
 #include "base/ui/elements/UIContainer.hpp"
+#include "base/renderer/RenderContextSingleton.hpp"
 #include "raylib.h"
+#include <memory>
 #include <ranges>
+
 namespace Base
 {
   void UIContainer::Update(float dt)
   {
+    const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
+    Vector2 mousePos = rd->mousePosition;
+
+    Vector2 current = GetPosition();
+    bool isCurrentlyHovered = CheckCollisionPointRec(mousePos, {current.x, current.y, _currentSize.x, _currentSize.y});
+
+    if (isCurrentlyHovered && !_isHovered)
+    {
+      // Mouse just entered the button
+      if (onHover)
+      {
+        onHover.flex();
+      }
+    }
+    else if (!isCurrentlyHovered && _isHovered)
+    {
+      // Mouse just exited the button
+      if (onHover)
+      {
+        onHover.relax();
+      }
+    }
+    UpdatePosition();
+    _isHovered = isCurrentlyHovered;
     switch (_layout)
     {
     case Layout::VERTICAL:
@@ -71,29 +98,37 @@ namespace Base
       switch (layoutSettings.hAlignment)
       {
       case UIHAlignment::LEFT:
-        nextPosition.x = _currentPosition.x + _padding.x;
+        nextPosition.x = GetPosition().x + _padding.x;
         break;
       case UIHAlignment::CENTER:
-        nextPosition.x = _currentPosition.x + _baseSize.x / 2.f;
+        nextPosition.x = GetPosition().x + _baseSize.x / 2.f;
         nextPosition.x -= element->GetSize().x / 2;
         break;
       case UIHAlignment::RIGHT:
-        nextPosition.x = (_currentPosition.x + _baseSize.x) - _padding.x - element->GetSize().x;
+        nextPosition.x = (GetPosition().x + _baseSize.x) - _padding.x - element->GetSize().x;
         break;
       }
 
       if (currentOffset == 0)
       {
         currentOffset += _padding.y;
-        nextPosition.y = _currentPosition.y + currentOffset;
+        nextPosition.y = GetPosition().y + currentOffset;
       }
       else
       {
         currentOffset += _gapSize;
-        nextPosition.y = _currentPosition.y + currentOffset;
+        nextPosition.y = GetPosition().y + currentOffset;
       }
       currentOffset += element->GetBaseSize().y;
-      element->SetPosition(nextPosition, false);
+
+      if (std::dynamic_pointer_cast<UIContainer>(element))
+      {
+        element->SetPosition(nextPosition);
+      }
+      else
+      {
+        element->_layoutPosition = nextPosition;
+      }
     }
   }
 
@@ -147,29 +182,37 @@ namespace Base
       switch (layoutSettings.vAlignment)
       {
       case UIVAlignment::TOP:
-        nextPosition.y = _currentPosition.y + _padding.y;
+        nextPosition.y = GetPosition().y + _padding.y;
         break;
       case UIVAlignment::CENTER:
-        nextPosition.y = _currentPosition.y + _baseSize.y / 2.f;
+        nextPosition.y = GetPosition().y + _baseSize.y / 2.f;
         nextPosition.y -= element->GetSize().y / 2;
         break;
       case UIVAlignment::BOTTOM:
-        nextPosition.y = (_currentPosition.y + _baseSize.y) - _padding.y - element->GetSize().y;
+        nextPosition.y = (GetPosition().y + _baseSize.y) - _padding.y - element->GetSize().y;
         break;
       }
 
       if (currentOffset == 0)
       {
         currentOffset += _padding.x;
-        nextPosition.x = _currentPosition.x + currentOffset;
+        nextPosition.x = GetPosition().x + currentOffset;
       }
       else
       {
         currentOffset += _gapSize;
-        nextPosition.x = _currentPosition.x + currentOffset;
+        nextPosition.x = GetPosition().x + currentOffset;
       }
       currentOffset += element->GetBaseSize().x;
-      element->SetPosition(nextPosition, false);
+
+      if (std::dynamic_pointer_cast<UIContainer>(element))
+      {
+        element->SetPosition(nextPosition);
+      }
+      else
+      {
+        element->_layoutPosition = nextPosition;
+      }
     }
   }
 
@@ -178,34 +221,35 @@ namespace Base
     switch (_anchorPoint)
     {
     case TOP_LEFT:
+      _layoutPosition = _basePosition;
       break;
     case TOP_CENTER:
-      _currentPosition.x = _basePosition.x - (_baseSize.x / 2);
+      _layoutPosition.x = _basePosition.x - (_baseSize.x / 2);
       break;
     case TOP_RIGHT:
-      _currentPosition.x = _basePosition.x - _baseSize.x;
+      _layoutPosition.x = _basePosition.x - _baseSize.x;
       break;
     case RIGHT_CENTER:
-      _currentPosition.x = _basePosition.x - _baseSize.x;
-      _currentPosition.y = _basePosition.y - (_baseSize.y / 2);
+      _layoutPosition.x = _basePosition.x - _baseSize.x;
+      _layoutPosition.y = _basePosition.y - (_baseSize.y / 2);
       break;
     case BOTTOM_RIGHT:
-      _currentPosition.x = _basePosition.x - _baseSize.x;
-      _currentPosition.y = _basePosition.y - _baseSize.y;
+      _layoutPosition.x = _basePosition.x - _baseSize.x;
+      _layoutPosition.y = _basePosition.y - _baseSize.y;
       break;
     case BOTTOM_CENTER:
-      _currentPosition.x = _basePosition.x - (_baseSize.x / 2);
-      _currentPosition.y = _basePosition.y - _baseSize.y;
+      _layoutPosition.x = _basePosition.x - (_baseSize.x / 2);
+      _layoutPosition.y = _basePosition.y - _baseSize.y;
       break;
     case BOTTOM_LEFT:
-      _currentPosition.y = _basePosition.y - _baseSize.y;
+      _layoutPosition.y = _basePosition.y - _baseSize.y;
       break;
     case LEFT_CENTER:
-      _currentPosition.y = _basePosition.y - (_baseSize.y / 2);
+      _layoutPosition.y = _basePosition.y - (_baseSize.y / 2);
       break;
     case CENTER:
-      _currentPosition.x = _basePosition.x - (_baseSize.x / 2);
-      _currentPosition.y = _basePosition.y - (_baseSize.y / 2);
+      _layoutPosition.x = _basePosition.x - (_baseSize.x / 2);
+      _layoutPosition.y = _basePosition.y - (_baseSize.y / 2);
       break;
     }
   }
@@ -226,6 +270,16 @@ namespace Base
     _anchorPoint = anchorPoint;
   }
 
+  void UIContainer::SetBackgroundColor(Color color)
+  {
+    _backgroundColor = color;
+  }
+
+  Color UIContainer::GetBackgroundColor() const
+  {
+    return _backgroundColor;
+  }
+
   void UIContainer::SetGapMode(UIContainer::GapMode gapmode)
   {
     _gapMode = gapmode;
@@ -233,13 +287,13 @@ namespace Base
 
   void UIContainer::Render()
   {
+    DrawRectangleRec({GetPosition().x, GetPosition().y, _baseSize.x, _baseSize.y}, _backgroundColor);
     auto elements = std::ranges::reverse_view(_childElements);
     for (auto &element : elements)
     {
       element->Render();
     }
-
-    DrawRectangleLinesEx({_currentPosition.x, _currentPosition.y, _baseSize.x, _baseSize.y}, 3, RED);
+    // DrawRectangleLinesEx({GetPosition().x, GetPosition().y, _baseSize.x, _baseSize.y}, 3, RED);
   }
 
   void UIContainer::Hide()

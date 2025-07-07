@@ -1,5 +1,7 @@
 #include "base/ui/UIElement.hpp"
 #include "base/ui/UILayoutSettings.hpp"
+#include "raylib.h"
+#include "raymath.h"
 
 namespace Base
 {
@@ -15,13 +17,14 @@ namespace Base
     }
   }
 
-  void UIElement::SetPosition(Vector2 position, bool base)
+  void UIElement::SetPosition(Vector2 position)
   {
-    if (base)
-    {
-      _basePosition = position;
-    }
-    _currentPosition = position;
+    _basePosition = position;
+  }
+
+  void UIElement::SetPositionalOffset(Vector2 offset)
+  {
+    _positionalOffset = offset;
   }
 
   void UIElement::SetSize(Vector2 size, bool base)
@@ -50,7 +53,12 @@ namespace Base
 
   Vector2 UIElement::GetPosition() const
   {
-    return _currentPosition;
+    return _layoutPosition + _positionalOffset;
+  }
+
+  Vector2 UIElement::GetPositionalOffset() const
+  {
+    return _positionalOffset;
   }
 
   Vector2 UIElement::GetSize() const
@@ -66,11 +74,6 @@ namespace Base
   UIElement::ElementSizeMode UIElement::GetElementSizeMode() const
   {
     return _elementSizeMode;
-  }
-
-  Vector2 UIElement::GetBasePosition() const
-  {
-    return _basePosition;
   }
 
   Vector2 UIElement::GetBaseSize() const

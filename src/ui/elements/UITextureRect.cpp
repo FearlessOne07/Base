@@ -17,7 +17,7 @@ namespace Base
   {
     DrawTexturePro( //
       *_texturehandle.Get()->GetRaylibTexture(), _soureceRect,
-      {_currentPosition.x, _currentPosition.y, _currentSize.x, _currentSize.y}, {0, 0}, 0, WHITE //
+      {GetPosition().x, GetPosition().y, _currentSize.x, _currentSize.y}, {0, 0}, 0, WHITE //
     );
   }
 } // namespace Base

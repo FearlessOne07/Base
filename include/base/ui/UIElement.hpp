@@ -4,6 +4,7 @@
 #include "base/sprites/Sprite.hpp"
 #include "base/textures/Font.hpp"
 #include "base/ui/UILayoutSettings.hpp"
+#include "base/util/AntagonisticFunction.hpp"
 #include <functional>
 #include <memory>
 #include <raylib.h>
@@ -28,12 +29,14 @@ namespace Base
     friend class UILayer;
     friend class UIContainer;
 
+  private:
+    Vector2 _basePosition = {0, 0};
+    Vector2 _layoutPosition = {0, 0};
+    Vector2 _positionalOffset = {0, 0};
+
   protected:
     AssetHandle<BaseFont> _font;
     Sprite _sprite;
-
-    Vector2 _basePosition = {0, 0};
-    Vector2 _currentPosition = {0, 0};
 
     Vector2 _baseSize = {0, 0};
     Vector2 _currentSize = {0, 0};
@@ -41,6 +44,12 @@ namespace Base
     ContainerSizeMode _containerSizeMode = ContainerSizeMode::DEFAULT;
 
     bool _isHidden = false;
+
+    bool _isHovered = false;
+    bool _firstHover = false;
+
+  public:
+    AntagonisticFunction onHover;
 
   protected:
     UILayoutSettings _layoutSettings;
@@ -53,14 +62,15 @@ namespace Base
     void SetLayoutSettings(const UILayoutSettings &settings);
     void SetFont(const AssetHandle<BaseFont> &);
 
-    void SetPosition(Vector2 position, bool base = true);
+    void SetPosition(Vector2 position);
+    void SetPositionalOffset(Vector2 offset);
     void SetSize(Vector2 size, bool base = true);
     void SetContainterSizeMode(ContainerSizeMode sizeMode);
     void SetElementSizeMode(ElementSizeMode sizeMode);
 
     // Getters
     Vector2 GetPosition() const;
-    Vector2 GetBasePosition() const;
+    Vector2 GetPositionalOffset() const;
 
     Vector2 GetSize() const;
     Vector2 GetBaseSize() const;

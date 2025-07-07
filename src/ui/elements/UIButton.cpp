@@ -107,14 +107,14 @@ namespace Base
     }
     else
     {
-      DrawRectangleRec({_currentPosition.x, _currentPosition.y, _currentSize.x, _currentSize.y}, _color);
+      DrawRectangleRec({GetPosition().x, GetPosition().y, _currentSize.x, _currentSize.y}, _color);
     }
 
     DrawTextEx( //
       font, _text.c_str(),
       {
-        _currentPosition.x + _padding.x,
-        _currentPosition.y + _padding.y,
+        GetPosition().x + _padding.x,
+        GetPosition().y + _padding.y,
       },
       _currentFontSize, 1, _textColor //
     );
@@ -131,7 +131,7 @@ namespace Base
     Vector2 mousePos = rd->mousePosition;
 
     bool isCurrentlyHovered =
-      CheckCollisionPointRec(mousePos, {_currentPosition.x, _currentPosition.y, _currentSize.x, _currentSize.y});
+      CheckCollisionPointRec(mousePos, {GetPosition().x, GetPosition().y, _currentSize.x, _currentSize.y});
 
     if (isCurrentlyHovered && !_isHovered)
     {

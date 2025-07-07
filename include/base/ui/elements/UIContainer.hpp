@@ -53,6 +53,8 @@ namespace Base
     GapMode _gapMode = GapMode::FIXED;
     float _gapSize = 10;
 
+    Color _backgroundColor = BLANK;
+
   private:
     void LayoutVertical();
     void LayoutHorizontal();
@@ -65,6 +67,9 @@ namespace Base
     void SetGapMode(GapMode gapMode);
     void SetLayout(Layout layout);
     void SetAnchorPoint(AnchorPoint anchorPoint);
+    void SetBackgroundColor(Color color);
+
+    Color GetBackgroundColor() const;
 
     // Core
     void Update(float dt) override;
@@ -120,4 +125,4 @@ namespace Base
       }
     }
   };
-} // namespace Bae
+} // namespace Base
