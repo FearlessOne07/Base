@@ -30,13 +30,22 @@ namespace Base
       return newHandle;
     }
 
-    AssetHandle(std::weak_ptr<T> ptr) : _assetPointer(ptr) {};
-    AssetHandle(std::shared_ptr<T> ptr) : _assetPointer(ptr) {};
+    AssetHandle(std::weak_ptr<T> ptr) : _assetPointer(ptr)
+    {
+      _uuid = UUID();
+    };
+
+    AssetHandle(std::shared_ptr<T> ptr) : _assetPointer(ptr)
+    {
+      _uuid = UUID();
+    };
+
     AssetHandle() {};
     inline std::shared_ptr<T> Get() const
     {
       return _assetPointer.lock();
     }
+
     inline UUID GetUUID() const
     {
       return _uuid;

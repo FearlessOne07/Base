@@ -104,25 +104,38 @@ namespace Base
 
     if (_sprite)
     {
+      _sprite.Draw({GetPosition().x, GetPosition().y, _currentSize.x, _currentSize.y});
     }
     else
     {
       DrawRectangleRec({GetPosition().x, GetPosition().y, _currentSize.x, _currentSize.y}, _color);
     }
 
-    DrawTextEx( //
-      font, _text.c_str(),
-      {
-        GetPosition().x + _padding.x,
-        GetPosition().y + _padding.y,
-      },
-      _currentFontSize, 1, _textColor //
-    );
+    // Measure text size
+    Vector2 textSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
+
+    // Center text inside padded button area
+    Vector2 targetPos = {GetPosition().x + _currentSize.x / 2, GetPosition().y + _currentSize.y / 2};
+    Vector2 textPos = {targetPos.x - textSize.x / 2, targetPos.y - textSize.y / 2};
+    DrawTextEx(font, _text.c_str(), textPos, _currentFontSize, 1, _textColor);
   }
 
   void UIButton::SetPadding(Vector2 padding)
   {
     _padding = padding;
+    Font font;
+    if (_font.Get())
+    {
+      font = *_font.Get()->GetRaylibFont();
+    }
+    else
+    {
+      font = GetFontDefault();
+    }
+
+    _baseSize = MeasureTextEx(font, _text.c_str(), _baseFontSize, 1);
+    _baseSize.x += _padding.x * 2;
+    _baseSize.y += _padding.y * 2;
   }
 
   void UIButton::Update(float dt)

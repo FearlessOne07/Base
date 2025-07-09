@@ -1,6 +1,7 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
 #include "base/input/InputEvent.hpp"
+#include "base/sprites/NinePatchSprite.hpp"
 #include "base/sprites/Sprite.hpp"
 #include "base/textures/Font.hpp"
 #include "base/ui/UILayoutSettings.hpp"
@@ -36,7 +37,7 @@ namespace Base
 
   protected:
     AssetHandle<BaseFont> _font;
-    Sprite _sprite;
+    NinePatchSprite _sprite;
 
     Vector2 _baseSize = {0, 0};
     Vector2 _currentSize = {0, 0};
@@ -67,6 +68,7 @@ namespace Base
     void SetSize(Vector2 size, bool base = true);
     void SetContainterSizeMode(ContainerSizeMode sizeMode);
     void SetElementSizeMode(ElementSizeMode sizeMode);
+    void SetSprite(const NinePatchSprite &sprite);
 
     // Getters
     Vector2 GetPosition() const;

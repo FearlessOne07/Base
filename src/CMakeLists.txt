@@ -7,8 +7,9 @@ set(SRC
   "./renderer/RenderContextSingleton.cpp"
   "./renderer/Renderer.cpp"
   "./renderer/RenderLayer.cpp"
-  
+
   "./sprites/Sprite.cpp"
+  "./sprites/NinePatchSprite.cpp"
 
   "./audio/Sound.cpp"
   "./audio/AudioStream.cpp"

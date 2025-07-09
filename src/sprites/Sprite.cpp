@@ -12,9 +12,54 @@ namespace Base
   {
   }
 
+  // Copy constructor
+  Sprite::Sprite(const Sprite &other)
+    : _texture(other._texture), _sourceIndex(other._sourceIndex), _sourceSize(other._sourceSize),
+      _targetSize(other._targetSize)
+  {
+  }
+
+  // Move constructor
+  Sprite::Sprite(Sprite &&other) noexcept
+    : _texture(std::move(other._texture)), _sourceIndex(std::move(other._sourceIndex)),
+      _sourceSize(std::move(other._sourceSize)), _targetSize(std::move(other._targetSize))
+  {
+  }
+
+  // Copy assignment operator
+  Sprite &Sprite::operator=(const Sprite &other)
+  {
+    if (this != &other)
+    {
+      _texture = other._texture;
+      _sourceIndex = other._sourceIndex;
+      _sourceSize = other._sourceSize;
+      _targetSize = other._targetSize;
+    }
+    return *this;
+  }
+
+  // Move assignment operator
+  Sprite &Sprite::operator=(Sprite &&other) noexcept
+  {
+    if (this != &other)
+    {
+      _texture = std::move(other._texture);
+      _sourceIndex = std::move(other._sourceIndex);
+      _sourceSize = std::move(other._sourceSize);
+      _targetSize = std::move(other._targetSize);
+    }
+    return *this;
+  }
+
   void Sprite::SetSourceIndex(const Vector2 &source)
   {
     _sourceIndex = source;
+  }
+
+  void Sprite::SetDestinationSize(const Vector2 &size)
+  {
+    _targetSize = size;
   }
 
   Vector2 Sprite::GetSourceIndex() const

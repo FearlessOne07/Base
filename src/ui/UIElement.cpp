@@ -1,4 +1,6 @@
 #include "base/ui/UIElement.hpp"
+#include "base/sprites/NinePatchSprite.hpp"
+#include "base/sprites/Sprite.hpp"
 #include "base/ui/UILayoutSettings.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -34,6 +36,11 @@ namespace Base
       _baseSize = size;
     }
     _currentSize = size;
+  }
+
+  void UIElement::SetSprite(const NinePatchSprite &sprite)
+  {
+    _sprite = sprite;
   }
 
   void UIElement::SetContainterSizeMode(UIElement::ContainerSizeMode sizeMode)

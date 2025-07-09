@@ -19,8 +19,14 @@ namespace Base
       const AssetHandle<Texture> &textureHandle, const Vector2 &sourceIndex, const Vector2 &sourceSize,
       const Vector2 &destinationSize //
     );
+    Sprite(const Sprite &other);
+    Sprite(Sprite &&other) noexcept;
+    Sprite &operator=(const Sprite &other);
+    Sprite &operator=(Sprite &&other) noexcept;
 
+    // Setters/ Getters
     void SetSourceIndex(const Vector2 &source);
+    void SetDestinationSize(const Vector2 &size);
     Vector2 GetSourceIndex() const;
     Vector2 GetSourceSize() const;
     const Rectangle GetTextureSourceRect() const;
