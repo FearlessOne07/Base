@@ -1,7 +1,9 @@
 #pragma once
+#include "base/assets/AssetHandle.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/audio/signals/PlaySoundSignal.hpp"
+#include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "internal/audio/SoundInstance.hpp"
 #include <atomic>
 #include <portaudio.h>
@@ -17,7 +19,7 @@ namespace Base
     uint64_t _sampleRate = 96000;
 
     std::vector<std::shared_ptr<SoundInstance>> _sounds;
-    std::vector<std::shared_ptr<AudioStream>> _streams;
+    std::vector<AssetHandle<AudioStream>> _streams;
 
     static constexpr int MAX_PENDING_SOUNDS = 64; // Maximum number of pending signals
     std::array<std::shared_ptr<SoundInstance>, MAX_PENDING_SOUNDS> _pendingSounds;
@@ -25,7 +27,7 @@ namespace Base
     std::atomic<int> _soundWriteIndex;
 
     static constexpr int MAX_PENDING_STREAMS = 8; // Maximum number of pending signals
-    std::array<std::shared_ptr<AudioStream>, MAX_PENDING_STREAMS> _pendingStreams;
+    std::array<AssetHandle<AudioStream>, MAX_PENDING_STREAMS> _pendingStreams;
     std::atomic<int> _streamReadIndex;
     std::atomic<int> _streamWriteIndex;
 
@@ -41,6 +43,7 @@ namespace Base
     void SetAssetManager(AssetManager *assetManager);
     void PlaySound(const std::shared_ptr<PlaySoundSignal> &signal);
     void PlayStream(const std::shared_ptr<PlayAudioStreamSignal> &signal);
+    void StopStream(const std::shared_ptr<StopAudioStreamSignal> &signal);
     bool AllSoundsDone();
     void DeInit();
   };

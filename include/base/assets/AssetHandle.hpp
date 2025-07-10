@@ -40,7 +40,40 @@ namespace Base
       _uuid = UUID();
     };
 
-    AssetHandle() {};
+    AssetHandle()
+    {
+      _uuid = 0;
+    };
+
+    AssetHandle(const AssetHandle<T> &other) : _uuid(other._uuid), _assetPointer(other._assetPointer)
+    {
+    }
+
+    AssetHandle(AssetHandle<T> &&other) noexcept
+      : _uuid(std::move(other._uuid)), _assetPointer(std::move(other._assetPointer))
+    {
+    }
+
+    AssetHandle<T> &operator=(const AssetHandle<T> &other)
+    {
+      if (this != &other)
+      {
+        _uuid = other._uuid;
+        _assetPointer = other._assetPointer;
+      }
+      return *this;
+    }
+
+    AssetHandle<T> &operator=(AssetHandle<T> &&other) noexcept
+    {
+      if (this != &other)
+      {
+        _uuid = std::move(other._uuid);
+        _assetPointer = std::move(other._assetPointer);
+      }
+      return *this;
+    }
+
     inline std::shared_ptr<T> Get() const
     {
       return _assetPointer.lock();

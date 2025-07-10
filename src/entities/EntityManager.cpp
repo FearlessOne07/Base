@@ -98,6 +98,11 @@ namespace Base
     return it != _entities.end() ? it->item : nullptr;
   }
 
+  void EntityManager::Clear()
+  {
+    _entities.Clear();
+  }
+
   std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> EntityManager::QueryArea(ItemAreaType area)
   {
     return _entities.Search(area);

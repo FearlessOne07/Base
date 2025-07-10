@@ -27,6 +27,7 @@ namespace Base
     std::shared_ptr<Entity> CreateEntity();
     void AddEntity(std::shared_ptr<Entity>);
     void UpdateEntity(std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator item);
+    void Clear();
 
     const std::shared_ptr<Entity> GetEntity(size_t id);
     void SetWorldBounds(Rectangle bounds);

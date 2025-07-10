@@ -11,6 +11,7 @@
 
 namespace Base
 {
+  class Scene;
   class SignalBus
   {
     using SignalHandler = std::function<void(const std::shared_ptr<Signal> &)>;
@@ -19,7 +20,8 @@ namespace Base
     static SignalBus *_instance;
 
   private:
-    std::unordered_map<std::type_index, std::vector<SignalHandler>> _handlers = {};
+    std::unordered_map<const Scene *, std::unordered_map<std::type_index, std::vector<SignalHandler>>> _handlers = {};
+    const Scene *_currentScene = nullptr;
 
   public:
     static SignalBus *GetInstance();
@@ -35,15 +37,20 @@ namespace Base
       // Get the event ID
       auto id = std::type_index(typeid(T));
 
+      if (!_handlers.contains(_currentScene))
+      {
+        _handlers[_currentScene];
+      }
+
       // Check if a vector of handlers for that event exists
-      if (_handlers.find(id) == _handlers.end())
+      if (_handlers.at(_currentScene).find(id) == _handlers.at(_currentScene).end())
       {
         // If not create one
-        _handlers[id] = {};
+        _handlers.at(_currentScene)[id] = {};
       }
 
       // Append tha handler to the list of handers for that event
-      _handlers.at(id).emplace_back(std::move(handler));
+      _handlers.at(_currentScene).at(id).emplace_back(std::move(handler));
     }
 
     void BroadCastSignal(const std::shared_ptr<Signal> &);

@@ -37,20 +37,11 @@ namespace Base
     _currentBuffer = 0;
     _currentFrame = 0;
     _resampledFrameCount = 0;
-
-    // Start the buffer filling thread
-    _fillBuffers.store(true);
-    _bufferThread = std::thread(&AudioStream::FillBuffers, this);
   }
 
   AudioStream::~AudioStream()
   {
-    // Stop the buffer thread
-    _fillBuffers.store(false);
-    if (_bufferThread.joinable())
-    {
-      _bufferThread.join();
-    }
+    Stop();
 
     // Clean up libsamplerate
     if (_srcState)
@@ -229,6 +220,13 @@ namespace Base
 
   void AudioStream::Play()
   {
+    if (!_fillBuffers.load())
+    {
+      // Start the buffer filling thread
+      _fillBuffers.store(true);
+      _bufferThread = std::thread(&AudioStream::FillBuffers, this);
+    }
+
     _isPlaying = true;
     _lastBufferRound = false;
   }
@@ -246,6 +244,13 @@ namespace Base
   void AudioStream::Stop()
   {
     // Reset stream state
+    // Stop the buffer thread
+    _fillBuffers.store(false);
+    if (_bufferThread.joinable())
+    {
+      _bufferThread.join();
+    }
+
     _isPlaying = false;
     _lastBufferRound = false;
     _currentFrame = 0;

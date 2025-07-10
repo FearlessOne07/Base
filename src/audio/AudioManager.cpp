@@ -1,5 +1,6 @@
 #include "internal/audio/AudioManager.hpp"
 #include "base/audio/signals/PlaySoundSignal.hpp"
+#include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Exception.hpp"
 #include "portaudio.h"
@@ -13,7 +14,6 @@ namespace Base
 {
   void AudioManager::Init()
   {
-
     // Initialize system audio device
     Pa_Initialize();
 
@@ -135,6 +135,13 @@ namespace Base
         PlayStream(playStreamSig);
       }
     });
+
+    bus->SubscribeSignal<StopAudioStreamSignal>([this](std::shared_ptr<Signal> signal) {
+      if (auto playStreamSig = std::static_pointer_cast<StopAudioStreamSignal>(signal))
+      {
+        StopStream(playStreamSig);
+      }
+    });
   }
 
   void AudioManager::SetAssetManager(AssetManager *assetManager)
@@ -188,8 +195,8 @@ namespace Base
       if (stream && std::ranges::find(_this->_streams, stream) == _this->_streams.end())
       {
         // Add it to the list of playing streams
-        _this->_streams.emplace_back(std::move(stream));
-        _this->_pendingStreams[read] = nullptr; // Clear the slot
+        _this->_streams.emplace_back(stream);
+        _this->_pendingStreams[read] = AssetHandle<AudioStream>(); // Clear the slot
       }
 
       // Increment read index
@@ -239,7 +246,7 @@ namespace Base
       {
         for (auto it = _this->_streams.begin(); it != _this->_streams.end();)
         {
-          std::shared_ptr<AudioStream> &stream = *it;
+          std::shared_ptr<AudioStream> stream = it->Get();
 
           // if Stream is still playing
           if (stream->IsPlaying())
@@ -321,10 +328,20 @@ namespace Base
       stream->Play();
 
       // Add stream to queue
-      _pendingStreams[write] = std::move(stream);
+      _pendingStreams[write] = std::move(signal->streamHandle);
 
       // update stream write index
       _streamWriteIndex.store(nextWrite, std::memory_order_release);
+    }
+  }
+
+  void AudioManager::StopStream(const std::shared_ptr<StopAudioStreamSignal> &signal)
+  {
+    AssetHandle<AudioStream> handle = signal->streamHandle;
+    if (auto it = std::ranges::find(_streams, handle); it != _streams.end())
+    {
+      it->Get()->Stop();
+      _streams.erase(it);
     }
   }
 

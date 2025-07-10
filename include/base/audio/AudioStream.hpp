@@ -4,6 +4,7 @@
 #include <atomic>
 #include <cstdint>
 #include <miniaudio.h>
+#include <mutex>
 #include <samplerate.h>
 #include <thread>
 #include <vector>
@@ -31,6 +32,7 @@ namespace Base
     std::atomic<bool> _fillBuffers{false};
     std::atomic<bool> _isBufferReady[2]{false, false};
     std::thread _bufferThread;
+    std::mutex _mutex;
 
     // Buffer management
     int _currentBuffer = 0; // Which buffer we're currently reading from
