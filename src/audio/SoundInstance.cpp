@@ -41,9 +41,9 @@ namespace Base
     return _isPlaying;
   }
 
-  std::array<int16_t, 2> SoundInstance::GetNextFrame()
+  std::array<float, 2> SoundInstance::GetNextFrame()
   {
-    std::array<int16_t, 2> frame;
+    std::array<float, 2> frame;
 
     // If sound hasn;t ended
     if (_currentFrame < _sound->GetFrameCount())

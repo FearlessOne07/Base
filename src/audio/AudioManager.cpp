@@ -205,7 +205,7 @@ namespace Base
     _this->_streamReadIndex.store(read);
 
     // Higher Res mixing buffer
-    std::vector<uint32_t> mixBuffer(framesPerBuffer * 2, 0);
+    std::vector<float> mixBuffer(framesPerBuffer * 2, 0);
 
     // Mix Sounds
     if (_this->_sounds.size() != 0)
@@ -271,7 +271,7 @@ namespace Base
     // Convert back to 16-bit with clipping protection
     for (size_t i = 0; i < framesPerBuffer * 2; i++)
     {
-      out[i] = static_cast<int16_t>(std::clamp<int32_t>(mixBuffer[i], (int32_t)INT16_MIN, (int32_t)INT16_MAX));
+      out[i] = static_cast<int16_t>(std::clamp<float>(mixBuffer[i], -1.0, 1.0) * 32767.0f);
     }
 
     // Continue

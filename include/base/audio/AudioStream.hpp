@@ -26,7 +26,6 @@ namespace Base
     // Double buffering
     std::vector<float> _resampledBuffers[2];
     std::vector<float> _toResampleBuffer;
-    std::vector<int16_t> _tempInt16Buffer;
 
     // Thread synchronization
     std::atomic<bool> _fillBuffers{false};
@@ -51,15 +50,12 @@ namespace Base
 
   private:
     void FillBuffers();
-    // Helper methods
-    void ConvertInt16ToFloat(const int16_t *input, float *output, size_t frameCount);
-    void ConvertFloatToInt16(const float *input, int16_t *output, size_t frameCount);
 
   public:
     AudioStream(ma_decoder decoder, uint64_t defaultSampleRate, uint64_t targetSampleRate);
     ~AudioStream();
 
-    std::array<int16_t, 2> GetNextFrame();
+    std::array<float, 2> GetNextFrame();
     void SetVolume(float volume);
     void SetPan(float pan);
     void SetLoop(bool loop);

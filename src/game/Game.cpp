@@ -187,9 +187,9 @@ namespace Base
   {
 
     // Deinitilize Systems
-    _assetManager.Deinit();
     _audioMan.DeInit();
     _renderer.DeInit();
+    _assetManager.Deinit();
     CloseWindow();
   }
 

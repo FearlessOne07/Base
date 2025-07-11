@@ -19,7 +19,7 @@ namespace Base
 
   public:
     SoundInstance(std::shared_ptr<Sound> sound);
-    std::array<int16_t, 2> GetNextFrame();
+    std::array<float, 2> GetNextFrame();
 
     void SetVolume(float volume);
     void SetPan(float pan);

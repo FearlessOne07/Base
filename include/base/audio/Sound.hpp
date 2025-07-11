@@ -11,12 +11,12 @@ namespace Base
   {
   private:
     // Data
-    std::vector<int16_t> _data;
+    std::vector<float> _data;
     uint64_t _frameCount = 0;
 
   public:
-    Sound(std::vector<int16_t> data, uint64_t frameCount);
-    std::array<int16_t, 2> GetFrame(uint64_t frame);
+    Sound(std::vector<float> data, uint64_t frameCount);
+    std::array<float, 2> GetFrame(uint64_t frame);
     uint64_t GetFrameCount();
   };
 } // namespace Base

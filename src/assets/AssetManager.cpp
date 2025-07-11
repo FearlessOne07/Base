@@ -31,7 +31,6 @@ namespace Base
 {
   void AssetManager::Init()
   {
-
     // Subscribe to SceneManager events
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
@@ -139,12 +138,12 @@ namespace Base
   {
     ma_result result;
     ma_decoder decoder;
-    ma_decoder_config config = ma_decoder_config_init(ma_format_s16, 2, _sampleRate);
+    ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, _sampleRate);
     std::string file = path.string();
     result = ma_decoder_init_file(file.c_str(), &config, &decoder);
 
     uint64_t frameCount = 0;
-    std::vector<int16_t> data;
+    std::vector<float> data;
     uint8_t channels = 0;
 
     if (result != MA_SUCCESS)
@@ -178,7 +177,7 @@ namespace Base
   {
     ma_result result;
     ma_decoder decoder;
-    ma_decoder_config config = ma_decoder_config_init(ma_format_s16, 2, 0);
+    ma_decoder_config config = ma_decoder_config_init(ma_format_f32, 2, 0);
     std::string file = path.string();
     result = ma_decoder_init_file(file.c_str(), &config, &decoder);
 
@@ -189,6 +188,7 @@ namespace Base
       );
       ma_decoder_uninit(&decoder);
     }
+
     return std::make_shared<AudioStream>(decoder, decoder.outputSampleRate, _sampleRate);
   }
 

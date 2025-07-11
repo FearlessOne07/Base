@@ -29,7 +29,6 @@ namespace Base
     _resampledBuffers[0].resize(_outputFrameCount * 2);
     _resampledBuffers[1].resize(_outputFrameCount * 2);
     _toResampleBuffer.resize(_dataBufferFrameCount * 2);
-    _tempInt16Buffer.resize(_dataBufferFrameCount * 2);
 
     // Initialize buffer states
     _isBufferReady[0].store(false);
@@ -50,19 +49,9 @@ namespace Base
     }
   }
 
-  void AudioStream::ConvertInt16ToFloat(const int16_t *input, float *output, size_t frameCount)
+  std::array<float, 2> AudioStream::GetNextFrame()
   {
-    src_short_to_float_array(input, output, frameCount * 2); // 2 channels
-  }
-
-  void AudioStream::ConvertFloatToInt16(const float *input, int16_t *output, size_t frameCount)
-  {
-    src_float_to_short_array(input, output, frameCount * 2); // 2 channels
-  }
-
-  std::array<int16_t, 2> AudioStream::GetNextFrame()
-  {
-    std::array<int16_t, 2> frame = {0, 0};
+    std::array<float, 2> frame = {0, 0};
 
     // If we are not playing, return silence
     if (!_isPlaying)
@@ -110,8 +99,8 @@ namespace Base
     float left = _resampledBuffers[_currentBuffer][_currentFrame * 2] * _volume * leftPan;
     float right = _resampledBuffers[_currentBuffer][_currentFrame * 2 + 1] * _volume * rightPan;
 
-    frame[0] = std::clamp<int16_t>(static_cast<int16_t>(left * 32767.0f), INT16_MIN, INT16_MAX);
-    frame[1] = std::clamp<int16_t>(static_cast<int16_t>(right * 32767.0f), INT16_MIN, INT16_MAX);
+    frame[0] = left;
+    frame[1] = right;
 
     _currentFrame++;
     return frame;
@@ -143,7 +132,7 @@ namespace Base
 
       // Read frames from decoder
       ma_uint64 readFrames = 0;
-      ma_decoder_read_pcm_frames(&_decoder, _tempInt16Buffer.data(), _dataBufferFrameCount, &readFrames);
+      ma_decoder_read_pcm_frames(&_decoder, _toResampleBuffer.data(), _dataBufferFrameCount, &readFrames);
 
       if (readFrames < _dataBufferFrameCount)
       {
@@ -152,14 +141,14 @@ namespace Base
           // If looping, seek to front of decoder, and fill in missing frames
           uint64_t remainingFrames = _dataBufferFrameCount - readFrames;
           ma_decoder_seek_to_pcm_frame(&_decoder, 0);
-          ma_decoder_read_pcm_frames(&_decoder, _tempInt16Buffer.data() + readFrames * 2, remainingFrames, nullptr);
+          ma_decoder_read_pcm_frames(&_decoder, _toResampleBuffer.data() + readFrames * 2, remainingFrames, nullptr);
           readFrames = _dataBufferFrameCount;
         }
         else
         {
           // If not, fill with silence
           memset( //
-            _tempInt16Buffer.data() + readFrames * 2, 0,
+            _toResampleBuffer.data() + readFrames * 2, 0,
             ((_dataBufferFrameCount - readFrames) * 2) * sizeof(int16_t) //
           );
 
@@ -167,9 +156,6 @@ namespace Base
           _lastBufferRound = true;
         }
       }
-
-      // Convert int16 to float for libsamplerate
-      ConvertInt16ToFloat(_tempInt16Buffer.data(), _toResampleBuffer.data(), readFrames);
 
       // Set up SRC_DATA for this conversion
       _srcData.data_in = _toResampleBuffer.data();

@@ -3,13 +3,13 @@
 
 namespace Base
 {
-  Sound::Sound(std::vector<int16_t> data, uint64_t frameCount) : _data(data), _frameCount(frameCount)
+  Sound::Sound(std::vector<float> data, uint64_t frameCount) : _data(data), _frameCount(frameCount)
   {
   }
 
-  std::array<int16_t, 2> Sound::GetFrame(uint64_t frameIndex)
+  std::array<float, 2> Sound::GetFrame(uint64_t frameIndex)
   {
-    std::array<int16_t, 2> frame;
+    std::array<float, 2> frame;
 
     // If frame is in range
     if (frameIndex < _frameCount)
