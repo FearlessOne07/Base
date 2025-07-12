@@ -48,6 +48,8 @@ namespace Base
     bool _loop = false;
     bool _lastBufferRound = false;
 
+    // Effects
+
   private:
     void FillBuffers();
 

@@ -14,3 +14,7 @@
 	path = vendor/libsamplerate
 	url = https://github.com/libsndfile/libsamplerate.git
 	branch = master
+[submodule "vendor/rubberband"]
+	path = vendor/rubberband
+	url = https://github.com/breakfastquay/rubberband.git
+	branch = default
