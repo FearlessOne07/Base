@@ -10,9 +10,7 @@
 #include "base/util/Strings.hpp"
 #include "internal/game/GameImpl.hpp"
 #include "raylib.h"
-#include "raymath.h"
 #include <algorithm>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <utility>
@@ -134,7 +132,6 @@ namespace Base
         float windowWidth = static_cast<float>(GetRenderWidth());
         float windowHeight = static_cast<float>(GetRenderHeight());
 
-        std::cout << "Window Size: " << windowWidth << ", " << windowHeight << "\n";
         float scale = std::min(             //
           (float)windowWidth / _gameWidth,  //
           (float)windowHeight / _gameHeight //
