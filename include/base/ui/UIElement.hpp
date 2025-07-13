@@ -35,6 +35,11 @@ namespace Base
     Vector2 _layoutPosition = {0, 0};
     Vector2 _positionalOffset = {0, 0};
 
+  private:
+    void _update(float dt);
+    virtual void Update(float dt);
+    Rectangle GetCombinedHoverRect() const;
+
   protected:
     AssetHandle<BaseFont> _font;
     NinePatchSprite _sprite;
@@ -54,7 +59,6 @@ namespace Base
 
   protected:
     UILayoutSettings _layoutSettings;
-    virtual void Update(float dt);
 
   public:
     virtual ~UIElement();

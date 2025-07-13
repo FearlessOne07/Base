@@ -9,7 +9,6 @@ namespace Base
     for (auto &element : _elements)
     {
       element->OnInputEvent(event);
-
       if (event->isHandled)
       {
         break;
@@ -19,7 +18,8 @@ namespace Base
 
   void UILayer::Render()
   {
-    for (auto &element : std::ranges::reverse_view(_elements))
+    auto elements = std::ranges::reverse_view(_elements);
+    for (auto &element : elements)
     {
       element->Render();
     }
@@ -44,7 +44,7 @@ namespace Base
   {
     for (auto &element : _elements)
     {
-      element->Update(dt);
+      element->_update(dt);
     }
   }
 

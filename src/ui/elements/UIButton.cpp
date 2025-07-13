@@ -140,30 +140,6 @@ namespace Base
 
   void UIButton::Update(float dt)
   {
-    const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-    Vector2 mousePos = rd->mousePosition;
-
-    bool isCurrentlyHovered =
-      CheckCollisionPointRec(mousePos, {GetPosition().x, GetPosition().y, _currentSize.x, _currentSize.y});
-
-    if (isCurrentlyHovered && !_isHovered)
-    {
-      // Mouse just entered the button
-      if (onHover)
-      {
-        onHover.flex();
-      }
-    }
-    else if (!isCurrentlyHovered && _isHovered)
-    {
-      // Mouse just exited the button
-      if (onHover)
-      {
-        onHover.relax();
-      }
-    }
-
-    _isHovered = isCurrentlyHovered;
     _color = _isHovered ? _hoverColor : _normalColor;
   }
 

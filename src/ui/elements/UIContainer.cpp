@@ -1,6 +1,6 @@
 #include "base/ui/elements/UIContainer.hpp"
-#include "base/renderer/RenderContextSingleton.hpp"
 #include "raylib.h"
+#include <cmath>
 #include <memory>
 #include <ranges>
 
@@ -8,30 +8,7 @@ namespace Base
 {
   void UIContainer::Update(float dt)
   {
-    const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-    Vector2 mousePos = rd->mousePosition;
-
-    Vector2 current = GetPosition();
-    bool isCurrentlyHovered = CheckCollisionPointRec(mousePos, {current.x, current.y, _currentSize.x, _currentSize.y});
-
-    if (isCurrentlyHovered && !_isHovered)
-    {
-      // Mouse just entered the button
-      if (onHover)
-      {
-        onHover.flex();
-      }
-    }
-    else if (!isCurrentlyHovered && _isHovered)
-    {
-      // Mouse just exited the button
-      if (onHover)
-      {
-        onHover.relax();
-      }
-    }
     UpdatePosition();
-    _isHovered = isCurrentlyHovered;
     switch (_layout)
     {
     case Layout::VERTICAL:
@@ -44,7 +21,7 @@ namespace Base
 
     for (auto &element : _childElements)
     {
-      element->Update(dt);
+      element->_update(dt);
     }
   }
 
@@ -262,6 +239,10 @@ namespace Base
       {
         element->OnInputEvent(event);
       }
+      if (event->isHandled)
+      {
+        break;
+      }
     }
   }
 
@@ -287,7 +268,14 @@ namespace Base
 
   void UIContainer::Render()
   {
-    DrawRectangleRec({GetPosition().x, GetPosition().y, _baseSize.x, _baseSize.y}, _backgroundColor);
+    if (_sprite)
+    {
+      _sprite.Draw({GetPosition().x, GetPosition().y, GetSize().x, GetSize().y});
+    }
+    else
+    {
+      DrawRectangleRec({GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, _backgroundColor);
+    }
     auto elements = std::ranges::reverse_view(_childElements);
     for (auto &element : elements)
     {

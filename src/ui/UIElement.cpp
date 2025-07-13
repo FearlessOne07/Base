@@ -1,6 +1,6 @@
 #include "base/ui/UIElement.hpp"
+#include "base/renderer/RenderContextSingleton.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
-#include "base/sprites/Sprite.hpp"
 #include "base/ui/UILayoutSettings.hpp"
 #include "raylib.h"
 #include "raymath.h"
@@ -11,6 +11,23 @@ namespace Base
   {
   }
 
+  static Rectangle RectangleUnion(Rectangle a, Rectangle b)
+  {
+    float minX = fminf(a.x, b.x);
+    float minY = fminf(a.y, b.y);
+    float maxX = fmaxf(a.x + a.width, b.x + b.width);
+    float maxY = fmaxf(a.y + a.height, b.y + b.height);
+
+    return {minX, minY, maxX - minX, maxY - minY};
+  }
+
+  Rectangle UIElement::GetCombinedHoverRect() const
+  {
+    Rectangle layoutRect = {_layoutPosition.x, _layoutPosition.y, _currentSize.x, _currentSize.y};
+    Rectangle offsetRect = {GetPosition().x, GetPosition().y, _currentSize.x, _currentSize.y};
+
+    return RectangleUnion(layoutRect, offsetRect);
+  }
   void UIElement::SetFont(const AssetHandle<BaseFont> &font)
   {
     if (font.Get())
@@ -116,6 +133,33 @@ namespace Base
     return !_isHidden;
   }
 
+  void UIElement::_update(float dt)
+  {
+    const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
+    Vector2 mousePos = rd->mousePosition;
+
+    bool isCurrentlyHovered = CheckCollisionPointRec(mousePos, GetCombinedHoverRect());
+
+    if (isCurrentlyHovered && !_isHovered)
+    {
+      // Mouse just entered the element
+      if (onHover)
+      {
+        onHover.flex();
+      }
+    }
+    else if (!isCurrentlyHovered && _isHovered)
+    {
+      // Mouse just exited the elemnt
+      if (onHover)
+      {
+        onHover.relax();
+      }
+    }
+    _isHovered = isCurrentlyHovered;
+
+    Update(dt);
+  }
   void UIElement::Update(float dt)
   {
   }
