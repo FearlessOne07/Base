@@ -3,6 +3,7 @@
 #include "base/entities/EntityManager.hpp"
 #include "base/game/Game.hpp"
 #include "base/game/GameConfig.hpp"
+#include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/renderer/Renderer.hpp"
 #include "base/shaders/ShaderManager.hpp"
@@ -10,6 +11,7 @@
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "internal/audio/AudioManager.hpp"
+#include "internal/input/InputListener.hpp"
 #include "internal/input/InputManager.hpp"
 #include "internal/scene/SceneManager.hpp"
 #include <functional>
@@ -20,7 +22,7 @@ namespace Base
 
   class Scene;
   class System;
-  class Game::GameImpl
+  class Game::GameImpl : InputListener
   {
     // Type defs
     using FactoryCallBack = std::function<std::unique_ptr<Scene>()>;
@@ -29,6 +31,8 @@ namespace Base
     bool _running = false;
     float _gameWidth = 0.f;
     float _gameHeight = 0.f;
+    bool _fullscreen = false;
+    Vector2 _lastScreenSize = {0, 0};
 
   private: // Systems
     AudioManager _audioMan = AudioManager();
@@ -56,6 +60,7 @@ namespace Base
     void Init(GameConfig config);
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);
     void RegisterSystem(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem);
+    void OnInputEvent(std::shared_ptr<InputEvent> event) override;
     void Run();
   };
 } // namespace Base

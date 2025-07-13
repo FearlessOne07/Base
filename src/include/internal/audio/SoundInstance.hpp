@@ -3,7 +3,7 @@
 #include "base/audio/Sound.hpp"
 #include <cstdint>
 #include <memory>
-#include <rubberband/RubberBandStretcher.h>
+
 namespace Base
 {
   class SoundInstance

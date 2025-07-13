@@ -1,5 +1,7 @@
 #include "base/game/Game.hpp"
 #include "base/game/GameConfig.hpp"
+#include "base/input/Events/KeyEvent.hpp"
+#include "base/input/InputEvent.hpp"
 #include "base/renderer/RenderContext.hpp"
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
@@ -8,7 +10,9 @@
 #include "base/util/Strings.hpp"
 #include "internal/game/GameImpl.hpp"
 #include "raylib.h"
+#include "raymath.h"
 #include <algorithm>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <utility>
@@ -52,7 +56,7 @@ namespace Base
 
     // Initialise InputManager
     _inpMan.Init();
-    _inpMan.RegisterListener(&_sceneManager);
+    _inpMan.RegisterListener(this);
 
     // Initialise Shader Manager
     _shaderManager.Init();
@@ -127,9 +131,29 @@ namespace Base
     {
       if (!IsWindowMinimized())
       {
-        // Update render context
-        auto windowWidth = static_cast<float>(GetScreenWidth());
-        auto windowHeight = static_cast<float>(GetScreenHeight());
+        float windowWidth = 0;
+        float windowHeight = 0;
+        if (_fullscreen)
+        {
+          int monitor = GetCurrentMonitor();
+          windowWidth = static_cast<float>(GetMonitorWidth(monitor));
+          windowHeight = static_cast<float>(GetMonitorHeight(monitor));
+        }
+        else
+        {
+          if (Vector2LengthSqr(_lastScreenSize) != 0)
+          {
+            windowWidth = _lastScreenSize.x;
+            windowHeight = _lastScreenSize.y;
+            _lastScreenSize = {0, 0};
+          }
+          else
+          {
+            windowWidth = static_cast<float>(GetScreenWidth());
+            windowHeight = static_cast<float>(GetScreenHeight());
+          }
+        }
+        std::cout << "Window Size: " << windowWidth << ", " << windowHeight << "\n";
         float scale = std::min(             //
           (float)windowWidth / _gameWidth,  //
           (float)windowHeight / _gameHeight //
@@ -168,11 +192,10 @@ namespace Base
         _shaderManager.Update(dt);
 
         // Post Update
-        _entityManager.RemoveDeadEntities(); // <-- HERE
+        _entityManager.RemoveDeadEntities();
         _inpMan.PostUpdate();
 
         // Render
-
         _renderer.RenderLayers();
         _renderer.CompositeLayers();
         _renderer.Render();
@@ -185,7 +208,6 @@ namespace Base
 
   void Game::GameImpl::End()
   {
-
     // Deinitilize Systems
     _audioMan.DeInit();
     _renderer.DeInit();
@@ -209,6 +231,25 @@ namespace Base
   {
     // Register a custom system
     _systemManager.RegisterSystem(systemID, std::move(system), isRenderSystem);
+  }
+
+  void Game::GameImpl::OnInputEvent(std::shared_ptr<InputEvent> event)
+  {
+    if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(event))
+    {
+      if (keyEvent->key == KEY_F11 && keyEvent->action == InputEvent::Action::PRESSED)
+      {
+        if (!_fullscreen)
+        {
+          _lastScreenSize = {static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight())};
+        }
+        ToggleFullscreen();
+        _fullscreen = !_fullscreen;
+        event->isHandled = true;
+        return;
+      }
+    }
+    _sceneManager.OnInputEvent(event);
   }
 
   // Game Class
