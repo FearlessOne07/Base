@@ -33,6 +33,7 @@ namespace Base
     float _gameHeight = 0.f;
     bool _fullscreen = false;
     Vector2 _lastScreenSize = {0, 0};
+    Vector2 _lastScreenPosition{0, 0};
 
   private: // Systems
     AudioManager _audioMan = AudioManager();
@@ -54,6 +55,7 @@ namespace Base
     void Quit();
     void End();
     void UpdateRenderContext();
+    void ToggleFullscreenBorderless();
 
   public:
     GameImpl() = default;

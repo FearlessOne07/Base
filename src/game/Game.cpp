@@ -131,28 +131,9 @@ namespace Base
     {
       if (!IsWindowMinimized())
       {
-        float windowWidth = 0;
-        float windowHeight = 0;
-        if (_fullscreen)
-        {
-          int monitor = GetCurrentMonitor();
-          windowWidth = static_cast<float>(GetMonitorWidth(monitor));
-          windowHeight = static_cast<float>(GetMonitorHeight(monitor));
-        }
-        else
-        {
-          if (Vector2LengthSqr(_lastScreenSize) != 0)
-          {
-            windowWidth = _lastScreenSize.x;
-            windowHeight = _lastScreenSize.y;
-            _lastScreenSize = {0, 0};
-          }
-          else
-          {
-            windowWidth = static_cast<float>(GetScreenWidth());
-            windowHeight = static_cast<float>(GetScreenHeight());
-          }
-        }
+        float windowWidth = static_cast<float>(GetRenderWidth());
+        float windowHeight = static_cast<float>(GetRenderHeight());
+
         std::cout << "Window Size: " << windowWidth << ", " << windowHeight << "\n";
         float scale = std::min(             //
           (float)windowWidth / _gameWidth,  //
@@ -239,17 +220,50 @@ namespace Base
     {
       if (keyEvent->key == KEY_F11 && keyEvent->action == InputEvent::Action::PRESSED)
       {
-        if (!_fullscreen)
-        {
-          _lastScreenSize = {static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight())};
-        }
-        ToggleFullscreen();
-        _fullscreen = !_fullscreen;
+        ToggleBorderlessWindowed();
         event->isHandled = true;
         return;
       }
     }
     _sceneManager.OnInputEvent(event);
+  }
+
+  void Game::GameImpl::ToggleFullscreenBorderless()
+  {
+    int monitor = GetCurrentMonitor();
+    Vector2 monitorPos = GetMonitorPosition(monitor);
+    int monitorWidth = GetMonitorWidth(monitor);
+    int monitorHeight = GetMonitorHeight(monitor);
+
+    if (!_fullscreen)
+    {
+      _lastScreenSize = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+      _lastScreenPosition = {(float)GetWindowPosition().x, (float)GetWindowPosition().y};
+
+      // Clear conflicting window states
+      ClearWindowState(FLAG_WINDOW_MAXIMIZED);
+      ClearWindowState(FLAG_WINDOW_MINIMIZED);
+
+      // Set undecorated + topmost
+      SetWindowState(FLAG_WINDOW_UNDECORATED);
+      SetWindowState(FLAG_WINDOW_TOPMOST);
+
+      SetWindowSize(monitorWidth, monitorHeight);
+      SetWindowPosition((int)monitorPos.x, (int)monitorPos.y);
+
+      _fullscreen = true;
+    }
+    else
+    {
+      // Restore window size and position
+      SetWindowSize((int)_lastScreenSize.x, (int)_lastScreenSize.y);
+      SetWindowPosition((int)_lastScreenPosition.x, (int)_lastScreenPosition.y);
+
+      ClearWindowState(FLAG_WINDOW_UNDECORATED);
+      ClearWindowState(FLAG_WINDOW_TOPMOST);
+
+      _fullscreen = false;
+    }
   }
 
   // Game Class
