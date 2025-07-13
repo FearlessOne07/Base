@@ -45,27 +45,6 @@ set(MINIAUDIO_NO_EXTRA_NODES ON CACHE BOOL "Do not build extra node graph nodes"
 set(MINIAUDIO_NO_LIBVORBIS ON CACHE BOOL "Disable miniaudio_libvorbis")
 set(MINIAUDIO_NO_LIBOPUS ON CACHE BOOL "Disable miniaudio_libopus")
 
-include(ExternalProject)
-set(RUBBER_BAND_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/vendor/rubberband/src/rubberband_ext-build")
-ExternalProject_Add(rubberband_ext
-  SOURCE_DIR     "${ROOT_BASE_DIR}/vendor/rubberband"
-  PREFIX         "${CMAKE_CURRENT_BINARY_DIR}/vendor/rubberband"
-  CONFIGURE_COMMAND meson setup "${RUBBER_BAND_BUILD_DIR}" ${ROOT_BASE_DIR}/vendor/rubberband -Dresampler=libsamplerate
-  BUILD_COMMAND meson compile -C "${RUBBER_BAND_BUILD_DIR}"
-  INSTALL_COMMAND ""
-  BUILD_IN_SOURCE 1
-)
-
-# Define IMPORTED library
-add_library(rubberband STATIC IMPORTED GLOBAL)
-add_dependencies(rubberband rubberband_ext)
-
-set_target_properties(rubberband PROPERTIES
-IMPORTED_LOCATION "${RUBBER_BAND_BUILD_DIR}/librubberband.a"
-  INTERFACE_INCLUDE_DIRECTORIES ${ROOT_BASE_DIR}/vendor/rubberband/rubberband
-
-)
-
 add_subdirectory(
   "./vendor/raylib/"
 )

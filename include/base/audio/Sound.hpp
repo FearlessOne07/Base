@@ -13,10 +13,12 @@ namespace Base
     // Data
     std::vector<float> _data;
     uint64_t _frameCount = 0;
+    uint64_t _sampleRate = 0;
 
   public:
-    Sound(std::vector<float> data, uint64_t frameCount);
-    std::array<float, 2> GetFrame(uint64_t frame);
-    uint64_t GetFrameCount();
+    Sound(std::vector<float> data, uint64_t frameCount, uint64_t sampleRate);
+    std::array<float, 2> GetFrame(uint64_t frame) const;
+    uint64_t GetFrameCount() const;
+    uint64_t GetSampleRate() const;
   };
 } // namespace Base

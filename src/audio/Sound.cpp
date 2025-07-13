@@ -4,11 +4,12 @@
 
 namespace Base
 {
-  Sound::Sound(std::vector<float> data, uint64_t frameCount) : _data(data), _frameCount(frameCount)
+  Sound::Sound(std::vector<float> data, uint64_t frameCount, uint64_t sampleRate)
+    : _data(data), _frameCount(frameCount), _sampleRate(sampleRate)
   {
   }
 
-  std::array<float, 2> Sound::GetFrame(uint64_t frameIndex)
+  std::array<float, 2> Sound::GetFrame(uint64_t frameIndex) const
   {
     std::array<float, 2> frame;
 
@@ -29,8 +30,13 @@ namespace Base
     return frame;
   }
 
-  uint64_t Sound::GetFrameCount()
+  uint64_t Sound::GetFrameCount() const
   {
     return _frameCount;
+  }
+
+  uint64_t Sound::GetSampleRate() const
+  {
+    return _sampleRate;
   }
 } // namespace Base

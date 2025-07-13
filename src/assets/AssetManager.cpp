@@ -170,7 +170,7 @@ namespace Base
         "Failed to decode sound" + path.string() //
       );
     }
-    return std::make_shared<Sound>(data, frameCount);
+    return std::make_shared<Sound>(data, frameCount, _sampleRate);
   }
 
   std::shared_ptr<AudioStream> AssetManager::LoadAudioStream(const std::filesystem::path &path)

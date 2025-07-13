@@ -3,6 +3,7 @@
 #include "base/audio/Sound.hpp"
 #include <cstdint>
 #include <memory>
+#include <rubberband/RubberBandStretcher.h>
 namespace Base
 {
   class SoundInstance
@@ -13,6 +14,7 @@ namespace Base
     // Effects
     float _volume = 1.f;
     float _pan = 0.5;
+    float _pitch = 1;
 
     // State
     bool _isPlaying = false;
@@ -27,6 +29,7 @@ namespace Base
 
     float GetVolume() const;
     float GetPan() const;
+    float GetPitch() const;
     bool IsPlaying() const;
   };
 }; // namespace Base

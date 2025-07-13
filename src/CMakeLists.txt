@@ -78,7 +78,6 @@ target_link_libraries("${PROJECT_NAME}"
     portaudio
     miniaudio
     samplerate
-    rubberband
 )
 
 target_link_directories("${PROJECT_NAME}"
@@ -92,7 +91,6 @@ target_include_directories("${PROJECT_NAME}"
   PUBLIC
     "${ROOT_BASE_DIR}/vendor/miniaudio/"
     "${ROOT_BASE_DIR}/vendor/libsamplerate/include"
-    "${ROOT_BASE_DIR}/vendor/rubberband/"
   PRIVATE
     "${ROOT_BASE_DIR}/src/include/"
     "${ROOT_BASE_DIR}/include/"

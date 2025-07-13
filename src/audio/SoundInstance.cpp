@@ -31,6 +31,7 @@ namespace Base
   {
     return _volume;
   }
+
   float SoundInstance::GetPan() const
   {
     return _pan;
@@ -43,34 +44,28 @@ namespace Base
 
   std::array<float, 2> SoundInstance::GetNextFrame()
   {
-    std::array<float, 2> frame;
+    std::array<float, 2> frame = {0.0f, 0.0f};
 
-    // If sound hasn;t ended
     if (_currentFrame < _sound->GetFrameCount())
     {
-      // Get next frame from sound
       frame = _sound->GetFrame(_currentFrame);
-      // Ppaly pan / volume
+
+      float left = frame[0] * _volume;
+      float right = frame[1] * _volume;
+
+      // Apply pan
       float angle = _pan * (PI / 2.f);
       float leftPan = std::cos(angle);
       float rightPan = std::sin(angle);
 
-      frame[0] = frame[0] * _volume * leftPan;
-      frame[1] = frame[1] * _volume * rightPan;
+      frame[0] = left * leftPan;
+      frame[1] = right * rightPan;
+      _currentFrame++;
     }
     else
     {
-      // Else return silence
-      frame[0] = 0;
-      frame[1] = 0;
-
-      // Mark instance as done playing
       _isPlaying = false;
     }
-
-    /// Advance frame
-    _currentFrame++;
     return frame;
   }
-
 } // namespace Base
