@@ -2,7 +2,6 @@
 #include "base/assets/AssetHandle.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
-#include "base/sprites/Sprite.hpp"
 #include "base/textures/Font.hpp"
 #include "base/ui/UILayoutSettings.hpp"
 #include "base/util/AntagonisticFunction.hpp"
@@ -92,6 +91,7 @@ namespace Base
     bool IsVisible() const;
     virtual void Show();
     virtual void Hide();
+    void SetVisibilityOff();
     std::function<void()> _onShow = nullptr;
     std::function<void()> _onHide = nullptr;
   };

@@ -10,6 +10,7 @@
 
 namespace Base
 {
+
   class TweenManager
   {
   public:
@@ -20,6 +21,15 @@ namespace Base
       EASE_IN_OUT
     };
 
+    template <typename T> struct TweenSettings
+    {
+      T startValue = 0;
+      T endValue = 0;
+      float duration = 1.f;
+      EasingType easingType = EasingType::EASE_OUT;
+      std::function<void()> onTweenEnd = nullptr;
+    };
+
   private:
     std::unordered_map<TweenKey, std::unique_ptr<ITween>> _tweens = {};
 
@@ -27,9 +37,8 @@ namespace Base
     void Update(float dt);
 
     template <typename T>
-    void AddTween( //
-      const TweenKey &key, std::function<void(T)> setter, T startValue, T endValue, float duration,
-      EasingType type = EasingType::EASE_OUT //
+    void AddTween(                                                                              //
+      const TweenKey &key, std::function<void(T)> setter, const TweenSettings<T> &tweenSettings //
     )
     {
       if (std::is_arithmetic_v<T> && !std::is_same_v<T, bool>)
@@ -40,7 +49,7 @@ namespace Base
         }
 
         std::function<float(float)> easingFunction = nullptr;
-        switch (type)
+        switch (tweenSettings.easingType)
         {
         case EasingType::EASE_IN:
           easingFunction = Easings::EaseInCubic;
@@ -52,8 +61,10 @@ namespace Base
           easingFunction = Easings::EaseInOutCubic;
           break;
         }
-        _tweens[key] =
-          std::make_unique<Tween<T>>(key.objectPtr, setter, startValue, endValue, duration, easingFunction);
+        _tweens[key] = std::make_unique<Tween<T>>( //
+          key.objectPtr, setter, tweenSettings.startValue, tweenSettings.endValue, tweenSettings.duration,
+          easingFunction, tweenSettings.onTweenEnd //
+        );
       }
     }
   };

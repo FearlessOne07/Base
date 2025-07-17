@@ -9,6 +9,7 @@ namespace Base
       it->second->Update(dt);
       if (it->second->IsFinished())
       {
+        it->second->OnEnd();
         it = _tweens.erase(it);
       }
       else

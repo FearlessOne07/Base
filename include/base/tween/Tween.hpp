@@ -20,14 +20,15 @@ namespace Base
     float _duration = 0.f;
     float _timer = 0.f;
     EasingFunction _easingFunction = nullptr;
+    std::function<void()> _onEnd;
 
   public:
-    Tween(                                                                              //
-      const void *target, std::function<void(T)> setter,                                //
-      T startValue, T endValue, float duration, EasingFunction easingFunction = nullptr //
+    Tween(                                                                                                 //
+      const void *target, std::function<void(T)> setter,                                                   //
+      T startValue, T endValue, float duration, EasingFunction easingFunction, std::function<void()> onEnd //
       )
       : _target(target), _setter(setter), _startValue(startValue), _endValue(endValue), _duration(duration),
-        _easingFunction(std::move(easingFunction))
+        _easingFunction(std::move(easingFunction)), _onEnd(onEnd)
     {
     }
 
@@ -55,6 +56,14 @@ namespace Base
     bool IsFinished() const override
     {
       return _timer >= _duration;
+    }
+
+    void OnEnd() override
+    {
+      if (_onEnd)
+      {
+        _onEnd();
+      }
     }
   };
 } // namespace Base

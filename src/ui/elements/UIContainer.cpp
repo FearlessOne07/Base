@@ -286,7 +286,6 @@ namespace Base
 
   void UIContainer::Hide()
   {
-    _isHidden = true;
     if (_onHide)
     {
       _onHide();

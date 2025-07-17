@@ -119,13 +119,17 @@ namespace Base
     }
   }
 
+  void UIElement::SetVisibilityOff()
+  {
+    _isHidden = true;
+  }
+
   void UIElement::Hide()
   {
     if (_onHide)
     {
       _onHide();
     }
-    _isHidden = true;
   }
 
   bool UIElement::IsVisible() const
