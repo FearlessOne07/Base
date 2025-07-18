@@ -1,19 +1,12 @@
 
-#include "base/scenes/signals/SceneResumedSignal.hpp"
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#define NOGDI  // Excludes GDI (Graphics Device Interface)
-#define NOUSER // Excludes USER APIs
-#endif         // WIN32
-
-#include "base/assets/AssetHandle.hpp"
 #include "base/assets/AssetManager.hpp"
+#include "base/assets/AssetHandle.hpp"
 #include "base/audio/AudioStream.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
+#include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/textures/Font.hpp"

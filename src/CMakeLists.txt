@@ -87,6 +87,16 @@ target_link_directories("${PROJECT_NAME}"
     "${ROOT_BASE_DIR}/build/vendor/libsamplerate"
 )
 
+if(WIN32)
+  target_compile_definitions("${PROJECT_NAME}"
+    PRIVATE
+      WIN32_LEAN_AND_MEAN
+      NOMINMAX
+      NOGDI
+      NOUSER
+  )
+endif()
+
 target_include_directories("${PROJECT_NAME}"
   PUBLIC
     "${ROOT_BASE_DIR}/vendor/miniaudio/"

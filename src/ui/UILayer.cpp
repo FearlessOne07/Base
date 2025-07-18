@@ -21,7 +21,7 @@ namespace Base
     auto elements = std::ranges::reverse_view(_elements);
     for (auto &element : elements)
     {
-      if (!element->_isHidden)
+      if (element->IsVisible())
       {
         element->Render();
       }

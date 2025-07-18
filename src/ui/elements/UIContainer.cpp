@@ -279,7 +279,10 @@ namespace Base
     auto elements = std::ranges::reverse_view(_childElements);
     for (auto &element : elements)
     {
-      element->Render();
+      if (element->IsVisible())
+      {
+        element->Render();
+      }
     }
     // DrawRectangleLinesEx({GetPosition().x, GetPosition().y, _baseSize.x, _baseSize.y}, 3, RED);
   }
