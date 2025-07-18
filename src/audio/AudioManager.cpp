@@ -335,13 +335,13 @@ namespace Base
     }
   }
 
+  // TODO: Implement Ring Buffer for stopping Streams Too
   void AudioManager::StopStream(const std::shared_ptr<StopAudioStreamSignal> &signal)
   {
     AssetHandle<AudioStream> handle = signal->streamHandle;
     if (auto it = std::ranges::find(_streams, handle); it != _streams.end())
     {
       it->Get()->Stop();
-      _streams.erase(it);
     }
   }
 
