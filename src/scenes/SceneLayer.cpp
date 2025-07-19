@@ -1,5 +1,6 @@
-#include "base/scenes/SceneLayer.hpp"
+#include "base/scenes/SceneLayer.inl"
 #include "base/scenes/Scene.hpp"
+#include "base/scenes/SceneLayer.hpp"
 #include "raylib.h"
 
 namespace Base

@@ -55,7 +55,6 @@ namespace Base
 
   void UIManager::RenderLayer(const std::string &layerID)
   {
-
     std::string lowerID = Base::Strings::ToLower(layerID);
     if (!_layers.contains(lowerID))
     {
