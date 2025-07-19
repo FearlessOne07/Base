@@ -1,6 +1,5 @@
 #include "base/ui/elements/UIContainer.hpp"
 #include "raylib.h"
-#include <cmath>
 #include <memory>
 #include <ranges>
 
@@ -62,6 +61,7 @@ namespace Base
       newContainerSize.x += _padding.x * 2;
       newContainerSize.y = currentOffset;
       _baseSize = newContainerSize;
+      _currentSize = newContainerSize;
     }
     UpdatePosition();
 
@@ -146,6 +146,7 @@ namespace Base
       newContainerSize.y += _padding.y * 2;
       newContainerSize.x = currentOffset;
       _baseSize = newContainerSize;
+      _currentSize = newContainerSize;
     }
     UpdatePosition();
 
@@ -237,7 +238,7 @@ namespace Base
     {
       if (element->IsVisible())
       {
-        element->OnInputEvent(event);
+        element->_onInputEvent(event);
       }
       if (event->isHandled)
       {
@@ -284,7 +285,6 @@ namespace Base
         element->Render();
       }
     }
-    // DrawRectangleLinesEx({GetPosition().x, GetPosition().y, _baseSize.x, _baseSize.y}, 3, RED);
   }
 
   void UIContainer::Hide()

@@ -16,14 +16,23 @@ namespace Base
       font = GetFontDefault();
     }
     _text = text;
-    _currentSize = MeasureTextEx(font, text.c_str(), _fontSize, 1);
-    _baseSize = MeasureTextEx(font, text.c_str(), _fontSize, 1);
+
+    if (_elementSizeMode == ElementSizeMode::FIT)
+    {
+      _baseSize = MeasureTextEx(font, text.c_str(), _baseFontSize, 1);
+      _baseSize.x += _padding.x * 2;
+      _baseSize.y += _padding.y * 2;
+
+      _currentSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
+      _currentSize.x += _padding.x * 2;
+      _currentSize.y += _padding.y * 2;
+    }
   }
 
-  void UILabel::SetFontSize(float size)
+  void UILabel::SetFontSize(float size, bool base)
   {
     Font font;
-    if (_font.Get())
+    if (_font)
     {
       font = *_font.Get()->GetRaylibFont();
     }
@@ -31,8 +40,32 @@ namespace Base
     {
       font = GetFontDefault();
     }
-    _fontSize = size;
-    _currentSize = MeasureTextEx(font, _text.c_str(), _fontSize, 1);
+
+    if (base)
+    {
+      _baseFontSize = size;
+      _baseSize = MeasureTextEx(font, _text.c_str(), _baseFontSize, 1);
+      _baseSize.x += _padding.x * 2;
+      _baseSize.y += _padding.y * 2;
+    }
+
+    _currentFontSize = size;
+    _currentSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
+    _currentSize.x += _padding.x * 2;
+    _currentSize.y += _padding.y * 2;
+  }
+
+  void UILabel::SetFont(const AssetHandle<BaseFont> &fontHandle)
+  {
+    _font = fontHandle;
+    Font font = *_font.Get()->GetRaylibFont();
+
+    _baseSize = MeasureTextEx(font, _text.c_str(), _baseFontSize, 1);
+    _baseSize.x += _padding.x * 2;
+    _baseSize.y += _padding.y * 2;
+    _currentSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
+    _currentSize.x += _padding.x * 2;
+    _currentSize.y += _padding.y * 2;
   }
 
   void UILabel::SetTextColor(Color color)
@@ -52,6 +85,24 @@ namespace Base
       font = GetFontDefault();
     }
 
-    DrawTextEx(font, _text.c_str(), GetPosition(), _fontSize, 1, _textColor);
+    DrawTextEx(font, _text.c_str(), GetPosition(), _currentFontSize, 1, _textColor);
+  }
+
+  void UILabel::SetPadding(Vector2 padding)
+  {
+    _padding = padding;
+    Font font;
+    if (_font.Get())
+    {
+      font = *_font.Get()->GetRaylibFont();
+    }
+    else
+    {
+      font = GetFontDefault();
+    }
+
+    _baseSize = MeasureTextEx(font, _text.c_str(), _baseFontSize, 1);
+    _baseSize.x += _padding.x * 2;
+    _baseSize.y += _padding.y * 2;
   }
 } // namespace Base

@@ -1,4 +1,5 @@
 #include "base/ui/UIElement.hpp"
+#include "base/input/Events/MouseButtonEvent.hpp"
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
 #include "base/ui/UILayoutSettings.hpp"
@@ -28,6 +29,7 @@ namespace Base
 
     return RectangleUnion(layoutRect, offsetRect);
   }
+
   void UIElement::SetFont(const AssetHandle<BaseFont> &font)
   {
     if (font.Get())
@@ -164,8 +166,46 @@ namespace Base
 
     Update(dt);
   }
+
   void UIElement::Update(float dt)
   {
+  }
+
+  void UIElement::_onInputEvent(std::shared_ptr<InputEvent> &event)
+  {
+
+    if (onClick)
+    {
+      if (auto mouseEvent = std::dynamic_pointer_cast<Base::MouseButtonEvent>(event))
+      {
+        if ( //
+          mouseEvent->action == Base::InputEvent::Action::HELD && mouseEvent->button == MOUSE_BUTTON_LEFT &&
+          _isHovered //
+        )
+        {
+          _isActive = true;
+          event->isHandled = true;
+        }
+        else if ( //
+          mouseEvent->action == Base::InputEvent::Action::RELEASED && mouseEvent->button == MOUSE_BUTTON_LEFT &&
+          _isActive //
+        )
+        {
+          onClick();
+          _isActive = false;
+          event->isHandled = true;
+        }
+        else
+        {
+          _isActive = false;
+        }
+      }
+    }
+
+    if (!event->isHandled)
+    {
+      OnInputEvent(event);
+    }
   }
 
   void UIElement::OnInputEvent(std::shared_ptr<InputEvent> &event)

@@ -38,6 +38,7 @@ namespace Base
     void _update(float dt);
     virtual void Update(float dt);
     Rectangle GetCombinedHoverRect() const;
+    void _onInputEvent(std::shared_ptr<InputEvent> &event);
 
   protected:
     AssetHandle<BaseFont> _font;
@@ -53,8 +54,11 @@ namespace Base
     bool _isHovered = false;
     bool _firstHover = false;
 
+    bool _isActive = false;
+
   public:
     AntagonisticFunction onHover;
+    std::function<void()> onClick = nullptr;
 
   protected:
     UILayoutSettings _layoutSettings;
@@ -64,7 +68,7 @@ namespace Base
 
     // Setters
     void SetLayoutSettings(const UILayoutSettings &settings);
-    void SetFont(const AssetHandle<BaseFont> &);
+    virtual void SetFont(const AssetHandle<BaseFont> &);
 
     void SetPosition(Vector2 position);
     void SetPositionalOffset(Vector2 offset);

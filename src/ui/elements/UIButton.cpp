@@ -1,7 +1,4 @@
 #include "base/ui/elements/UIButton.hpp"
-#include "base/input/Events/MouseButtonEvent.hpp"
-#include "base/renderer/RenderContext.hpp"
-#include "base/renderer/RenderContextSingleton.hpp"
 #include "raylib.h"
 #include <memory>
 
@@ -10,29 +7,6 @@ namespace Base
 
   void UIButton::OnInputEvent(std::shared_ptr<InputEvent> &event)
   {
-    if (auto mouseEvent = std::dynamic_pointer_cast<Base::MouseButtonEvent>(event))
-    {
-      if (                                                                                                            //
-        mouseEvent->action == Base::InputEvent::Action::HELD && mouseEvent->button == MOUSE_BUTTON_LEFT && _isHovered //
-      )
-      {
-        _isActive = true;
-        event->isHandled = true;
-      }
-      else if ( //
-        mouseEvent->action == Base::InputEvent::Action::RELEASED && mouseEvent->button == MOUSE_BUTTON_LEFT &&
-        _isActive //
-      )
-      {
-        onClick();
-        _isActive = false;
-        event->isHandled = true;
-      }
-      else
-      {
-        _isActive = false;
-      }
-    }
   }
 
   void UIButton::SetColors(Color hoverColor, Color activeColor, Color normalColor, Color textColor)
@@ -61,6 +35,10 @@ namespace Base
       _baseSize = MeasureTextEx(font, text.c_str(), _baseFontSize, 1);
       _baseSize.x += _padding.x * 2;
       _baseSize.y += _padding.y * 2;
+
+      _currentSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
+      _currentSize.x += _padding.x * 2;
+      _currentSize.y += _padding.y * 2;
     }
   }
 
@@ -85,6 +63,19 @@ namespace Base
     }
 
     _currentFontSize = size;
+    _currentSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
+    _currentSize.x += _padding.x * 2;
+    _currentSize.y += _padding.y * 2;
+  }
+
+  void UIButton::SetFont(const AssetHandle<BaseFont> &fontHandle)
+  {
+    _font = fontHandle;
+    Font font = *_font.Get()->GetRaylibFont();
+
+    _baseSize = MeasureTextEx(font, _text.c_str(), _baseFontSize, 1);
+    _baseSize.x += _padding.x * 2;
+    _baseSize.y += _padding.y * 2;
     _currentSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
     _currentSize.x += _padding.x * 2;
     _currentSize.y += _padding.y * 2;

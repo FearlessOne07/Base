@@ -8,7 +8,7 @@ namespace Base
   {
     for (auto &element : _elements)
     {
-      element->OnInputEvent(event);
+      element->_onInputEvent(event);
       if (event->isHandled)
       {
         break;
