@@ -1,8 +1,9 @@
 #pragma once
 #include "base/tween/ITween.hpp"
-#include "raymath.h"
 #include <algorithm>
 #include <functional>
+#include <raylib.h>
+#include <raymath.h>
 #include <utility>
 
 namespace Base
@@ -32,6 +33,7 @@ namespace Base
     {
     }
 
+    T TweenLerp(T start, T end, float t);
     void Update(float dt) override
     {
       _timer += dt;
@@ -44,7 +46,7 @@ namespace Base
 
       if (_setter && _target)
       {
-        _setter(static_cast<T>(Lerp(_startValue, _endValue, lifePoint)));
+        _setter(TweenLerp(_startValue, _endValue, lifePoint));
       }
     }
 

@@ -4,6 +4,8 @@ namespace Base
 {
   void TweenManager::Update(float dt)
   {
+    _isUpdatingTweens = true;
+
     for (auto it = _tweens.begin(); it != _tweens.end();)
     {
       it->second->Update(dt);
@@ -17,5 +19,13 @@ namespace Base
         ++it;
       }
     }
+
+    _isUpdatingTweens = false;
+
+    // Flush pending tweens after main update loop
+    for (auto &addTween : _pendingTweens)
+      addTween();
+    _pendingTweens.clear();
   }
+
 } // namespace Base

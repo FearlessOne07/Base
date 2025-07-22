@@ -58,6 +58,7 @@ set(SRC
 
   "./tween/TweenManager.cpp"
   "./tween/ITween.cpp"
+  "./tween/Tween.cpp"
 
   "./util/Exception.cpp"
   "./util/Easings.cpp"
