@@ -1,6 +1,8 @@
 #pragma once
 #include "base/components/Component.hpp"
 #include "base/util/Exception.hpp"
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <sstream>
 #include <type_traits>
@@ -10,12 +12,24 @@
 
 namespace Base
 {
+  class EntityID
+  {
+  private:
+    int64_t _id = -1;
+
+  public:
+    explicit EntityID(int64_t id);
+    EntityID();
+    operator bool();
+    operator int64_t() const;
+    bool operator==(const EntityID &other);
+  };
 
   class Entity : public std::enable_shared_from_this<Entity>
   {
     friend class EntityManager;
 
-    size_t _id = 0;
+    EntityID _id;
     bool _alive = true;
     std::unordered_map<std::type_index, std::unique_ptr<Component>> _components;
     Entity(size_t id);
@@ -77,7 +91,7 @@ namespace Base
       if (_components.find(compId) == _components.end())
       {
         std::stringstream error;
-        error << "Failed to get component " << typeid(T).name() << "; Entity[" << _id
+        error << "Failed to get component " << typeid(T).name() << "; Entity[" << static_cast<int64_t>(_id)
               << "] does not have specified component\n";
         THROW_BASE_RUNTIME_ERROR(error.str());
       }
@@ -89,7 +103,7 @@ namespace Base
     }
 
     // Access
-    size_t GetID() const;
+    EntityID GetID() const;
     bool IsAlive() const;
     void SetDead();
   };

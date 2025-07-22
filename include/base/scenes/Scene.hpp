@@ -5,6 +5,7 @@
 #include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneLayerStack.hpp"
 #include "base/scenes/SceneTransition.hpp"
+#include "base/scenes/SharedSceneDataStore.hpp"
 #include "base/shaders/ShaderManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
@@ -56,6 +57,7 @@ namespace Base
       TweenManager *tweenManager = nullptr;
       ShaderManager *shaderManager = nullptr;
       Color clearColor = BLACK;
+      SharedSceneDataStore<void> sharedData;
     };
 
     std::unique_ptr<SceneState> _state;
@@ -73,8 +75,18 @@ namespace Base
     // Scene Store
 
   protected:
+    // Rendering
     void SetClearColor(Color color);
     RenderLayer *AddRenderLayer(Vector2 size, Color clearColor = BLANK);
+
+    // Shared Data
+    template <typename T> void InitSharedData()
+    {
+      auto data = SharedSceneDataStore<T>();
+      data.Init();
+
+      _state->sharedData = data;
+    }
 
   public:
     Scene();
@@ -126,6 +138,12 @@ namespace Base
     template <typename T> void AttachLayer(RenderLayer *renderLayer)
     {
       _layerStack.AttachLayer<T>(renderLayer);
+    }
+
+    // Shared Data
+    template <typename T> std::shared_ptr<T> GetSharedData()
+    {
+      return _state->sharedData.Get<T>();
     }
 
     // System Management

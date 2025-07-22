@@ -8,7 +8,6 @@ namespace Base
 {
   template <typename T> class AssetHandle
   {
-
     template <typename> friend class AssetHandle;
 
   private:

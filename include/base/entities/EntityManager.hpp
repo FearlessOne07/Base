@@ -29,7 +29,7 @@ namespace Base
     void UpdateEntity(std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator item);
     void Clear();
 
-    const std::shared_ptr<Entity> GetEntity(size_t id);
+    const std::shared_ptr<Entity> GetEntity(EntityID id);
     void SetWorldBounds(Rectangle bounds);
     const Rectangle GetWorldBounds() const;
     std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> QueryArea(ItemAreaType area);

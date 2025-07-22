@@ -1,6 +1,7 @@
 #include "base/entities/EntityManager.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/TransformComponent.hpp"
+#include "base/entities/Entity.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/QuadTreeContainer.hpp"
 #include <algorithm>
@@ -17,7 +18,8 @@ namespace Base
     if (_entityPending)
     {
       THROW_BASE_RUNTIME_ERROR(
-        "Attempted Creation of enty before addition of previuously created one. Make Sure to call AddEntity()");
+        "Attempted Creation of entity before addition of previuously created one. Make Sure to call AddEntity()" //
+      );
     }
     else
     {
@@ -90,7 +92,7 @@ namespace Base
     }
   }
 
-  const std::shared_ptr<Entity> EntityManager::GetEntity(size_t id)
+  const std::shared_ptr<Entity> EntityManager::GetEntity(EntityID id)
   {
     auto it = std::ranges::find_if(                                                              //
       _entities, [id](QuadTreeItem<std::shared_ptr<Entity>> e) { return e.item->GetID() == id; } //
@@ -101,6 +103,7 @@ namespace Base
   void EntityManager::Clear()
   {
     _entities.Clear();
+    _nextID = 0;
   }
 
   std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> EntityManager::QueryArea(ItemAreaType area)
