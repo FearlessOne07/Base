@@ -1,10 +1,38 @@
 #include "base/ui/elements/UIContainer.hpp"
 #include "raylib.h"
+#include <algorithm>
 #include <memory>
 #include <ranges>
 
 namespace Base
 {
+  static bool operator==(Color a, Color b)
+  {
+    return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
+  }
+
+  void UIContainer::SetAlpha(float alpha)
+  {
+    _alpha = alpha;
+    _alpha = std::clamp<float>(_alpha, 0, 1);
+
+    for (auto &child : _childElements)
+    {
+      child->SetParentAlpha(_alpha * _parentAlpha);
+    }
+  }
+
+  void UIContainer::SetParentAlpha(float alpha)
+  {
+    _parentAlpha = alpha;
+    _parentAlpha = std::clamp<float>(_parentAlpha, 0, 1);
+
+    for (auto &child : _childElements)
+    {
+      child->SetParentAlpha(_alpha * _parentAlpha);
+    }
+  }
+
   void UIContainer::Update(float dt)
   {
     UpdatePosition();
@@ -271,12 +299,30 @@ namespace Base
   {
     if (_sprite)
     {
-      _sprite.Draw({GetPosition().x, GetPosition().y, GetSize().x, GetSize().y});
+      _sprite.Draw({GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, _alpha * _parentAlpha * 255);
     }
     else
     {
-      DrawRectangleRec({GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, _backgroundColor);
+      float alpha = 0;
+      if (_backgroundColor == BLANK)
+      {
+        alpha = 0;
+      }
+      else
+      {
+        alpha = _alpha;
+      }
+      DrawRectangleRec( //
+        {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y},
+        {
+          _backgroundColor.r,
+          _backgroundColor.g,
+          _backgroundColor.b,
+          static_cast<unsigned char>(alpha * _parentAlpha * 255),
+        } //
+      );
     }
+
     auto elements = std::ranges::reverse_view(_childElements);
     for (auto &element : elements)
     {

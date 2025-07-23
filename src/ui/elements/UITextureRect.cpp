@@ -5,14 +5,16 @@ namespace Base
 {
   void UITextureRect::Render()
   {
-
     if (_sprite)
     {
-      _sprite.Draw({GetPosition().x, GetPosition().y, _currentSize.x, _currentSize.y});
+      _sprite.Draw({GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, _alpha * _parentAlpha * 255);
     }
     else
     {
-      DrawRectangleRec({GetPosition().x, GetPosition().y, _currentSize.x, _currentSize.y}, WHITE);
+      DrawRectangleRec( //
+        {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y},
+        {255, 255, 255, static_cast<unsigned char>(_alpha * _parentAlpha * 255)} //
+      );
     }
   }
 } // namespace Base

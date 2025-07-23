@@ -23,7 +23,7 @@ namespace Base
   public:
     NinePatchSprite(const AssetHandle<Texture> &texture, Border border, Vector2 sourceIndex, Vector2 sourceSize);
     NinePatchSprite() = default;
-    void Draw(Rectangle dest);
+    void Draw(Rectangle dest, unsigned char alpha);
 
     inline operator bool()
     {

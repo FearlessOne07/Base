@@ -85,7 +85,14 @@ namespace Base
       font = GetFontDefault();
     }
 
-    DrawTextEx(font, _text.c_str(), GetPosition(), _currentFontSize, 1, _textColor);
+    DrawTextEx( //
+      font, _text.c_str(), GetPosition(), _currentFontSize, 1,
+      {
+        _textColor.r,
+        _textColor.g,
+        _textColor.b,
+        static_cast<unsigned char>(_alpha * _parentAlpha * 255),
+      });
   }
 
   void UILabel::SetPadding(Vector2 padding)

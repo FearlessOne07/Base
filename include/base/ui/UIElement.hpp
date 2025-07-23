@@ -35,9 +35,11 @@ namespace Base
     Vector2 _positionalOffset = {0, 0};
 
   private:
-    void _update(float dt);
     virtual void Update(float dt);
     Rectangle GetCombinedHoverRect() const;
+
+    // Template Methods
+    void _update(float dt);
     void _onInputEvent(std::shared_ptr<InputEvent> &event);
 
   protected:
@@ -56,6 +58,9 @@ namespace Base
 
     bool _isActive = false;
 
+    float _alpha = 1;
+    float _parentAlpha = 1;
+
   public:
     AntagonisticFunction onHover;
     std::function<void()> onClick = nullptr;
@@ -69,6 +74,8 @@ namespace Base
     // Setters
     void SetLayoutSettings(const UILayoutSettings &settings);
     virtual void SetFont(const AssetHandle<BaseFont> &);
+    virtual void SetAlpha(float alpha);
+    virtual void SetParentAlpha(float alpha);
 
     void SetPosition(Vector2 position);
     void SetPositionalOffset(Vector2 offset);
@@ -80,6 +87,7 @@ namespace Base
     // Getters
     Vector2 GetPosition() const;
     Vector2 GetPositionalOffset() const;
+    float GetAlpha() const;
 
     Vector2 GetSize() const;
     Vector2 GetBaseSize() const;

@@ -58,7 +58,7 @@ namespace Base
       border.bottom,
     }; // Bottom-right
   }
-  void NinePatchSprite::Draw(Rectangle dest)
+  void NinePatchSprite::Draw(Rectangle dest, unsigned char alpha)
   {
     float x = dest.x;
     float y = dest.y;
@@ -117,7 +117,9 @@ namespace Base
     // Draw all 9 patches using the sprite sheet
     for (int i = 0; i < 9; i++)
     {
-      DrawTexturePro(*_texture.Get()->GetRaylibTexture(), _patches[i], destRects[i], {0, 0}, 0.0f, WHITE);
+      DrawTexturePro(                                                                                        //
+        *_texture.Get()->GetRaylibTexture(), _patches[i], destRects[i], {0, 0}, 0.0f, {255, 255, 255, alpha} //
+      );
     }
   }
 } // namespace Base

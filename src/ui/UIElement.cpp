@@ -5,6 +5,7 @@
 #include "base/ui/UILayoutSettings.hpp"
 #include "raylib.h"
 #include "raymath.h"
+#include <algorithm>
 
 namespace Base
 {
@@ -36,6 +37,22 @@ namespace Base
     {
       _font = font;
     }
+  }
+  void UIElement::SetAlpha(float alpha)
+  {
+    _alpha = alpha;
+    _alpha = std::clamp<float>(_alpha, 0, 1);
+  }
+
+  void UIElement::SetParentAlpha(float alpha)
+  {
+    _parentAlpha = alpha;
+    _parentAlpha = std::clamp<float>(_parentAlpha, 0, 1);
+  }
+
+  float UIElement::GetAlpha() const
+  {
+    return _alpha;
   }
 
   void UIElement::SetPosition(Vector2 position)
