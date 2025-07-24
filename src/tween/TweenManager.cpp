@@ -19,7 +19,6 @@ namespace Base
         ++it;
       }
     }
-
     _isUpdatingTweens = false;
 
     // Flush pending tweens after main update loop

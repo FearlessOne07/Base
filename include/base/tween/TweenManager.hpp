@@ -5,7 +5,6 @@
 #include "base/util/Easings.hpp"
 #include <functional>
 #include <memory>
-#include <type_traits>
 #include <unordered_map>
 #include <vector>
 
@@ -29,6 +28,7 @@ namespace Base
       float duration = 1.f;
       EasingType easingType = EasingType::EASE_OUT;
       std::function<void()> onTweenEnd = nullptr;
+      TweenPriorityLevel priority = TweenPriorityLevel::DEFAULT;
     };
 
   private:
@@ -42,9 +42,19 @@ namespace Base
     template <typename T>
     void AddTween(const TweenKey &key, std::function<void(T)> setter, const TweenSettings<T> &tweenSettings)
     {
+      if (auto it = _tweens.find(key); it != _tweens.end())
+      {
+        TweenPriorityLevel level = it->second->GetProrityLevel();
+        if (level > tweenSettings.priority)
+        {
+          return;
+        }
+      }
+
       if (_isUpdatingTweens)
       {
         _pendingTweens.push_back([=, this]() { AddTween<T>(key, setter, tweenSettings); });
+
         return;
       }
 
@@ -67,7 +77,7 @@ namespace Base
 
       _tweens[key] = std::make_unique<Tween<T>>( //
         key.objectPtr, setter, tweenSettings.startValue, tweenSettings.endValue, tweenSettings.duration, easingFunction,
-        tweenSettings.onTweenEnd //
+        tweenSettings.onTweenEnd, tweenSettings.priority //
       );
     }
   };

@@ -8,10 +8,11 @@
 
 namespace Base
 {
-  template <typename T> struct Tween : public ITween
+  template <typename T> class Tween : public ITween
   {
     using EasingFunction = std::function<float(float)>;
 
+  public:
   private:
     const void *_target = nullptr;
     std::function<void(T)> _setter = nullptr;
@@ -23,13 +24,16 @@ namespace Base
     EasingFunction _easingFunction = nullptr;
     std::function<void()> _onEnd;
 
+    TweenPriorityLevel _priority;
+
   public:
-    Tween(                                                                                                 //
-      const void *target, std::function<void(T)> setter,                                                   //
-      T startValue, T endValue, float duration, EasingFunction easingFunction, std::function<void()> onEnd //
+    Tween(                                               //
+      const void *target, std::function<void(T)> setter, //
+      T startValue, T endValue, float duration, EasingFunction easingFunction, std::function<void()> onEnd,
+      TweenPriorityLevel priority //
       )
       : _target(target), _setter(setter), _startValue(startValue), _endValue(endValue), _duration(duration),
-        _easingFunction(std::move(easingFunction)), _onEnd(onEnd)
+        _easingFunction(std::move(easingFunction)), _onEnd(onEnd), _priority(priority)
     {
     }
 
@@ -59,6 +63,11 @@ namespace Base
     {
       return _timer >= _duration;
     }
+
+    TweenPriorityLevel GetProrityLevel() const override
+    {
+      return _priority;
+    };
 
     void OnEnd() override
     {
