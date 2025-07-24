@@ -1,10 +1,13 @@
 #pragma once
 #include "base/camera/Camera2DExt.hpp"
-#include "base/shaders/ShaderChain.hpp"
+#include "base/shaders/ShaderEffect.hpp"
+#include "base/shaders/ShaderEffectChain.hpp"
 #include "raylib.h"
 #include <bitset>
 #include <deque>
 #include <functional>
+#include <memory>
+
 namespace Base
 {
   class Scene;
@@ -31,7 +34,7 @@ namespace Base
     // Shaders
     bool _shaderBuffersInitialized = false;
     RenderTexture _ping;
-    ShaderChain _shaderChain;
+    ShaderEffectChain _effectChain;
 
   private:
     void Update(float dt);
@@ -46,12 +49,7 @@ namespace Base
     Vector2 GetSize() const;
     Vector2 GetPosition() const;
     void AddRenderFunction(const RenderFunction &);
-
-    // Shader Chain Management
-    void AddShaderPass(AssetHandle<Base::BaseShader> shaderHandle);
-    void SetShaderUniform(                                                                           //
-      AssetHandle<Base::BaseShader> shaderHandle, const std::string &uniformName, UniformValue value //
-    );
+    const Scene *GetOwnerScene() const;
 
     // Camera
     void SetCameraMode(Camera2DExtMode mode);
@@ -64,5 +62,16 @@ namespace Base
     Vector2 GetScreenToWorld(Vector2 position) const;
     void BeginCamera();
     void EndCamera();
+
+    // Shader Effect Management
+    template <typename T, typename... Args> void AddShaderEffect(Args &&...args)
+    {
+      _effectChain.AddEffect<T>(std::forward<Args>(args)..., this);
+    }
+
+    template <typename T> std::unique_ptr<T> GetShaderEffect()
+    {
+      return _effectChain.GetEffect<T>();
+    }
   };
 } // namespace Base

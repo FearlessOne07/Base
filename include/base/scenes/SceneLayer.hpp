@@ -1,4 +1,5 @@
 #pragma once
+#include "base/assets/AssetHandle.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/renderer/RenderLayer.hpp"
 #include "base/scenes/SceneTransition.hpp"

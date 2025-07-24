@@ -3,7 +3,6 @@
 #include "base/scenes/Scene.hpp"
 #include "raylib.h"
 #include "rlgl.h"
-#include <algorithm>
 #include <ranges>
 #include <utility>
 
@@ -20,7 +19,7 @@ namespace Base
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
     : _position(other._position), _size(other._size), _renderFunctions(std::move(other._renderFunctions)),
-      _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _shaderChain(other._shaderChain),
+      _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _effectChain(std::move(other._effectChain)),
       _ping(other._ping)
   {
     other._renderTexture.id = 0;
@@ -46,7 +45,7 @@ namespace Base
       _renderFunctions = std::move(other._renderFunctions);
       _ownerScene = other._ownerScene;
       _renderTexture = other._renderTexture;
-      _shaderChain = other._shaderChain;
+      _effectChain = std::move(other._effectChain);
       _ping = other._ping;
 
       other._renderTexture.id = 0;
@@ -72,36 +71,18 @@ namespace Base
     }
     EndTextureMode();
 
-    if (_shaderChain.Empty())
+    if (_effectChain.Empty())
     {
       return;
     }
 
     RenderTexture2D *input = &_renderTexture;
     RenderTexture2D *output = &_ping;
+    auto shaderMan = _ownerScene->GetShaderManager();
 
-    for (auto &[shaderHandle, pass] : _shaderChain)
+    for (auto &effect : _effectChain)
     {
-      auto shaderMan = _ownerScene->GetShaderManager();
-      if (pass.HasDirty())
-      {
-        for (auto &uniform : pass.GetDirty())
-        {
-          shaderMan->SetUniform(shaderHandle, uniform.c_str(), pass.GetUniformValue(uniform));
-        }
-        pass.ClearDirty();
-      }
-
-      BeginTextureMode(*output);
-      ClearBackground(_clearColor);
-      shaderMan->ActivateShader(shaderHandle);
-      DrawTexturePro(                              //
-        input->texture, {0, 0, _size.x, -_size.y}, //
-        {0, 0, _size.x, _size.y}, {0, 0}, 0, WHITE //
-      );
-      shaderMan->DeactivateCurrentShader();
-      EndTextureMode();
-
+      effect->Apply(input, output, _size);
       std::swap(input, output); // Ping-pong
     }
 
@@ -133,17 +114,6 @@ namespace Base
   void RenderLayer::AddRenderFunction(const RenderFunction &function)
   {
     _renderFunctions.emplace_back(std::move(function));
-  }
-
-  void RenderLayer::AddShaderPass(AssetHandle<Base::BaseShader> shaderHandle)
-  {
-    _shaderChain.AddShaderPass(shaderHandle);
-  }
-  void RenderLayer::SetShaderUniform(                                                              //
-    AssetHandle<Base::BaseShader> shaderHandle, const std::string &uniformName, UniformValue value //
-  )
-  {
-    _shaderChain.SetShaderUniform(shaderHandle, uniformName, value);
   }
 
   void RenderLayer::SetCameraMode(Camera2DExtMode mode)
@@ -181,6 +151,10 @@ namespace Base
     _layerCamera.Shake(config);
   }
 
+  const Scene *RenderLayer::GetOwnerScene() const
+  {
+    return _ownerScene;
+  }
   Vector2 RenderLayer::GetScreenToWorld(Vector2 position) const
   {
     return _layerCamera.GetScreenToWorld(position);

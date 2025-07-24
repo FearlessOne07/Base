@@ -67,8 +67,6 @@ set(SRC
   "./util/Pauseable.cpp"
 
   "./shaders/ShaderManager.cpp"
-  "./shaders/ShaderPass.cpp"
-  "./shaders/ShaderChain.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 
