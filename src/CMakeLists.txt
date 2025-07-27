@@ -65,6 +65,7 @@ set(SRC
   "./util/Strings.cpp"
   "./util/UUID.cpp"
   "./util/Pauseable.cpp"
+  "./util/Draw.cpp"
 
   "./shaders/ShaderManager.cpp"
 )

@@ -1,4 +1,5 @@
 #include "base/ui/elements/UIButton.hpp"
+#include "base/util/Draw.hpp"
 #include "raylib.h"
 #include <memory>
 
@@ -111,7 +112,7 @@ namespace Base
     // Center text inside padded button area
     Vector2 targetPos = {GetPosition().x + _currentSize.x / 2, GetPosition().y + _currentSize.y / 2};
     Vector2 textPos = {targetPos.x - textSize.x / 2, targetPos.y - textSize.y / 2};
-    DrawTextEx( //
+    DrawTextBase( //
       font, _text.c_str(), textPos, _currentFontSize, 1,
       {
         _textColor.r,

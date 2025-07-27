@@ -77,7 +77,7 @@ namespace Base
     virtual void SetAlpha(float alpha);
     virtual void SetParentAlpha(float alpha);
 
-    void SetPosition(Vector2 position);
+    void SetPosition(Vector2 position, bool final = false);
     void SetPositionalOffset(Vector2 offset);
     void SetSize(Vector2 size, bool base = true);
     void SetContainterSizeMode(ContainerSizeMode sizeMode);

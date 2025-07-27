@@ -64,11 +64,13 @@ namespace Base
   {
     BeginTextureMode(_renderTexture);
     ClearBackground(_clearColor);
+    BeginBlendMode(BLEND_ALPHA_PREMULTIPLY);
     auto functions = std::ranges::reverse_view(_renderFunctions);
     for (auto &function : functions)
     {
       function();
     }
+    EndBlendMode();
     EndTextureMode();
 
     if (_effectChain.Empty())

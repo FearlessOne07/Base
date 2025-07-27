@@ -1,4 +1,5 @@
 #include "base/sprites/NinePatchSprite.hpp"
+#include "raymath.h"
 #include <cmath>
 
 namespace Base
@@ -58,7 +59,12 @@ namespace Base
       border.bottom,
     }; // Bottom-right
   }
-  void NinePatchSprite::Draw(Rectangle dest, unsigned char alpha)
+  void NinePatchSprite::SetSourceIndex(const Vector2 &index)
+  {
+    _sourceIndex = Vector2Max(index, {0});
+  }
+
+  void NinePatchSprite::Draw(const Rectangle &dest, unsigned char alpha)
   {
     float x = dest.x;
     float y = dest.y;
@@ -117,8 +123,14 @@ namespace Base
     // Draw all 9 patches using the sprite sheet
     for (int i = 0; i < 9; i++)
     {
-      DrawTexturePro(                                                                                        //
-        *_texture.Get()->GetRaylibTexture(), _patches[i], destRects[i], {0, 0}, 0.0f, {255, 255, 255, alpha} //
+      DrawTexturePro( //
+        *_texture.Get()->GetRaylibTexture(), _patches[i], destRects[i], {0, 0}, 0.0f,
+        {
+          static_cast<unsigned char>((255 * alpha) / 255),
+          static_cast<unsigned char>((255 * alpha) / 255),
+          static_cast<unsigned char>((255 * alpha) / 255),
+          alpha,
+        } //
       );
     }
   }

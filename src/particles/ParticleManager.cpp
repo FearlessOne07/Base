@@ -2,6 +2,7 @@
 #include "base/particles/ParticleEmitter.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/util/Draw.hpp"
 #include "base/util/Exception.hpp"
 #include "internal/particles/ParticleManagerImpl.hpp"
 #include "raylib.h"
@@ -285,7 +286,7 @@ namespace Base
 
         if (particle->shape == ParticleEmitter::ParticleShape::RECT)
         {
-          DrawRectanglePro( //
+          DrawRectangleBase( //
             {
               particle->position.x,
               particle->position.y,

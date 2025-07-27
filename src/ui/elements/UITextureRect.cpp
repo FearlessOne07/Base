@@ -1,4 +1,5 @@
 #include "base/ui/elements/UITextureRect.hpp"
+#include "base/util/Draw.hpp"
 #include "raylib.h"
 
 namespace Base
@@ -11,8 +12,8 @@ namespace Base
     }
     else
     {
-      DrawRectangleRec( //
-        {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y},
+      DrawRectangleBase( //
+        {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, {0, 0}, 0,
         {255, 255, 255, static_cast<unsigned char>(_alpha * _parentAlpha * 255)} //
       );
     }

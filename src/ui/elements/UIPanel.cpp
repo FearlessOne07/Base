@@ -1,4 +1,5 @@
 #include "base/ui/elements/UIPanel.hpp"
+#include "base/util/Draw.hpp"
 #include "raylib.h"
 
 namespace Base
@@ -15,8 +16,8 @@ namespace Base
 
   void UIPanel::Render()
   {
-    DrawRectangleRec( //
-      {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y},
+    DrawRectangleBase( //
+      {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, {0, 0}, 0,
       {
         _color.r,
         _color.g,

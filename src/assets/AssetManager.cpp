@@ -1,4 +1,3 @@
-
 #include "base/assets/AssetManager.hpp"
 #include "base/assets/AssetHandle.hpp"
 #include "base/audio/AudioStream.hpp"
@@ -18,6 +17,8 @@
 #include <miniaudio.h>
 #include <raylib.h>
 #include <sstream>
+#include <stdio.h>
+#include <string.h>
 #include <vector>
 
 namespace Base
@@ -196,7 +197,35 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto texture = std::make_shared<Texture>(LoadTexture(fullpath.c_str()));
+          Image image = LoadImage(fullpath.c_str()); // Load from disk (CPU)
+          Color *pixels = LoadImageColors(image);    // Access raw pixel data
+
+          // Premultiply alpha
+          for (int i = 0; i < image.width * image.height; i++)
+          {
+            if (pixels[i].a == 0)
+            {
+              pixels[i].r = 0;
+              pixels[i].g = 0;
+              pixels[i].b = 0;
+            }
+            else
+            {
+              pixels[i].r = (pixels[i].r * pixels[i].a) / 255;
+              pixels[i].g = (pixels[i].g * pixels[i].a) / 255;
+              pixels[i].b = (pixels[i].b * pixels[i].a) / 255;
+            }
+          }
+
+          // Copy modified pixel data back to the image
+          memcpy(image.data, pixels, image.width * image.height * sizeof(Color));
+
+          auto texture = std::make_shared<Texture>(LoadTextureFromImage(image));
+
+          // Cleanup
+          UnloadImage(image);
+          UnloadImageColors(pixels);
+
           AssetHandle<Texture> handle(texture);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(texture)};
           return handle;
@@ -214,11 +243,39 @@ namespace Base
         {
           if (_sceneAssets.at(_currentScene).find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto texture = std::make_shared<Texture>(LoadTexture(fullpath.c_str()));
+            Image image = LoadImage(fullpath.c_str()); // Load from disk (CPU)
+            Color *pixels = LoadImageColors(image);    // Access raw pixel data
+
+            // Premultiply alpha
+            for (int i = 0; i < image.width * image.height; i++)
+            {
+              if (pixels[i].a == 0)
+              {
+                pixels[i].r = 0;
+                pixels[i].g = 0;
+                pixels[i].b = 0;
+              }
+              else
+              {
+                pixels[i].r = (pixels[i].r * pixels[i].a) / 255;
+                pixels[i].g = (pixels[i].g * pixels[i].a) / 255;
+                pixels[i].b = (pixels[i].b * pixels[i].a) / 255;
+              }
+            }
+
+            // Copy modified pixel data back to the image
+            memcpy(image.data, pixels, image.width * image.height * sizeof(Color));
+
+            auto texture = std::make_shared<Texture>(LoadTextureFromImage(image));
+
+            // Cleanup
+            UnloadImage(image);
+            UnloadImageColors(pixels);
+
             AssetHandle<Texture> handle(texture);
-            _sceneAssets[_currentScene][name] = {
+            _sceneAssets.at(_currentScene)[name] = {
               static_cast<AssetHandle<void>>(handle),
-              static_pointer_cast<BaseAsset>(texture),
+              std::static_pointer_cast<BaseAsset>(texture),
             };
             return handle;
           }

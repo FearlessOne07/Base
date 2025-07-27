@@ -4,6 +4,7 @@
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
+#include "base/util/Draw.hpp"
 #include "raylib.h"
 #include <memory>
 
@@ -44,7 +45,7 @@ namespace Base
           {
             if (abbcmp->fill)
             {
-              DrawRectanglePro( //
+              DrawRectangleBase( //
                 {transcmp->position.x - abbcmp->positionOffset.x, transcmp->position.y - abbcmp->positionOffset.y,
                  abbcmp->size.x, abbcmp->size.y},
                 {0, 0}, transcmp->rotation,

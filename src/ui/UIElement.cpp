@@ -55,9 +55,14 @@ namespace Base
     return _alpha;
   }
 
-  void UIElement::SetPosition(Vector2 position)
+  void UIElement::SetPosition(Vector2 position, bool final)
   {
     _basePosition = position;
+
+    if (final)
+    {
+      _layoutPosition = position;
+    }
   }
 
   void UIElement::SetPositionalOffset(Vector2 offset)
