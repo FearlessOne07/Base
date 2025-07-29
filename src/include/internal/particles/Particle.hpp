@@ -1,7 +1,6 @@
 #pragma once
-
-#include "base/assets/AssetHandle.hpp"
 #include "base/particles/ParticleEmitter.hpp"
+#include "base/sprites/Sprite.hpp"
 #include "base/util/Pauseable.hpp"
 #include "raylib.h"
 namespace Base
@@ -35,8 +34,7 @@ namespace Base
     int sideNumber = 3;
 
     // Texture
-    AssetHandle<Texture> texture;
-    Rectangle textureSource = {0, 0, 0, 0};
+    Sprite sprite;
 
     // Rotation
     float rotationSpeed = 0.f;

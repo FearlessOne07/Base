@@ -11,6 +11,10 @@ namespace Base
   {
   }
 
+  SpriteComponent::SpriteComponent(const Sprite &sprite) : _sprite(sprite)
+  {
+  }
+
   void SpriteComponent::SetSourceIndex(const Vector2 &source)
   {
     _sprite.SetSourceIndex(source);
@@ -21,10 +25,9 @@ namespace Base
     return _sprite.GetTextureSourceRect();
   }
 
-  const AssetHandle<Texture> &SpriteComponent::GetTexture() const
+  const Sprite &SpriteComponent::GetSprite() const
   {
-    return _sprite.GetTexture();
-    ;
+    return _sprite;
   }
 
   const Vector2 SpriteComponent::GetTargetSize() const

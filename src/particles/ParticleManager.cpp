@@ -100,16 +100,15 @@ namespace Base
 
       if (particle->shape == ParticleEmitter::ParticleShape::TEXTURE)
       {
-        if (!emitter.particleTexture.Get())
+        if (!emitter.particleSprite)
         {
-          THROW_BASE_RUNTIME_ERROR("Texture not provided for textured particle emitter");
+          THROW_BASE_RUNTIME_ERROR("Sprite not provided for textured particle emitter");
         }
-        particle->texture = emitter.particleTexture;
-        particle->textureSource = emitter.particleTextureSource;
+        particle->sprite = emitter.particleSprite;
       }
     }
-    // Position
 
+    // Position
     switch (emitter.emissionType)
     {
     case ParticleEmitter::EmissionType::POINT: {
@@ -299,7 +298,7 @@ namespace Base
         else if (particle->shape == ParticleEmitter::ParticleShape::TEXTURE)
         {
           DrawTexturePro( //
-            *particle->texture.Get()->GetRaylibTexture(), particle->textureSource,
+            *particle->sprite.GetTexture().Get()->GetRaylibTexture(), particle->sprite.GetTextureSourceRect(),
             {
               particle->position.x,
               particle->position.y,

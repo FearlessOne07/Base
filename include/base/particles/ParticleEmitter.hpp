@@ -1,6 +1,5 @@
 #pragma once
-#include "base/assets/AssetHandle.hpp"
-#include "base/textures/Texture.hpp"
+#include "base/sprites/Sprite.hpp"
 #include "base/util/Pauseable.hpp"
 #include <cstdint>
 #include <functional>
@@ -56,7 +55,7 @@ namespace Base
     int particleSideNumber = 3;
 
     // Texture
-    AssetHandle<Texture> particleTexture;
+    Sprite particleSprite;
 
     Rectangle particleTextureSource = {0, 0, 0, 0};
 

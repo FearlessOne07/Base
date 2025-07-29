@@ -73,7 +73,7 @@ namespace Base
           if (sprtmp && transcmp)
           {
             DrawTexturePro( //
-              *sprtmp->GetTexture().Get()->GetRaylibTexture(), sprtmp->GetTextureSourceRect(),
+              *sprtmp->GetSprite().GetTexture().Get()->GetRaylibTexture(), sprtmp->GetTextureSourceRect(),
               {transcmp->position.x, transcmp->position.y, sprtmp->GetTargetSize().x, sprtmp->GetTargetSize().y},
               {sprtmp->GetTargetSize().x / 2, sprtmp->GetTargetSize().y / 2}, transcmp->rotation, WHITE //
             );

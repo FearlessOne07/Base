@@ -17,10 +17,11 @@ namespace Base
       const AssetHandle<Texture> &textureHandle, const Vector2 &sourceIndex, const Vector2 &sourceSize,
       const Vector2 &destinationSize //
     );
+    SpriteComponent(const Sprite &sprite);
     void SetSourceIndex(const Vector2 &source);
     Vector2 GetSourceIndex() const;
     const Rectangle GetTextureSourceRect() const;
     const Vector2 GetTargetSize() const;
-    const AssetHandle<Texture> &GetTexture() const;
+    const Sprite &GetSprite() const;
   };
 } // namespace Base
