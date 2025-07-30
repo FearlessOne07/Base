@@ -63,6 +63,8 @@ namespace Base
     void BeginCamera();
     void EndCamera();
 
+    float GetCameraZoom() const;
+
     // Shader Effect Management
     template <typename T, typename... Args> void AddShaderEffect(Args &&...args)
     {

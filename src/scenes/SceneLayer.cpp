@@ -62,6 +62,10 @@ namespace Base
     return _size;
   }
 
+  float SceneLayer::GetCameraZoom() const
+  {
+    return _renderLayer->GetCameraZoom();
+  }
   Vector2 SceneLayer::GetLayerMousePosition() const
   {
     auto windowWidth = static_cast<float>(GetScreenWidth());

@@ -41,6 +41,7 @@ namespace Base
 
     Vector2 GetSize() const;
     Vector2 GetLayerMousePosition() const;
+    float GetCameraZoom() const;
 
     // Camera
     void SetCameraMode(Camera2DExtMode mode);

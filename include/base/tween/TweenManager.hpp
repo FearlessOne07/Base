@@ -59,7 +59,9 @@ namespace Base
       }
 
       if (_tweens.find(key) != _tweens.end())
+      {
         _tweens.erase(key);
+      }
 
       std::function<float(float)> easingFunction = nullptr;
       switch (tweenSettings.easingType)

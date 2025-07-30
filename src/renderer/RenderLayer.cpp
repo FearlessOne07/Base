@@ -162,6 +162,11 @@ namespace Base
     return _layerCamera.GetScreenToWorld(position);
   };
 
+  float RenderLayer::GetCameraZoom() const
+  {
+    return _layerCamera.GetZoom();
+  }
+
   void RenderLayer::BeginCamera()
   {
     _layerCamera.Begin();

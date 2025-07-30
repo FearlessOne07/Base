@@ -147,6 +147,11 @@ namespace Base
     return GetScreenToWorld2D(position, _camera);
   }
 
+  float Camera2DExt::GetZoom() const
+  {
+    return _camera.zoom;
+  }
+
   void Camera2DExt::Begin()
   {
     BeginMode2D(_camera);

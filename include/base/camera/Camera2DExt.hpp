@@ -54,6 +54,7 @@ namespace Base
     void Shake(const CameraShakeConfig &config);
     void Update(float dt);
     Vector2 GetScreenToWorld(Vector2 position) const;
+    float GetZoom() const;
     void Begin();
     void End();
   };
