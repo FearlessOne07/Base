@@ -5,8 +5,9 @@
 
 namespace Base
 {
-  struct RigidBodyComponent : public Component
+  class RigidBodyComponent : public Component
   {
+  public:
     // General
     Vector2 direction = {0, 0};
     bool isKinematic = true;

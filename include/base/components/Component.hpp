@@ -5,12 +5,10 @@ namespace Base
 {
 
   class Entity;
-  struct Component
+  class Component
   {
-
-    virtual ~Component() = default;
-
   public:
+    virtual ~Component() = default;
     Entity *GetOwner();
     void SetOwner(std::shared_ptr<Entity> owner);
 

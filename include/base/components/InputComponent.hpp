@@ -6,8 +6,9 @@
 namespace Base
 {
 
-  struct InputComponent : public Component
+  class InputComponent : public Component
   {
+  public:
     std::unordered_map<int, std::function<void()>> keyDownBinds;
     std::unordered_map<int, std::function<void()>> keyReleasedBinds;
     std::unordered_map<int, std::function<void()>> keyPressedBinds;

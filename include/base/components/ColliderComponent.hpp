@@ -4,7 +4,7 @@
 
 namespace Base
 {
-  struct ColliderComponent : public Component
+  class ColliderComponent : public Component
   {
   public:
     enum struct Shape : uint8_t

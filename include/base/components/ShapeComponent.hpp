@@ -4,7 +4,7 @@
 
 namespace Base
 {
-  struct   ShapeComponent : public Component
+  class ShapeComponent : public Component
   {
   public:
     float radius = 0.f;

@@ -7,7 +7,7 @@
 
 namespace Base
 {
-  struct SpriteComponent : public Component
+  class SpriteComponent : public Component
   {
   private:
     Sprite _sprite;

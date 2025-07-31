@@ -5,8 +5,9 @@
 
 namespace Base
 {
-  struct ImpulseComponent : public Component
+  class ImpulseComponent : public Component
   {
+  public:
     Vector2 direction = {0, 0};
     float force = 0;
 

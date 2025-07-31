@@ -6,6 +6,7 @@
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/textures/Texture.hpp"
 #include "raylib.h"
 #include <iterator>
 #include <memory>
@@ -120,6 +121,11 @@ namespace Base
     {
       int v = std::get<int>(value);
       SetShaderValue(*shader, loc, &v, SHADER_UNIFORM_INT);
+    }
+    else if (std::holds_alternative<Texture2D>(value))
+    {
+      Texture2D v = std::get<Texture2D>(value);
+      SetShaderValueTexture(*shader, loc, v);
     }
   }
 

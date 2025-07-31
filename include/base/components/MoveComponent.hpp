@@ -3,7 +3,7 @@
 
 namespace Base
 {
-  struct MoveComponent : public Component
+  class MoveComponent : public Component
   {
   public:
     float driveForce = 0.f;

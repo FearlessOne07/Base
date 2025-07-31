@@ -2,8 +2,9 @@
 
 namespace Base
 {
-  struct GravityComponent : public Component
+  class GravityComponent : public Component
   {
+  public:
     float gravityStrength = 0;
     float jumpHeight = 0;
 
