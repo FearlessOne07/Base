@@ -4,10 +4,12 @@
 
 namespace Base
 {
-  NinePatchSprite::NinePatchSprite(                                                             //
-    const AssetHandle<Texture> &texture, Border border, Vector2 sourceIndex, Vector2 sourceSize //
+  NinePatchSprite::NinePatchSprite( //
+    const AssetHandle<Texture> &texture, Border border, Vector2 sourceIndex, Vector2 sourceSize,
+    float borderScaleMultiplier //
     )
-    : _texture(texture), _border(border), _sourceIndex(sourceIndex), _sourceSize(sourceSize)
+    : _texture(texture), _border(border), _sourceIndex(sourceIndex), _sourceSize(sourceSize),
+      _borderScaleMultiplier(borderScaleMultiplier)
   {
     float spriteX = sourceIndex.x * sourceSize.x;
     float spriteY = sourceIndex.y * sourceSize.y;
@@ -73,7 +75,7 @@ namespace Base
 
     float destArea = width * height;
     float refArea = 160 * 60;
-    float _scale = std::max<float>(std::sqrt(destArea / refArea) * 1.5, 2.f);
+    float _scale = std::max<float>(std::sqrt(destArea / refArea) * _borderScaleMultiplier, 2.f);
 
     // Scale the border sizes for rendering
     float scaledBorderLeft = _border.left * _scale;

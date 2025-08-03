@@ -19,9 +19,13 @@ namespace Base
     Vector2 _sourceIndex = {0, 0};
     Vector2 _sourceSize = {0, 0};
     Rectangle _patches[9];
+    float _borderScaleMultiplier = 1;
 
   public:
-    NinePatchSprite(const AssetHandle<Texture> &texture, Border border, Vector2 sourceIndex, Vector2 sourceSize);
+    NinePatchSprite( //
+      const AssetHandle<Texture> &texture, Border border, Vector2 sourceIndex, Vector2 sourceSize,
+      float borderScaleMultiplier = 2.f //
+    );
     NinePatchSprite() = default;
     void Draw(const Rectangle &dest, unsigned char alpha);
     void SetSourceIndex(const Vector2 &index);
