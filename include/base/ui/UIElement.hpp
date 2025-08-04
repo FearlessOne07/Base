@@ -104,7 +104,7 @@ namespace Base
     virtual void Show();
     virtual void Hide();
     void SetVisibilityOff();
-    std::function<void()> _onShow = nullptr;
-    std::function<void()> _onHide = nullptr;
+    std::function<void()> onShow = nullptr;
+    std::function<void()> onHide = nullptr;
   };
 } // namespace Base

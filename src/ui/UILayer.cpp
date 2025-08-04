@@ -8,7 +8,11 @@ namespace Base
   {
     for (auto &element : _elements)
     {
-      element->_onInputEvent(event);
+      if (element->IsVisible())
+      {
+        element->_onInputEvent(event);
+      }
+
       if (event->isHandled)
       {
         break;

@@ -335,9 +335,9 @@ namespace Base
 
   void UIContainer::Hide()
   {
-    if (_onHide)
+    if (onHide)
     {
-      _onHide();
+      onHide();
     }
 
     for (auto &element : _childElements)
@@ -349,9 +349,9 @@ namespace Base
   void UIContainer::Show()
   {
     _isHidden = false;
-    if (_onShow)
+    if (onShow)
     {
-      _onShow();
+      onShow();
     }
 
     for (auto &element : _childElements)

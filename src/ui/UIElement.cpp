@@ -137,9 +137,9 @@ namespace Base
   void UIElement::Show()
   {
     _isHidden = false;
-    if (_onShow)
+    if (onShow)
     {
-      _onShow();
+      onShow();
     }
   }
 
@@ -150,9 +150,9 @@ namespace Base
 
   void UIElement::Hide()
   {
-    if (_onHide)
+    if (onHide)
     {
-      _onHide();
+      onHide();
     }
   }
 
