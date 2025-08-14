@@ -56,7 +56,6 @@ set(SRC
   "./assets/BaseAsset.cpp"
 
   "./tween/TweenManager.cpp"
-  "./tween/ITween.cpp"
   "./tween/Tween.cpp"
 
   "./util/Exception.cpp"

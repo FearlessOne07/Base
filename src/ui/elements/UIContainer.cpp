@@ -1,4 +1,5 @@
 #include "base/ui/elements/UIContainer.hpp"
+#include "base/util/Draw.hpp"
 #include "raylib.h"
 #include <algorithm>
 #include <memory>
@@ -68,6 +69,7 @@ namespace Base
       _gapSize = gapCount > 0 ? std::max(0.0f, availableHeight / gapCount) : 0.0f;
     }
 
+    // FIT mode recalculates container size
     float currentOffset = 0;
     if (_elementSizeMode == ElementSizeMode::FIT)
     {
@@ -82,48 +84,64 @@ namespace Base
         {
           currentOffset += _gapSize;
         }
+
         newContainerSize.x = std::max(newContainerSize.x, element->GetBaseSize().x);
         currentOffset += element->GetBaseSize().y;
       }
-      currentOffset += _padding.x;
+      currentOffset += _padding.y;
       newContainerSize.x += _padding.x * 2;
       newContainerSize.y = currentOffset;
       _baseSize = newContainerSize;
       _currentSize = newContainerSize;
     }
+
     UpdatePosition();
 
-    // Calculate Layout
+    // Layout each child
     currentOffset = 0;
     for (auto &element : _childElements)
     {
       const UILayoutSettings &layoutSettings = element->GetLayoutSettings();
       Vector2 nextPosition = {0, 0};
 
+      // Horizontal alignment (cross axis)
       switch (layoutSettings.hAlignment)
       {
       case UIHAlignment::LEFT:
         nextPosition.x = GetPosition().x + _padding.x;
         break;
       case UIHAlignment::CENTER:
-        nextPosition.x = GetPosition().x + _baseSize.x / 2.f;
-        nextPosition.x -= element->GetSize().x / 2;
+        nextPosition.x = GetPosition().x + _baseSize.x / 2.f - element->GetSize().x / 2;
         break;
       case UIHAlignment::RIGHT:
         nextPosition.x = (GetPosition().x + _baseSize.x) - _padding.x - element->GetSize().x;
         break;
       }
 
+      // Increment for main axis position
       if (currentOffset == 0)
       {
         currentOffset += _padding.y;
-        nextPosition.y = GetPosition().y + currentOffset;
       }
       else
       {
         currentOffset += _gapSize;
-        nextPosition.y = GetPosition().y + currentOffset;
       }
+
+      // Vertical alignment (main axis)
+      switch (layoutSettings.vAlignment)
+      {
+      case UIVAlignment::TOP:
+        nextPosition.y = GetPosition().y + currentOffset;
+        break;
+      case UIVAlignment::CENTER:
+        nextPosition.y = GetPosition().y + currentOffset + element->GetBaseSize().y / 2.f - element->GetSize().y / 2;
+        break;
+      case UIVAlignment::BOTTOM:
+        nextPosition.y = GetPosition().y + currentOffset + element->GetBaseSize().y - element->GetSize().y;
+        break;
+      }
+
       currentOffset += element->GetBaseSize().y;
 
       if (std::dynamic_pointer_cast<UIContainer>(element))
@@ -191,8 +209,7 @@ namespace Base
         nextPosition.y = GetPosition().y + _padding.y;
         break;
       case UIVAlignment::CENTER:
-        nextPosition.y = GetPosition().y + _baseSize.y / 2.f;
-        nextPosition.y -= element->GetSize().y / 2;
+        nextPosition.y = GetPosition().y + _baseSize.y / 2.f - element->GetSize().y / 2;
         break;
       case UIVAlignment::BOTTOM:
         nextPosition.y = (GetPosition().y + _baseSize.y) - _padding.y - element->GetSize().y;
@@ -202,13 +219,25 @@ namespace Base
       if (currentOffset == 0)
       {
         currentOffset += _padding.x;
-        nextPosition.x = GetPosition().x + currentOffset;
       }
       else
       {
         currentOffset += _gapSize;
-        nextPosition.x = GetPosition().x + currentOffset;
       }
+
+      switch (layoutSettings.hAlignment)
+      {
+      case UIHAlignment::LEFT:
+        nextPosition.x = GetPosition().x + currentOffset;
+        break;
+      case UIHAlignment::CENTER:
+        nextPosition.x = GetPosition().x + currentOffset + (element->GetBaseSize().x / 2) - (element->GetSize().x / 2);
+        break;
+      case UIHAlignment::RIGHT:
+        nextPosition.x = GetPosition().x + currentOffset + element->GetBaseSize().x - element->GetSize().x;
+        break;
+      }
+
       currentOffset += element->GetBaseSize().x;
 
       if (std::dynamic_pointer_cast<UIContainer>(element))
@@ -312,8 +341,8 @@ namespace Base
       {
         alpha = _alpha;
       }
-      DrawRectangleRec( //
-        {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y},
+      DrawRectangleBase( //
+        {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, {0, 0}, 0,
         {
           _backgroundColor.r,
           _backgroundColor.g,

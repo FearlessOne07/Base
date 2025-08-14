@@ -1,6 +1,5 @@
 #pragma once
 #include "TweenKey.hpp"
-#include "base/tween/ITween.hpp"
 #include "base/tween/Tween.hpp"
 #include "base/util/Easings.hpp"
 #include <functional>
