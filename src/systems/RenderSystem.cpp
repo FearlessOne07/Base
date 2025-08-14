@@ -54,6 +54,10 @@ namespace Base
               frame.elapsed = 0;
               animcmp->Advance();
             }
+            else
+            {
+              frame.elapsed += dt;
+            }
           }
 
           if (sprtmp && transcmp)
