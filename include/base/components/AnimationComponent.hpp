@@ -1,24 +1,37 @@
 #include "base/components/Component.hpp"
 #include "raylib.h"
+#include <unordered_map>
+#include <vector>
 
 namespace Base
 {
+  struct AnimationFrame
+  {
+    AnimationFrame(Vector2 frameOrgin, Vector2 frameSize, float frameDuration)
+      : origin(frameOrgin), size(frameSize), duration(frameDuration)
+    {
+    }
+
+    Vector2 origin{0, 0};
+    Vector2 size = {0, 0};
+    float duration = 0;
+    float elapsed = 0.f;
+  };
+
+  using Animation = std::vector<AnimationFrame>;
+
   class AnimationComponent : public Component
   {
   private:
-    int _frameCount = 0;
-    Vector2 _animationStartIndex{0, 0};
-    bool _loop = false;
-    int _currentFrame = 0;
-    float _frameTime = 0;
-    float _frameTimer = 0;
+    std::unordered_map<std::string, Animation> _animations;
+    float _currentFrame = 0;
+    std::string _currentAnimation = "";
 
   public:
-    AnimationComponent(int frameCount, Vector2 animationStartIndex, float duration, bool loop = true);
-    int GetCurrentFrame() const;
-    bool IsLoop() const;
-    bool IsDone() const;
-    void Advance(float dt);
-    void Reset();
+    AnimationFrame &GetNextFrame();
+    AnimationComponent(const std::string &initialAnimation);
+    void AddAnimation(const std::string &name, const Animation &animation);
+    void SwitchAnimation(const std::string &name);
+    void Advance();
   };
 } // namespace Base

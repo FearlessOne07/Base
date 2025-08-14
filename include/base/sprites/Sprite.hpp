@@ -9,7 +9,7 @@ namespace Base
   {
   private:
     AssetHandle<Texture> _texture;
-    Vector2 _sourceIndex = {0, 0};
+    Vector2 _sourcePos = {0, 0};
     Vector2 _sourceSize = {0, 0};
     Vector2 _targetSize = {0, 0};
 
@@ -24,19 +24,13 @@ namespace Base
     Sprite &operator=(const Sprite &other);
     Sprite &operator=(Sprite &&other) noexcept;
 
-    // Setters/ Getters
-    void SetSourceIndex(const Vector2 &source);
-    void SetDestinationSize(const Vector2 &size);
-    Vector2 GetSourceIndex() const;
-    Vector2 GetSourceSize() const;
-    const Rectangle GetTextureSourceRect() const;
-    const Vector2 GetTargetSize() const;
-    const AssetHandle<Texture> &GetTexture() const;
-
     // Converters
     inline operator bool()
     {
       return _texture;
     }
+
+    void Render(Vector2 position, Color tint);
+    void SetTargetSize(Vector2 size);
   };
 } // namespace Base

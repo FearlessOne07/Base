@@ -1,47 +1,48 @@
 #include "base/components/AnimationComponent.hpp"
+#include "base/util/Exception.hpp"
+#include "base/util/Strings.hpp"
 
 namespace Base
 {
-  int AnimationComponent::GetCurrentFrame() const
+  AnimationComponent::AnimationComponent(const std::string &initialAnimation) : _currentAnimation(initialAnimation)
   {
-    return _currentFrame;
   }
 
-  AnimationComponent::AnimationComponent(int frameCount, Vector2 animationStartIndex, float frameTime, bool loop)
-    : _frameCount(frameCount), _animationStartIndex(animationStartIndex), _frameTime(frameTime), _loop(loop)
+  AnimationFrame &AnimationComponent::GetNextFrame()
   {
-    _currentFrame = _animationStartIndex.x;
+    return _animations.at(_currentAnimation)[_currentFrame];
   }
 
-  bool AnimationComponent::IsLoop() const
+  void AnimationComponent::AddAnimation(const std::string &name, const Animation &animation)
   {
-    return _loop;
-  }
+    std::string animName = Strings::ToLower(name);
 
-  void AnimationComponent::Advance(float dt)
-  {
-    if (_frameTimer >= _frameTime)
+    if (!_animations.contains(animName))
     {
-      _frameTimer = 0;
-      _currentFrame++;
-      if (_loop && _currentFrame >= _animationStartIndex.x + _frameCount)
-      {
-        _currentFrame = _animationStartIndex.x;
-      }
+      _animations[animName] = animation;
+    }
+  }
+
+  void AnimationComponent::Advance()
+  {
+    _currentFrame++;
+    if (_currentFrame >= _animations[_currentAnimation].size())
+    {
+      _currentFrame = 0;
+    }
+  }
+
+  void AnimationComponent::SwitchAnimation(const std::string &name)
+  {
+    std::string animName = Strings::ToLower(name);
+
+    if (_animations.contains(animName))
+    {
+      _currentAnimation = animName;
     }
     else
     {
-      _frameTimer += dt;
+      THROW_BASE_RUNTIME_ERROR("Animation " + animName + " does not exist on specified entity");
     }
-  }
-
-  void AnimationComponent::Reset()
-  {
-    _currentFrame = 0;
-  }
-
-  bool AnimationComponent::IsDone() const
-  {
-    return _currentFrame >= _frameCount;
   }
 } // namespace Base

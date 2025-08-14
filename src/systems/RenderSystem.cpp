@@ -1,4 +1,5 @@
 #include "internal/systems/RenderSystem.hpp"
+#include "base/components/AnimationComponent.hpp"
 #include "base/components/ColliderComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/SpriteComponent.hpp"
@@ -37,43 +38,28 @@ namespace Base
           }
         }
 
-        if (e->HasComponent<ColliderComponent>())
-        {
-          auto *abbcmp = e->GetComponent<ColliderComponent>();
-
-          if (abbcmp->draw)
-          {
-            if (abbcmp->fill)
-            {
-              DrawRectangleBase( //
-                {transcmp->position.x - abbcmp->positionOffset.x, transcmp->position.y - abbcmp->positionOffset.y,
-                 abbcmp->size.x, abbcmp->size.y},
-                {0, 0}, transcmp->rotation,
-                abbcmp->color //
-              );
-            }
-            else
-            {
-              DrawRectangleLinesEx( //
-                {
-                  transcmp->position.x - abbcmp->positionOffset.x,
-                  transcmp->position.y - abbcmp->positionOffset.y,
-                  abbcmp->size.x,
-                  abbcmp->size.y,
-                },                                      //
-                abbcmp->nonFillThickness, abbcmp->color //
-              );
-            }
-          }
-        }
-
         if (e->HasComponent<SpriteComponent>())
         {
+
           auto *sprtmp = e->GetComponent<SpriteComponent>();
+          if (e->HasComponent<AnimationComponent>())
+          {
+            auto animcmp = e->GetComponent<AnimationComponent>();
+
+            AnimationFrame &frame = animcmp->GetNextFrame();
+            sprtmp->SetSourceRect({frame.origin.x, frame.origin.y, frame.size.x, frame.size.y});
+
+            if (frame.elapsed >= frame.duration)
+            {
+              frame.elapsed = 0;
+              animcmp->Advance();
+            }
+          }
+
           if (sprtmp && transcmp)
           {
             DrawTexturePro( //
-              *sprtmp->GetSprite().GetTexture().Get()->GetRaylibTexture(), sprtmp->GetTextureSourceRect(),
+              *sprtmp->GetTexture().Get()->GetRaylibTexture(), sprtmp->GetSourceRect(),
               {transcmp->position.x, transcmp->position.y, sprtmp->GetTargetSize().x, sprtmp->GetTargetSize().y},
               {sprtmp->GetTargetSize().x / 2, sprtmp->GetTargetSize().y / 2}, transcmp->rotation, WHITE //
             );

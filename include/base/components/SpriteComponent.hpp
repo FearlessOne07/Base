@@ -10,18 +10,19 @@ namespace Base
   class SpriteComponent : public Component
   {
   private:
-    Sprite _sprite;
+    AssetHandle<Texture> _textureHandle;
+    Vector2 _source = {0, 0};
+    Vector2 _size{0, 0};
+    Vector2 _targetSize{0, 0};
 
   public:
     SpriteComponent( //
-      const AssetHandle<Texture> &textureHandle, const Vector2 &sourceIndex, const Vector2 &sourceSize,
-      const Vector2 &destinationSize //
+      const AssetHandle<Texture> &textureHandle, const Vector2 &source, const Vector2 &sourceSize,
+      const Vector2 &targetSize //
     );
-    SpriteComponent(const Sprite &sprite);
-    void SetSourceIndex(const Vector2 &source);
-    Vector2 GetSourceIndex() const;
-    const Rectangle GetTextureSourceRect() const;
-    const Vector2 GetTargetSize() const;
-    const Sprite &GetSprite() const;
+    const Rectangle GetSourceRect() const;
+    void SetSourceRect(const Rectangle &rect);
+    const AssetHandle<Texture> &GetTexture() const;
+    Vector2 GetTargetSize() const;
   };
 } // namespace Base

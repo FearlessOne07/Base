@@ -297,16 +297,8 @@ namespace Base
         }
         else if (particle->shape == ParticleEmitter::ParticleShape::TEXTURE)
         {
-          DrawTexturePro( //
-            *particle->sprite.GetTexture().Get()->GetRaylibTexture(), particle->sprite.GetTextureSourceRect(),
-            {
-              particle->position.x,
-              particle->position.y,
-              size.x,
-              size.y,
-            },
-            {size.x / 2, size.y / 2}, particle->rotation, color //
-          );
+          particle->sprite.SetTargetSize(size);
+          particle->sprite.Render(particle->position, color);
         }
       }
     }
