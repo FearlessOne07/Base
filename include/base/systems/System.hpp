@@ -1,10 +1,10 @@
 #pragma once
 #include "base/entities/Entity.hpp"
+#include "base/entities/EntityManager.hpp"
 #include "base/input/InputEvent.hpp"
 
 namespace Base
 {
-  class EntityManager;
   class Scene;
   class System
   {

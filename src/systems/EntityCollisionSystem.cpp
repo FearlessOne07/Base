@@ -29,8 +29,8 @@ namespace Base
         {
           if (e1->HasComponent<ColliderComponent>() && e2->HasComponent<ColliderComponent>())
           {
-            auto *abb1 = e1->GetComponent<ColliderComponent>();
-            auto *abb2 = e2->GetComponent<ColliderComponent>();
+            auto abb1 = e1->GetComponent<ColliderComponent>();
+            auto abb2 = e2->GetComponent<ColliderComponent>();
             bool collision = false;
             Vector2 normal = {0, 0};
 
@@ -83,10 +83,10 @@ namespace Base
 
   bool EntityCollisionSystem::BoxVsBoxCollision(std::shared_ptr<Entity> &e1, std::shared_ptr<Entity> &e2)
   {
-    auto *abb1 = e1->GetComponent<ColliderComponent>();
-    auto *abb2 = e2->GetComponent<ColliderComponent>();
-    auto *trans1 = e1->GetComponent<TransformComponent>();
-    auto *trans2 = e2->GetComponent<TransformComponent>();
+    auto abb1 = e1->GetComponent<ColliderComponent>();
+    auto abb2 = e2->GetComponent<ColliderComponent>();
+    auto trans1 = e1->GetComponent<TransformComponent>();
+    auto trans2 = e2->GetComponent<TransformComponent>();
 
     Rectangle rect1 = {
       trans1->position.x - abb1->positionOffset.x,
@@ -109,11 +109,11 @@ namespace Base
     std::shared_ptr<Entity> &e1, std::shared_ptr<Entity> &e2, Vector2 &outNormal //
   )
   {
-    auto *abb1 = e1->GetComponent<ColliderComponent>();
+    auto abb1 = e1->GetComponent<ColliderComponent>();
     auto rbcmp1 = e1->GetComponent<RigidBodyComponent>();
-    auto *abb2 = e2->GetComponent<ColliderComponent>();
-    auto *trans1 = e1->GetComponent<TransformComponent>();
-    auto *trans2 = e2->GetComponent<TransformComponent>();
+    auto abb2 = e2->GetComponent<ColliderComponent>();
+    auto trans1 = e1->GetComponent<TransformComponent>();
+    auto trans2 = e2->GetComponent<TransformComponent>();
 
     Vector2 position1 = trans1->position - abb1->positionOffset;
     Vector2 position2 = trans2->position - abb2->positionOffset;
@@ -126,10 +126,10 @@ namespace Base
     std::shared_ptr<Entity> &circleEntity, std::shared_ptr<Entity> &boxEntity, Vector2 &outNormal //
   )
   {
-    auto *colCircle = circleEntity->GetComponent<ColliderComponent>();
-    auto *colBox = boxEntity->GetComponent<ColliderComponent>();
-    auto *transCircle = circleEntity->GetComponent<TransformComponent>();
-    auto *transBox = boxEntity->GetComponent<TransformComponent>();
+    auto colCircle = circleEntity->GetComponent<ColliderComponent>();
+    auto colBox = boxEntity->GetComponent<ColliderComponent>();
+    auto transCircle = circleEntity->GetComponent<TransformComponent>();
+    auto transBox = boxEntity->GetComponent<TransformComponent>();
 
     Vector2 rectBoundsX = {
       transBox->position.x - colBox->positionOffset.x,

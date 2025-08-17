@@ -117,7 +117,7 @@ namespace Base
 
   void Renderer::Render()
   {
-    auto *rd = RenderContextSingleton::GetInstance();
+    auto rd = RenderContextSingleton::GetInstance();
 
     // Draw Render texture to the Screen
     BeginDrawing();

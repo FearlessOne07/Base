@@ -20,11 +20,11 @@ namespace Base
       auto e = item->item;
       if (e)
       {
-        auto *transcmp = e->GetComponent<TransformComponent>();
+        auto transcmp = e->GetComponent<TransformComponent>();
 
         if (e->HasComponent<ShapeComponent>())
         {
-          auto *shc = e->GetComponent<ShapeComponent>();
+          auto shc = e->GetComponent<ShapeComponent>();
 
           if (shc->fill)
           {
@@ -41,7 +41,7 @@ namespace Base
         if (e->HasComponent<SpriteComponent>())
         {
 
-          auto *sprtmp = e->GetComponent<SpriteComponent>();
+          auto sprtmp = e->GetComponent<SpriteComponent>();
           if (e->HasComponent<AnimationComponent>())
           {
             auto animcmp = e->GetComponent<AnimationComponent>();

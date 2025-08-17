@@ -37,7 +37,7 @@ namespace Base
         break;
       }
 
-      auto *inpcmp = e->GetComponent<InputComponent>();
+      auto inpcmp = e->GetComponent<InputComponent>();
       if (event->action == KeyEvent::Action::PRESSED)
       {
         for (auto &[key, action] : inpcmp->keyPressedBinds)
@@ -84,7 +84,7 @@ namespace Base
         break;
       }
 
-      auto *inpcmp = e->GetComponent<InputComponent>();
+      auto inpcmp = e->GetComponent<InputComponent>();
       if (event->action == MouseButtonEvent::Action::PRESSED)
       {
         for (auto &[key, action] : inpcmp->mousePressedBinds)

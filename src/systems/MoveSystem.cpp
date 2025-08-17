@@ -23,8 +23,8 @@ namespace Base
       auto e = item->item;
       if (e)
       {
-        auto *rbcmp = e->GetComponent<RigidBodyComponent>();
-        auto *mvcmp = e->GetComponent<MoveComponent>();
+        auto rbcmp = e->GetComponent<RigidBodyComponent>();
+        auto mvcmp = e->GetComponent<MoveComponent>();
         auto transcmp = e->GetComponent<TransformComponent>();
 
         if (!rbcmp->isKinematic)
@@ -55,7 +55,7 @@ namespace Base
 
             if (e->HasComponent<ImpulseComponent>())
             {
-              auto *impcmp = e->GetComponent<ImpulseComponent>();
+              auto impcmp = e->GetComponent<ImpulseComponent>();
               if (impcmp->force > 0)
               {
                 Vector2 impDirection = Vector2Normalize(impcmp->direction);
@@ -91,10 +91,10 @@ namespace Base
 
   void MoveSystem::HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager)
   {
-    auto *mvcmp1 = e->GetComponent<MoveComponent>();
-    auto *abbcmp1 = e->GetComponent<ColliderComponent>();
-    auto *transcmp1 = e->GetComponent<TransformComponent>();
-    auto *rbcmp1 = e->GetComponent<RigidBodyComponent>();
+    auto mvcmp1 = e->GetComponent<MoveComponent>();
+    auto abbcmp1 = e->GetComponent<ColliderComponent>();
+    auto transcmp1 = e->GetComponent<TransformComponent>();
+    auto rbcmp1 = e->GetComponent<RigidBodyComponent>();
     auto entites = entityManager->QueryArea(Circle(transcmp1->position, 30));
 
     for (auto &item : entites)
@@ -107,7 +107,7 @@ namespace Base
       )
       {
 
-        auto *abbcmp2 = e2->GetComponent<ColliderComponent>();
+        auto abbcmp2 = e2->GetComponent<ColliderComponent>();
 
         if (abbcmp1->shape == ColliderComponent::Shape::BOX && abbcmp2->shape == ColliderComponent::Shape::BOX)
         {
@@ -120,15 +120,15 @@ namespace Base
   void MoveSystem::ResolveBoxBox(std::shared_ptr<Entity> &e1, std::shared_ptr<Entity> &e2, int axis)
   {
     // e1
-    auto *abbcmp1 = e1->GetComponent<ColliderComponent>();
-    auto *mvcmp1 = e1->GetComponent<MoveComponent>();
-    auto *transcmp1 = e1->GetComponent<TransformComponent>();
-    auto *rbcmp1 = e1->GetComponent<RigidBodyComponent>();
+    auto abbcmp1 = e1->GetComponent<ColliderComponent>();
+    auto mvcmp1 = e1->GetComponent<MoveComponent>();
+    auto transcmp1 = e1->GetComponent<TransformComponent>();
+    auto rbcmp1 = e1->GetComponent<RigidBodyComponent>();
 
     // e2
-    auto *abbcmp2 = e2->GetComponent<ColliderComponent>();
-    auto *transcmp2 = e2->GetComponent<TransformComponent>();
-    auto *rbcmp2 = e2->GetComponent<RigidBodyComponent>();
+    auto abbcmp2 = e2->GetComponent<ColliderComponent>();
+    auto transcmp2 = e2->GetComponent<TransformComponent>();
+    auto rbcmp2 = e2->GetComponent<RigidBodyComponent>();
     abbcmp2->lastPosition = transcmp2->position;
 
     // Apply Positional Offset
@@ -173,7 +173,7 @@ namespace Base
 
           if (e1->HasComponent<GravityComponent>())
           {
-            auto *gravcmp = e1->GetComponent<GravityComponent>();
+            auto gravcmp = e1->GetComponent<GravityComponent>();
             gravcmp->isJumping = false;
           }
         }

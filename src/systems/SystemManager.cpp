@@ -8,7 +8,9 @@
 #include "internal/systems/EntityCollisionSystem.hpp"
 #include "internal/systems/InputSystem.hpp"
 #include "internal/systems/MoveSystem.hpp"
+#include "internal/systems/ProximitySystem.hpp"
 #include "internal/systems/RenderSystem.hpp"
+#include "internal/systems/StateSystem.hpp"
 #include <memory>
 #include <typeindex>
 #include <utility>
@@ -75,9 +77,13 @@ namespace Base
     std::shared_ptr<MoveSystem> _mvSystem = std::make_shared<MoveSystem>();
     std::shared_ptr<InputSystem> _iSystem = std::make_shared<InputSystem>();
     std::shared_ptr<EntityCollisionSystem> _ecSystem = std::make_shared<EntityCollisionSystem>();
+    std::shared_ptr<ProximitySystem> _proxSystem = std::make_shared<ProximitySystem>();
+    std::shared_ptr<StateSystem> _stateSystem = std::make_shared<StateSystem>();
     RegisterSystem(std::type_index(typeid(RenderSystem)), _rSystem, true);
+    RegisterSystem(std::type_index(typeid(StateSystem)), _stateSystem, false);
     RegisterSystem(std::type_index(typeid(MoveSystem)), _mvSystem, false);
     RegisterSystem(std::type_index(typeid(InputSystem)), _iSystem, false);
+    RegisterSystem(std::type_index(typeid(ProximitySystem)), _proxSystem, false);
     RegisterSystem(std::type_index(typeid(EntityCollisionSystem)), _ecSystem, false);
   }
 

@@ -9,7 +9,7 @@ namespace Base
   {
   public:
     virtual ~Component() = default;
-    Entity *GetOwner();
+    std::shared_ptr<Entity> GetOwner();
     void SetOwner(std::shared_ptr<Entity> owner);
 
   private:

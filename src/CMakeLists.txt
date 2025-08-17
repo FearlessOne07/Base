@@ -36,6 +36,8 @@ set(SRC
   "./systems/RenderSystem.cpp"
   "./systems/InputSystem.cpp"
   "./systems/EntityCollisionSystem.cpp"
+  "./systems/ProximitySystem.cpp"
+  "./systems/StateSystem.cpp"
 
   "./components/Component.cpp"
   "./components/InputComponent.cpp"
@@ -43,6 +45,10 @@ set(SRC
   "./components/ImpulseComponent.cpp"
   "./components/AnimationComponent.cpp"
   "./components/SpriteComponent.cpp"
+  "./components/ComponentBundle.cpp"
+  "./components/StateComponent.cpp"
+  "./components/ProximityComponent.cpp"
+  "./components/TransitionComponent.cpp"
 
   "./particles/ParticleManager.cpp"
 

@@ -16,9 +16,12 @@ namespace Base
   {
   private:
     int64_t _id = -1;
+    friend class Entity;
+
+  private:
+    explicit EntityID(int64_t id);
 
   public:
-    explicit EntityID(int64_t id);
     EntityID();
     operator bool();
     operator int64_t() const;
@@ -31,7 +34,7 @@ namespace Base
 
     EntityID _id;
     bool _alive = true;
-    std::unordered_map<std::type_index, std::unique_ptr<Component>> _components;
+    std::unordered_map<std::type_index, std::shared_ptr<Component>> _components;
     Entity(size_t id);
 
   public:
@@ -44,50 +47,54 @@ namespace Base
 
     template <typename T> bool HasComponent() const
     {
-      // Check if T is a derivative of Base::Component
       static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
-
-      // Check wether is exsits in the _components map an return the result
       return _components.find(std::type_index(typeid(T))) != _components.end();
     }
 
-    template <typename T, typename... Args> T *AddComponent(Args &&...args)
+    void RemoveComponent(const std::shared_ptr<Component> &component);
+    template <typename T> void RemoveComponent()
     {
-      // Check if T is a derivative of Base::Component
       static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
-
-      // Generate Component ID
       auto compID = std::type_index(typeid(T));
-
-      // Check if component alreadt exists  on entity
-      if (!HasComponent<T>())
+      if (HasComponent<T>())
       {
-        // Create Component
-        std::unique_ptr<Component> comp = std::make_unique<T>(std::forward<Args>(args)...);
-
-        // Set The component Owner
-        comp->SetOwner(shared_from_this());
-
-        // Move component to map
-        _components[compID] = std::move(comp);
-
-        // Return Component for setup
-        return static_cast<T *>(_components[compID].get());
+        _components.erase(compID);
       }
       else
       {
-        THROW_BASE_RUNTIME_ERROR("Entity already has specified compoment");
+        std::stringstream error;
+        error << "Failed to get remove " << typeid(T).name() << "; Entity[" << static_cast<int64_t>(_id)
+              << "] does not have specified component\n";
+        THROW_BASE_RUNTIME_ERROR(error.str());
       }
     }
 
-    template <typename T> T *GetComponent() const
+    void AddComponent(const std::shared_ptr<Component> &component);
+    template <typename T, typename... Args> std::shared_ptr<T> AddComponent(Args &&...args)
     {
-      // Check if T is a derivative of Base::Component
       static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
 
-      auto compId = std::type_index(typeid(T));
+      auto compID = std::type_index(typeid(T));
 
-      // Check if component exists
+      if (!HasComponent<T>())
+      {
+        std::shared_ptr<Component> comp = std::make_shared<T>(std::forward<Args>(args)...);
+        comp->SetOwner(shared_from_this());
+        _components[compID] = std::move(comp);
+        return static_pointer_cast<T>(_components[compID]);
+      }
+      else
+      {
+        std::stringstream error;
+        error << "Entity[" << static_cast<int64_t>(_id) << "] already has compoment " << typeid(T).name();
+        THROW_BASE_RUNTIME_ERROR(error.str());
+      }
+    }
+
+    template <typename T> std::shared_ptr<T> GetComponent() const
+    {
+      static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
+      auto compId = std::type_index(typeid(T));
       if (_components.find(compId) == _components.end())
       {
         std::stringstream error;
@@ -97,8 +104,7 @@ namespace Base
       }
       else
       {
-        // if so, return a pointer to it
-        return static_cast<T *>(_components.at(compId).get());
+        return static_pointer_cast<T>(_components.at(compId));
       }
     }
 

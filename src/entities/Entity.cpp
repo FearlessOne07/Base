@@ -48,6 +48,40 @@ namespace Base
     return *this;
   }
 
+  void Entity::RemoveComponent(const std::shared_ptr<Component> &component)
+  {
+    auto compID = std::type_index(typeid(*component));
+    if (_components.find(compID) != _components.end())
+    {
+      _components.erase(compID);
+    }
+    else
+    {
+      std::stringstream error;
+      error << "Failed to remove " << compID.name() << "; Entity[" << static_cast<int64_t>(_id)
+            << "] does not have specified component\n";
+      THROW_BASE_RUNTIME_ERROR(error.str());
+    }
+  }
+  void Entity::AddComponent(const std::shared_ptr<Component> &component)
+  {
+    // Get the actual type of the object pointed to
+    auto compID = std::type_index(typeid(*component)); // dereference pointer
+
+    // Check if component of this type already exists
+    if (_components.find(compID) == _components.end())
+    {
+      _components[compID] = component;
+      component->SetOwner(shared_from_this());
+    }
+    else
+    {
+      std::stringstream error;
+      error << "Entity[" << static_cast<int64_t>(_id) << "] already has component " << compID.name();
+      THROW_BASE_RUNTIME_ERROR(error.str());
+    }
+  }
+
   EntityID Entity::GetID() const
   {
     return _id;
@@ -62,5 +96,4 @@ namespace Base
   {
     return _alive;
   }
-
 } // namespace Base

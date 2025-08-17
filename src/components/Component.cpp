@@ -5,9 +5,9 @@
 
 namespace Base
 {
-  Entity *Component::GetOwner()
+  std::shared_ptr<Entity> Component::GetOwner()
   {
-    return _owner.get();
+    return _owner;
   }
 
   void Component::SetOwner(std::shared_ptr<Entity> owner)
