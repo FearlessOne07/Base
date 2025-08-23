@@ -5,22 +5,23 @@
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "raylib.h"
-#include "raymath.h"
 
-static bool FitsEntirelyRect(Rectangle rect, Rectangle container)
-{
-  return rect.x >= container.x && rect.y >= container.y && rect.x + rect.width <= container.x + container.width &&
-         rect.y + rect.height <= container.y + container.height;
-}
-
-static bool FitsEntirelyCircle(Circle circle, Rectangle container)
-{
-  return (circle.position.x - circle.radius) >= container.x && (circle.position.y - circle.radius) >= container.y &&
-         (circle.position.x + circle.radius) <= (container.x + container.width) &&
-         (circle.position.y + circle.radius) <= (container.y + container.height);
-}
 namespace Base
 {
+
+  static bool FitsEntirelyRect(Rectangle rect, Rectangle container)
+  {
+    return rect.x >= container.x && rect.y >= container.y && rect.x + rect.width <= container.x + container.width &&
+           rect.y + rect.height <= container.y + container.height;
+  }
+
+  static bool FitsEntirelyCircle(Circle circle, Rectangle container)
+  {
+    return (circle.position.x - circle.radius) >= container.x && (circle.position.y - circle.radius) >= container.y &&
+           (circle.position.x + circle.radius) <= (container.x + container.width) &&
+           (circle.position.y + circle.radius) <= (container.y + container.height);
+  }
+
   void AreaSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
   {
     auto entities_arentry = entitymanager->Query<StateComponent, AreaEntry>();
