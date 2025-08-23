@@ -10,7 +10,6 @@ namespace Base
 
   void ProximitySystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
   {
-    // Shape Component
     auto entities_proxentry = entitymanager->Query<StateComponent, ProximityEntry>();
     for (auto &item : entities_proxentry)
     {
@@ -29,7 +28,6 @@ namespace Base
       }
     }
 
-    // Shape Component
     auto entities_proxexit = entitymanager->Query<StateComponent, ProximityExit>();
     for (auto &item : entities_proxexit)
     {
