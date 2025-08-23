@@ -38,6 +38,7 @@ set(SRC
   "./systems/EntityCollisionSystem.cpp"
   "./systems/ProximitySystem.cpp"
   "./systems/StateSystem.cpp"
+  "./systems/AreaSystem.cpp"
 
   "./components/Component.cpp"
   "./components/InputComponent.cpp"
@@ -48,6 +49,7 @@ set(SRC
   "./components/ComponentBundle.cpp"
   "./components/StateComponent.cpp"
   "./components/ProximityComponent.cpp"
+  "./components/AreaComponent.cpp"
   "./components/TransitionComponent.cpp"
 
   "./particles/ParticleManager.cpp"

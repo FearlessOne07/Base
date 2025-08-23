@@ -1,10 +1,12 @@
 #include "base/systems/SystemManager.hpp"
+#include "base/components/AreaComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/systems/System.hpp"
+#include "internal/systems/AreaSystem.hpp"
 #include "internal/systems/EntityCollisionSystem.hpp"
 #include "internal/systems/InputSystem.hpp"
 #include "internal/systems/MoveSystem.hpp"
@@ -78,12 +80,14 @@ namespace Base
     std::shared_ptr<InputSystem> _iSystem = std::make_shared<InputSystem>();
     std::shared_ptr<EntityCollisionSystem> _ecSystem = std::make_shared<EntityCollisionSystem>();
     std::shared_ptr<ProximitySystem> _proxSystem = std::make_shared<ProximitySystem>();
+    std::shared_ptr<AreaSystem> _areaSystem = std::make_shared<AreaSystem>();
     std::shared_ptr<StateSystem> _stateSystem = std::make_shared<StateSystem>();
     RegisterSystem(std::type_index(typeid(RenderSystem)), _rSystem, true);
     RegisterSystem(std::type_index(typeid(StateSystem)), _stateSystem, false);
     RegisterSystem(std::type_index(typeid(MoveSystem)), _mvSystem, false);
     RegisterSystem(std::type_index(typeid(InputSystem)), _iSystem, false);
     RegisterSystem(std::type_index(typeid(ProximitySystem)), _proxSystem, false);
+    RegisterSystem(std::type_index(typeid(AreaSystem)), _areaSystem, false);
     RegisterSystem(std::type_index(typeid(EntityCollisionSystem)), _ecSystem, false);
   }
 
