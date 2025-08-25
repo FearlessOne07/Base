@@ -29,29 +29,29 @@ namespace Base
 
         if (!rbcmp->isKinematic)
         {
-          Vector2 direction = Vector2Normalize(rbcmp->direction);
-
-          Vector2 braking = {0, 0};
-          Vector2 driving = {0, 0};
-          Vector2 drag = {0, 0};
-
-          // Apply Braking force if we arent moving
-          if (Vector2Length(direction) > 0)
-          {
-            driving = direction * mvcmp->driveForce;
-          }
-          else if (Vector2Length(direction) == 0)
-          {
-            Vector2 velDir = Vector2Normalize(rbcmp->velocity);
-            braking = velDir * -mvcmp->brakeForce;
-          }
-
-          // Drag
-          drag = rbcmp->velocity * -(rbcmp->drag / rbcmp->mass);
-
           if (rbcmp->mass > 0)
           {
-            rbcmp->velocity += ((driving + braking + drag) / rbcmp->mass) * dt;
+            Vector2 totalForce = {0, 0};
+
+            Vector2 direction = Vector2Normalize(rbcmp->direction);
+
+            // Driving force
+            if (Vector2Length(direction) > 0)
+            {
+              totalForce += direction * mvcmp->driveForce;
+            }
+            else if (Vector2Length(rbcmp->velocity) > 0)
+            {
+              // Braking force opposite to velocity
+              Vector2 velDir = Vector2Normalize(rbcmp->velocity);
+              totalForce += velDir * -mvcmp->brakeForce;
+            }
+
+            // Drag (air resistance proportional to velocity)
+            totalForce += rbcmp->velocity * -(rbcmp->drag);
+
+            Vector2 acceleration = totalForce / rbcmp->mass;
+            rbcmp->velocity += acceleration * dt;
 
             if (e->HasComponent<ImpulseComponent>())
             {
@@ -59,15 +59,17 @@ namespace Base
               if (impcmp->force > 0)
               {
                 Vector2 impDirection = Vector2Normalize(impcmp->direction);
-                rbcmp->velocity = {.x = 0, .y = 0};
-                rbcmp->velocity += (impDirection) * (impcmp->force / rbcmp->mass);
+                float impulse = impcmp->force; // treat as impulse, not force
+                rbcmp->velocity += impDirection * (impulse / rbcmp->mass);
+
+                // clear after applying
                 impcmp->force = 0;
-                impcmp->direction = {.x = 0, .y = 0};
+                impcmp->direction = {0, 0};
               }
             }
           }
         }
-        else if (rbcmp->isKinematic)
+        else
         {
           Vector2 direction = Vector2Normalize(rbcmp->direction);
           rbcmp->velocity = direction * rbcmp->speed;
