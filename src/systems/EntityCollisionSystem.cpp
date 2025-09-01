@@ -1,6 +1,5 @@
 #include "internal/systems/EntityCollisionSystem.hpp"
 #include "base/components/ColliderComponent.hpp"
-#include "base/components/RigidBodyComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/entities/signals/EntityCollisionSignal.hpp"
@@ -20,7 +19,21 @@ namespace Base
     for (auto &item1 : entities)
     {
       auto e1 = item1->item;
-      auto nearby = entityManager->QueryArea(Circle{e1->GetComponent<TransformComponent>()->position, 30});
+      auto colcmp1 = e1->GetComponent<ColliderComponent>();
+      std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> nearby;
+      if (colcmp1->shape == ColliderComponent::Shape::CIRCLE)
+      {
+        nearby = entityManager->QueryArea(Circle{e1->GetComponent<TransformComponent>()->position, colcmp1->radius});
+      }
+      else if (colcmp1->shape == ColliderComponent::Shape::BOX)
+      {
+        nearby = entityManager->QueryArea(Rectangle{
+          e1->GetComponent<TransformComponent>()->position.x - colcmp1->positionOffset.x,
+          e1->GetComponent<TransformComponent>()->position.y - colcmp1->positionOffset.y,
+          colcmp1->size.x,
+          colcmp1->size.y,
+        });
+      }
 
       for (auto &item2 : nearby)
       {
@@ -110,7 +123,6 @@ namespace Base
   )
   {
     auto abb1 = e1->GetComponent<ColliderComponent>();
-    auto rbcmp1 = e1->GetComponent<RigidBodyComponent>();
     auto abb2 = e2->GetComponent<ColliderComponent>();
     auto trans1 = e1->GetComponent<TransformComponent>();
     auto trans2 = e2->GetComponent<TransformComponent>();
@@ -118,7 +130,6 @@ namespace Base
     Vector2 position1 = trans1->position - abb1->positionOffset;
     Vector2 position2 = trans2->position - abb2->positionOffset;
 
-    outNormal = Vector2Normalize(rbcmp1->velocity);
     return CheckCollisionCircles(position1, abb1->radius, position2, abb2->radius);
   }
 

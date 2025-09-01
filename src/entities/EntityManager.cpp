@@ -106,7 +106,9 @@ namespace Base
     _nextID = 0;
   }
 
-  std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> EntityManager::QueryArea(ItemAreaType area)
+  template <>
+  auto EntityManager::QueryArea<void>(ItemAreaType area)
+    -> std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator>
   {
     return _entities.Search(area);
   }

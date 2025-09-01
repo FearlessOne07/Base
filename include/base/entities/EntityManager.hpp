@@ -32,7 +32,6 @@ namespace Base
     const std::shared_ptr<Entity> GetEntity(EntityID id);
     void SetWorldBounds(Rectangle bounds);
     const Rectangle GetWorldBounds() const;
-    std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> QueryArea(ItemAreaType area);
 
     template <typename... Components>
     auto Query() -> std::vector<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator>
@@ -40,7 +39,21 @@ namespace Base
       std::vector<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> results = {};
       for (auto it = _entities.begin(); it != _entities.end(); it++)
       {
-        if ((it->item->HasComponent<Components>() && ...) && it->item->IsAlive())
+        if ((it->item->HasComponent<Components>() && ...))
+        {
+          results.emplace_back(it);
+        }
+      }
+      return results;
+    }
+
+    template <typename... Components>
+    auto QueryArea(ItemAreaType area) -> std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator>
+    {
+      std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> results = _entities.Search(area);
+      for (auto it = _entities.begin(); it != _entities.end(); it++)
+      {
+        if ((it->item->HasComponent<Components>() && ...))
         {
           results.emplace_back(it);
         }

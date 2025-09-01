@@ -28,7 +28,6 @@ namespace Base
     void SetLayerIndex(int index);
 
   protected:
-    Scene *GetOwner();
     RenderLayer *GetRenderLayer();
     const std::bitset<8> &GetPauseMask();
 
@@ -42,6 +41,7 @@ namespace Base
     Vector2 GetSize() const;
     Vector2 GetLayerMousePosition() const;
     float GetCameraZoom() const;
+    Scene *GetOwner();
 
     // Camera
     void SetCameraMode(Camera2DExtMode mode);

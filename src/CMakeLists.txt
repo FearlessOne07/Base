@@ -39,6 +39,7 @@ set(SRC
   "./systems/ProximitySystem.cpp"
   "./systems/StateSystem.cpp"
   "./systems/AreaSystem.cpp"
+  "./systems/TimerSystem.cpp"
 
   "./components/Component.cpp"
   "./components/InputComponent.cpp"
@@ -51,6 +52,7 @@ set(SRC
   "./components/ProximityComponent.cpp"
   "./components/AreaComponent.cpp"
   "./components/TransitionComponent.cpp"
+  "./components/TimerComponent.cpp"
 
   "./particles/ParticleManager.cpp"
 
