@@ -119,15 +119,18 @@ namespace Base
 
   void SystemManager::OnInputEvent(std::shared_ptr<InputEvent> &event)
   {
-    for (auto &[id, system] : _systems)
+    if (!_isSuspended)
     {
-      system->OnInputEvent(event);
-      if (event->isHandled)
+      for (auto &[id, system] : _systems)
       {
-        break;
+        system->OnInputEvent(event);
+        if (event->isHandled)
+        {
+          break;
+        }
       }
     }
-  };
+  }
 
   void SystemManager::StartSystems()
   {

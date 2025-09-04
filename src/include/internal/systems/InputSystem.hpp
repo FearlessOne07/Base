@@ -11,6 +11,7 @@ namespace Base
   {
   private:
     std::vector<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> _entities;
+    EntityManager *_eMan = nullptr;
 
   private:
     void OnKeyEvent(const std::shared_ptr<KeyEvent> &event);

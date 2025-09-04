@@ -12,11 +12,21 @@ namespace Base
 
   void InputSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
   {
+    if (!_eMan)
+    {
+      _eMan = entitymanager;
+    }
     _entities = entitymanager->Query<InputComponent>();
   }
 
   void InputSystem::OnInputEvent(std::shared_ptr<InputEvent> event)
   {
+
+    if (_eMan)
+    {
+      _entities = _eMan->Query<InputComponent>();
+    }
+
     if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(event))
     {
       OnKeyEvent(keyEvent);

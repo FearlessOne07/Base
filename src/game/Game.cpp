@@ -181,8 +181,9 @@ namespace Base
         _shaderManager.Update(dt);
 
         // Post Update
-        _entityManager.RemoveDeadEntities();
         _inpMan.PostUpdate();
+        _entityManager.RemoveDeadEntities();
+
 
         // Render
         _renderer.RenderLayers();
