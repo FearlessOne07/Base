@@ -1,5 +1,7 @@
 #include "internal/systems/StateSystem.hpp"
 #include "base/components/StateComponent.hpp"
+#include <algorithm>
+
 namespace Base
 {
   void StateSystem::Update(float dt, EntityManager *entityManager, const Scene *)
