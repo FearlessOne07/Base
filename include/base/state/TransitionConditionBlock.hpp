@@ -50,48 +50,15 @@ namespace Base
 
     TransitionConditionBlock() = default;
 
-    TransitionEvaluationType GetEvaluationType() const
-    {
-      return _evaluationType;
-    }
+    TransitionEvaluationType GetEvaluationType() const;
 
-    void AddComponents(std::shared_ptr<Entity> e)
-    {
-      for (auto &comp : _components)
-      {
-        e->AddComponent(std::dynamic_pointer_cast<Component>(comp));
-      }
-    }
+    void AddComponents(std::shared_ptr<Entity> e);
 
-    void RemoveComponents(std::shared_ptr<Entity> e)
-    {
-      for (auto &comp : _components)
-      {
-        e->RemoveComponent(std::dynamic_pointer_cast<Component>(comp));
-      }
-    }
+    void RemoveComponents(std::shared_ptr<Entity> e);
 
-    const std::vector<bool> &GetFlags() const
-    {
-      return _flags;
-    }
-
-    void ResetFlags()
-    {
-      for (size_t i = 0; i < _flags.size(); i++)
-      {
-        _flags[i] = false;
-      }
-    }
-
-    void SetIndex(size_t index)
-    {
-      _flags[index] = true;
-    }
-
-    const std::string &GetNextState()
-    {
-      return _nextState;
-    }
+    const std::vector<bool> &GetFlags() const;
+    void ResetFlags();
+    void SetIndex(size_t index);
+    const std::string &GetNextState();
   };
 } // namespace Base

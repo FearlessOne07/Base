@@ -62,6 +62,8 @@ set(SRC
 
   "./signals/SignalBus.cpp"
 
+  "./state/TransitionConditionBlock.cpp"
+
   "./assets/AssetManager.cpp"
   "./assets/BaseAsset.cpp"
 
