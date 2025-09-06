@@ -35,17 +35,17 @@ namespace Base
 
   void SceneLayer::Pause()
   {
-    GetOwner()->PauseMenu(_layerIndex);
+    GetOwner()->PauseLayer(_layerIndex);
   }
 
   void SceneLayer::UnPause()
   {
-    GetOwner()->UnPauseMenu(_layerIndex);
+    GetOwner()->UnPauseLayer(_layerIndex);
   }
 
   bool SceneLayer::IsPaused()
   {
-    return GetOwner()->IsMenuPaused(_layerIndex);
+    return GetOwner()->IsLayerPaused(_layerIndex);
   }
 
   void SceneLayer::SetLayerIndex(int index)

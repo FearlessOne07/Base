@@ -96,9 +96,9 @@ namespace Base
     virtual void Resume();
     virtual void Suspend();
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
-    void PauseMenu(int layerIndex);
-    void UnPauseMenu(int layerIndex);
-    bool IsMenuPaused(int layerIndex);
+    void PauseLayer(int layerIndex);
+    void UnPauseLayer(int layerIndex);
+    bool IsLayerPaused(int layerIndex);
 
     void _OnInputEvent(std::shared_ptr<InputEvent> event);
 

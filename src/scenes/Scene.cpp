@@ -2,6 +2,8 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneData.hpp"
+#include "base/scenes/signals/SceneLayerPausedSignal.hpp"
+#include "base/signals/SignalBus.hpp"
 #include "base/systems/SystemManager.hpp"
 #include "raylib.h"
 #include <memory>
@@ -205,17 +207,19 @@ namespace Base
     GetSystemManager()->StopSystems();
   }
 
-  void Scene::PauseMenu(int layerIndex)
+  void Scene::PauseLayer(int layerIndex)
   {
+    auto bus = SignalBus::GetInstance();
+    bus->BroadCastSignal(std::make_shared<SceneLayerPausedSignal>());
     _pauseMask.set(layerIndex);
   }
 
-  void Scene::UnPauseMenu(int layerIndex)
+  void Scene::UnPauseLayer(int layerIndex)
   {
     _pauseMask.reset(layerIndex);
   }
 
-  bool Scene::IsMenuPaused(int layerIndex)
+  bool Scene::IsLayerPaused(int layerIndex)
   {
     return _pauseMask.test(layerIndex);
   }

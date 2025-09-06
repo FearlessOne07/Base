@@ -1,6 +1,7 @@
 #include "internal/input/InputManager.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
+#include "base/scenes/signals/SceneLayerPausedSignal.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/SceneSuspendedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -19,6 +20,10 @@ namespace Base
     });
 
     bus->SubscribeSignal<ScenePoppedSignal>([this](const std::shared_ptr<Signal> &signal) {
+      this->ResetInput(signal); //
+    });
+
+    bus->SubscribeSignal<SceneLayerPausedSignal>([this](const std::shared_ptr<Signal> &signal) {
       this->ResetInput(signal); //
     });
   }
@@ -188,10 +193,12 @@ namespace Base
   // Called when A scene is popped or Suspended
   void InputManager::ResetInput(const std::shared_ptr<Signal> &sig)
   {
-
     // For any Held Keys / Mouse buttons, when a scene is changed, dispatch synthetic RELEASED events
     // so effects of the HELD events can be reversed
-    if (std::dynamic_pointer_cast<SceneSuspendedSignal>(sig) || std::dynamic_pointer_cast<ScenePoppedSignal>(sig))
+    if ( //
+      std::dynamic_pointer_cast<SceneSuspendedSignal>(sig) || std::dynamic_pointer_cast<ScenePoppedSignal>(sig) ||
+      std::dynamic_pointer_cast<SceneLayerPausedSignal>(sig) //
+    )
     {
       for (auto it = _heldKeys.begin(); it != _heldKeys.end();)
       {
