@@ -298,7 +298,7 @@ namespace Base
         else if (particle->shape == ParticleEmitter::ParticleShape::TEXTURE)
         {
           particle->sprite.SetTargetSize(size);
-          particle->sprite.Render(particle->position, color);
+          particle->sprite.Render(particle->position, particle->rotation, color);
         }
       }
     }

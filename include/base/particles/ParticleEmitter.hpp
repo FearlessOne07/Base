@@ -57,8 +57,6 @@ namespace Base
     // Texture
     Sprite particleSprite;
 
-    Rectangle particleTextureSource = {0, 0, 0, 0};
-
     float particleRotationSpeed = 0.f;
 
     // Point

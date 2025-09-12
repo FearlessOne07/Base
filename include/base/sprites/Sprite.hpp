@@ -30,7 +30,9 @@ namespace Base
       return _texture;
     }
 
-    void Render(Vector2 position, Color tint);
+    void Render(Vector2 position, float rotatation, Color tint) const;
     void SetTargetSize(Vector2 size);
+    void SetSourceRect(const Rectangle &rect);
+    Vector2 GetTargetSize() const;
   };
 } // namespace Base

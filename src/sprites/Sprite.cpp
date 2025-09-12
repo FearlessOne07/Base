@@ -55,11 +55,23 @@ namespace Base
   {
     _targetSize = size;
   }
-  void Sprite::Render(Vector2 position, Color tint)
+
+  void Sprite::SetSourceRect(const Rectangle &rect)
+  {
+    _sourcePos = {rect.x, rect.y};
+    _sourceSize = {rect.width, rect.height};
+  }
+
+  Vector2 Sprite::GetTargetSize() const
+  {
+    return _targetSize;
+  }
+
+  void Sprite::Render(Vector2 position, float rotatation, Color tint) const
   {
     DrawTexturePro( //
       *_texture.Get()->GetRaylibTexture(), {_sourcePos.x, _sourcePos.y, _sourceSize.x, _sourceSize.y},
-      {position.x, position.y, _targetSize.x, _targetSize.y}, {_targetSize.x / 2, _targetSize.y / 2}, 0.0f,
+      {position.x, position.y, _targetSize.x, _targetSize.y}, {_targetSize.x / 2, _targetSize.y / 2}, rotatation,
       {
         static_cast<unsigned char>((tint.r * tint.a) / 255),
         static_cast<unsigned char>((tint.g * tint.a) / 255),
