@@ -5,6 +5,7 @@
 #include "base/audio/signals/PlaySoundSignal.hpp"
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "internal/audio/SoundInstance.hpp"
+#include <array>
 #include <atomic>
 #include <portaudio.h>
 #include <vector>
@@ -30,6 +31,10 @@ namespace Base
     std::array<AssetHandle<AudioStream>, MAX_PENDING_STREAMS> _pendingStreams;
     std::atomic<int> _streamReadIndex;
     std::atomic<int> _streamWriteIndex;
+
+    std::array<AssetHandle<AudioStream>, MAX_PENDING_STREAMS> _pendingRemovalStreams;
+    std::atomic<int> _streamRemoveReadIndex;
+    std::atomic<int> _streamRemoveWriteIndex;
 
   public:
     static int AudioCallBack( //

@@ -177,6 +177,9 @@ namespace Base
       {
         // Create Sound instance from sound
         _this->_sounds.emplace_back(std::move(sound));
+        _this->_sounds.back()->Play();
+
+        // Mark the sound as playing
         _this->_pendingSounds[read] = nullptr; // Clear the slot
       }
 
@@ -196,6 +199,7 @@ namespace Base
       {
         // Add it to the list of playing streams
         _this->_streams.emplace_back(stream);
+        stream.Get()->Play();
         _this->_pendingStreams[read] = AssetHandle<AudioStream>(); // Clear the slot
       }
 
@@ -203,6 +207,29 @@ namespace Base
       read = (read + 1) % MAX_PENDING_STREAMS;
     }
     _this->_streamReadIndex.store(read);
+
+    // Proccess Queued Stream events
+    read = _this->_streamRemoveReadIndex.load();
+    while (read != _this->_streamRemoveWriteIndex.load(std::memory_order_acquire))
+    {
+      auto stream = _this->_pendingRemovalStreams[read];
+
+      // If Stream is already playing
+      if (stream)
+      {
+        if (auto it = std::ranges::find(_this->_streams, stream); it != _this->_streams.end())
+        {
+          // Add it to the list of playing streams
+          _this->_streams.erase(it);
+          stream.Get()->Stop();
+          _this->_pendingRemovalStreams[read] = AssetHandle<AudioStream>(); // Clear the slot
+        }
+      }
+
+      // Increment read index
+      read = (read + 1) % MAX_PENDING_STREAMS;
+    }
+    _this->_streamRemoveReadIndex.store(read);
 
     // Higher Res mixing buffer
     std::vector<float> mixBuffer(framesPerBuffer * 2, 0);
@@ -297,9 +324,6 @@ namespace Base
       instance->SetVolume(std::clamp(signal->soundVolume, 0.f, 1.f));
       instance->SetPan(std::clamp(signal->soundPan, -1.f, 1.f));
 
-      // Mark the sound as playing
-      instance->Play();
-
       // add it to pending sounds list
       _pendingSounds[write] = std::move(instance);
 
@@ -324,9 +348,6 @@ namespace Base
       stream->SetPan(std::clamp(signal->streamPan, -1.f, 1.f));
       stream->SetLoop(signal->loopStream);
 
-      // Marks stream as playing
-      stream->Play();
-
       // Add stream to queue
       _pendingStreams[write] = std::move(signal->streamHandle);
 
@@ -335,13 +356,22 @@ namespace Base
     }
   }
 
-  // TODO: Implement Ring Buffer for stopping Streams Too
   void AudioManager::StopStream(const std::shared_ptr<StopAudioStreamSignal> &signal)
   {
-    AssetHandle<AudioStream> handle = signal->streamHandle;
-    if (auto it = std::ranges::find(_streams, handle); it != _streams.end())
+    size_t write = _streamRemoveWriteIndex.load();
+    size_t nextWrite = (write + 1) % MAX_PENDING_STREAMS;
+
+    // if stream queue isn't full
+    if (nextWrite != _streamRemoveReadIndex.load())
     {
-      it->Get()->Stop();
+      // Get the stream asset
+      auto stream = signal->streamHandle.Get();
+
+      // Add stream to queue
+      _pendingRemovalStreams[write] = std::move(signal->streamHandle);
+
+      // update stream write index
+      _streamRemoveWriteIndex.store(nextWrite, std::memory_order_release);
     }
   }
 
