@@ -61,7 +61,7 @@ namespace Base
         THROW_BASE_RUNTIME_ERROR("Element " + id + " isn't registerd in layer");
       }
     }
-
+    bool HasElement(const std::string &name) const;
     void RemoveElement(const std::string &id);
     void OnInputEvent(std::shared_ptr<InputEvent> &event);
     void Render();

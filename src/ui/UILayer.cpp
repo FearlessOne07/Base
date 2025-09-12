@@ -32,6 +32,18 @@ namespace Base
     }
   }
 
+  bool UILayer::HasElement(const std::string &name) const
+  {
+    std::string lowerid = Base::Strings::ToLower(name);
+    if (auto it = std::ranges::find(_elementIds, lowerid); it == _elementIds.end())
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
   void UILayer::RemoveElement(const std::string &id)
   {
     std::string lowerid = Base::Strings::ToLower(id);

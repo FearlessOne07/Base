@@ -6,7 +6,6 @@
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
-#include "base/textures/Texture.hpp"
 #include "raylib.h"
 #include <iterator>
 #include <memory>
