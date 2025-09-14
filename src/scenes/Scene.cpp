@@ -229,4 +229,9 @@ namespace Base
     return _pauseMask;
   }
 
+  const ShaderEffectChain &Scene::GetPostProcessingEffects() const
+  {
+    return _postProcessingEffects;
+  }
+
 } // namespace Base

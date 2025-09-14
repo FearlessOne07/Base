@@ -1,7 +1,6 @@
 #pragma once
 
 #include "base/renderer/RenderLayer.hpp"
-#include "base/renderer/ShaderBuffer.hpp"
 #include "raylib.h"
 #include <deque>
 #include <unordered_map>
@@ -17,9 +16,10 @@ namespace Base
     std::unordered_map<const Scene *, std::deque<RenderLayer>> _renderLayers;
     RenderTexture2D _renderTexture;
     const Scene *_currentScene = nullptr;
+    Vector2 _renderResolution;
 
     // Shaders
-    ShaderBuffer _shaderBuffer;
+    RenderTexture2D _ping;
 
   private:
     void Init(int width, int height);

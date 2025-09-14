@@ -45,9 +45,12 @@ namespace Base
 
   void Renderer::Init(int width, int height)
   {
+    _renderResolution = {
+      static_cast<float>(width),
+      static_cast<float>(height),
+    };
     _renderTexture = LoadRenderTexture(width, height);
-    _shaderBuffer.ping = LoadRenderTexture(width, height);
-    _shaderBuffer.pong = LoadRenderTexture(width, height);
+    _ping = LoadRenderTexture(width, height);
 
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
@@ -76,8 +79,7 @@ namespace Base
   {
     _renderLayers.clear();
     UnloadRenderTexture(_renderTexture);
-    UnloadRenderTexture(_shaderBuffer.ping);
-    UnloadRenderTexture(_shaderBuffer.pong);
+    UnloadRenderTexture(_ping);
   }
 
   void Renderer::RenderLayers()
@@ -113,6 +115,26 @@ namespace Base
       );
     }
     EndTextureMode();
+
+    const auto &scenePost = _currentScene->GetPostProcessingEffects();
+    RenderTexture2D *input = &_renderTexture;
+    RenderTexture2D *output = &_ping;
+
+    for (auto &effect : scenePost)
+    {
+      effect->Apply(input, output, _renderResolution);
+      std::swap(input, output); // Ping-pong
+    }
+
+    if (input != &_renderTexture)
+    {
+      BeginTextureMode(_renderTexture);
+      DrawTexturePro( //
+        input->texture, {0, 0, (float)_renderResolution.x, -(float)_renderResolution.y},
+        {0, 0, _renderResolution.x, _renderResolution.y}, {0, 0}, 0.0f, WHITE //
+      );
+      EndTextureMode();
+    }
   }
 
   void Renderer::Render()

@@ -17,7 +17,7 @@ namespace Base
     std::vector<std::type_index> _effectIds;
 
   public:
-    template <typename T, typename... Args> void AddEffect(const RenderLayer *renderLayer, Args &&...args)
+    template <typename T, typename... Args> void AddEffect(const Scene *currentScene, Args &&...args)
     {
       if (std::is_base_of_v<ShaderEffect, T>)
       {
@@ -27,7 +27,7 @@ namespace Base
         {
           _effectIds.push_back(id);
           std::unique_ptr<T> effect = std::make_unique<T>(std::forward<Args>(args)...);
-          effect->Setup(renderLayer);
+          effect->Setup(currentScene);
           _effects.emplace_back(std::move(effect));
         }
         else
@@ -73,12 +73,12 @@ namespace Base
       return _effects.end();
     }
 
-    std::vector<std::unique_ptr<ShaderEffect>>::const_iterator cbegin()
+    std::vector<std::unique_ptr<ShaderEffect>>::const_iterator begin() const
     {
       return _effects.cbegin();
     }
 
-    std::vector<std::unique_ptr<ShaderEffect>>::const_iterator cend()
+    std::vector<std::unique_ptr<ShaderEffect>>::const_iterator end() const
     {
       return _effects.cend();
     }

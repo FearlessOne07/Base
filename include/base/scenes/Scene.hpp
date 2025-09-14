@@ -2,10 +2,10 @@
 #include "base/assets/AssetHandle.hpp"
 #include "base/assets/AssetManager.hpp"
 #include "base/particles/ParticleManager.hpp"
-#include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneLayerStack.hpp"
 #include "base/scenes/SceneTransition.hpp"
 #include "base/scenes/SharedSceneDataStore.hpp"
+#include "base/shaders/ShaderEffectChain.hpp"
 #include "base/shaders/ShaderManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
@@ -22,6 +22,7 @@ namespace Base
   class EntityManager;
   class SystemManager;
   class AssetManager;
+  class Renderer;
   class Scene
   {
 
@@ -78,6 +79,14 @@ namespace Base
     // Rendering
     void SetClearColor(Color color);
     RenderLayer *AddRenderLayer(Vector2 size, Color clearColor = BLANK);
+
+    ShaderEffectChain _postProcessingEffects;
+
+    // Shader Effect Management
+    template <typename T, typename... Args> void AddPostProcessingEffect(Args &&...args)
+    {
+      _postProcessingEffects.AddEffect<T>(this, std::forward<Args>(args)...);
+    }
 
     // Shared Data
     template <typename T> void InitSharedData()
@@ -153,5 +162,6 @@ namespace Base
     void StopSystems();
 
     const std::bitset<8> &GetPauseMask() const;
+    const ShaderEffectChain &GetPostProcessingEffects() const;
   };
 } // namespace Base

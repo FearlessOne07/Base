@@ -80,7 +80,6 @@ namespace Base
 
     RenderTexture2D *input = &_renderTexture;
     RenderTexture2D *output = &_ping;
-    auto shaderMan = _ownerScene->GetShaderManager();
 
     for (auto &effect : _effectChain)
     {

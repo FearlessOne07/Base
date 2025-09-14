@@ -68,7 +68,7 @@ namespace Base
     // Shader Effect Management
     template <typename T, typename... Args> void AddShaderEffect(Args &&...args)
     {
-      _effectChain.AddEffect<T>(this, std::forward<Args>(args)...);
+      _effectChain.AddEffect<T>(_ownerScene, std::forward<Args>(args)...);
     }
 
     template <typename T> std::unique_ptr<T> GetShaderEffect()
