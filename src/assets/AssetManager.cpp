@@ -295,7 +295,7 @@ namespace Base
     else
     {
       std::stringstream error;
-      error << "Cannot find teture file '" << path.string() << "'";
+      error << "Cannot find texture file '" << path.string() << "'";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
@@ -319,7 +319,7 @@ namespace Base
         else
         {
           std::stringstream error;
-          error << "Repeated loading of global texture '" << name << "'";
+          error << "Repeated loading of global shader '" << name << "'";
           THROW_BASE_RUNTIME_ERROR(error.str());
         }
       }
@@ -340,7 +340,7 @@ namespace Base
           else
           {
             std::stringstream error;
-            error << "Repeated loading of scene-local texture '" << name << "'";
+            error << "Repeated loading of scene-local shader '" << name << "'";
             THROW_BASE_RUNTIME_ERROR(error.str());
           }
         }
@@ -353,7 +353,7 @@ namespace Base
     else
     {
       std::stringstream error;
-      error << "Cannot find teture file '" << path.string() << "'";
+      error << "Cannot find shader file '" << path.string() << "'";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
@@ -377,7 +377,7 @@ namespace Base
         else
         {
           std::stringstream error;
-          error << "Repeated loading of global texture '" << name << "'";
+          error << "Repeated loading of global sound '" << name << "'";
           THROW_BASE_RUNTIME_ERROR(error.str());
         }
       }
@@ -398,7 +398,7 @@ namespace Base
           else
           {
             std::stringstream error;
-            error << "Repeated loading of scene-local texture '" << name << "'";
+            error << "Repeated loading of scene-local sound '" << name << "'";
             THROW_BASE_RUNTIME_ERROR(error.str());
           }
         }
@@ -411,7 +411,7 @@ namespace Base
     else
     {
       std::stringstream error;
-      error << "Cannot find teture file '" << path.string() << "'";
+      error << "Cannot find sound file '" << path.string() << "'";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
@@ -435,7 +435,7 @@ namespace Base
         else
         {
           std::stringstream error;
-          error << "Repeated loading of global texture '" << name << "'";
+          error << "Repeated loading of global audio-stream'" << name << "'";
           THROW_BASE_RUNTIME_ERROR(error.str());
         }
       }
@@ -456,7 +456,7 @@ namespace Base
           else
           {
             std::stringstream error;
-            error << "Repeated loading of scene-local texture '" << name << "'";
+            error << "Repeated loading of scene-local audio-stream '" << name << "'";
             THROW_BASE_RUNTIME_ERROR(error.str());
           }
         }
@@ -469,7 +469,7 @@ namespace Base
     else
     {
       std::stringstream error;
-      error << "Cannot find teture file '" << path.string() << "'";
+      error << "Cannot find audio-stream file '" << path.string() << "'";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
@@ -493,7 +493,7 @@ namespace Base
         else
         {
           std::stringstream error;
-          error << "Repeated loading of global texture '" << name << "'";
+          error << "Repeated loading of global font '" << name << "'";
           THROW_BASE_RUNTIME_ERROR(error.str());
         }
       }
