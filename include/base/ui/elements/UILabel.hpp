@@ -15,7 +15,7 @@ namespace Base
     void SetText(const std::string &text);
     void SetFontSize(float size);
     void SetTextColor(Color color);
-    void Render() override;
+    void Render(float opacity) override;
     const std::string &GetText() const;
 
     // New

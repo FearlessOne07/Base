@@ -14,16 +14,20 @@ namespace Base
     return _color;
   }
 
-  void UIPanel::Render()
+  void UIPanel::Render(float opacity)
   {
-    DrawRectangleBase( //
-      {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
-      {
-        _color.r,
-        _color.g,
-        _color.b,
-        static_cast<unsigned char>(_alpha * _parentAlpha * 255),
-      } //
-    );
+
+    if (!_isHidden)
+    {
+      DrawRectangleBase( //
+        {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
+        {
+          _color.r,
+          _color.g,
+          _color.b,
+          static_cast<unsigned char>(_renderTransform.GetOpacity() * opacity * 255),
+        } //
+      );
+    }
   }
 } // namespace Base

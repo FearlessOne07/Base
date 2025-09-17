@@ -6,6 +6,6 @@ namespace Base
   class UITextureRect : public UIElement
   {
   public:
-    void Render() override;
+    void Render(float opacity) override;
   };
 } // namespace Base

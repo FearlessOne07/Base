@@ -42,7 +42,7 @@ namespace Base
       font = GetFontDefault();
     }
 
-    auto textSize = MeasureTextEx(font, _text.c_str(), _fontSize * _renderTransform.fontScale, 1);
+    auto textSize = MeasureTextEx(font, _text.c_str(), _fontSize * _renderTransform.GetFontScale(), 1);
     _layoutRect = finalRect;
     float width = textSize.x;
     float height = textSize.y;
@@ -95,26 +95,30 @@ namespace Base
     _textColor = color;
   }
 
-  void UILabel::Render()
+  void UILabel::Render(float opacity)
   {
-    Font font;
-    if (_font.Get())
-    {
-      font = *_font.Get()->GetRaylibFont();
-    }
-    else
-    {
-      font = GetFontDefault();
-    }
 
-    DrawTextBase( //
-      font, _text.c_str(), {_layoutRect.x, _layoutRect.y}, _fontSize * _renderTransform.fontScale, 1,
+    if (!_isHidden)
+    {
+      Font font;
+      if (_font.Get())
       {
-        _textColor.r,
-        _textColor.g,
-        _textColor.b,
-        static_cast<unsigned char>(_alpha * _parentAlpha * 255),
-      } //
-    );
+        font = *_font.Get()->GetRaylibFont();
+      }
+      else
+      {
+        font = GetFontDefault();
+      }
+
+      DrawTextBase( //
+        font, _text.c_str(), {_layoutRect.x, _layoutRect.y}, _fontSize * _renderTransform.GetFontScale(), 1,
+        {
+          _textColor.r,
+          _textColor.g,
+          _textColor.b,
+          static_cast<unsigned char>(_renderTransform.GetOpacity() * opacity * 255),
+        } //
+      );
+    }
   }
 } // namespace Base

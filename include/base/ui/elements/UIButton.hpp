@@ -24,7 +24,7 @@ namespace Base
     float GetFontSize() const;
 
     // Core
-    void Render() override;
+    void Render(float opacity) override;
     void UpdateElement(float dt) override;
 
     // New

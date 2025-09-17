@@ -1,4 +1,6 @@
 #include "base/ui/UILayer.hpp"
+#include "raylib.h"
+#include <memory>
 
 namespace Base
 {
@@ -12,7 +14,6 @@ namespace Base
     {
       if (!event->isHandled)
       {
-
         _root->OnInputEvent(event);
       }
     }
@@ -20,14 +21,23 @@ namespace Base
 
   void UILayer::Render()
   {
-    if (!_isHidden && _root)
+    if (_layerBackPanel)
     {
-      _root->Render();
+      _layerBackPanel->Render(1);
+    }
+    if (_root)
+    {
+      _root->Render(1);
     }
   }
 
   void UILayer::Update(float dt)
   {
+    if (_layerBackPanel)
+    {
+      _layerBackPanel->Arrange({0, 0, _layerSize.x, _layerSize.y});
+    }
+
     if (_root)
     {
       _root->Measure();
@@ -38,6 +48,10 @@ namespace Base
 
   void UILayer::Hide()
   {
+    if (_layerBackPanel)
+    {
+      _layerBackPanel->Hide();
+    }
     if (_root)
     {
       _root->Hide();
@@ -47,6 +61,12 @@ namespace Base
 
   void UILayer::Show()
   {
+
+    if (_layerBackPanel)
+    {
+      _layerBackPanel->Show();
+    }
+
     if (_root)
     {
       _root->Show();
@@ -57,5 +77,11 @@ namespace Base
   bool UILayer::IsVisible() const
   {
     return !_isHidden;
+  }
+
+  std::shared_ptr<UIPanel> UILayer::SetLayerBackPanel()
+  {
+    _layerBackPanel = std::make_shared<UIPanel>();
+    return _layerBackPanel;
   }
 } // namespace Base

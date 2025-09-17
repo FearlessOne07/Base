@@ -49,8 +49,8 @@ namespace Base
   void UIStackPanel::Arrange(Rectangle finalRect)
   {
     _layoutRect = finalRect;
-    float width = _desiredSize.width;
-    float height = _desiredSize.height;
+    float width = _desiredSize.width * _renderTransform.GetScaleX();
+    float height = _desiredSize.height * _renderTransform.GetScaleY();
 
     // Horizontal alignment
     switch (_horizontalAlignment)
@@ -82,8 +82,11 @@ namespace Base
       height = finalRect.height;
       break;
     }
-    _layoutRect.width = width;
-    _layoutRect.height = height;
+    _layoutRect.width = std::min(width, finalRect.width);
+    _layoutRect.height = std::min(height, finalRect.height);
+
+    _layoutRect.x += _renderTransform.GetScaleX();
+    _layoutRect.y += _renderTransform.GetOffsetY();
 
     float offset = (_orientation == Orientation::Vertical) ? _layoutRect.y + _paddingTop : _layoutRect.x + _paddingLeft;
 
@@ -115,31 +118,9 @@ namespace Base
     }
   }
 
-  void UIStackPanel::SetAlpha(float alpha)
-  {
-    _alpha = alpha;
-    _alpha = std::clamp<float>(_alpha, 0, 1);
-
-    for (auto &child : _childElements)
-    {
-      child->SetParentAlpha(_alpha * _parentAlpha);
-    }
-  }
-
   void UIStackPanel::SetGap(float gap)
   {
     _gap = gap;
-  }
-
-  void UIStackPanel::SetParentAlpha(float alpha)
-  {
-    _parentAlpha = alpha;
-    _parentAlpha = std::clamp<float>(_parentAlpha, 0, 1);
-
-    for (auto &child : _childElements)
-    {
-      child->SetParentAlpha(_alpha * _parentAlpha);
-    }
   }
 
   void UIStackPanel::OnElementInputEvent(std::shared_ptr<InputEvent> &event)
@@ -172,40 +153,45 @@ namespace Base
     return _backgroundColor;
   }
 
-  void UIStackPanel::Render()
+  void UIStackPanel::Render(float opacity)
   {
-    if (_sprite)
+
+    if (!_isHidden)
     {
-      _sprite.Draw({_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, _alpha * _parentAlpha * 255);
-    }
-    else
-    {
-      float alpha = 0;
-      if (_backgroundColor == BLANK)
+      if (_sprite)
       {
-        alpha = 0;
+        _sprite.Draw({_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height},
+                     _renderTransform.GetOpacity() * opacity * 255);
       }
       else
       {
-        alpha = _alpha;
-      }
-      DrawRectangleBase( //
-        {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
+        float alpha = 0;
+        if (_backgroundColor == BLANK)
         {
-          _backgroundColor.r,
-          _backgroundColor.g,
-          _backgroundColor.b,
-          static_cast<unsigned char>(alpha * _parentAlpha * 255),
-        } //
-      );
-    }
+          alpha = 0;
+        }
+        else
+        {
+          alpha = _renderTransform.GetOpacity();
+        }
+        DrawRectangleBase( //
+          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
+          {
+            _backgroundColor.r,
+            _backgroundColor.g,
+            _backgroundColor.b,
+            static_cast<unsigned char>(alpha * opacity * 255),
+          } //
+        );
+      }
 
-    auto elements = std::ranges::reverse_view(_childElements);
-    for (auto &element : elements)
-    {
-      if (element->IsVisible())
+      auto elements = std::ranges::reverse_view(_childElements);
+      for (auto &element : elements)
       {
-        element->Render();
+        if (element->IsVisible())
+        {
+          element->Render(_renderTransform.GetOpacity() * opacity);
+        }
       }
     }
   }

@@ -11,6 +11,6 @@ namespace Base
   public:
     void SetColor(Color color);
     Color GetColor() const;
-    void Render() override;
+    void Render(float opacity) override;
   };
 } // namespace Base

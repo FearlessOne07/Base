@@ -29,12 +29,6 @@ namespace Base
     }
   }
 
-  void UIElement::SetAlpha(float alpha)
-  {
-    _alpha = alpha;
-    _alpha = std::clamp<float>(_alpha, 0, 1);
-  }
-
   void UIElement::SetPadding(float padding)
   {
     _paddingTop = padding;
@@ -59,12 +53,6 @@ namespace Base
     _paddingRight = paddingRight;
   }
 
-  void UIElement::SetParentAlpha(float alpha)
-  {
-    _parentAlpha = alpha;
-    _parentAlpha = std::clamp<float>(_parentAlpha, 0, 1);
-  }
-
   void UIElement::SetSize(Size size)
   {
     _desiredSize = size;
@@ -73,11 +61,6 @@ namespace Base
   void UIElement::SetSprite(const NinePatchSprite &sprite)
   {
     _sprite = sprite;
-  }
-
-  void UIElement::SetRenderTransform(const RenderTransform &transform)
-  {
-    _renderTransform = transform;
   }
 
   void UIElement::Show()
@@ -193,8 +176,8 @@ namespace Base
   void UIElement::Arrange(Rectangle finalRect)
   {
     _layoutRect = finalRect;
-    float width = _desiredSize.width * _renderTransform.scaleX;
-    float height = _desiredSize.height * _renderTransform.scaleY;
+    float width = _desiredSize.width * _renderTransform.GetScaleX();
+    float height = _desiredSize.height * _renderTransform.GetScaleY();
 
     // Horizontal alignment
     switch (_horizontalAlignment)
@@ -228,8 +211,8 @@ namespace Base
       break;
     }
 
-    _layoutRect.width = width;
-    _layoutRect.height = height;
+    _layoutRect.width = std::min(width, finalRect.width);
+    _layoutRect.height = std::min(height, finalRect.height);
 
     for (auto &child : _childElements)
     {
@@ -237,7 +220,7 @@ namespace Base
     }
   }
 
-  const RenderTransform &UIElement::GetRenderTransform() const
+  RenderTransform &UIElement::GetRenderTransform()
   {
     return _renderTransform;
   }
@@ -245,5 +228,10 @@ namespace Base
   Size UIElement::GetDesiredSize() const
   {
     return _desiredSize;
+  }
+
+  Vector2 UIElement::GetPosition() const
+  {
+    return {_layoutRect.x + _renderTransform.GetOffsetx(), _layoutRect.y + _renderTransform.GetOffsetY()};
   }
 } // namespace Base

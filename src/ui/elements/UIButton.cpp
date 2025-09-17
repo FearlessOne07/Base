@@ -48,7 +48,7 @@ namespace Base
       font = GetFontDefault();
     }
 
-    auto textSize = MeasureTextEx(font, _text.c_str(), _fontSize * _renderTransform.fontScale, 1);
+    auto textSize = MeasureTextEx(font, _text.c_str(), _fontSize * _renderTransform.GetFontScale(), 1);
     _layoutRect = finalRect;
     float width = textSize.x;
     float height = textSize.y;
@@ -96,51 +96,56 @@ namespace Base
     _fontSize = size;
   }
 
-  void UIButton::Render()
+  void UIButton::Render(float opacity)
   {
-    Font font;
-    if (_font.Get())
-    {
-      font = *_font.Get()->GetRaylibFont();
-    }
-    else
-    {
-      font = GetFontDefault();
-    }
 
-    if (_sprite)
+    if (!_isHidden)
     {
-      _sprite.Draw(                                                                                        //
-        {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, _alpha * _parentAlpha * 255 //
-      );
-    }
-    else
-    {
-      DrawRectangleRec( //
-        {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height},
-        {_color.r, _color.g, _color.b, static_cast<unsigned char>(_alpha * _parentAlpha * 255)} //
-      );
-    }
-
-    // Measure text size
-    float fontSize = _fontSize * _renderTransform.fontScale;
-    Vector2 textSize = MeasureTextEx(font, _text.c_str(), fontSize, 1);
-
-    // Center text inside padded button area
-    Vector2 textPos = {
-      _layoutRect.x + (_layoutRect.width - textSize.x) / 2,
-      _layoutRect.y + (_layoutRect.height - textSize.y) / 2,
-    };
-
-    DrawTextBase( //
-      font, _text.c_str(), textPos, fontSize, 1,
+      Font font;
+      if (_font.Get())
       {
-        _textColor.r,
-        _textColor.g,
-        _textColor.b,
-        static_cast<unsigned char>(_alpha * _parentAlpha * 255),
-      } //
-    );
+        font = *_font.Get()->GetRaylibFont();
+      }
+      else
+      {
+        font = GetFontDefault();
+      }
+
+      if (_sprite)
+      {
+        _sprite.Draw( //
+          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height},
+          _renderTransform.GetOpacity() * opacity * 255 //
+        );
+      }
+      else
+      {
+        DrawRectangleRec( //
+          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height},
+          {_color.r, _color.g, _color.b, static_cast<unsigned char>(_renderTransform.GetOpacity() * opacity * 255)} //
+        );
+      }
+
+      // Measure text size
+      float fontSize = _fontSize * _renderTransform.GetFontScale();
+      Vector2 textSize = MeasureTextEx(font, _text.c_str(), fontSize, 1);
+
+      // Center text inside padded button area
+      Vector2 textPos = {
+        _layoutRect.x + (_layoutRect.width - textSize.x) / 2,
+        _layoutRect.y + (_layoutRect.height - textSize.y) / 2,
+      };
+
+      DrawTextBase( //
+        font, _text.c_str(), textPos, fontSize, 1,
+        {
+          _textColor.r,
+          _textColor.g,
+          _textColor.b,
+          static_cast<unsigned char>(_renderTransform.GetOpacity() * opacity * 255),
+        } //
+      );
+    }
   }
 
   void UIButton::UpdateElement(float dt)

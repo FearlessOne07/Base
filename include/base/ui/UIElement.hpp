@@ -5,6 +5,7 @@
 #include "base/textures/Font.hpp"
 #include "base/ui/UILayoutSettings.hpp"
 #include "base/util/AntagonisticFunction.hpp"
+#include <algorithm>
 #include <functional>
 #include <memory>
 #include <raylib.h>
@@ -16,10 +17,73 @@ namespace Base
     float width = 0, height = 0;
   };
 
-  struct RenderTransform
+  class RenderTransform
   {
-    float scaleX = 1, scaleY = 1;
-    float fontScale = 1;
+    float _scaleX = 1, _scaleY = 1;
+    float _fontScale = 1;
+    float _offsetX = 0, _offsetY = 0;
+    float _opactity = 1;
+
+  public:
+    float GetScaleX() const
+    {
+      return _scaleX;
+    }
+
+    float GetScaleY() const
+    {
+      return _scaleY;
+    }
+
+    float GetFontScale() const
+    {
+      return _fontScale;
+    }
+
+    float GetOffsetx() const
+    {
+      return _offsetX;
+    }
+
+    float GetOffsetY() const
+    {
+      return _offsetY;
+    }
+
+    float GetOpacity() const
+    {
+      return _opactity;
+    }
+
+    void SetOpacity(float value)
+    {
+      _opactity = std::clamp(value, 0.f, 1.f);
+    }
+
+    void SetOffsetX(float value)
+    {
+      _offsetX = value;
+    }
+
+    void SetOffsetY(float value)
+    {
+      _offsetY = value;
+    }
+
+    void SetFontScale(float value)
+    {
+      _fontScale = value;
+    }
+
+    void SetScaleX(float value)
+    {
+      _scaleX = value;
+    }
+
+    void SetScaleY(float value)
+    {
+      _scaleY = value;
+    }
   };
 
   enum class HAlign
@@ -59,9 +123,6 @@ namespace Base
 
     bool _isHidden = false;
 
-    float _alpha = 1;
-    float _parentAlpha = 1;
-
     HAlign _horizontalAlignment = HAlign::Left;
     VAlign _verticalAlignment = VAlign::Top;
 
@@ -91,8 +152,6 @@ namespace Base
     void SetHAlignment(HAlign hAlign);
     void SetVAlignment(VAlign vAlign);
     void SetFont(const AssetHandle<BaseFont> &);
-    virtual void SetAlpha(float alpha);
-    virtual void SetParentAlpha(float alpha);
 
     void SetSize(Size size);
     void SetSprite(const NinePatchSprite &sprite);
@@ -103,7 +162,7 @@ namespace Base
     void SetPadding(float paddingLeft, float paddingRight, float paddingTop, float paddingBottom);
 
     // Core
-    virtual void Render() = 0;
+    virtual void Render(float alpha) = 0;
 
     // Hide
     bool IsVisible() const;
@@ -118,12 +177,12 @@ namespace Base
     virtual Size Measure();
     virtual void Arrange(Rectangle finalRect);
     Size GetDesiredSize() const;
+    Vector2 GetPosition() const;
 
     virtual void OnElementInputEvent(std::shared_ptr<InputEvent> &event);
     virtual void UpdateElement(float dt);
 
     // Render Tranform
-    void SetRenderTransform(const RenderTransform &transform);
-    const RenderTransform &GetRenderTransform() const;
+    RenderTransform &GetRenderTransform();
   };
 } // namespace Base

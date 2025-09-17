@@ -35,11 +35,8 @@ namespace Base
 
     Color GetBackgroundColor() const;
 
-    void SetAlpha(float alpha) override;
-    void SetParentAlpha(float alpha) override;
-
     // Core
-    void Render() override;
+    void Render(float opacity) override;
 
     void Hide() override;
     void Show() override;
@@ -59,7 +56,6 @@ namespace Base
         {
           _childElements.emplace_back(std::make_shared<T>());
           _childElementIds.emplace_back(name);
-          _childElements.back()->SetParentAlpha(_alpha * _parentAlpha);
           _dirty = true;
           return std::static_pointer_cast<T>(_childElements.back());
         }
