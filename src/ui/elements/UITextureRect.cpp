@@ -8,12 +8,12 @@ namespace Base
   {
     if (_sprite)
     {
-      _sprite.Draw({GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, _alpha * _parentAlpha * 255);
+      _sprite.Draw({_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, _alpha * _parentAlpha * 255);
     }
     else
     {
       DrawRectangleBase( //
-        {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, {0, 0}, 0,
+        {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
         {255, 255, 255, static_cast<unsigned char>(_alpha * _parentAlpha * 255)} //
       );
     }

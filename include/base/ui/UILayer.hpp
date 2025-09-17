@@ -2,71 +2,44 @@
 #include "base/input/InputEvent.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/util/Exception.hpp"
-#include "base/util/Strings.hpp"
-#include <algorithm>
-#include <cctype>
-#include <iterator>
 #include <memory>
 #include <string>
 #include <type_traits>
-#include <vector>
 
 namespace Base
 {
   class UILayer
   {
   private:
-    std::vector<std::string> _elementIds;
-    std::vector<std::shared_ptr<UIElement>> _elements;
+    std::shared_ptr<UIElement> _root;
     bool _isHidden = false;
+    Vector2 _layerSize = {0, 0};
 
   public:
-    template <typename T> std::shared_ptr<T> AddElement(const std::string &id)
+    UILayer() = default;
+    UILayer(Vector2 layerSize);
+    template <typename T> std::shared_ptr<T> SetRootElement(const std::string &id)
     {
       if (!std::is_base_of_v<UIElement, T>)
       {
         THROW_BASE_RUNTIME_ERROR("T must ba a derivative of UIElement");
       }
 
-      std::string lowerid = Base::Strings::ToLower(id);
-
-      if (std::ranges::find(_elementIds, lowerid) != _elementIds.end())
+      if (_root)
       {
-        THROW_BASE_RUNTIME_ERROR("Element " + id + " already registered in layer");
+        THROW_BASE_RUNTIME_ERROR("Layer root element already set");
       }
 
-      _elementIds.emplace_back(lowerid);
-      _elements.emplace_back(std::make_shared<T>());
-
-      return std::static_pointer_cast<T>(_elements.back());
+      _root = std::make_shared<T>();
+      return std::static_pointer_cast<T>(_root);
     }
 
-    template <typename T> std::shared_ptr<T> GetElement(const std::string &id)
-    {
-      if (!std::is_base_of_v<UIElement, T>)
-      {
-        THROW_BASE_RUNTIME_ERROR("T must ba a derivative of UIElement");
-      }
-
-      std::string lowerid = id;
-      std::ranges::transform(id, lowerid.begin(), [](char c) { return std::tolower(c); });
-
-      if (auto it = std::ranges::find(_elementIds, lowerid); it != _elementIds.end())
-      {
-        int index = static_cast<int>(std::distance(_elementIds.begin(), it));
-        return std::static_pointer_cast<T>(_elements[index]);
-      }
-      else
-      {
-        THROW_BASE_RUNTIME_ERROR("Element " + id + " isn't registerd in layer");
-      }
-    }
-    bool HasElement(const std::string &name) const;
-    void RemoveElement(const std::string &id);
     void OnInputEvent(std::shared_ptr<InputEvent> &event);
-    void Render();
-    void Update(float dt);
     bool IsVisible() const;
+
+    void Update(float dt);
+    void Render();
+
     void Hide();
     void Show();
   };

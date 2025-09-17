@@ -17,7 +17,7 @@ namespace Base
   void UIPanel::Render()
   {
     DrawRectangleBase( //
-      {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, {0, 0}, 0,
+      {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
       {
         _color.r,
         _color.g,

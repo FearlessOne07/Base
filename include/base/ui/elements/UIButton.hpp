@@ -9,10 +9,7 @@ namespace Base
   {
   private:
     std::string _text = "Button";
-    Vector2 _padding = {10, 10};
-
-    float _baseFontSize = 12;
-    float _currentFontSize = 12;
+    float _fontSize = 12;
 
     Color _normalColor = WHITE;
     Color _hoverColor = GRAY;
@@ -23,13 +20,15 @@ namespace Base
   public:
     void SetText(const std::string &);
     void SetColors(Color hoverColor, Color activeColor, Color normalColor, Color textColor);
-    void SetFontSize(float size, bool base = true);
-    void SetFont(const AssetHandle<BaseFont> &) override;
-    void SetPadding(Vector2 padding);
-    void Render() override;
-    void Update(float dt) override;
-    void OnInputEvent(std::shared_ptr<InputEvent> &event) override;
+    void SetFontSize(float size);
     float GetFontSize() const;
-    float GetBaseFontSize() const;
+
+    // Core
+    void Render() override;
+    void UpdateElement(float dt) override;
+
+    // New
+    Size Measure() override;
+    void Arrange(Rectangle finalRect) override;
   };
 } // namespace Base

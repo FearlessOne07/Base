@@ -1,4 +1,5 @@
 #include "base/ui/elements/UILabel.hpp"
+#include "base/ui/UIElement.hpp"
 #include "base/util/Draw.hpp"
 #include "raylib.h"
 #include <string>
@@ -7,30 +8,10 @@ namespace Base
 {
   void UILabel::SetText(const std::string &text)
   {
-    Font font;
-    if (_font.Get())
-    {
-      font = *_font.Get()->GetRaylibFont();
-    }
-    else
-    {
-      font = GetFontDefault();
-    }
     _text = text;
-
-    if (_elementSizeMode == ElementSizeMode::FIT)
-    {
-      _baseSize = MeasureTextEx(font, text.c_str(), _baseFontSize, 1);
-      _baseSize.x += _padding.x * 2;
-      _baseSize.y += _padding.y * 2;
-
-      _currentSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
-      _currentSize.x += _padding.x * 2;
-      _currentSize.y += _padding.y * 2;
-    }
   }
 
-  void UILabel::SetFontSize(float size, bool base)
+  Size UILabel::Measure()
   {
     Font font;
     if (_font)
@@ -42,31 +23,71 @@ namespace Base
       font = GetFontDefault();
     }
 
-    if (base)
-    {
-      _baseFontSize = size;
-      _baseSize = MeasureTextEx(font, _text.c_str(), _baseFontSize, 1);
-      _baseSize.x += _padding.x * 2;
-      _baseSize.y += _padding.y * 2;
-    }
-
-    _currentFontSize = size;
-    _currentSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
-    _currentSize.x += _padding.x * 2;
-    _currentSize.y += _padding.y * 2;
+    auto textSize = MeasureTextEx(font, _text.c_str(), _fontSize, 1);
+    _desiredSize = {textSize.x, textSize.y};
+    _desiredSize.width += _paddingLeft + _paddingRight;
+    _desiredSize.height += _paddingTop + _paddingBottom;
+    return _desiredSize;
   }
 
-  void UILabel::SetFont(const AssetHandle<BaseFont> &fontHandle)
+  void UILabel::Arrange(Rectangle finalRect)
   {
-    _font = fontHandle;
-    Font font = *_font.Get()->GetRaylibFont();
+    Font font;
+    if (_font.Get())
+    {
+      font = *_font.Get()->GetRaylibFont();
+    }
+    else
+    {
+      font = GetFontDefault();
+    }
 
-    _baseSize = MeasureTextEx(font, _text.c_str(), _baseFontSize, 1);
-    _baseSize.x += _padding.x * 2;
-    _baseSize.y += _padding.y * 2;
-    _currentSize = MeasureTextEx(font, _text.c_str(), _currentFontSize, 1);
-    _currentSize.x += _padding.x * 2;
-    _currentSize.y += _padding.y * 2;
+    auto textSize = MeasureTextEx(font, _text.c_str(), _fontSize * _renderTransform.fontScale, 1);
+    _layoutRect = finalRect;
+    float width = textSize.x;
+    float height = textSize.y;
+    width += _paddingLeft + _paddingRight;
+    height += _paddingTop + _paddingBottom;
+
+    // Horizontal alignment
+    switch (_horizontalAlignment)
+    {
+    case HAlign::Left:
+      break;
+    case HAlign::Center:
+      _layoutRect.x += (finalRect.width - width) / 2;
+      break;
+    case HAlign::Right:
+      _layoutRect.x += finalRect.width - width;
+      break;
+    case HAlign::Stretch:
+      width = finalRect.width;
+      break;
+    }
+
+    // Vertical alignment
+    switch (_verticalAlignment)
+    {
+    case VAlign::Top:
+      break;
+    case VAlign::Center:
+      _layoutRect.y += (finalRect.height - height) / 2;
+      break;
+    case VAlign::Bottom:
+      _layoutRect.y += finalRect.height - height;
+      break;
+    case VAlign::Stretch:
+      height = finalRect.height;
+      break;
+    }
+
+    _layoutRect.width = width;
+    _layoutRect.height = height;
+  }
+
+  void UILabel::SetFontSize(float size)
+  {
+    _fontSize = size;
   }
 
   void UILabel::SetTextColor(Color color)
@@ -87,7 +108,7 @@ namespace Base
     }
 
     DrawTextBase( //
-      font, _text.c_str(), GetPosition(), _currentFontSize, 1,
+      font, _text.c_str(), {_layoutRect.x, _layoutRect.y}, _fontSize * _renderTransform.fontScale, 1,
       {
         _textColor.r,
         _textColor.g,
@@ -95,23 +116,5 @@ namespace Base
         static_cast<unsigned char>(_alpha * _parentAlpha * 255),
       } //
     );
-  }
-
-  void UILabel::SetPadding(Vector2 padding)
-  {
-    _padding = padding;
-    Font font;
-    if (_font.Get())
-    {
-      font = *_font.Get()->GetRaylibFont();
-    }
-    else
-    {
-      font = GetFontDefault();
-    }
-
-    _baseSize = MeasureTextEx(font, _text.c_str(), _baseFontSize, 1);
-    _baseSize.x += _padding.x * 2;
-    _baseSize.y += _padding.y * 2;
   }
 } // namespace Base

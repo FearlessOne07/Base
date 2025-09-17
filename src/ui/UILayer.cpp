@@ -1,86 +1,55 @@
 #include "base/ui/UILayer.hpp"
-#include "base/util/Strings.hpp"
-#include <ranges>
 
 namespace Base
 {
+  UILayer::UILayer(Vector2 layerSize) : _layerSize(layerSize)
+  {
+  }
+
   void UILayer::OnInputEvent(std::shared_ptr<InputEvent> &event)
   {
-    for (auto &element : _elements)
+    if (_root)
     {
-      if (element->IsVisible())
+      if (!event->isHandled)
       {
-        element->_onInputEvent(event);
-      }
 
-      if (event->isHandled)
-      {
-        break;
+        _root->OnInputEvent(event);
       }
     }
   }
 
   void UILayer::Render()
   {
-    auto elements = std::ranges::reverse_view(_elements);
-    for (auto &element : elements)
+    if (!_isHidden && _root)
     {
-      if (element->IsVisible())
-      {
-        element->Render();
-      }
-    }
-  }
-
-  bool UILayer::HasElement(const std::string &name) const
-  {
-    std::string lowerid = Base::Strings::ToLower(name);
-    if (auto it = std::ranges::find(_elementIds, lowerid); it == _elementIds.end())
-    {
-      return false;
-    }
-    else
-    {
-      return true;
-    }
-  }
-  void UILayer::RemoveElement(const std::string &id)
-  {
-    std::string lowerid = Base::Strings::ToLower(id);
-    if (auto it = std::ranges::find(_elementIds, lowerid); it != _elementIds.end())
-    {
-      int index = static_cast<int>(std::distance(_elementIds.begin(), it));
-      _elementIds.erase(it);
-      _elements.erase(_elements.begin() + index);
-    }
-    else
-    {
-      THROW_BASE_RUNTIME_ERROR("Element " + id + " isn't registerd in layer");
+      _root->Render();
     }
   }
 
   void UILayer::Update(float dt)
   {
-    for (auto &element : _elements)
+    if (_root)
     {
-      element->_update(dt);
+      _root->Measure();
+      _root->Arrange({0, 0, _layerSize.x, _layerSize.y});
+      _root->Update(dt);
     }
   }
 
   void UILayer::Hide()
   {
-    for (auto &element : _elements)
+    if (_root)
     {
-      element->Hide();
+      _root->Hide();
     }
     _isHidden = true;
   }
 
   void UILayer::Show()
   {
-    for (auto &element : _elements)
+    if (_root)
     {
-      element->Show();
+      _root->Show();
     }
     _isHidden = false;
   }

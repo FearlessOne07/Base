@@ -11,62 +11,26 @@
 
 namespace Base
 {
-  class UIContainer : public UIElement
+  class UIStackPanel : public UIElement
   {
   public:
-    enum struct Layout : uint8_t
+    enum struct Orientation : uint8_t
     {
-      VERTICAL = 0,
-      HORIZONTAL
-    };
-
-    enum struct GapMode : uint8_t
-    {
-      FIXED = 0,
-      AUTO
-    };
-
-    enum AnchorPoint : uint8_t
-    {
-      TOP_LEFT,
-      TOP_CENTER,
-      TOP_RIGHT,
-      RIGHT_CENTER,
-      BOTTOM_RIGHT,
-      BOTTOM_CENTER,
-      BOTTOM_LEFT,
-      LEFT_CENTER,
-      CENTER
+      Vertical,
+      Horizontal
     };
 
   private:
-    // UI Elements
-    std::vector<std::string> _childElementIds;
-    std::vector<std::shared_ptr<UIElement>> _childElements;
-
     // Layout
-    AnchorPoint _anchorPoint = AnchorPoint::TOP_LEFT;
-    Layout _layout = Layout::VERTICAL;
+    Orientation _orientation = Orientation::Vertical;
     bool _dirty = false;
-    Vector2 _padding = {0, 0};
-
-    GapMode _gapMode = GapMode::FIXED;
-    float _gapSize = 10;
-
+    float _gap = 10;
     Color _backgroundColor = BLANK;
-
-  private:
-    void LayoutVertical();
-    void LayoutHorizontal();
-    void UpdatePosition();
 
   public:
     // Layout
-    void SetPadding(Vector2 padding);
-    void SetGapSize(float gapSize);
-    void SetGapMode(GapMode gapMode);
-    void SetLayout(Layout layout);
-    void SetAnchorPoint(AnchorPoint anchorPoint);
+    void SetGap(float gap);
+    void SetOrientation(Orientation layout);
     void SetBackgroundColor(Color color);
 
     Color GetBackgroundColor() const;
@@ -75,15 +39,17 @@ namespace Base
     void SetParentAlpha(float alpha) override;
 
     // Core
-    void Update(float dt) override;
     void Render() override;
 
     void Hide() override;
     void Show() override;
-    void OnInputEvent(std::shared_ptr<InputEvent> &event) override;
+    void OnElementInputEvent(std::shared_ptr<InputEvent> &event) override;
+
+    // New
+    Size Measure() override;
+    void Arrange(Rectangle finalRect) override;
 
   public:
-    // Templates
     template <typename T> std::shared_ptr<T> AddChild(const std::string &name)
     {
       if (std::is_base_of_v<UIElement, T>)

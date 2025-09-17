@@ -22,7 +22,7 @@ set(SRC
   "./ui/elements/UILabel.cpp"
   "./ui/elements/UIButton.cpp"
   "./ui/elements/UIPanel.cpp"
-  "./ui/elements/UIContainer.cpp"
+  "./ui/elements/UIStackPanel.cpp"
   "./ui/elements/UITextureRect.cpp"
 
   "./scenes/SceneManager.cpp"

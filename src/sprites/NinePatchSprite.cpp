@@ -75,7 +75,7 @@ namespace Base
 
     float destArea = width * height;
     float refArea = 160 * 60;
-    float _scale = std::max<float>(std::sqrt(destArea / refArea) * _borderScaleMultiplier, 2.f);
+    float _scale = _borderScaleMultiplier + 1;
 
     // Scale the border sizes for rendering
     float scaledBorderLeft = _border.left * _scale;

@@ -1,6 +1,7 @@
 #include "base/ui/UIManager.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
+#include "raylib.h"
 
 namespace Base
 {
@@ -20,7 +21,7 @@ namespace Base
     }
   }
 
-  UILayer *UIManager::AddLayer(const std::string &layerID)
+  UILayer *UIManager::AddLayer(const std::string &layerID, Vector2 layerSize)
   {
     std::string lowerID = Base::Strings::ToLower(layerID);
     if (_layers.contains(lowerID))
@@ -28,7 +29,7 @@ namespace Base
       THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " already exists");
     }
 
-    _layers[lowerID] = UILayer();
+    _layers[lowerID] = UILayer(layerSize);
     return &_layers.at(lowerID);
   }
 

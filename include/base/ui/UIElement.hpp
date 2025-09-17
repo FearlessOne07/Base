@@ -11,56 +11,70 @@
 
 namespace Base
 {
+  struct Size
+  {
+    float width = 0, height = 0;
+  };
+
+  struct RenderTransform
+  {
+    float scaleX = 1, scaleY = 1;
+    float fontScale = 1;
+  };
+
+  enum class HAlign
+  {
+    Left,
+    Center,
+    Right,
+    Stretch
+  };
+
+  enum class VAlign
+  {
+    Top,
+    Center,
+    Bottom,
+    Stretch
+  };
+
   class UIElement
   {
-  public:
-    enum struct ElementSizeMode : uint8_t
-    {
-      FIXED = 0,
-      FIT
-    };
-
-    enum struct ContainerSizeMode : uint8_t
-    {
-      DEFAULT = 0,
-      FILL
-    };
-
-    friend class UILayer;
-    friend class UIContainer;
-
-  private:
-    Vector2 _basePosition = {0, 0};
-    Vector2 _layoutPosition = {0, 0};
-    Vector2 _positionalOffset = {0, 0};
-
-  private:
-    virtual void Update(float dt);
+  protected:
     Rectangle GetCombinedHoverRect() const;
-
-    // Template Methods
-    void _update(float dt);
-    void _onInputEvent(std::shared_ptr<InputEvent> &event);
 
   protected:
     AssetHandle<BaseFont> _font;
     NinePatchSprite _sprite;
 
-    Vector2 _baseSize = {0, 0};
-    Vector2 _currentSize = {0, 0};
-    ElementSizeMode _elementSizeMode = ElementSizeMode::FIT;
-    ContainerSizeMode _containerSizeMode = ContainerSizeMode::DEFAULT;
+    Size _desiredSize = {0, 0};
+
+    std::vector<std::string> _childElementIds;
+    std::vector<std::shared_ptr<UIElement>> _childElements;
+
+    Rectangle _layoutRect = {0, 0, 0, 0};
+
+    // Padding
+    float _paddingLeft = 0, _paddingRight = 0, _paddingTop = 0, _paddingBottom = 0;
 
     bool _isHidden = false;
-
-    bool _isHovered = false;
-    bool _firstHover = false;
-
-    bool _isActive = false;
 
     float _alpha = 1;
     float _parentAlpha = 1;
 
+    HAlign _horizontalAlignment = HAlign::Left;
+    VAlign _verticalAlignment = VAlign::Top;
+
+    // Render
+    RenderTransform _renderTransform;
+
+    // Hover
+    bool _isHovered = false;
+    bool _firstHover = false;
+    bool _isActive = false;
+
+    // Template Functions
+  protected:
   public:
     AntagonisticFunction onHover;
     std::function<void()> onClick = nullptr;
@@ -71,32 +85,24 @@ namespace Base
   public:
     virtual ~UIElement();
 
+    void OnInputEvent(std::shared_ptr<InputEvent> &event);
+    void Update(float dt);
     // Setters
-    void SetLayoutSettings(const UILayoutSettings &settings);
-    virtual void SetFont(const AssetHandle<BaseFont> &);
+    void SetHAlignment(HAlign hAlign);
+    void SetVAlignment(VAlign vAlign);
+    void SetFont(const AssetHandle<BaseFont> &);
     virtual void SetAlpha(float alpha);
     virtual void SetParentAlpha(float alpha);
 
-    void SetPosition(Vector2 position, bool final = false);
-    void SetPositionalOffset(Vector2 offset);
-    void SetSize(Vector2 size, bool base = true);
-    void SetContainterSizeMode(ContainerSizeMode sizeMode);
-    void SetElementSizeMode(ElementSizeMode sizeMode);
+    void SetSize(Size size);
     void SetSprite(const NinePatchSprite &sprite);
 
-    // Getters
-    Vector2 GetPosition() const;
-    Vector2 GetPositionalOffset() const;
-    float GetAlpha() const;
-
-    Vector2 GetSize() const;
-    Vector2 GetBaseSize() const;
-    ContainerSizeMode GetContainerSizeMode() const;
-    ElementSizeMode GetElementSizeMode() const;
-    const UILayoutSettings &GetLayoutSettings() const;
+    // Padding
+    void SetPadding(float padding);
+    void SetPadding(float paddingX, float paddingY);
+    void SetPadding(float paddingLeft, float paddingRight, float paddingTop, float paddingBottom);
 
     // Core
-    virtual void OnInputEvent(std::shared_ptr<InputEvent> &event);
     virtual void Render() = 0;
 
     // Hide
@@ -106,5 +112,18 @@ namespace Base
     void SetVisibilityOff();
     std::function<void()> onShow = nullptr;
     std::function<void()> onHide = nullptr;
+
+  public:
+    // New
+    virtual Size Measure();
+    virtual void Arrange(Rectangle finalRect);
+    Size GetDesiredSize() const;
+
+    virtual void OnElementInputEvent(std::shared_ptr<InputEvent> &event);
+    virtual void UpdateElement(float dt);
+
+    // Render Tranform
+    void SetRenderTransform(const RenderTransform &transform);
+    const RenderTransform &GetRenderTransform() const;
   };
 } // namespace Base
