@@ -1,10 +1,11 @@
 #include "base/ui/UILayer.hpp"
+#include "base/ui/elements/UICanvas.hpp"
 #include "raylib.h"
 #include <memory>
 
 namespace Base
 {
-  UILayer::UILayer(Vector2 layerSize) : _layerSize(layerSize)
+  UILayer::UILayer(Vector2 layerSize, Vector2 layerPosition) : _layerSize(layerSize), _layerPosition(layerPosition)
   {
   }
 
@@ -35,13 +36,14 @@ namespace Base
   {
     if (_layerBackPanel)
     {
-      _layerBackPanel->Arrange({0, 0, _layerSize.x, _layerSize.y});
+      _layerBackPanel->Arrange({_layerPosition.x, _layerPosition.y, _layerSize.x, _layerSize.y});
     }
 
     if (_root)
     {
-      _root->Measure();
-      _root->Arrange({0, 0, _layerSize.x, _layerSize.y});
+      Size rSize = _root->Measure();
+      Vector2 rPos = _root->GetPosition();
+      _root->Arrange({_layerPosition.x + rPos.x, _layerPosition.y + rPos.y, _layerSize.x, _layerSize.y});
       _root->Update(dt);
     }
   }

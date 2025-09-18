@@ -43,11 +43,15 @@ namespace Base
     }
 
     auto textSize = MeasureTextEx(font, _text.c_str(), _fontSize * _renderTransform.GetFontScale(), 1);
+
     _layoutRect = finalRect;
     float width = textSize.x;
     float height = textSize.y;
     width += _paddingLeft + _paddingRight;
     height += _paddingTop + _paddingBottom;
+
+    _layoutRect.x += _renderTransform.GetOffsetx();
+    _layoutRect.y += _renderTransform.GetOffsetY();
 
     // Horizontal alignment
     switch (_horizontalAlignment)

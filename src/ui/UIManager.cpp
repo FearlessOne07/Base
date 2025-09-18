@@ -21,7 +21,7 @@ namespace Base
     }
   }
 
-  UILayer *UIManager::AddLayer(const std::string &layerID, Vector2 layerSize)
+  UILayer *UIManager::AddLayer(const std::string &layerID, Vector2 layerSize, Vector2 layerPosition)
   {
     std::string lowerID = Base::Strings::ToLower(layerID);
     if (_layers.contains(lowerID))
@@ -29,7 +29,7 @@ namespace Base
       THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " already exists");
     }
 
-    _layers[lowerID] = UILayer(layerSize);
+    _layers[lowerID] = UILayer(layerSize, layerPosition);
     return &_layers.at(lowerID);
   }
 

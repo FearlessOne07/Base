@@ -3,6 +3,7 @@
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIPanel.hpp"
 #include "base/util/Exception.hpp"
+#include "raylib.h"
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -17,11 +18,12 @@ namespace Base
 
     bool _isHidden = false;
     Vector2 _layerSize = {0, 0};
+    Vector2 _layerPosition = {0, 0};
 
   public:
     UILayer() = default;
-    UILayer(Vector2 layerSize);
-    template <typename T> std::shared_ptr<T> SetRootElement(const std::string &id)
+    UILayer(Vector2 layerSize, Vector2 layerPosition);
+    template <typename T> std::shared_ptr<T> SetRootElement()
     {
       if (!std::is_base_of_v<UIElement, T>)
       {
@@ -37,7 +39,7 @@ namespace Base
       return std::static_pointer_cast<T>(_root);
     }
 
-    template <typename T> std::shared_ptr<T> GetRootElement(const std::string &id)
+    template <typename T> std::shared_ptr<T> GetRootElement()
     {
       if (!std::is_base_of_v<UIElement, T>)
       {

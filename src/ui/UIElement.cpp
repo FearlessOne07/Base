@@ -4,9 +4,32 @@
 #include "base/sprites/NinePatchSprite.hpp"
 #include "raylib.h"
 #include <algorithm>
+#include <cmath>
 
 namespace Base
 {
+  static Rectangle RectangleUnion(Rectangle a, Rectangle b)
+  {
+    float minX = fminf(a.x, b.x);
+    float minY = fminf(a.y, b.y);
+    float maxX = fmaxf(a.x + a.width, b.x + b.width);
+    float maxY = fmaxf(a.y + a.height, b.y + b.height);
+
+    return {minX, minY, maxX - minX, maxY - minY};
+  }
+
+  Rectangle UIElement::GetCombinedHoverRect() const
+  {
+    Rectangle layoutRect = {
+      _layoutRect.x - _renderTransform.GetOffsetx(),
+      _layoutRect.y - _renderTransform.GetOffsetY(),
+      _layoutRect.width,
+      _layoutRect.height,
+    };
+
+    return RectangleUnion(layoutRect, _layoutRect);
+  }
+
   UIElement::~UIElement()
   {
   }
@@ -89,6 +112,11 @@ namespace Base
     _desiredSize = size;
   }
 
+  void UIElement::SetPosition(Vector2 position)
+  {
+    _desiredPosition = position;
+  }
+
   void UIElement::Show()
   {
     _isHidden = false;
@@ -154,7 +182,7 @@ namespace Base
     const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
     Vector2 mousePos = rd->mousePosition;
 
-    bool isCurrentlyHovered = CheckCollisionPointRec(mousePos, _layoutRect);
+    bool isCurrentlyHovered = CheckCollisionPointRec(mousePos, GetCombinedHoverRect());
 
     if (isCurrentlyHovered && !_isHovered)
     {
@@ -172,7 +200,6 @@ namespace Base
         onHover.relax();
       }
     }
-
     _isHovered = isCurrentlyHovered;
     UpdateElement(dt);
   }
@@ -269,6 +296,44 @@ namespace Base
 
   Vector2 UIElement::GetPosition() const
   {
-    return {_layoutRect.x + _renderTransform.GetOffsetx(), _layoutRect.y + _renderTransform.GetOffsetY()};
+    return _desiredPosition;
+  }
+
+  VAlign UIElement::GetVAlignment() const
+  {
+    return _verticalAlignment;
+  }
+
+  HAlign UIElement::GetHAlignment() const
+  {
+    return _horizontalAlignment;
+  }
+
+  bool UIElement::HasChild(const std::string &name) const
+  {
+    std::string lowerid = Base::Strings::ToLower(name);
+    if (auto it = std::ranges::find(_childElementIds, lowerid); it == _childElementIds.end())
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
+
+  void UIElement::RemoveChild(const std::string &id)
+  {
+    std::string lowerid = Base::Strings::ToLower(id);
+    if (auto it = std::ranges::find(_childElementIds, lowerid); it != _childElementIds.end())
+    {
+      int index = static_cast<int>(std::distance(_childElementIds.begin(), it));
+      _childElementIds.erase(it);
+      _childElements.erase(_childElements.begin() + index);
+    }
+    else
+    {
+      THROW_BASE_RUNTIME_ERROR("Element " + id + " isn't registerd in layer");
+    }
   }
 } // namespace Base

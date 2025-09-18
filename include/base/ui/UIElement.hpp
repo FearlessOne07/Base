@@ -111,7 +111,7 @@ namespace Base
 
   class UIElement
   {
-  protected:
+  private:
     Rectangle GetCombinedHoverRect() const;
 
   protected:
@@ -119,6 +119,7 @@ namespace Base
     NinePatchSprite _sprite;
 
     Size _desiredSize = {0, 0};
+    Vector2 _desiredPosition = {0, 0};
 
     std::vector<std::string> _childElementIds;
     std::vector<std::shared_ptr<UIElement>> _childElements;
@@ -164,6 +165,8 @@ namespace Base
     void SetWidthSizeMode(SizeMode mode);
     void SetHeightSizeMode(SizeMode mode);
 
+    void SetPosition(Vector2 position);
+
     void SetSizeMode(SizeMode mode);
     void SetSize(Size size);
 
@@ -185,6 +188,8 @@ namespace Base
 
     Size GetDesiredSize() const;
     Vector2 GetPosition() const;
+    HAlign GetHAlignment() const;
+    VAlign GetVAlignment() const;
 
     // New
     virtual Size Measure();
@@ -196,9 +201,10 @@ namespace Base
     // Render Tranform
     RenderTransform &GetRenderTransform();
 
-    // Templates
-
   public:
+    // Child Management
+    bool HasChild(const std::string &name) const;
+    void RemoveChild(const std::string &name);
     template <typename T> std::shared_ptr<T> AddChild(const std::string &name)
     {
       if (std::is_base_of_v<UIElement, T>)

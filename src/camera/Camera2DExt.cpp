@@ -147,6 +147,11 @@ namespace Base
     return GetScreenToWorld2D(position, _camera);
   }
 
+  Vector2 Camera2DExt::GetWorldToScreen(Vector2 position) const
+  {
+    return GetWorldToScreen2D(position, _camera) / _camera.zoom;
+  }
+
   float Camera2DExt::GetZoom() const
   {
     return _camera.zoom;

@@ -4,7 +4,6 @@
 #include "raylib.h"
 #include <algorithm>
 #include <iterator>
-#include <memory>
 #include <ranges>
 
 namespace Base
@@ -156,19 +155,13 @@ namespace Base
     _backgroundColor = color;
   }
 
-  Color UIStackPanel::GetBackgroundColor() const
-  {
-    return _backgroundColor;
-  }
-
   void UIStackPanel::Render(float opacity)
   {
     if (!_isHidden)
     {
       if (_sprite)
       {
-        _sprite.Draw({_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height},
-                     _renderTransform.GetOpacity() * opacity * 255);
+        _sprite.Draw(_layoutRect, _renderTransform.GetOpacity() * opacity * 255);
       }
       else
       {
@@ -195,10 +188,7 @@ namespace Base
       auto elements = std::ranges::reverse_view(_childElements);
       for (auto &element : elements)
       {
-        if (element->IsVisible())
-        {
-          element->Render(_renderTransform.GetOpacity() * opacity);
-        }
+        element->Render(_renderTransform.GetOpacity() * opacity);
       }
     }
   }

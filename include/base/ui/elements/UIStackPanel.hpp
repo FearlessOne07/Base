@@ -17,7 +17,6 @@ namespace Base
   private:
     // Layout
     Orientation _orientation = Orientation::Vertical;
-    bool _dirty = false;
     float _gap = 10;
     Color _backgroundColor = BLANK;
 
@@ -26,8 +25,6 @@ namespace Base
     void SetGap(float gap);
     void SetOrientation(Orientation layout);
     void SetBackgroundColor(Color color);
-
-    Color GetBackgroundColor() const;
 
     // Core
     void Render(float opacity) override;
