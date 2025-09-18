@@ -2,17 +2,12 @@
 #include "base/input/Events/MouseButtonEvent.hpp"
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
-#include "base/ui/UILayoutSettings.hpp"
 #include "raylib.h"
-#include "raymath.h"
 #include <algorithm>
+#include <cmath>
 
 namespace Base
 {
-  UIElement::~UIElement()
-  {
-  }
-
   static Rectangle RectangleUnion(Rectangle a, Rectangle b)
   {
     float minX = fminf(a.x, b.x);
@@ -25,10 +20,28 @@ namespace Base
 
   Rectangle UIElement::GetCombinedHoverRect() const
   {
-    Rectangle layoutRect = {_layoutPosition.x, _layoutPosition.y, _currentSize.x, _currentSize.y};
-    Rectangle offsetRect = {GetPosition().x, GetPosition().y, _currentSize.x, _currentSize.y};
+    Rectangle layoutRect = {
+      _layoutRect.x - _renderTransform.GetOffsetx(),
+      _layoutRect.y - _renderTransform.GetOffsetY(),
+      _layoutRect.width,
+      _layoutRect.height,
+    };
 
-    return RectangleUnion(layoutRect, offsetRect);
+    return RectangleUnion(layoutRect, _layoutRect);
+  }
+
+  UIElement::~UIElement()
+  {
+  }
+
+  void UIElement::SetHAlignment(HAlign hAlign)
+  {
+    _horizontalAlignment = hAlign;
+  }
+
+  void UIElement::SetVAlignment(VAlign vAlign)
+  {
+    _verticalAlignment = vAlign;
   }
 
   void UIElement::SetFont(const AssetHandle<BaseFont> &font)
@@ -38,45 +51,49 @@ namespace Base
       _font = font;
     }
   }
-  void UIElement::SetAlpha(float alpha)
+
+  void UIElement::SetPadding(float padding)
   {
-    _alpha = alpha;
-    _alpha = std::clamp<float>(_alpha, 0, 1);
+    _paddingTop = padding;
+    _paddingBottom = padding;
+    _paddingLeft = padding;
+    _paddingRight = padding;
   }
 
-  void UIElement::SetParentAlpha(float alpha)
+  void UIElement::SetPadding(float paddingX, float paddingY)
   {
-    _parentAlpha = alpha;
-    _parentAlpha = std::clamp<float>(_parentAlpha, 0, 1);
+    _paddingLeft = paddingX;
+    _paddingRight = paddingX;
+    _paddingTop = paddingY;
+    _paddingBottom = paddingY;
   }
 
-  float UIElement::GetAlpha() const
+  void UIElement::SetPadding(float paddingLeft, float paddingRight, float paddingTop, float paddingBottom)
   {
-    return _alpha;
+    _paddingTop = paddingTop;
+    _paddingBottom = paddingBottom;
+    _paddingLeft = paddingLeft;
+    _paddingRight = paddingRight;
   }
 
-  void UIElement::SetPosition(Vector2 position, bool final)
+  void UIElement::SetWidth(float width)
   {
-    _basePosition = position;
-
-    if (final)
-    {
-      _layoutPosition = position;
-    }
+    _desiredSize.width = width;
   }
 
-  void UIElement::SetPositionalOffset(Vector2 offset)
+  void UIElement::SetHeight(float height)
   {
-    _positionalOffset = offset;
+    _desiredSize.height = height;
   }
 
-  void UIElement::SetSize(Vector2 size, bool base)
+  void UIElement::SetWidthSizeMode(SizeMode mode)
   {
-    if (base)
-    {
-      _baseSize = size;
-    }
-    _currentSize = size;
+    _widthSizeMode = mode;
+  }
+
+  void UIElement::SetHeightSizeMode(SizeMode mode)
+  {
+    _heightSizeMode = mode;
   }
 
   void UIElement::SetSprite(const NinePatchSprite &sprite)
@@ -84,54 +101,20 @@ namespace Base
     _sprite = sprite;
   }
 
-  void UIElement::SetContainterSizeMode(UIElement::ContainerSizeMode sizeMode)
+  void UIElement::SetSizeMode(SizeMode mode)
   {
-    _containerSizeMode = sizeMode;
+    _widthSizeMode = mode;
+    _heightSizeMode = mode;
   }
 
-  void UIElement::SetElementSizeMode(UIElement::ElementSizeMode sizeMode)
+  void UIElement::SetSize(Size size)
   {
-    _elementSizeMode = sizeMode;
+    _desiredSize = size;
   }
 
-  void UIElement::SetLayoutSettings(const UILayoutSettings &settings)
+  void UIElement::SetPosition(Vector2 position)
   {
-    _layoutSettings = settings;
-  }
-
-  Vector2 UIElement::GetPosition() const
-  {
-    return _layoutPosition + _positionalOffset;
-  }
-
-  Vector2 UIElement::GetPositionalOffset() const
-  {
-    return _positionalOffset;
-  }
-
-  Vector2 UIElement::GetSize() const
-  {
-    return _currentSize;
-  }
-
-  UIElement::ContainerSizeMode UIElement::GetContainerSizeMode() const
-  {
-    return _containerSizeMode;
-  }
-
-  UIElement::ElementSizeMode UIElement::GetElementSizeMode() const
-  {
-    return _elementSizeMode;
-  }
-
-  Vector2 UIElement::GetBaseSize() const
-  {
-    return _baseSize;
-  }
-
-  const UILayoutSettings &UIElement::GetLayoutSettings() const
-  {
-    return _layoutSettings;
+    _desiredPosition = position;
   }
 
   void UIElement::Show()
@@ -161,44 +144,11 @@ namespace Base
     return !_isHidden;
   }
 
-  void UIElement::_update(float dt)
+  void UIElement::OnInputEvent(std::shared_ptr<InputEvent> &event)
   {
-    const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-    Vector2 mousePos = rd->mousePosition;
-
-    bool isCurrentlyHovered = CheckCollisionPointRec(mousePos, GetCombinedHoverRect());
-
-    if (isCurrentlyHovered && !_isHovered)
+    if (auto mouseEvent = std::dynamic_pointer_cast<Base::MouseButtonEvent>(event))
     {
-      // Mouse just entered the element
-      if (onHover)
-      {
-        onHover.flex();
-      }
-    }
-    else if (!isCurrentlyHovered && _isHovered)
-    {
-      // Mouse just exited the elemnt
-      if (onHover)
-      {
-        onHover.relax();
-      }
-    }
-    _isHovered = isCurrentlyHovered;
-
-    Update(dt);
-  }
-
-  void UIElement::Update(float dt)
-  {
-  }
-
-  void UIElement::_onInputEvent(std::shared_ptr<InputEvent> &event)
-  {
-
-    if (onClick)
-    {
-      if (auto mouseEvent = std::dynamic_pointer_cast<Base::MouseButtonEvent>(event))
+      if (onClick)
       {
         if ( //
           mouseEvent->action == Base::InputEvent::Action::HELD && mouseEvent->button == MOUSE_BUTTON_LEFT &&
@@ -224,13 +174,166 @@ namespace Base
       }
     }
 
-    if (!event->isHandled)
+    OnElementInputEvent(event);
+  }
+
+  void UIElement::Update(float dt)
+  {
+    const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
+    Vector2 mousePos = rd->mousePosition;
+
+    bool isCurrentlyHovered = CheckCollisionPointRec(mousePos, GetCombinedHoverRect());
+
+    if (isCurrentlyHovered && !_isHovered)
     {
-      OnInputEvent(event);
+      // Mouse just entered the element
+      if (onHover)
+      {
+        onHover.flex();
+      }
+    }
+    else if (!isCurrentlyHovered && _isHovered)
+    {
+      // Mouse just exited the elemnt
+      if (onHover)
+      {
+        onHover.relax();
+      }
+    }
+    _isHovered = isCurrentlyHovered;
+    UpdateElement(dt);
+  }
+
+  void UIElement::OnElementInputEvent(std::shared_ptr<InputEvent> &event)
+  {
+    for (auto &element : _childElements)
+    {
+      if (element->IsVisible())
+      {
+        element->OnInputEvent(event);
+      }
+      if (event->isHandled)
+      {
+        break;
+      }
     }
   }
 
-  void UIElement::OnInputEvent(std::shared_ptr<InputEvent> &event)
+  void UIElement::UpdateElement(float dt)
   {
+    for (auto &child : _childElements)
+    {
+      child->Update(dt);
+    }
+  }
+
+  Size UIElement::Measure()
+  {
+    for (auto &child : _childElements)
+    {
+      child->Measure();
+    }
+
+    return _desiredSize;
+  }
+
+  void UIElement::Arrange(Rectangle finalRect)
+  {
+    _layoutRect = finalRect;
+    float width = _desiredSize.width * _renderTransform.GetScaleX();
+    float height = _desiredSize.height * _renderTransform.GetScaleY();
+
+    // Horizontal alignment
+    switch (_horizontalAlignment)
+    {
+    case HAlign::Left:
+      break;
+    case HAlign::Center:
+      _layoutRect.x += (finalRect.width - width) / 2;
+      break;
+    case HAlign::Right:
+      _layoutRect.x += finalRect.width - width;
+      break;
+    case HAlign::Stretch:
+      width = finalRect.width;
+      break;
+    }
+
+    // Vertical alignment
+    switch (_verticalAlignment)
+    {
+    case VAlign::Top:
+      break;
+    case VAlign::Center:
+      _layoutRect.y += (finalRect.height - height) / 2;
+      break;
+    case VAlign::Bottom:
+      _layoutRect.y += finalRect.height - height;
+      break;
+    case VAlign::Stretch:
+      height = finalRect.height;
+      break;
+    }
+
+    _layoutRect.width = std::min(width, finalRect.width);
+    _layoutRect.height = std::min(height, finalRect.height);
+
+    for (auto &child : _childElements)
+    {
+      child->Arrange(_layoutRect);
+    }
+  }
+
+  RenderTransform &UIElement::GetRenderTransform()
+  {
+    return _renderTransform;
+  }
+
+  Size UIElement::GetDesiredSize() const
+  {
+    return _desiredSize;
+  }
+
+  Vector2 UIElement::GetPosition() const
+  {
+    return _desiredPosition;
+  }
+
+  VAlign UIElement::GetVAlignment() const
+  {
+    return _verticalAlignment;
+  }
+
+  HAlign UIElement::GetHAlignment() const
+  {
+    return _horizontalAlignment;
+  }
+
+  bool UIElement::HasChild(const std::string &name) const
+  {
+    std::string lowerid = Base::Strings::ToLower(name);
+    if (auto it = std::ranges::find(_childElementIds, lowerid); it == _childElementIds.end())
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
+
+  void UIElement::RemoveChild(const std::string &id)
+  {
+    std::string lowerid = Base::Strings::ToLower(id);
+    if (auto it = std::ranges::find(_childElementIds, lowerid); it != _childElementIds.end())
+    {
+      int index = static_cast<int>(std::distance(_childElementIds.begin(), it));
+      _childElementIds.erase(it);
+      _childElements.erase(_childElements.begin() + index);
+    }
+    else
+    {
+      THROW_BASE_RUNTIME_ERROR("Element " + id + " isn't registerd in layer");
+    }
   }
 } // namespace Base

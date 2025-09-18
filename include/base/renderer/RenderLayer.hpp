@@ -60,6 +60,7 @@ namespace Base
     void SetCameraPauseMask(const std::bitset<8> &mask);
     void ShakeCamera(const CameraShakeConfig &config);
     Vector2 GetScreenToWorld(Vector2 position) const;
+    Vector2 GetWorldToScreen(Vector2 position) const;
     void BeginCamera();
     void EndCamera();
 

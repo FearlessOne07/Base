@@ -121,6 +121,11 @@ namespace Base
     return _renderLayer->GetScreenToWorld(position);
   };
 
+  Vector2 SceneLayer::GetWorldToScreen(Vector2 position) const
+  {
+    return _renderLayer->GetWorldToScreen(position);
+  };
+
   void SceneLayer::BeginCamera()
   {
     _renderLayer->BeginCamera();

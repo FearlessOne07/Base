@@ -1,86 +1,77 @@
 #include "base/ui/UILayer.hpp"
-#include "base/util/Strings.hpp"
-#include <ranges>
+#include "base/ui/elements/UICanvas.hpp"
+#include "raylib.h"
+#include <memory>
 
 namespace Base
 {
+  UILayer::UILayer(Vector2 layerSize, Vector2 layerPosition) : _layerSize(layerSize), _layerPosition(layerPosition)
+  {
+  }
+
   void UILayer::OnInputEvent(std::shared_ptr<InputEvent> &event)
   {
-    for (auto &element : _elements)
+    if (_root)
     {
-      if (element->IsVisible())
+      if (!event->isHandled)
       {
-        element->_onInputEvent(event);
-      }
-
-      if (event->isHandled)
-      {
-        break;
+        _root->OnInputEvent(event);
       }
     }
   }
 
   void UILayer::Render()
   {
-    auto elements = std::ranges::reverse_view(_elements);
-    for (auto &element : elements)
+    if (_layerBackPanel)
     {
-      if (element->IsVisible())
-      {
-        element->Render();
-      }
+      _layerBackPanel->Render(1);
     }
-  }
-
-  bool UILayer::HasElement(const std::string &name) const
-  {
-    std::string lowerid = Base::Strings::ToLower(name);
-    if (auto it = std::ranges::find(_elementIds, lowerid); it == _elementIds.end())
+    if (_root)
     {
-      return false;
-    }
-    else
-    {
-      return true;
-    }
-  }
-  void UILayer::RemoveElement(const std::string &id)
-  {
-    std::string lowerid = Base::Strings::ToLower(id);
-    if (auto it = std::ranges::find(_elementIds, lowerid); it != _elementIds.end())
-    {
-      int index = static_cast<int>(std::distance(_elementIds.begin(), it));
-      _elementIds.erase(it);
-      _elements.erase(_elements.begin() + index);
-    }
-    else
-    {
-      THROW_BASE_RUNTIME_ERROR("Element " + id + " isn't registerd in layer");
+      _root->Render(1);
     }
   }
 
   void UILayer::Update(float dt)
   {
-    for (auto &element : _elements)
+    if (_layerBackPanel)
     {
-      element->_update(dt);
+      _layerBackPanel->Arrange({_layerPosition.x, _layerPosition.y, _layerSize.x, _layerSize.y});
+    }
+
+    if (_root)
+    {
+      Size rSize = _root->Measure();
+      Vector2 rPos = _root->GetPosition();
+      _root->Arrange({_layerPosition.x + rPos.x, _layerPosition.y + rPos.y, _layerSize.x, _layerSize.y});
+      _root->Update(dt);
     }
   }
 
   void UILayer::Hide()
   {
-    for (auto &element : _elements)
+    if (_layerBackPanel)
     {
-      element->Hide();
+      _layerBackPanel->Hide();
+    }
+    if (_root)
+    {
+      _root->Hide();
     }
     _isHidden = true;
   }
 
   void UILayer::Show()
   {
-    for (auto &element : _elements)
+
+    if (_layerBackPanel)
     {
-      element->Show();
+      _layerBackPanel->Show();
+    }
+
+    if (_root)
+    {
+      _root->Show();
     }
     _isHidden = false;
   }
@@ -88,5 +79,11 @@ namespace Base
   bool UILayer::IsVisible() const
   {
     return !_isHidden;
+  }
+
+  std::shared_ptr<UIPanel> UILayer::SetLayerBackPanel()
+  {
+    _layerBackPanel = std::make_shared<UIPanel>();
+    return _layerBackPanel;
   }
 } // namespace Base

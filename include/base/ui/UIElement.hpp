@@ -3,108 +3,249 @@
 #include "base/input/InputEvent.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
 #include "base/textures/Font.hpp"
-#include "base/ui/UILayoutSettings.hpp"
 #include "base/util/AntagonisticFunction.hpp"
+#include "base/util/Exception.hpp"
+#include "base/util/Strings.hpp"
+#include <algorithm>
 #include <functional>
 #include <memory>
 #include <raylib.h>
 
 namespace Base
 {
+  struct Size
+  {
+    float width = 0, height = 0;
+  };
+
+  class RenderTransform
+  {
+    float _scaleX = 1, _scaleY = 1;
+    float _fontScale = 1;
+    float _offsetX = 0, _offsetY = 0;
+    float _opactity = 1;
+
+  public:
+    float GetScaleX() const
+    {
+      return _scaleX;
+    }
+
+    float GetScaleY() const
+    {
+      return _scaleY;
+    }
+
+    float GetFontScale() const
+    {
+      return _fontScale;
+    }
+
+    float GetOffsetx() const
+    {
+      return _offsetX;
+    }
+
+    float GetOffsetY() const
+    {
+      return _offsetY;
+    }
+
+    float GetOpacity() const
+    {
+      return _opactity;
+    }
+
+    void SetOpacity(float value)
+    {
+      _opactity = std::clamp(value, 0.f, 1.f);
+    }
+
+    void SetOffsetX(float value)
+    {
+      _offsetX = value;
+    }
+
+    void SetOffsetY(float value)
+    {
+      _offsetY = value;
+    }
+
+    void SetFontScale(float value)
+    {
+      _fontScale = value;
+    }
+
+    void SetScaleX(float value)
+    {
+      _scaleX = value;
+    }
+
+    void SetScaleY(float value)
+    {
+      _scaleY = value;
+    }
+  };
+
+  enum class HAlign
+  {
+    Left,
+    Center,
+    Right,
+    Stretch
+  };
+
+  enum class VAlign
+  {
+    Top,
+    Center,
+    Bottom,
+    Stretch
+  };
+
+  enum class SizeMode
+  {
+    Fixed = 0,
+    Auto
+  };
+
   class UIElement
   {
-  public:
-    enum struct ElementSizeMode : uint8_t
-    {
-      FIXED = 0,
-      FIT
-    };
-
-    enum struct ContainerSizeMode : uint8_t
-    {
-      DEFAULT = 0,
-      FILL
-    };
-
-    friend class UILayer;
-    friend class UIContainer;
-
   private:
-    Vector2 _basePosition = {0, 0};
-    Vector2 _layoutPosition = {0, 0};
-    Vector2 _positionalOffset = {0, 0};
-
-  private:
-    virtual void Update(float dt);
     Rectangle GetCombinedHoverRect() const;
-
-    // Template Methods
-    void _update(float dt);
-    void _onInputEvent(std::shared_ptr<InputEvent> &event);
 
   protected:
     AssetHandle<BaseFont> _font;
     NinePatchSprite _sprite;
 
-    Vector2 _baseSize = {0, 0};
-    Vector2 _currentSize = {0, 0};
-    ElementSizeMode _elementSizeMode = ElementSizeMode::FIT;
-    ContainerSizeMode _containerSizeMode = ContainerSizeMode::DEFAULT;
+    Size _desiredSize = {0, 0};
+    Vector2 _desiredPosition = {0, 0};
+
+    std::vector<std::string> _childElementIds;
+    std::vector<std::shared_ptr<UIElement>> _childElements;
+
+    Rectangle _layoutRect = {0, 0, 0, 0};
+    SizeMode _widthSizeMode = SizeMode::Auto;
+    SizeMode _heightSizeMode = SizeMode::Auto;
+
+    // Padding
+    float _paddingLeft = 0, _paddingRight = 0, _paddingTop = 0, _paddingBottom = 0;
 
     bool _isHidden = false;
 
+    HAlign _horizontalAlignment = HAlign::Left;
+    VAlign _verticalAlignment = VAlign::Top;
+
+    // Render
+    RenderTransform _renderTransform;
+
+    // Hover
     bool _isHovered = false;
     bool _firstHover = false;
-
     bool _isActive = false;
-
-    float _alpha = 1;
-    float _parentAlpha = 1;
 
   public:
     AntagonisticFunction onHover;
     std::function<void()> onClick = nullptr;
-
-  protected:
-    UILayoutSettings _layoutSettings;
+    std::function<void()> onShow = nullptr;
+    std::function<void()> onHide = nullptr;
 
   public:
     virtual ~UIElement();
 
+    void OnInputEvent(std::shared_ptr<InputEvent> &event);
+    void Update(float dt);
     // Setters
-    void SetLayoutSettings(const UILayoutSettings &settings);
-    virtual void SetFont(const AssetHandle<BaseFont> &);
-    virtual void SetAlpha(float alpha);
-    virtual void SetParentAlpha(float alpha);
+    void SetHAlignment(HAlign hAlign);
+    void SetVAlignment(VAlign vAlign);
+    void SetFont(const AssetHandle<BaseFont> &);
 
-    void SetPosition(Vector2 position, bool final = false);
-    void SetPositionalOffset(Vector2 offset);
-    void SetSize(Vector2 size, bool base = true);
-    void SetContainterSizeMode(ContainerSizeMode sizeMode);
-    void SetElementSizeMode(ElementSizeMode sizeMode);
+    void SetWidth(float width);
+    void SetHeight(float height);
+    void SetWidthSizeMode(SizeMode mode);
+    void SetHeightSizeMode(SizeMode mode);
+
+    void SetPosition(Vector2 position);
+
+    void SetSizeMode(SizeMode mode);
+    void SetSize(Size size);
+
     void SetSprite(const NinePatchSprite &sprite);
 
-    // Getters
-    Vector2 GetPosition() const;
-    Vector2 GetPositionalOffset() const;
-    float GetAlpha() const;
-
-    Vector2 GetSize() const;
-    Vector2 GetBaseSize() const;
-    ContainerSizeMode GetContainerSizeMode() const;
-    ElementSizeMode GetElementSizeMode() const;
-    const UILayoutSettings &GetLayoutSettings() const;
+    // Padding
+    void SetPadding(float padding);
+    void SetPadding(float paddingX, float paddingY);
+    void SetPadding(float paddingLeft, float paddingRight, float paddingTop, float paddingBottom);
 
     // Core
-    virtual void OnInputEvent(std::shared_ptr<InputEvent> &event);
-    virtual void Render() = 0;
+    virtual void Render(float alpha) = 0;
 
     // Hide
     bool IsVisible() const;
     virtual void Show();
     virtual void Hide();
     void SetVisibilityOff();
-    std::function<void()> onShow = nullptr;
-    std::function<void()> onHide = nullptr;
+
+    Size GetDesiredSize() const;
+    Vector2 GetPosition() const;
+    HAlign GetHAlignment() const;
+    VAlign GetVAlignment() const;
+
+    // New
+    virtual Size Measure();
+    virtual void Arrange(Rectangle finalRect);
+
+    virtual void OnElementInputEvent(std::shared_ptr<InputEvent> &event);
+    virtual void UpdateElement(float dt);
+
+    // Render Tranform
+    RenderTransform &GetRenderTransform();
+
+  public:
+    // Child Management
+    bool HasChild(const std::string &name) const;
+    void RemoveChild(const std::string &name);
+    template <typename T> std::shared_ptr<T> AddChild(const std::string &name)
+    {
+      if (std::is_base_of_v<UIElement, T>)
+      {
+        std::string lower = Base::Strings::ToLower(name);
+        if (std::ranges::find(_childElementIds, lower) == _childElementIds.end())
+        {
+          _childElements.emplace_back(std::make_shared<T>());
+          _childElementIds.emplace_back(name);
+          return std::static_pointer_cast<T>(_childElements.back());
+        }
+        else
+        {
+          THROW_BASE_RUNTIME_ERROR("Element " + name + " already exists in container");
+        }
+      }
+      else
+      {
+        THROW_BASE_RUNTIME_ERROR("T must be a derivative of UIElement");
+      }
+    }
+
+    template <typename T> std::shared_ptr<T> GetChild(const std::string &name)
+    {
+      if (std::is_base_of_v<UIElement, T>)
+      {
+        std::string lower = Base::Strings::ToLower(name);
+        if (auto it = std::ranges::find(_childElementIds, lower); it != _childElementIds.end())
+        {
+          auto index = std::distance(_childElementIds.begin(), it);
+          return std::static_pointer_cast<T>(_childElements[index]);
+        }
+        else
+        {
+          THROW_BASE_RUNTIME_ERROR("Element " + name + " does not exist in container");
+        }
+      }
+      else
+      {
+        THROW_BASE_RUNTIME_ERROR("T must be a derivative of UIElement");
+      }
+    }
   };
 } // namespace Base

@@ -4,18 +4,24 @@
 
 namespace Base
 {
-  void UITextureRect::Render()
+  void UITextureRect::Render(float opacity)
   {
-    if (_sprite)
+    if (!_isHidden)
     {
-      _sprite.Draw({GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, _alpha * _parentAlpha * 255);
-    }
-    else
-    {
-      DrawRectangleBase( //
-        {GetPosition().x, GetPosition().y, GetSize().x, GetSize().y}, {0, 0}, 0,
-        {255, 255, 255, static_cast<unsigned char>(_alpha * _parentAlpha * 255)} //
-      );
+      if (_sprite)
+      {
+        _sprite.Draw( //
+          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height},
+          _renderTransform.GetOpacity() * opacity * 255 //
+        );
+      }
+      else
+      {
+        DrawRectangleBase( //
+          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
+          {255, 255, 255, static_cast<unsigned char>(_renderTransform.GetOpacity() * opacity * 255)} //
+        );
+      }
     }
   }
 } // namespace Base

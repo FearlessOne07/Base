@@ -9,18 +9,17 @@ namespace Base
     std::string _text = "Label";
     Color _textColor = WHITE;
 
-    float _baseFontSize = 12;
-    float _currentFontSize = 12;
-
-    Vector2 _padding = {0, 0};
+    float _fontSize = 12;
 
   public:
     void SetText(const std::string &text);
-    void SetFont(const AssetHandle<BaseFont> &) override;
-    void SetFontSize(float size, bool base = true);
-    void SetPadding(Vector2 padding);
+    void SetFontSize(float size);
     void SetTextColor(Color color);
-    void Render() override;
+    void Render(float opacity) override;
     const std::string &GetText() const;
+
+    // New
+    Size Measure() override;
+    void Arrange(Rectangle finalRect) override;
   };
 } // namespace Base

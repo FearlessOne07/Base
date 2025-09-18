@@ -51,6 +51,7 @@ namespace Base
     void SetCameraZoom(float zoom);
     void ShakeCamera(const CameraShakeConfig &config);
     Vector2 GetScreenToWorld(Vector2 position) const;
+    Vector2 GetWorldToScreen(Vector2 position) const;
     void BeginCamera();
     void EndCamera();
     void SetCameraPauseMask();
