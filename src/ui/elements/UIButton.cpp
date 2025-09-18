@@ -1,4 +1,5 @@
 #include "base/ui/elements/UIButton.hpp"
+#include "base/ui/UIElement.hpp"
 #include "base/util/Draw.hpp"
 #include "raylib.h"
 

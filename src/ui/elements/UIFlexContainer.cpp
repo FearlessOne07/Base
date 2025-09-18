@@ -1,79 +1,58 @@
-#include "base/ui/elements/UIStackPanel.hpp"
+#include "base/ui/elements/UIFlexContainer.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/util/Draw.hpp"
-#include "raylib.h"
-#include <algorithm>
-#include <iterator>
-#include <memory>
 #include <ranges>
 
 namespace Base
 {
+
   static bool operator==(Color a, Color b)
   {
     return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
   }
 
-  Size UIStackPanel::Measure()
+  Size UIFlexContainer::Measure()
   {
-    Size total = {0, 0};
-    for (auto it = _childElements.begin(); it != _childElements.end(); it++)
+    if (/* _sizeMode == SizeMode::Auto */ true)
     {
-      auto &child = *it;
-      Size csize = child->Measure();
-      if (_orientation == Orientation::Vertical)
+
+      Size total = {0, 0};
+      for (auto it = _childElements.begin(); it != _childElements.end(); it++)
       {
-        if (_widthSizeMode == SizeMode::Auto)
+        auto &child = *it;
+        Size csize = child->Measure();
+        if (_orientation == Orientation::Vertical)
         {
           total.width = std::max(total.width, csize.width);
-        }
-
-        if (_heightSizeMode == SizeMode::Auto)
-        {
           total.height += csize.height;
-          if (std::distance(it, _childElements.end()) > 1)
-          {
-            total.height += _gap;
-          }
         }
-      }
-      else
-      {
-        if (_heightSizeMode == SizeMode::Auto)
+        else
         {
           total.height = std::max(total.height, csize.height);
-        }
-
-        if (_widthSizeMode == SizeMode::Auto)
-        {
           total.width += csize.width;
-          if (std::distance(it, _childElements.end()) > 1)
-          {
-            total.width += _gap;
-          }
         }
       }
-    }
-
-    total.height += _paddingBottom + _paddingTop;
-    total.width += _paddingLeft + _paddingRight;
-
-    if (_widthSizeMode == SizeMode::Auto)
-    {
-      _desiredSize.width = total.width;
-    }
-    if (_heightSizeMode == SizeMode::Auto)
-    {
-      _desiredSize.height = total.height;
+      total.width += _paddingLeft + _paddingRight;
+      total.height += _paddingBottom + _paddingTop;
+      _desiredSize = total;
     }
     return _desiredSize;
-  };
+  }
 
-  void UIStackPanel::Arrange(Rectangle finalRect)
+  void UIFlexContainer::Arrange(Rectangle finalRect)
   {
     _layoutRect = finalRect;
     float width = _desiredSize.width * _renderTransform.GetScaleX();
     float height = _desiredSize.height * _renderTransform.GetScaleY();
+
+    if (_orientation == Orientation::Vertical)
+    {
+      _verticalAlignment = VAlign::Stretch;
+    }
+    else
+    {
+      _horizontalAlignment = HAlign::Stretch;
+    }
 
     // Horizontal alignment
     switch (_horizontalAlignment)
@@ -111,8 +90,9 @@ namespace Base
     _layoutRect.x += _renderTransform.GetScaleX();
     _layoutRect.y += _renderTransform.GetOffsetY();
 
+    float rectHeight = (_layoutRect.height - (_paddingTop + _paddingBottom)) / _childElements.size();
+    float rectWidth = (_layoutRect.width - (_paddingLeft + _paddingRight)) / _childElements.size();
     float offset = (_orientation == Orientation::Vertical) ? _layoutRect.y + _paddingTop : _layoutRect.x + _paddingLeft;
-
     for (auto &child : _childElements)
     {
       Size csize = child->GetDesiredSize();
@@ -122,46 +102,26 @@ namespace Base
           _layoutRect.x + _paddingLeft,
           offset,
           _layoutRect.width - (_paddingLeft + _paddingRight),
-          csize.height,
+          rectHeight,
         } //
         );
-        offset += csize.height + _gap;
+        offset += rectHeight;
       }
       else
       {
         child->Arrange({
           offset,
           _layoutRect.y + _paddingTop,
-          csize.width,
+          rectWidth,
           _layoutRect.height - (_paddingTop + _paddingBottom),
         } //
         );
-        offset += csize.width + _gap;
+        offset += rectWidth;
       }
     }
   }
 
-  void UIStackPanel::SetGap(float gap)
-  {
-    _gap = gap;
-  }
-
-  void UIStackPanel::SetOrientation(Orientation orientation)
-  {
-    _orientation = orientation;
-  }
-
-  void UIStackPanel::SetBackgroundColor(Color color)
-  {
-    _backgroundColor = color;
-  }
-
-  Color UIStackPanel::GetBackgroundColor() const
-  {
-    return _backgroundColor;
-  }
-
-  void UIStackPanel::Render(float opacity)
+  void UIFlexContainer::Render(float opacity)
   {
     if (!_isHidden)
     {
@@ -203,30 +163,13 @@ namespace Base
     }
   }
 
-  void UIStackPanel::Hide()
+  void UIFlexContainer::SetBackgroundColor(Color color)
   {
-    if (onHide)
-    {
-      onHide();
-    }
-
-    for (auto &element : _childElements)
-    {
-      element->Hide();
-    }
+    _backgroundColor = color;
   }
 
-  void UIStackPanel::Show()
+  void UIFlexContainer::SetOrientation(Orientation orientation)
   {
-    _isHidden = false;
-    if (onShow)
-    {
-      onShow();
-    }
-
-    for (auto &element : _childElements)
-    {
-      element->Show();
-    }
+    _orientation = orientation;
   }
 } // namespace Base

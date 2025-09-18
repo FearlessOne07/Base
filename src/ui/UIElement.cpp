@@ -53,14 +53,40 @@ namespace Base
     _paddingRight = paddingRight;
   }
 
-  void UIElement::SetSize(Size size)
+  void UIElement::SetWidth(float width)
   {
-    _desiredSize = size;
+    _desiredSize.width = width;
+  }
+
+  void UIElement::SetHeight(float height)
+  {
+    _desiredSize.height = height;
+  }
+
+  void UIElement::SetWidthSizeMode(SizeMode mode)
+  {
+    _widthSizeMode = mode;
+  }
+
+  void UIElement::SetHeightSizeMode(SizeMode mode)
+  {
+    _heightSizeMode = mode;
   }
 
   void UIElement::SetSprite(const NinePatchSprite &sprite)
   {
     _sprite = sprite;
+  }
+
+  void UIElement::SetSizeMode(SizeMode mode)
+  {
+    _widthSizeMode = mode;
+    _heightSizeMode = mode;
+  }
+
+  void UIElement::SetSize(Size size)
+  {
+    _desiredSize = size;
   }
 
   void UIElement::Show()
@@ -153,6 +179,17 @@ namespace Base
 
   void UIElement::OnElementInputEvent(std::shared_ptr<InputEvent> &event)
   {
+    for (auto &element : _childElements)
+    {
+      if (element->IsVisible())
+      {
+        element->OnInputEvent(event);
+      }
+      if (event->isHandled)
+      {
+        break;
+      }
+    }
   }
 
   void UIElement::UpdateElement(float dt)

@@ -3,8 +3,9 @@
 #include "base/input/InputEvent.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
 #include "base/textures/Font.hpp"
-#include "base/ui/UILayoutSettings.hpp"
 #include "base/util/AntagonisticFunction.hpp"
+#include "base/util/Exception.hpp"
+#include "base/util/Strings.hpp"
 #include <algorithm>
 #include <functional>
 #include <memory>
@@ -102,6 +103,12 @@ namespace Base
     Stretch
   };
 
+  enum class SizeMode
+  {
+    Fixed = 0,
+    Auto
+  };
+
   class UIElement
   {
   protected:
@@ -117,6 +124,8 @@ namespace Base
     std::vector<std::shared_ptr<UIElement>> _childElements;
 
     Rectangle _layoutRect = {0, 0, 0, 0};
+    SizeMode _widthSizeMode = SizeMode::Auto;
+    SizeMode _heightSizeMode = SizeMode::Auto;
 
     // Padding
     float _paddingLeft = 0, _paddingRight = 0, _paddingTop = 0, _paddingBottom = 0;
@@ -134,14 +143,11 @@ namespace Base
     bool _firstHover = false;
     bool _isActive = false;
 
-    // Template Functions
-  protected:
   public:
     AntagonisticFunction onHover;
     std::function<void()> onClick = nullptr;
-
-  protected:
-    UILayoutSettings _layoutSettings;
+    std::function<void()> onShow = nullptr;
+    std::function<void()> onHide = nullptr;
 
   public:
     virtual ~UIElement();
@@ -153,7 +159,14 @@ namespace Base
     void SetVAlignment(VAlign vAlign);
     void SetFont(const AssetHandle<BaseFont> &);
 
+    void SetWidth(float width);
+    void SetHeight(float height);
+    void SetWidthSizeMode(SizeMode mode);
+    void SetHeightSizeMode(SizeMode mode);
+
+    void SetSizeMode(SizeMode mode);
     void SetSize(Size size);
+
     void SetSprite(const NinePatchSprite &sprite);
 
     // Padding
@@ -169,20 +182,64 @@ namespace Base
     virtual void Show();
     virtual void Hide();
     void SetVisibilityOff();
-    std::function<void()> onShow = nullptr;
-    std::function<void()> onHide = nullptr;
 
-  public:
+    Size GetDesiredSize() const;
+    Vector2 GetPosition() const;
+
     // New
     virtual Size Measure();
     virtual void Arrange(Rectangle finalRect);
-    Size GetDesiredSize() const;
-    Vector2 GetPosition() const;
 
     virtual void OnElementInputEvent(std::shared_ptr<InputEvent> &event);
     virtual void UpdateElement(float dt);
 
     // Render Tranform
     RenderTransform &GetRenderTransform();
+
+    // Templates
+
+  public:
+    template <typename T> std::shared_ptr<T> AddChild(const std::string &name)
+    {
+      if (std::is_base_of_v<UIElement, T>)
+      {
+        std::string lower = Base::Strings::ToLower(name);
+        if (std::ranges::find(_childElementIds, lower) == _childElementIds.end())
+        {
+          _childElements.emplace_back(std::make_shared<T>());
+          _childElementIds.emplace_back(name);
+          return std::static_pointer_cast<T>(_childElements.back());
+        }
+        else
+        {
+          THROW_BASE_RUNTIME_ERROR("Element " + name + " already exists in container");
+        }
+      }
+      else
+      {
+        THROW_BASE_RUNTIME_ERROR("T must be a derivative of UIElement");
+      }
+    }
+
+    template <typename T> std::shared_ptr<T> GetChild(const std::string &name)
+    {
+      if (std::is_base_of_v<UIElement, T>)
+      {
+        std::string lower = Base::Strings::ToLower(name);
+        if (auto it = std::ranges::find(_childElementIds, lower); it != _childElementIds.end())
+        {
+          auto index = std::distance(_childElementIds.begin(), it);
+          return std::static_pointer_cast<T>(_childElements[index]);
+        }
+        else
+        {
+          THROW_BASE_RUNTIME_ERROR("Element " + name + " does not exist in container");
+        }
+      }
+      else
+      {
+        THROW_BASE_RUNTIME_ERROR("T must be a derivative of UIElement");
+      }
+    }
   };
 } // namespace Base
