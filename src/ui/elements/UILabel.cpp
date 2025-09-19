@@ -11,6 +11,38 @@ namespace Base
     _text = text;
   }
 
+  void UILabel::SetTextInternal(const std::string &text, bool user = false)
+  {
+    _text = text;
+    if (user && _textBinding)
+    {
+      _textBinding.Set(text);
+    }
+  }
+
+  void UILabel::ClearBinding()
+  {
+    _textBinding = {};
+  }
+
+  void UILabel::Bind(const Binding<std::string> &binding)
+  {
+    _textBinding = std::move(binding);
+  }
+
+  void UILabel::UpdateElement(float dt)
+  {
+    if (_textBinding)
+    {
+      std::string newText = _textBinding.Get();
+      if (newText != _cachedText)
+      {
+        SetTextInternal(newText);
+        _cachedText = newText;
+      }
+    }
+  }
+
   Size UILabel::Measure()
   {
     Font font;

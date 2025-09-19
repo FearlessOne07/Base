@@ -5,7 +5,6 @@
 #include "base/util/Exception.hpp"
 #include "raylib.h"
 #include <memory>
-#include <string>
 #include <type_traits>
 
 namespace Base

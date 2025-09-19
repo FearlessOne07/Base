@@ -60,6 +60,7 @@ namespace Base
     _running = true;
 
     // Init Systems
+    _uiManager.Init();
     _particleManager.Init();
     _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
 
@@ -183,7 +184,6 @@ namespace Base
         // Post Update
         _inpMan.PostUpdate();
         _entityManager.RemoveDeadEntities();
-
 
         // Render
         _renderer.RenderLayers();
