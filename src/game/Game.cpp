@@ -190,6 +190,10 @@ namespace Base
         _renderer.CompositeLayers();
         _renderer.Render();
       }
+      else
+      {
+        PollInputEvents();
+      }
     }
 
     // Cleanup
