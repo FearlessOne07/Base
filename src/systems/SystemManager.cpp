@@ -1,5 +1,4 @@
 #include "base/systems/SystemManager.hpp"
-#include "base/components/AreaComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
@@ -107,14 +106,7 @@ namespace Base
 
   void SystemManager::Render()
   {
-    if (_systems.find(_renderSystemID) != _systems.end())
-    {
-      _systems.at(_renderSystemID)->Update(0, _entityManager, _currentScene);
-    }
-    else
-    {
-      THROW_BASE_RUNTIME_ERROR("No Render System has been registered");
-    }
+    _systems.at(_renderSystemID)->Update(0, _entityManager, _currentScene);
   }
 
   void SystemManager::OnInputEvent(std::shared_ptr<InputEvent> &event)

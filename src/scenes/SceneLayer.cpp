@@ -1,4 +1,4 @@
-#include "base/scenes/SceneLayer.inl"
+#include "base/scenes/SceneLayer.tpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include "raylib.h"
