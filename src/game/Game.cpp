@@ -1,4 +1,5 @@
 #include "base/game/Game.hpp"
+#include "base/assets/BaseAsset.hpp"
 #include "base/game/GameConfig.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/InputEvent.hpp"
@@ -7,12 +8,10 @@
 #include "base/scenes/Scene.hpp"
 #include "base/systems/System.hpp"
 #include "base/util/Exception.hpp"
-#include "base/util/Strings.hpp"
 #include "internal/game/GameImpl.hpp"
 #include "raylib.h"
 #include <algorithm>
 #include <memory>
-#include <string>
 #include <utility>
 
 // Hint dGPU
@@ -75,34 +74,44 @@ namespace Base
     _assetManager.Init();
     if (config.GlobalAssets.size() > 0)
     {
-      for (auto &[type, path] : config.GlobalAssets)
+      for (const auto &[type, pathList] : config.GlobalAssets)
       {
-        std::string assetType = Strings::ToLower(type);
 
-        if (assetType == "font")
+        switch (type)
         {
-          _assetManager.LoadAsset<BaseFont>(path);
-        }
-        else if (assetType == "sound")
-        {
-          _assetManager.LoadAsset<Sound>(path);
-        }
-        else if (assetType == "audio-stream")
-        {
-          _assetManager.LoadAsset<AudioStream>(path);
-        }
-        else if (assetType == "shader")
-        {
-          _assetManager.LoadAsset<BaseShader>(path);
-        }
-        else if (assetType == "texture")
-        {
-          _assetManager.LoadAsset<Texture>(path);
-        }
-        else
-        {
+        case AssetType::Texture:
+          for (const auto &path : pathList)
+          {
+            _assetManager.LoadAsset<Texture>(path);
+          }
+          break;
+        case AssetType::Sound:
+          for (const auto &path : pathList)
+          {
+            _assetManager.LoadAsset<Sound>(path);
+          }
+          break;
+        case AssetType::AudioStream:
+          for (const auto &path : pathList)
+          {
+            _assetManager.LoadAsset<AudioStream>(path);
+          }
+          break;
+        case AssetType::Font:
+          for (const auto &path : pathList)
+          {
+            _assetManager.LoadAsset<BaseFont>(path);
+          }
+          break;
+        case AssetType::Shader:
+          for (const auto &path : pathList)
+          {
+            _assetManager.LoadAsset<BaseShader>(path);
+          }
+          break;
+        default:
           THROW_BASE_RUNTIME_ERROR("Invalid Asset type speicfied in global assets");
-        }
+        };
       }
     }
 

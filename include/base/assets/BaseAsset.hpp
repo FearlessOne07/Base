@@ -7,4 +7,13 @@ namespace Base
   public:
     virtual ~BaseAsset();
   };
+
+  enum class AssetType
+  {
+    Texture = 0,
+    Sound,
+    AudioStream,
+    Font,
+    Shader
+  };
 } // namespace Base
