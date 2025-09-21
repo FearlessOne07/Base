@@ -148,6 +148,7 @@ namespace Base
     // Loop Wule the window is Open
     while (!WindowShouldClose() && _running)
     {
+      PollInputEvents();
       if (!IsWindowMinimized())
       {
         float windowWidth = static_cast<float>(GetRenderWidth());
@@ -198,10 +199,6 @@ namespace Base
         _renderer.RenderLayers();
         _renderer.CompositeLayers();
         _renderer.Render();
-      }
-      else
-      {
-        PollInputEvents();
       }
     }
 
