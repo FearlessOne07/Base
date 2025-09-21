@@ -83,8 +83,11 @@ namespace Base
 
     for (auto &effect : _effectChain)
     {
-      effect->Apply(input, output, _size);
-      std::swap(input, output); // Ping-pong
+      if (effect->IsAvtive())
+      {
+        effect->Apply(input, output, _size);
+        std::swap(input, output); // Ping-pong
+      }
     }
 
     if (input != &_renderTexture)
@@ -187,6 +190,11 @@ namespace Base
     if (!(B.count() != 0 && (A & B) == B))
     {
       _layerCamera.Update(dt);
+
+      for (auto &effect : _effectChain)
+      {
+        effect->Update(dt);
+      }
     }
   }
 } // namespace Base

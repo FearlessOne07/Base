@@ -32,7 +32,6 @@ namespace Base
     const Scene *_ownerScene = nullptr;
 
     // Shaders
-    bool _shaderBuffersInitialized = false;
     RenderTexture _ping;
     ShaderEffectChain _effectChain;
 
@@ -72,7 +71,7 @@ namespace Base
       _effectChain.AddEffect<T>(_ownerScene, std::forward<Args>(args)...);
     }
 
-    template <typename T> std::unique_ptr<T> GetShaderEffect()
+    template <typename T> std::shared_ptr<T> GetShaderEffect()
     {
       return _effectChain.GetEffect<T>();
     }

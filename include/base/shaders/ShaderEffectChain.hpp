@@ -13,7 +13,7 @@ namespace Base
   class ShaderEffectChain
   {
   private:
-    std::vector<std::unique_ptr<ShaderEffect>> _effects;
+    std::vector<std::shared_ptr<ShaderEffect>> _effects;
     std::vector<std::type_index> _effectIds;
 
   public:
@@ -26,7 +26,7 @@ namespace Base
         if (std::ranges::find(_effectIds, id) == _effectIds.end())
         {
           _effectIds.push_back(id);
-          std::unique_ptr<T> effect = std::make_unique<T>(std::forward<Args>(args)...);
+          std::shared_ptr<T> effect = std::make_shared<T>(std::forward<Args>(args)...);
           effect->Setup(currentScene);
           _effects.emplace_back(std::move(effect));
         }
@@ -41,7 +41,7 @@ namespace Base
       }
     }
 
-    template <typename T> std::unique_ptr<T> GetEffect()
+    template <typename T> std::shared_ptr<T> GetEffect()
     {
       if (std::is_base_of_v<ShaderEffect, T>)
       {
@@ -49,7 +49,7 @@ namespace Base
 
         if (auto it = std::ranges::find(_effectIds, id); it != _effectIds.end())
         {
-          return _effects[std::distance(_effectIds.begin(), it)];
+          return std::static_pointer_cast<T>(_effects[std::distance(_effectIds.begin(), it)]);
         }
         else
         {
@@ -63,22 +63,22 @@ namespace Base
       }
     }
 
-    std::vector<std::unique_ptr<ShaderEffect>>::iterator begin()
+    std::vector<std::shared_ptr<ShaderEffect>>::iterator begin()
     {
       return _effects.begin();
     }
 
-    std::vector<std::unique_ptr<ShaderEffect>>::iterator end()
+    std::vector<std::shared_ptr<ShaderEffect>>::iterator end()
     {
       return _effects.end();
     }
 
-    std::vector<std::unique_ptr<ShaderEffect>>::const_iterator begin() const
+    std::vector<std::shared_ptr<ShaderEffect>>::const_iterator begin() const
     {
       return _effects.cbegin();
     }
 
-    std::vector<std::unique_ptr<ShaderEffect>>::const_iterator end() const
+    std::vector<std::shared_ptr<ShaderEffect>>::const_iterator end() const
     {
       return _effects.cend();
     }
