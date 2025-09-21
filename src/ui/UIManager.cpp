@@ -30,16 +30,19 @@ namespace Base
 
   void UIManager::OnInputEvent(std::shared_ptr<InputEvent> &event)
   {
-    for (auto &[id, layer] : _layers.at(_currentScene))
+    if (_currentScene)
     {
-      if (layer.IsVisible())
+      for (auto &[id, layer] : _layers.at(_currentScene))
       {
-        layer.OnInputEvent(event);
-      }
+        if (layer.IsVisible())
+        {
+          layer.OnInputEvent(event);
+        }
 
-      if (event->isHandled)
-      {
-        break;
+        if (event->isHandled)
+        {
+          break;
+        }
       }
     }
   }
@@ -64,25 +67,32 @@ namespace Base
 
   void UIManager::RenderLayer(const std::string &layerID)
   {
-    std::string lowerID = Base::Strings::ToLower(layerID);
-    if (!_layers[_currentScene].contains(lowerID))
+    if (_currentScene)
     {
-      THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " does not exist");
+      std::string lowerID = Base::Strings::ToLower(layerID);
+      if (!_layers[_currentScene].contains(lowerID))
+      {
+        THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " does not exist");
+      }
+      _layers[_currentScene].at(lowerID).Render();
     }
-    _layers[_currentScene].at(lowerID).Render();
   }
 
   void UIManager::Update(float dt)
   {
-    for (auto &[id, layer] : _layers[_currentScene])
+    if (_currentScene)
     {
-      layer.Update(dt);
+      for (auto &[id, layer] : _layers[_currentScene])
+      {
+        layer.Update(dt);
+      }
     }
   }
 
   void UIManager::UnloadSceneUI(const Scene *scene)
   {
     _layers.erase(_currentScene);
+    _currentScene = nullptr;
   }
 
   void UIManager::UpdateCurrentScene(const Scene *scene)
