@@ -24,7 +24,7 @@ extern "C"
   _declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif
-
+// TODO: Maybe make a base Manager class for _currentScene functionality
 namespace Base
 {
   void Game::GameImpl::Init(GameConfig config)
@@ -117,6 +117,9 @@ namespace Base
 
     // Initialize Systems
     _systemManager.Init();
+
+    // Tween Manaher
+    _tweenManager.Init();
 
     // Initialize render context
     auto windowWidth = static_cast<float>(GetScreenWidth());

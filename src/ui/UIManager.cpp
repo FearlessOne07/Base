@@ -52,14 +52,14 @@ namespace Base
     std::string lowerID = Base::Strings::ToLower(layerID);
     if (_currentScene)
     {
-      if (_layers[_currentScene].contains(lowerID))
+      if (_layers.at(_currentScene).contains(lowerID))
       {
         THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " already exist");
       }
       else
       {
-        _layers[_currentScene][layerID] = UILayer(layerSize, layerPosition);
-        return &_layers[_currentScene][layerID];
+        _layers.at(_currentScene)[layerID] = UILayer(layerSize, layerPosition);
+        return &_layers.at(_currentScene)[layerID];
       }
     }
     return nullptr;
@@ -70,11 +70,11 @@ namespace Base
     if (_currentScene)
     {
       std::string lowerID = Base::Strings::ToLower(layerID);
-      if (!_layers[_currentScene].contains(lowerID))
+      if (!_layers.at(_currentScene).contains(lowerID))
       {
         THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " does not exist");
       }
-      _layers[_currentScene].at(lowerID).Render();
+      _layers.at(_currentScene).at(lowerID).Render();
     }
   }
 
@@ -98,5 +98,6 @@ namespace Base
   void UIManager::UpdateCurrentScene(const Scene *scene)
   {
     _currentScene = scene;
+    _layers[_currentScene];
   }
 } // namespace Base

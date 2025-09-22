@@ -9,7 +9,7 @@
 
 namespace Base
 {
-
+  class Scene;
   class TweenManager
   {
   public:
@@ -31,55 +31,64 @@ namespace Base
     };
 
   private:
-    std::unordered_map<TweenKey, std::unique_ptr<ITween>> _tweens;
+    std::unordered_map<const Scene *, std::unordered_map<TweenKey, std::unique_ptr<ITween>>> _tweens;
     std::vector<std::function<void()>> _pendingTweens;
     bool _isUpdatingTweens = false;
+    const Scene *_currentScene = nullptr;
+
+  private:
+    void UpdateCurrentScene(const Scene *scene);
+    void UnloadSceneTweens(const Scene *scene);
 
   public:
     void Update(float dt);
+    void Init();
 
     template <typename T>
     void AddTween(const TweenKey &key, std::function<void(T)> setter, const TweenSettings<T> &tweenSettings)
     {
-      if (auto it = _tweens.find(key); it != _tweens.end())
+      if (_currentScene)
       {
-        TweenPriorityLevel level = it->second->GetProrityLevel();
-        if (level > tweenSettings.priority)
+        if (auto it = _tweens.at(_currentScene).find(key); it != _tweens.at(_currentScene).end())
         {
+          TweenPriorityLevel level = it->second->GetProrityLevel();
+          if (level > tweenSettings.priority)
+          {
+            return;
+          }
+        }
+
+        if (_isUpdatingTweens)
+        {
+          _pendingTweens.push_back([=, this]() { AddTween<T>(key, setter, tweenSettings); });
+
           return;
         }
+
+        if (_tweens.at(_currentScene).find(key) != _tweens.at(_currentScene).end())
+        {
+          _tweens.at(_currentScene).erase(key);
+        }
+
+        std::function<float(float)> easingFunction = nullptr;
+        switch (tweenSettings.easingType)
+        {
+        case EasingType::EASE_IN:
+          easingFunction = Easings::EaseInCubic;
+          break;
+        case EasingType::EASE_OUT:
+          easingFunction = Easings::EaseOutCubic;
+          break;
+        case EasingType::EASE_IN_OUT:
+          easingFunction = Easings::EaseInOutCubic;
+          break;
+        }
+
+        _tweens.at(_currentScene)[key] = std::make_unique<Tween<T>>( //
+          key.objectPtr, setter, tweenSettings.startValue, tweenSettings.endValue, tweenSettings.duration,
+          easingFunction, tweenSettings.onTweenEnd, tweenSettings.priority //
+        );
       }
-
-      if (_isUpdatingTweens)
-      {
-        _pendingTweens.push_back([=, this]() { AddTween<T>(key, setter, tweenSettings); });
-
-        return;
-      }
-
-      if (_tweens.find(key) != _tweens.end())
-      {
-        _tweens.erase(key);
-      }
-
-      std::function<float(float)> easingFunction = nullptr;
-      switch (tweenSettings.easingType)
-      {
-      case EasingType::EASE_IN:
-        easingFunction = Easings::EaseInCubic;
-        break;
-      case EasingType::EASE_OUT:
-        easingFunction = Easings::EaseOutCubic;
-        break;
-      case EasingType::EASE_IN_OUT:
-        easingFunction = Easings::EaseInOutCubic;
-        break;
-      }
-
-      _tweens[key] = std::make_unique<Tween<T>>( //
-        key.objectPtr, setter, tweenSettings.startValue, tweenSettings.endValue, tweenSettings.duration, easingFunction,
-        tweenSettings.onTweenEnd, tweenSettings.priority //
-      );
     }
   };
 
