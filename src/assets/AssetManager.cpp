@@ -17,7 +17,6 @@
 #include <miniaudio.h>
 #include <raylib.h>
 #include <sstream>
-#include <stdio.h>
 #include <string.h>
 #include <vector>
 

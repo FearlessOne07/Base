@@ -13,20 +13,20 @@ namespace Base
   class Scene;
   class AssetManager
   {
-    struct Asset
+    struct AssetSlot
     {
       AssetHandle<void> handle;
       std::shared_ptr<BaseAsset> asset = nullptr;
 
-      Asset() = default;
-      Asset(AssetHandle<void> _handle, std::shared_ptr<BaseAsset> _asset) : handle(_handle), asset(_asset)
+      AssetSlot() = default;
+      AssetSlot(AssetHandle<void> _handle, std::shared_ptr<BaseAsset> _asset) : handle(_handle), asset(_asset)
       {
       }
     };
 
   private:
-    std::unordered_map<std::string, Asset> _globalAssets;
-    std::unordered_map<const Scene *, std::unordered_map<std::string, Asset>> _sceneAssets;
+    std::unordered_map<std::string, AssetSlot> _globalAssets;
+    std::unordered_map<const Scene *, std::unordered_map<std::string, AssetSlot>> _sceneAssets;
 
     const Scene *_currentScene = nullptr;
 
