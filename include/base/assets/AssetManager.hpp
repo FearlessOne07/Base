@@ -1,15 +1,18 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
 #include "base/assets/BaseAsset.hpp"
+#include "base/audio/AudioStream.hpp"
+#include "base/audio/Sound.hpp"
+#include "base/util/Exception.hpp"
+#include "base/util/Strings.hpp"
 #include <filesystem>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 namespace Base
 {
   namespace fs = std::filesystem;
-  class Sound;
-  class AudioStream;
   class Scene;
   class AssetManager
   {
@@ -44,6 +47,32 @@ namespace Base
     void Deinit();
     void SetAudioSampleRate(uint64_t sampleRate);
     template <typename T> AssetHandle<T> LoadAsset(const fs::path &, bool global = true);
-    template <typename T> AssetHandle<T> GetAsset(const std::string &, const Scene *scene = nullptr);
+    template <typename T> AssetHandle<T> GetAsset(const std::string &assetName, const Scene *scene = nullptr)
+    {
+      if (std::is_base_of_v<BaseAsset, T>)
+      {
+        std::string name = Base::Strings::ToLower(assetName);
+        if (scene)
+        {
+          if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
+          {
+            std::stringstream error;
+            error << "Scene-local Font '" << name << "' does not exist";
+            THROW_BASE_RUNTIME_ERROR(error.str());
+          }
+          return AssetHandle<T>::Cast(_sceneAssets.at(scene).at(name).handle);
+        }
+        else
+        {
+          if (_globalAssets.find(name) == _globalAssets.end())
+          {
+            std::stringstream error;
+            error << "Global asset '" << name << "' does not exist";
+            THROW_BASE_RUNTIME_ERROR(error.str());
+          }
+          return AssetHandle<T>::Cast(_globalAssets.at(name).handle);
+        }
+      }
+    }
   };
 } // namespace Base
