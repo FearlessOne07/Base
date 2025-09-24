@@ -13,29 +13,50 @@ namespace Base
 
   Size UIFlexContainer::Measure()
   {
-    if (/* _sizeMode == SizeMode::Auto */ true)
-    {
 
-      Size total = {0, 0};
-      for (auto it = _childElements.begin(); it != _childElements.end(); it++)
+    Size total = {0, 0};
+    for (auto it = _childElements.begin(); it != _childElements.end(); it++)
+    {
+      auto &child = *it;
+      Size csize = child->Measure();
+      if (_orientation == Orientation::Vertical)
       {
-        auto &child = *it;
-        Size csize = child->Measure();
-        if (_orientation == Orientation::Vertical)
+
+        if (_widthSizeMode == SizeMode::Auto)
         {
           total.width = std::max(total.width, csize.width);
+        }
+
+        if (_heightSizeMode == SizeMode::Auto)
+        {
           total.height += csize.height;
         }
-        else
+      }
+      else
+      {
+        if (_heightSizeMode == SizeMode::Auto)
         {
           total.height = std::max(total.height, csize.height);
+        }
+
+        if (_widthSizeMode == SizeMode::Auto)
+        {
           total.width += csize.width;
         }
       }
-      total.width += _paddingLeft + _paddingRight;
-      total.height += _paddingBottom + _paddingTop;
-      _desiredSize = total;
     }
+    total.height += _paddingBottom + _paddingTop;
+    total.width += _paddingLeft + _paddingRight;
+
+    if (_widthSizeMode == SizeMode::Auto)
+    {
+      _desiredSize.width = total.width;
+    }
+    if (_heightSizeMode == SizeMode::Auto)
+    {
+      _desiredSize.height = total.height;
+    }
+
     return _desiredSize;
   }
 
