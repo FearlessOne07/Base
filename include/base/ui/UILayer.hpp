@@ -22,12 +22,10 @@ namespace Base
   public:
     UILayer() = default;
     UILayer(Vector2 layerSize, Vector2 layerPosition);
-    template <typename T> std::shared_ptr<T> SetRootElement()
+    template <typename T>
+      requires(std::is_base_of_v<UIElement, T>)
+    std::shared_ptr<T> SetRootElement()
     {
-      if (!std::is_base_of_v<UIElement, T>)
-      {
-        THROW_BASE_RUNTIME_ERROR("T must ba a derivative of UIElement");
-      }
 
       if (_root)
       {
@@ -38,12 +36,10 @@ namespace Base
       return std::static_pointer_cast<T>(_root);
     }
 
-    template <typename T> std::shared_ptr<T> GetRootElement()
+    template <typename T>
+      requires(std::is_base_of_v<UIElement, T>)
+    std::shared_ptr<T> GetRootElement()
     {
-      if (!std::is_base_of_v<UIElement, T>)
-      {
-        THROW_BASE_RUNTIME_ERROR("T must ba a derivative of UIElement");
-      }
 
       if (!_root)
       {

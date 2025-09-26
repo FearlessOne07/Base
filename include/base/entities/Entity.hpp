@@ -45,16 +45,18 @@ namespace Base
     Entity &operator=(Entity &) = delete;
     Entity(Entity &) = delete;
 
-    template <typename T> bool HasComponent() const
+    template <typename T>
+      requires(std::is_base_of_v<Component, T>)
+    bool HasComponent() const
     {
-      static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
       return _components.find(std::type_index(typeid(T))) != _components.end();
     }
 
     void RemoveComponent(const std::shared_ptr<Component> &component);
-    template <typename T> void RemoveComponent()
+    template <typename T>
+      requires(std::is_base_of_v<Component, T>)
+    void RemoveComponent()
     {
-      static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
       auto compID = std::type_index(typeid(T));
       if (HasComponent<T>())
       {
@@ -70,10 +72,10 @@ namespace Base
     }
 
     void AddComponent(const std::shared_ptr<Component> &component);
-    template <typename T, typename... Args> std::shared_ptr<T> AddComponent(Args &&...args)
+    template <typename T, typename... Args>
+      requires(std::is_base_of_v<Component, T>)
+    std::shared_ptr<T> AddComponent(Args &&...args)
     {
-      static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
-
       auto compID = std::type_index(typeid(T));
 
       if (!HasComponent<T>())
@@ -91,9 +93,10 @@ namespace Base
       }
     }
 
-    template <typename T> std::shared_ptr<T> GetComponent() const
+    template <typename T>
+      requires(std::is_base_of_v<Component, T>)
+    std::shared_ptr<T> GetComponent() const
     {
-      static_assert(std::is_base_of_v<Component, T>, "T must derive from the class 'Component'");
       auto compId = std::type_index(typeid(T));
       if (_components.find(compId) == _components.end())
       {

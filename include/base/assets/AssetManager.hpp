@@ -46,32 +46,35 @@ namespace Base
     void Init();
     void Deinit();
     void SetAudioSampleRate(uint64_t sampleRate);
-    template <typename T> AssetHandle<T> LoadAsset(const fs::path &, bool global = true);
-    template <typename T> AssetHandle<T> GetAsset(const std::string &assetName, const Scene *scene = nullptr)
+
+    template <typename T>
+      requires(std::is_base_of_v<BaseAsset, T>)
+    AssetHandle<T> LoadAsset(const fs::path &, bool global = true);
+
+    template <typename T>
+      requires(std::is_base_of_v<BaseAsset, T>)
+    AssetHandle<T> GetAsset(const std::string &assetName, const Scene *scene = nullptr)
     {
-      if (std::is_base_of_v<BaseAsset, T>)
+      std::string name = Base::Strings::ToLower(assetName);
+      if (scene)
       {
-        std::string name = Base::Strings::ToLower(assetName);
-        if (scene)
+        if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
         {
-          if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
-          {
-            std::stringstream error;
-            error << "Scene-local Font '" << name << "' does not exist";
-            THROW_BASE_RUNTIME_ERROR(error.str());
-          }
-          return AssetHandle<T>::Cast(_sceneAssets.at(scene).at(name).handle);
+          std::stringstream error;
+          error << "Scene-local Font '" << name << "' does not exist";
+          THROW_BASE_RUNTIME_ERROR(error.str());
         }
-        else
+        return AssetHandle<T>::Cast(_sceneAssets.at(scene).at(name).handle);
+      }
+      else
+      {
+        if (_globalAssets.find(name) == _globalAssets.end())
         {
-          if (_globalAssets.find(name) == _globalAssets.end())
-          {
-            std::stringstream error;
-            error << "Global asset '" << name << "' does not exist";
-            THROW_BASE_RUNTIME_ERROR(error.str());
-          }
-          return AssetHandle<T>::Cast(_globalAssets.at(name).handle);
+          std::stringstream error;
+          error << "Global asset '" << name << "' does not exist";
+          THROW_BASE_RUNTIME_ERROR(error.str());
         }
+        return AssetHandle<T>::Cast(_globalAssets.at(name).handle);
       }
     }
   };

@@ -26,30 +26,24 @@ namespace Base
   public:
     SceneLayerStack(Scene *owner);
     template <typename T>
+      requires(std::is_base_of_v<SceneLayer, T>)
     T *AttachLayer(RenderLayer *renderLayer)
     {
-      if (std::is_base_of_v<SceneLayer, T>)
+      auto id = std::type_index(typeid(T));
+      if (std::ranges::find(_layerIds, id) == _layerIds.end())
       {
-        auto id = std::type_index(typeid(T));
-        if (std::ranges::find(_layerIds, id) == _layerIds.end())
-        {
-          _layerIds.push_back(id);
-          _layers.emplace_back(std::make_shared<T>());
-          _layers.back()->_owner = _owner;
-          _layers.back()->SetPauseMask(_currentLayer);
-          _layers.back()->SetLayerIndex(_currentLayer);
-          _layers.back()->_onAttach(renderLayer);
-          _currentLayer++;
-          return std::static_pointer_cast<T>(_layers.back()).get();
-        }
-        else
-        {
-          THROW_BASE_RUNTIME_ERROR("Scene layer already attached");
-        }
+        _layerIds.push_back(id);
+        _layers.emplace_back(std::make_shared<T>());
+        _layers.back()->_owner = _owner;
+        _layers.back()->SetPauseMask(_currentLayer);
+        _layers.back()->SetLayerIndex(_currentLayer);
+        _layers.back()->_onAttach(renderLayer);
+        _currentLayer++;
+        return std::static_pointer_cast<T>(_layers.back()).get();
       }
       else
       {
-        THROW_BASE_RUNTIME_ERROR("T must be a derivative of SceneLayer");
+        THROW_BASE_RUNTIME_ERROR("Scene layer already attached");
       }
     }
 

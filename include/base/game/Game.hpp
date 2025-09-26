@@ -18,35 +18,23 @@ namespace Base
     Game(Game &game) = delete;
     Game &operator=(Game &game) = delete;
 
-    template <typename T> void RegisterScene(bool startScene = false)
+    template <typename T>
+      requires(std::is_base_of_v<Scene, T>)
+    void RegisterScene(bool startScene = false)
     {
-      // Check if T is a derivative of Base::Scene
-      if (std::is_base_of<Scene, T>())
-      {
-        auto sceneID = std::type_index(typeid(T));
-        RegisterSceneImpl( //
-          sceneID, std::move([]() -> std::unique_ptr<Scene> { return std::make_unique<T>(); }),
-          startScene //
-        );
-      }
-      else
-      {
-        THROW_BASE_RUNTIME_ERROR("Type Must be a derivative if the Scene class");
-      }
+      auto sceneID = std::type_index(typeid(T));
+      RegisterSceneImpl( //
+        sceneID, std::move([]() -> std::unique_ptr<Scene> { return std::make_unique<T>(); }),
+        startScene //
+      );
     };
 
-    template <typename T> void RegisterSystem(bool isRenderSystem = false)
+    template <typename T>
+      requires(std::is_base_of_v<System, T>)
+    void RegisterSystem(bool isRenderSystem = false)
     {
-      // Check if T is a derivative of Base::System
-      if (std::is_base_of<System, T>())
-      {
-        auto systemID = std::type_index(typeid(T));
-        RegisterSystemImpl(systemID, std::move(std::make_unique<T>()), isRenderSystem);
-      }
-      else
-      {
-        THROW_BASE_RUNTIME_ERROR("Type Must be a derivative if the System class");
-      }
+      auto systemID = std::type_index(typeid(T));
+      RegisterSystemImpl(systemID, std::move(std::make_unique<T>()), isRenderSystem);
     };
     void Init(GameConfig gameConig = GameConfig());
     void Run();

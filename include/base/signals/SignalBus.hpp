@@ -26,14 +26,10 @@ namespace Base
   public:
     static SignalBus *GetInstance();
 
-    template <typename T> void SubscribeSignal(const SignalHandler &handler)
+    template <typename T>
+      requires(std::is_base_of_v<Signal, T>)
+    void SubscribeSignal(const SignalHandler &handler)
     {
-      // Check if T is a derivative of Base::Signal
-      if (!std::is_base_of_v<Signal, T>)
-      {
-        THROW_BASE_RUNTIME_ERROR("T must be a derivative of the  Signal class");
-      }
-
       // Get the event ID
       auto id = std::type_index(typeid(T));
 
