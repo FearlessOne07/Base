@@ -26,7 +26,6 @@ namespace Base
       requires(std::is_base_of_v<UIElement, T>)
     std::shared_ptr<T> SetRootElement()
     {
-
       if (_root)
       {
         THROW_BASE_RUNTIME_ERROR("Layer root element already set");

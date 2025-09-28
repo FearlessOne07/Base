@@ -9,9 +9,9 @@ namespace Base
 {
   enum struct TweenPriorityLevel
   {
-    DEFAULT = 0,
-    MEDIUM = 1,
-    HIGH = 2,
+    Default = 0,
+    Medium = 1,
+    High = 2,
   };
 
   class ITween

@@ -107,7 +107,7 @@ namespace Base
     _layoutRect.width = std::min(width, finalRect.width);
     _layoutRect.height = std::min(height, finalRect.height);
 
-    _layoutRect.x += _renderTransform.GetScaleX();
+    _layoutRect.x += _renderTransform.GetOffsetx();
     _layoutRect.y += _renderTransform.GetOffsetY();
 
     float offset = (_orientation == Orientation::Vertical) ? _layoutRect.y + _paddingTop : _layoutRect.x + _paddingLeft;

@@ -275,8 +275,8 @@ namespace Base
       break;
     }
 
-    _layoutRect.width = std::min(width, finalRect.width);
-    _layoutRect.height = std::min(height, finalRect.height);
+    _layoutRect.width = width;
+    _layoutRect.height = height;
 
     for (auto &child : _childElements)
     {

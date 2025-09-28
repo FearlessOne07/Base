@@ -19,13 +19,13 @@ namespace Base
     };
   }
 
-  SceneTransition Scene::GetSceneTransition() const
+  const SceneTransition &Scene::GetSceneTransition() const
   {
     return _state->sceneTransition;
   }
   void Scene::ResetSceneTransition()
   {
-    _state->sceneTransition = {.request = SceneRequest::NONE, .sceneID = typeid(-1)};
+    _state->sceneTransition = {.request = SceneRequest::None, .sceneID = typeid(-1)};
   }
 
   void Scene::SetRenderer(Renderer *manager)

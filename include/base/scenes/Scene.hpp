@@ -68,10 +68,10 @@ namespace Base
     // Private Getters
     [[nodiscard]] Renderer *GetRenderer() const;
     [[nodiscard]] AssetManager *GetAssetManager() const;
-    [[nodiscard]] SceneTransition GetSceneTransition() const;
+    [[nodiscard]] const SceneTransition &GetSceneTransition() const ;
 
-    // Pause
-    std::bitset<8> _pauseMask;
+      // Pause
+      std::bitset<8> _pauseMask;
 
     // Scene Store
 
@@ -100,7 +100,7 @@ namespace Base
   public:
     Scene();
     virtual ~Scene() = default;
-    virtual void Enter(SceneData sceneData = SceneData()) = 0;
+    virtual void Enter(const SceneData &sceneData = SceneData()) = 0;
     virtual void Exit() = 0;
     virtual void Resume();
     virtual void Suspend();

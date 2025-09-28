@@ -15,9 +15,9 @@ namespace Base
   public:
     enum class EasingType : uint8_t
     {
-      EASE_IN,
-      EASE_OUT,
-      EASE_IN_OUT
+      EaseIn,
+      EaseOut,
+      EaseInOut
     };
 
     template <typename T> struct TweenSettings
@@ -25,9 +25,9 @@ namespace Base
       T startValue = 0;
       T endValue = 0;
       float duration = 1.f;
-      EasingType easingType = EasingType::EASE_OUT;
+      EasingType easingType = EasingType::EaseOut;
       std::function<void()> onTweenEnd = nullptr;
-      TweenPriorityLevel priority = TweenPriorityLevel::DEFAULT;
+      TweenPriorityLevel priority = TweenPriorityLevel::Default;
     };
 
   private:
@@ -73,13 +73,13 @@ namespace Base
         std::function<float(float)> easingFunction = nullptr;
         switch (tweenSettings.easingType)
         {
-        case EasingType::EASE_IN:
+        case EasingType::EaseIn:
           easingFunction = Easings::EaseInCubic;
           break;
-        case EasingType::EASE_OUT:
+        case EasingType::EaseOut:
           easingFunction = Easings::EaseOutCubic;
           break;
-        case EasingType::EASE_IN_OUT:
+        case EasingType::EaseInOut:
           easingFunction = Easings::EaseInOutCubic;
           break;
         }

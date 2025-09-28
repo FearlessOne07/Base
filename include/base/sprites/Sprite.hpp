@@ -16,7 +16,7 @@ namespace Base
   public:
     Sprite() = default;
     Sprite( //
-      const AssetHandle<Texture> &textureHandle, const Vector2 &sourceIndex, const Vector2 &sourceSize,
+      const AssetHandle<Texture> &textureHandle, const Vector2 &sourcePos, const Vector2 &sourceSize,
       const Vector2 &destinationSize //
     );
     Sprite(const Sprite &other);

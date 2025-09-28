@@ -137,22 +137,22 @@ namespace Base
       // Reset the scene's transisition request
       _scenes.top()->ResetSceneTransition();
 
-      if (sceneTrans.request != SceneRequest::NONE)
+      if (sceneTrans.request != SceneRequest::None)
       {
-        if (sceneTrans.request == SceneRequest::QUIT)
+        if (sceneTrans.request == SceneRequest::Quit)
         {
           // Quit if the scene requests to quite the game
           _quitCallBack();
         }
-        else if (sceneTrans.request == SceneRequest::PUSH_NEW_SCENE)
+        else if (sceneTrans.request == SceneRequest::PushNewScene)
         {
           PushScene(sceneTrans.sceneID, sceneTrans.data);
         }
-        else if (sceneTrans.request == SceneRequest::REPLACE_CURRENT_SCENE)
+        else if (sceneTrans.request == SceneRequest::ReplaceCurrentScene)
         {
           ReplaceScene(sceneTrans.sceneID, sceneTrans.data);
         }
-        else if (sceneTrans.request == SceneRequest::POP_CURRENT_SCENE)
+        else if (sceneTrans.request == SceneRequest::PopCurrentScene)
         {
           PopScene();
         }

@@ -1,18 +1,17 @@
 #include "base/sprites/NinePatchSprite.hpp"
 #include "raymath.h"
-#include <cmath>
 
 namespace Base
 {
   NinePatchSprite::NinePatchSprite( //
-    const AssetHandle<Texture> &texture, Border border, Vector2 sourceIndex, Vector2 sourceSize,
+    const AssetHandle<Texture> &texture, Border border, Vector2 sourcePos, Vector2 sourceSize,
     float borderScaleMultiplier //
     )
-    : _texture(texture), _border(border), _sourceIndex(sourceIndex), _sourceSize(sourceSize),
+    : _texture(texture), _border(border), _sourcePos(sourcePos), _sourceSize(sourceSize),
       _borderScaleMultiplier(borderScaleMultiplier)
   {
-    float spriteX = sourceIndex.x * sourceSize.x;
-    float spriteY = sourceIndex.y * sourceSize.y;
+    float spriteX = sourcePos.x;
+    float spriteY = sourcePos.y;
     float spriteWidth = sourceSize.x;
     float spriteHeight = sourceSize.y;
 
@@ -61,9 +60,10 @@ namespace Base
       border.bottom,
     }; // Bottom-right
   }
-  void NinePatchSprite::SetSourceIndex(const Vector2 &index)
+
+  void NinePatchSprite::SetSourcePos(const Vector2 &pos)
   {
-    _sourceIndex = Vector2Max(index, {0});
+    _sourcePos = Vector2Max(pos, {0});
   }
 
   void NinePatchSprite::Draw(const Rectangle &dest, unsigned char alpha)
