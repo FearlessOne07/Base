@@ -8,6 +8,7 @@
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/scenes/signals/SceneSuspendedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/systems/SystemManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "base/util/Exception.hpp"
 #include <memory>
@@ -130,7 +131,17 @@ namespace Base
     {
       // Update Current Scene
       _scenes.top()->Update(dt);
+    }
+    else
+    {
+      THROW_BASE_RUNTIME_ERROR("No Registered scene!");
+    }
+  }
 
+  void SceneManager::PostUpdate()
+  {
+    if (!_scenes.empty())
+    {
       // Check if the current scene has requested a scene change
       SceneTransition sceneTrans = _scenes.top()->GetSceneTransition();
 

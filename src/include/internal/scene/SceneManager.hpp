@@ -53,6 +53,7 @@ namespace Base
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);
     void Update(float dt);
+    void PostUpdate();
     void Render();
 
     // Input

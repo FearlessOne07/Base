@@ -193,14 +193,15 @@ namespace Base
 
         _shaderManager.Update(dt);
 
-        // Post Update
-        _inpMan.PostUpdate();
-        _entityManager.RemoveDeadEntities();
-
         // Render
         _renderer.RenderLayers();
         _renderer.CompositeLayers();
         _renderer.Render();
+
+        // Post Update
+        _inpMan.PostUpdate();
+        _entityManager.RemoveDeadEntities();
+        _sceneManager.PostUpdate();
       }
       else
       {

@@ -8,31 +8,27 @@ namespace Base
 {
   void TweenManager::Update(float dt)
   {
-    if (_currentScene)
+    _isUpdatingTweens = true;
+
+    for (auto it = _tweens.at(_currentScene).begin(); it != _tweens.at(_currentScene).end();)
     {
-
-      _isUpdatingTweens = true;
-
-      for (auto it = _tweens.at(_currentScene).begin(); it != _tweens.at(_currentScene).end();)
+      it->second->Update(dt);
+      if (it->second->IsFinished())
       {
-        it->second->Update(dt);
-        if (it->second->IsFinished())
-        {
-          it->second->OnEnd();
-          it = _tweens.at(_currentScene).erase(it);
-        }
-        else
-        {
-          ++it;
-        }
+        it->second->OnEnd();
+        it = _tweens.at(_currentScene).erase(it);
       }
-      _isUpdatingTweens = false;
-
-      // Flush pending tweens after main update loop
-      for (auto &addTween : _pendingTweens)
-        addTween();
-      _pendingTweens.clear();
+      else
+      {
+        ++it;
+      }
     }
+    _isUpdatingTweens = false;
+
+    // Flush pending tweens after main update loop
+    for (auto &addTween : _pendingTweens)
+      addTween();
+    _pendingTweens.clear();
   }
 
   void TweenManager::Init()
