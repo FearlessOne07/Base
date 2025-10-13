@@ -68,25 +68,9 @@ namespace Base
             {
               std::shared_ptr<EntityCollisionSignal> event = std::make_shared<EntityCollisionSignal>();
               event->collisionNormal = normal;
-
-              if ( //
-                (abb1->HasTypeFlag(ColliderComponent::Type::HITBOX) &&
-                 abb2->HasTypeFlag(ColliderComponent::Type::HURTBOX)) //
-              )
-              {
-                event->hittBoxEntity = e1;
-                event->hurtBoxEntity = e2;
-                SignalBus::GetInstance()->BroadCastSignal(event);
-              }
-              else if ( //
-                (abb2->HasTypeFlag(ColliderComponent::Type::HITBOX) &&
-                 abb1->HasTypeFlag(ColliderComponent::Type::HURTBOX)) //
-              )
-              {
-                event->hittBoxEntity = e2;
-                event->hurtBoxEntity = e1;
-                SignalBus::GetInstance()->BroadCastSignal(event);
-              }
+              event->hittBoxEntity = e1;
+              event->hurtBoxEntity = e2;
+              SignalBus::GetInstance()->BroadCastSignal(event);
             }
           }
         }

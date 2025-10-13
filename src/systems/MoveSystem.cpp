@@ -102,11 +102,7 @@ namespace Base
     for (auto &item : entites)
     {
       auto e2 = item->item;
-      if (           //
-          e != e2 && //
-          abbcmp1->HasTypeFlag(ColliderComponent::Type::COLLIDER) &&
-          e2->GetComponent<ColliderComponent>()->HasTypeFlag(ColliderComponent::Type::COLLIDER) //
-      )
+      if (e != e2)
       {
 
         auto abbcmp2 = e2->GetComponent<ColliderComponent>();
@@ -135,20 +131,20 @@ namespace Base
 
     // Apply Positional Offset
     Vector2 currentRectPos = {
-        transcmp1->position.x - abbcmp1->positionOffset.x,
-        transcmp1->position.y - abbcmp1->positionOffset.y,
+      transcmp1->position.x - abbcmp1->positionOffset.x,
+      transcmp1->position.y - abbcmp1->positionOffset.y,
     };
 
     Vector2 lastRectPos = {
-        abbcmp1->lastPosition.x - abbcmp1->positionOffset.x,
-        abbcmp1->lastPosition.y - abbcmp1->positionOffset.y,
+      abbcmp1->lastPosition.x - abbcmp1->positionOffset.x,
+      abbcmp1->lastPosition.y - abbcmp1->positionOffset.y,
     };
 
-    if (                                                                                      //
-        CheckCollisionRecs(                                                                   //
-            {transcmp2->position.x, transcmp2->position.y, abbcmp2->size.x, abbcmp2->size.y}, //
-            {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y}            //
-            )                                                                                 //
+    if (                                                                                  //
+      CheckCollisionRecs(                                                                 //
+        {transcmp2->position.x, transcmp2->position.y, abbcmp2->size.x, abbcmp2->size.y}, //
+        {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y}            //
+        )                                                                                 //
     )
     {
       if (axis == 0)
@@ -158,8 +154,8 @@ namespace Base
           rbcmp1->velocity.x = 0;
           currentRectPos.x = transcmp2->position.x - abbcmp1->size.x;
         }
-        else if (                                                    //
-            lastRectPos.x >= transcmp2->position.x + abbcmp2->size.x //
+        else if (                                                  //
+          lastRectPos.x >= transcmp2->position.x + abbcmp2->size.x //
         )
         {
           rbcmp1->velocity.x = 0;
@@ -179,8 +175,8 @@ namespace Base
             gravcmp->isJumping = false;
           }
         }
-        else if (                                                    //
-            lastRectPos.y >= transcmp2->position.y + abbcmp2->size.y //
+        else if (                                                  //
+          lastRectPos.y >= transcmp2->position.y + abbcmp2->size.y //
         )
         {
           rbcmp1->velocity.y = 0;

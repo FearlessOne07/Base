@@ -12,15 +12,11 @@ namespace Base
       BOX = 0,
       CIRCLE
     };
-    enum struct Type : uint8_t
-    {
-      COLLIDER = 0,
-      HURTBOX = 1,
-      HITBOX = 2,
-    };
 
   private:
-    std::bitset<3> _typeFlags;
+    // To Be Implemented
+    std::bitset<8> _layer;
+    std::bitset<8> _mask;
 
   public:
     // Shape
@@ -35,8 +31,5 @@ namespace Base
 
     // Circle
     float radius = 0;
-
-    void SetTypeFlag(Type type);
-    bool HasTypeFlag(Type type);
   };
 } // namespace Base
