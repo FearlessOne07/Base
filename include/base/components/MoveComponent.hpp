@@ -8,5 +8,8 @@ namespace Base
   public:
     float driveForce = 0.f;
     float brakeForce = 0.f;
+
+    // Kinematic
+    float speed = 0;
   };
 } // namespace Base

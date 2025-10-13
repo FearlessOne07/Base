@@ -1,6 +1,6 @@
 #include "Component.hpp"
-#include <raylib.h>
 #include <bitset>
+#include <raylib.h>
 
 namespace Base
 {
@@ -35,12 +35,6 @@ namespace Base
 
     // Circle
     float radius = 0;
-
-    // Draw (Temp)
-    bool draw = false;
-    bool fill = true;
-    Color color = WHITE;
-    float nonFillThickness = 3;
 
     void SetTypeFlag(Type type);
     bool HasTypeFlag(Type type);

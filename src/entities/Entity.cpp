@@ -66,7 +66,7 @@ namespace Base
   void Entity::AddComponent(const std::shared_ptr<Component> &component)
   {
     // Get the actual type of the object pointed to
-    auto compID = std::type_index(typeid(*component)); // dereference pointer
+    auto compID = std::type_index(typeid(*component));
 
     // Check if component of this type already exists
     if (_components.find(compID) == _components.end())

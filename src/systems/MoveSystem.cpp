@@ -17,7 +17,7 @@ namespace Base
 {
   void MoveSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
   {
-    auto entities = entitymanager->Query<RigidBodyComponent>();
+    auto entities = entitymanager->Query<RigidBodyComponent, MoveComponent>();
     for (auto &item : entities)
     {
       auto e = item->item;
@@ -59,7 +59,7 @@ namespace Base
               if (impcmp->force > 0)
               {
                 Vector2 impDirection = Vector2Normalize(impcmp->direction);
-                float impulse = impcmp->force; // treat as impulse, not force
+                float impulse = impcmp->force;
                 rbcmp->velocity += impDirection * (impulse / rbcmp->mass);
 
                 // clear after applying
@@ -72,7 +72,7 @@ namespace Base
         else
         {
           Vector2 direction = Vector2Normalize(rbcmp->direction);
-          rbcmp->velocity = direction * rbcmp->speed;
+          rbcmp->velocity = direction * mvcmp->speed;
         }
 
         if (abs(rbcmp->velocity.x) < 5e-10)
@@ -102,10 +102,10 @@ namespace Base
     for (auto &item : entites)
     {
       auto e2 = item->item;
-      if (         //
-        e != e2 && //
-        abbcmp1->HasTypeFlag(ColliderComponent::Type::COLLIDER) &&
-        e2->GetComponent<ColliderComponent>()->HasTypeFlag(ColliderComponent::Type::COLLIDER) //
+      if (           //
+          e != e2 && //
+          abbcmp1->HasTypeFlag(ColliderComponent::Type::COLLIDER) &&
+          e2->GetComponent<ColliderComponent>()->HasTypeFlag(ColliderComponent::Type::COLLIDER) //
       )
       {
 
@@ -135,20 +135,20 @@ namespace Base
 
     // Apply Positional Offset
     Vector2 currentRectPos = {
-      transcmp1->position.x - abbcmp1->positionOffset.x,
-      transcmp1->position.y - abbcmp1->positionOffset.y,
+        transcmp1->position.x - abbcmp1->positionOffset.x,
+        transcmp1->position.y - abbcmp1->positionOffset.y,
     };
 
     Vector2 lastRectPos = {
-      abbcmp1->lastPosition.x - abbcmp1->positionOffset.x,
-      abbcmp1->lastPosition.y - abbcmp1->positionOffset.y,
+        abbcmp1->lastPosition.x - abbcmp1->positionOffset.x,
+        abbcmp1->lastPosition.y - abbcmp1->positionOffset.y,
     };
 
-    if (                                                                                  //
-      CheckCollisionRecs(                                                                 //
-        {transcmp2->position.x, transcmp2->position.y, abbcmp2->size.x, abbcmp2->size.y}, //
-        {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y}            //
-        )                                                                                 //
+    if (                                                                                      //
+        CheckCollisionRecs(                                                                   //
+            {transcmp2->position.x, transcmp2->position.y, abbcmp2->size.x, abbcmp2->size.y}, //
+            {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y}            //
+            )                                                                                 //
     )
     {
       if (axis == 0)
@@ -158,8 +158,8 @@ namespace Base
           rbcmp1->velocity.x = 0;
           currentRectPos.x = transcmp2->position.x - abbcmp1->size.x;
         }
-        else if (                                                  //
-          lastRectPos.x >= transcmp2->position.x + abbcmp2->size.x //
+        else if (                                                    //
+            lastRectPos.x >= transcmp2->position.x + abbcmp2->size.x //
         )
         {
           rbcmp1->velocity.x = 0;
@@ -179,8 +179,8 @@ namespace Base
             gravcmp->isJumping = false;
           }
         }
-        else if (                                                  //
-          lastRectPos.y >= transcmp2->position.y + abbcmp2->size.y //
+        else if (                                                    //
+            lastRectPos.y >= transcmp2->position.y + abbcmp2->size.y //
         )
         {
           rbcmp1->velocity.y = 0;

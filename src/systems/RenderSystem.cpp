@@ -1,6 +1,8 @@
 #include "internal/systems/RenderSystem.hpp"
 #include "base/components/AnimationComponent.hpp"
+#include "base/components/CircleComponent.hpp"
 #include "base/components/ColliderComponent.hpp"
+#include "base/components/QuadComponent.hpp"
 #include "base/components/ShapeComponent.hpp"
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
@@ -37,10 +39,22 @@ namespace Base
             );
           }
         }
-
-        if (e->HasComponent<SpriteComponent>())
+        else if (e->HasComponent<QuadComponent>())
         {
-
+          auto quadcmp = e->GetComponent<QuadComponent>();
+          DrawRectangleBase( //
+            {transcmp->position.x, transcmp->position.y, quadcmp->GetSize().x, quadcmp->GetSize().y},
+            {quadcmp->GetSize().x / 2, quadcmp->GetSize().y / 2}, transcmp->rotation,
+            quadcmp->GetColor() //
+          );
+        }
+        else if (e->HasComponent<CircleComponent>())
+        {
+          auto cirlcecmp = e->GetComponent<CircleComponent>();
+          DrawCircleV(transcmp->position, cirlcecmp->GetRadius(), cirlcecmp->GetColor());
+        }
+        else if (e->HasComponent<SpriteComponent>())
+        {
           auto sprtmp = e->GetComponent<SpriteComponent>();
           if (e->HasComponent<AnimationComponent>())
           {

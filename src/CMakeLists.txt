@@ -44,6 +44,7 @@ set(SRC
   "./systems/TimerSystem.cpp"
 
   "./components/Component.cpp"
+  "./components/CircleComponent.cpp"
   "./components/InputComponent.cpp"
   "./components/ColliderComponent.cpp"
   "./components/ImpulseComponent.cpp"
@@ -54,6 +55,7 @@ set(SRC
   "./components/ProximityComponent.cpp"
   "./components/AreaComponent.cpp"
   "./components/TransitionComponent.cpp"
+  "./components/QuadComponent.cpp"
   "./components/TimerComponent.cpp"
 
   "./particles/ParticleManager.cpp"
