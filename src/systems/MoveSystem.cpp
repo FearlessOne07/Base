@@ -85,7 +85,12 @@ namespace Base
         }
 
         // Update Positions
-        transcmp->position += rbcmp->velocity * dt;
+        transcmp->position.x += rbcmp->velocity.x * dt;
+        HandleCollisions(e, 0, entitymanager);
+
+        transcmp->position.y += rbcmp->velocity.y * dt;
+        HandleCollisions(e, 1, entitymanager);
+
         entitymanager->UpdateEntity(item);
       }
     }
@@ -97,14 +102,23 @@ namespace Base
     auto abbcmp1 = e->GetComponent<ColliderComponent>();
     auto transcmp1 = e->GetComponent<TransformComponent>();
     auto rbcmp1 = e->GetComponent<RigidBodyComponent>();
-    auto entites = entityManager->QueryArea(Circle(transcmp1->position, 30));
+    std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> entites;
+
+    if (abbcmp1->shape == ColliderComponent::Shape::BOX)
+    {
+      entites = entityManager->QueryArea(
+        Rectangle{transcmp1->position.x, transcmp1->position.y, abbcmp1->size.x, abbcmp1->size.y});
+    }
+    else if (abbcmp1->shape == ColliderComponent::Shape::CIRCLE)
+    {
+      entites = entityManager->QueryArea(Circle(transcmp1->position, abbcmp1->radius));
+    }
 
     for (auto &item : entites)
     {
       auto e2 = item->item;
       if (e != e2)
       {
-
         auto abbcmp2 = e2->GetComponent<ColliderComponent>();
 
         if (abbcmp1->shape == ColliderComponent::Shape::BOX && abbcmp2->shape == ColliderComponent::Shape::BOX)
@@ -140,34 +154,39 @@ namespace Base
       abbcmp1->lastPosition.y - abbcmp1->positionOffset.y,
     };
 
-    if (                                                                                  //
-      CheckCollisionRecs(                                                                 //
-        {transcmp2->position.x, transcmp2->position.y, abbcmp2->size.x, abbcmp2->size.y}, //
-        {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y}            //
-        )                                                                                 //
+    Vector2 e2Position = {
+      transcmp2->position.x - abbcmp2->positionOffset.x,
+      transcmp2->position.y - abbcmp2->positionOffset.y,
+    };
+
+    if (                                                                       //
+      CheckCollisionRecs(                                                      //
+        {e2Position.x, e2Position.y, abbcmp2->size.x, abbcmp2->size.y},        //
+        {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y} //
+        )                                                                      //
     )
     {
       if (axis == 0)
       {
-        if (lastRectPos.x + abbcmp1->size.x <= transcmp2->position.x)
+        if (lastRectPos.x + abbcmp1->size.x <= e2Position.x)
         {
           rbcmp1->velocity.x = 0;
-          currentRectPos.x = transcmp2->position.x - abbcmp1->size.x;
+          currentRectPos.x = e2Position.x - abbcmp1->size.x;
         }
-        else if (                                                  //
-          lastRectPos.x >= transcmp2->position.x + abbcmp2->size.x //
+        else if (                                         //
+          lastRectPos.x >= e2Position.x + abbcmp2->size.x //
         )
         {
           rbcmp1->velocity.x = 0;
-          currentRectPos.x = transcmp2->position.x + abbcmp1->size.x;
+          currentRectPos.x = e2Position.x + abbcmp1->size.x;
         }
       }
       else
       {
-        if (lastRectPos.y + abbcmp1->size.y <= transcmp2->position.y)
+        if (lastRectPos.y + abbcmp1->size.y <= e2Position.y)
         {
           rbcmp1->velocity.y = 0;
-          currentRectPos.y = transcmp2->position.y - abbcmp1->size.y;
+          currentRectPos.y = e2Position.y - abbcmp1->size.y;
 
           if (e1->HasComponent<GravityComponent>())
           {
@@ -175,12 +194,12 @@ namespace Base
             gravcmp->isJumping = false;
           }
         }
-        else if (                                                  //
-          lastRectPos.y >= transcmp2->position.y + abbcmp2->size.y //
+        else if (                                         //
+          lastRectPos.y >= e2Position.y + abbcmp2->size.y //
         )
         {
           rbcmp1->velocity.y = 0;
-          currentRectPos.y = transcmp2->position.y + abbcmp1->size.y;
+          currentRectPos.y = e2Position.y + abbcmp1->size.y;
         }
       }
 
