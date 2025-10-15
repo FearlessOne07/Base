@@ -178,7 +178,7 @@ namespace Base
         )
         {
           rbcmp1->velocity.x = 0;
-          currentRectPos.x = e2Position.x + abbcmp1->size.x;
+          currentRectPos.x = e2Position.x + abbcmp2->size.x;
         }
       }
       else
@@ -199,7 +199,7 @@ namespace Base
         )
         {
           rbcmp1->velocity.y = 0;
-          currentRectPos.y = e2Position.y + abbcmp1->size.y;
+          currentRectPos.y = e2Position.y + abbcmp2->size.y;
         }
       }
 
