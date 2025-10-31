@@ -11,13 +11,13 @@ namespace Base
 
     enum class Action : uint8_t
     {
-      NONE = 0,
-      PRESSED,
-      HELD,
-      RELEASED
+      None = 0,
+      Pressed,
+      Held,
+      Released
     };
 
-    Action action = Action::NONE;
+    Action action = Action::None;
     bool isHandled = false;
   };
 } // namespace Base

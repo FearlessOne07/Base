@@ -26,6 +26,7 @@ set(SRC
   "./ui/elements/UITextureRect.cpp"
   "./ui/elements/UIFlexContainer.cpp"
   "./ui/elements/UICanvas.cpp"
+  "./ui/elements/UIGrid.cpp"
 
   "./scenes/SceneManager.cpp"
   "./scenes/Scene.cpp"

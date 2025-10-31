@@ -244,7 +244,7 @@ namespace Base
   {
     if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(event))
     {
-      if (keyEvent->key == KEY_F11 && keyEvent->action == InputEvent::Action::PRESSED)
+      if (keyEvent->key == KEY_F11 && keyEvent->action == InputEvent::Action::Pressed)
       {
         ToggleBorderlessWindowed();
         event->isHandled = true;

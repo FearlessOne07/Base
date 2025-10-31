@@ -26,7 +26,6 @@ namespace Base
       _layoutRect.width,
       _layoutRect.height,
     };
-
     return RectangleUnion(layoutRect, _layoutRect);
   }
 
@@ -151,7 +150,7 @@ namespace Base
       if (onClick)
       {
         if ( //
-          mouseEvent->action == Base::InputEvent::Action::HELD && mouseEvent->button == MOUSE_BUTTON_LEFT &&
+          mouseEvent->action == Base::InputEvent::Action::Held && mouseEvent->button == MOUSE_BUTTON_LEFT &&
           _isHovered //
         )
         {
@@ -159,7 +158,7 @@ namespace Base
           event->isHandled = true;
         }
         else if ( //
-          mouseEvent->action == Base::InputEvent::Action::RELEASED && mouseEvent->button == MOUSE_BUTTON_LEFT &&
+          mouseEvent->action == Base::InputEvent::Action::Released && mouseEvent->button == MOUSE_BUTTON_LEFT &&
           _isActive //
         )
         {

@@ -45,7 +45,7 @@ namespace Base
           // create and dispatch a PRESSED event
           std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
           event->key = key;
-          event->action = KeyEvent::Action::PRESSED;
+          event->action = KeyEvent::Action::Pressed;
           _lastEvent = event;
           DispatchEvent(event);
 
@@ -67,7 +67,7 @@ namespace Base
             // Dispatch a HELD event
             std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
             event->key = key;
-            event->action = KeyEvent::Action::HELD;
+            event->action = KeyEvent::Action::Held;
             DispatchEvent(event);
 
             // Set this as the last HELD key
@@ -93,7 +93,7 @@ namespace Base
         // Dispath a RELEASED key event
         std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
         event->key = key;
-        event->action = KeyEvent::Action::RELEASED;
+        event->action = KeyEvent::Action::Released;
         DispatchEvent(event);
 
         _lastEvent = event;
@@ -110,7 +110,7 @@ namespace Base
           _heldMouseBtns[btn] = 1;
           std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
           event->button = btn;
-          event->action = MouseButtonEvent::Action::PRESSED;
+          event->action = MouseButtonEvent::Action::Pressed;
           DispatchEvent(event);
           _lastEvent = event;
 
@@ -126,7 +126,7 @@ namespace Base
             ++_heldMouseBtns.at(btn);
             std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
             event->button = btn;
-            event->action = MouseButtonEvent::Action::HELD;
+            event->action = MouseButtonEvent::Action::Held;
             DispatchEvent(event);
             _lastEvent = event;
           }
@@ -145,7 +145,7 @@ namespace Base
 
         std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
         event->button = btn;
-        event->action = MouseButtonEvent::Action::RELEASED;
+        event->action = MouseButtonEvent::Action::Released;
         DispatchEvent(event);
         _lastEvent = event;
       }
@@ -162,22 +162,22 @@ namespace Base
       if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(_lastEvent))
       {
         keyEvent = std::static_pointer_cast<KeyEvent>(_lastEvent);
-        if (keyEvent->isHandled && keyEvent->action == KeyEvent::Action::PRESSED)
+        if (keyEvent->isHandled && keyEvent->action == KeyEvent::Action::Pressed)
         {
           std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
           event->key = keyEvent->key;
-          event->action = KeyEvent::Action::RELEASED;
+          event->action = KeyEvent::Action::Released;
           DispatchEvent(event);
         }
       }
       else if (auto mouseEvent = std::dynamic_pointer_cast<MouseButtonEvent>(_lastEvent))
       {
         mouseEvent = std::static_pointer_cast<MouseButtonEvent>(_lastEvent);
-        if (mouseEvent->isHandled && mouseEvent->action == MouseButtonEvent::Action::PRESSED)
+        if (mouseEvent->isHandled && mouseEvent->action == MouseButtonEvent::Action::Pressed)
         {
           std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
           event->button = mouseEvent->button;
-          event->action = MouseButtonEvent::Action::RELEASED;
+          event->action = MouseButtonEvent::Action::Released;
           DispatchEvent(event);
         }
       }
@@ -204,7 +204,7 @@ namespace Base
       {
         std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
         event->key = it->first;
-        event->action = InputEvent::Action::RELEASED;
+        event->action = InputEvent::Action::Released;
         DispatchEvent(event);
         it = _heldKeys.erase(it);
       }
@@ -213,7 +213,7 @@ namespace Base
       {
         std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
         event->button = it->first;
-        event->action = InputEvent::Action::RELEASED;
+        event->action = InputEvent::Action::Released;
         DispatchEvent(event);
         it = _heldMouseBtns.erase(it);
       }
@@ -226,7 +226,6 @@ namespace Base
     for (auto &listener : _listenrs)
     {
       listener->OnInputEvent(event);
-
       if (event->isHandled)
       {
         break;

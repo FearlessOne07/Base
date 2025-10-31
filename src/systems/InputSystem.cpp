@@ -48,7 +48,7 @@ namespace Base
       }
 
       auto inpcmp = e->GetComponent<InputComponent>();
-      if (event->action == KeyEvent::Action::PRESSED)
+      if (event->action == KeyEvent::Action::Pressed)
       {
         for (auto &[key, action] : inpcmp->keyPressedBinds)
         {
@@ -59,7 +59,7 @@ namespace Base
           }
         }
       }
-      else if (event->action == KeyEvent::Action::HELD)
+      else if (event->action == KeyEvent::Action::Held)
       {
         for (auto &[key, action] : inpcmp->keyDownBinds)
         {
@@ -70,7 +70,7 @@ namespace Base
           }
         }
       }
-      else if (event->action == KeyEvent::Action::RELEASED)
+      else if (event->action == KeyEvent::Action::Released)
       {
         for (auto &[key, action] : inpcmp->keyReleasedBinds)
         {
@@ -95,7 +95,7 @@ namespace Base
       }
 
       auto inpcmp = e->GetComponent<InputComponent>();
-      if (event->action == MouseButtonEvent::Action::PRESSED)
+      if (event->action == MouseButtonEvent::Action::Pressed)
       {
         for (auto &[key, action] : inpcmp->mousePressedBinds)
         {
@@ -106,7 +106,7 @@ namespace Base
           }
         }
       }
-      else if (event->action == MouseButtonEvent::Action::HELD)
+      else if (event->action == MouseButtonEvent::Action::Held)
       {
         for (auto &[key, action] : inpcmp->mouseDownBinds)
         {
@@ -117,7 +117,7 @@ namespace Base
           }
         }
       }
-      else if (event->action == MouseButtonEvent::Action::RELEASED)
+      else if (event->action == MouseButtonEvent::Action::Released)
       {
         for (auto &[key, action] : inpcmp->mouseReleasedBinds)
         {
@@ -131,4 +131,3 @@ namespace Base
     }
   }
 } // namespace Base
-//

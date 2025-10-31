@@ -71,7 +71,7 @@ namespace Base
   void UIStackPanel::Arrange(Rectangle finalRect)
   {
     _layoutRect = finalRect;
-    float width = _desiredSize.width * _renderTransform.GetScaleX();
+    float width =  _desiredSize.width * _renderTransform.GetScaleX();
     float height = _desiredSize.height * _renderTransform.GetScaleY();
 
     // Horizontal alignment
