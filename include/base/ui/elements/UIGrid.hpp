@@ -16,11 +16,14 @@ namespace Base
   class UIGrid : public UIElement
   {
   private:
-    std::vector<GridSizeUnit> _rowDefinitions = {};
-    std::vector<GridSizeUnit> _columnDefinitions = {};
+    std::vector<GridSizeUnit> _rowDefinitions = {GridCellSizeMode::Auto};
+    std::vector<GridSizeUnit> _columnDefinitions = {GridCellSizeMode::Auto};
     std::vector<Vector2> _elementGridPositions = {};
-    std::vector<float> _rowSizes = {};
-    std::vector<float> _columnSizes = {};
+    std::vector<float> _rowSizes = {0};
+    std::vector<float> _columnSizes = {0};
+
+    // Color
+    Color _backgroundColor = GREEN;
 
   public:
     void SetRowDefinitions(const std::vector<GridSizeUnit> &definitions);
@@ -35,18 +38,19 @@ namespace Base
       requires(std::is_base_of_v<UIElement, T>)
     std::shared_ptr<T> AddGridElement(const std::string &name, Vector2 gridPosition)
     {
-
+      // Round down to nearest whole grid cell
       gridPosition.x = std::trunc(gridPosition.x);
       gridPosition.y = std::trunc(gridPosition.y);
 
-      if (gridPosition.x >= _rowDefinitions.size() || gridPosition.y >= _columnDefinitions.size())
+      // Grid bounds check (zero-indexed)
+      if (gridPosition.y < 0 || gridPosition.y >= static_cast<float>(_rowDefinitions.size()))
       {
-        THROW_BASE_RUNTIME_ERROR("Grid Position Greater than available rows or columns");
+        THROW_BASE_RUNTIME_ERROR("Grid row position out of bounds");
       }
 
-      if (gridPosition.x <= 0 && gridPosition.y <= 0)
+      if (gridPosition.x < 0 || gridPosition.x >= static_cast<float>(_columnDefinitions.size()))
       {
-        THROW_BASE_RUNTIME_ERROR("Invalid Grid Position");
+        THROW_BASE_RUNTIME_ERROR("Grid column position out of bounds");
       }
 
       _elementGridPositions.push_back(gridPosition);
