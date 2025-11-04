@@ -8,16 +8,31 @@ namespace Base
 {
   enum GridCellSizeMode
   {
-    Fill,
-    Auto
+    Auto,
+    Star
   };
 
   using GridSizeUnit = std::variant<float, GridCellSizeMode>;
+
+  struct GridDefinition
+  {
+    GridDefinition(const GridSizeUnit &unit) : Unit(unit)
+    {
+    }
+
+    GridDefinition(const GridSizeUnit &unit, int scale) : Unit(unit), Scale(scale)
+    {
+    }
+
+    GridSizeUnit Unit;
+    int Scale = 1;
+  };
+
   class UIGrid : public UIElement
   {
   private:
-    std::vector<GridSizeUnit> _rowDefinitions = {GridCellSizeMode::Auto};
-    std::vector<GridSizeUnit> _columnDefinitions = {GridCellSizeMode::Auto};
+    std::vector<GridDefinition> _rowDefinitions = {{GridCellSizeMode::Auto}};
+    std::vector<GridDefinition> _columnDefinitions = {{GridCellSizeMode::Auto}};
     std::vector<Vector2> _elementGridPositions = {};
     std::vector<float> _rowSizes = {0};
     std::vector<float> _columnSizes = {0};
@@ -26,8 +41,8 @@ namespace Base
     Color _backgroundColor = GREEN;
 
   public:
-    void SetRowDefinitions(const std::vector<GridSizeUnit> &definitions);
-    void SetColumnDefinitions(const std::vector<GridSizeUnit> &definitions);
+    void SetRowDefinitions(const std::vector<GridDefinition> &definitions);
+    void SetColumnDefinitions(const std::vector<GridDefinition> &definitions);
 
     Size Measure() override;
     void Arrange(Rectangle finalRect) override;

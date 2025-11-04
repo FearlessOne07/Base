@@ -1,4 +1,5 @@
 #include "base/ui/elements/UIGrid.hpp"
+#include "base/ui/UIElement.hpp"
 #include "base/util/Draw.hpp"
 #include "raylib.h"
 #include <algorithm>
@@ -14,13 +15,13 @@ namespace Base
     return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
   }
 
-  void UIGrid::SetRowDefinitions(const std::vector<GridSizeUnit> &definitions)
+  void UIGrid::SetRowDefinitions(const std::vector<GridDefinition> &definitions)
   {
     _rowDefinitions = definitions;
     _rowSizes.resize(_rowDefinitions.size());
   }
 
-  void UIGrid::SetColumnDefinitions(const std::vector<GridSizeUnit> &definitions)
+  void UIGrid::SetColumnDefinitions(const std::vector<GridDefinition> &definitions)
   {
     _columnDefinitions = definitions;
     _columnSizes.resize(_columnDefinitions.size());
@@ -35,8 +36,8 @@ namespace Base
       Vector2 position = _elementGridPositions[index];
       Size csize = (*it)->Measure();
 
-      GridSizeUnit column = _columnDefinitions[position.x];
-      GridSizeUnit row = _rowDefinitions[position.y];
+      GridSizeUnit column = _columnDefinitions[position.x].Unit;
+      GridSizeUnit row = _rowDefinitions[position.y].Unit;
 
       // Row
       if (std::holds_alternative<GridCellSizeMode>(row))
@@ -46,6 +47,10 @@ namespace Base
         if (mode == GridCellSizeMode::Auto)
         {
           _rowSizes[position.y] = std::max(csize.height, _rowSizes[position.y]);
+        }
+        else
+        {
+          continue;
         }
       }
       else if (std::holds_alternative<float>(row))
@@ -69,8 +74,18 @@ namespace Base
       }
     }
 
-    _desiredSize.width = std::accumulate(_columnSizes.begin(), _columnSizes.end(), 0);
-    _desiredSize.height = std::accumulate(_rowSizes.begin(), _rowSizes.end(), 0);
+    if (_widthSizeMode == SizeMode::Auto)
+    {
+      _desiredSize.width = std::accumulate(_columnSizes.begin(), _columnSizes.end(), 0);
+    }
+    else
+    {
+    }
+
+    if (_heightSizeMode == SizeMode::Auto)
+    {
+      _desiredSize.height = std::accumulate(_rowSizes.begin(), _rowSizes.end(), 0);
+    }
     return _desiredSize;
   }
 
