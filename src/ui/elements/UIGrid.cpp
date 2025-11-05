@@ -33,11 +33,11 @@ namespace Base
     for (auto it = _childElements.begin(); it != _childElements.end(); it++)
     {
       int index = std::distance(_childElements.begin(), it);
-      Vector2 position = _elementGridPositions[index];
+      GridPosition position = _elementGridPositions[index];
       Size csize = (*it)->Measure();
 
-      GridSizeUnit column = _columnDefinitions[position.x].Unit;
-      GridSizeUnit row = _rowDefinitions[position.y].Unit;
+      GridSizeUnit column = _columnDefinitions[position.Column].Unit;
+      GridSizeUnit row = _rowDefinitions[position.Row].Unit;
 
       // Row
       if (std::holds_alternative<GridCellSizeMode>(row))
@@ -46,7 +46,7 @@ namespace Base
 
         if (mode == GridCellSizeMode::Auto)
         {
-          _rowSizes[position.y] = std::max(csize.height, _rowSizes[position.y]);
+          _rowSizes[position.Row] = std::max(csize.height, _rowSizes[position.Row]);
         }
         else
         {
@@ -55,7 +55,7 @@ namespace Base
       }
       else if (std::holds_alternative<float>(row))
       {
-        _rowSizes[position.y] = std::get<float>(row);
+        _rowSizes[position.Row] = std::get<float>(row);
       }
 
       // Column
@@ -65,12 +65,12 @@ namespace Base
 
         if (mode == GridCellSizeMode::Auto)
         {
-          _columnSizes[position.x] = std::max(csize.width, _columnSizes[position.x]);
+          _columnSizes[position.Column] = std::max(csize.width, _columnSizes[position.Column]);
         }
       }
       else if (std::holds_alternative<float>(column))
       {
-        _columnSizes[position.x] = std::get<float>(column);
+        _columnSizes[position.Column] = std::get<float>(column);
       }
     }
 
@@ -137,25 +137,25 @@ namespace Base
     {
       Rectangle childRect = {0, 0, 0, 0};
       auto &child = _childElements[index];
-      Vector2 gridPos = _elementGridPositions[index];
+      GridPosition gridPos = _elementGridPositions[index];
 
       // Column Pos,
       float offset = 0;
-      for (int i = 0; i < gridPos.x; i++)
+      for (int i = 0; i < gridPos.Column; i++)
       {
         offset += _columnSizes[i];
       }
       childRect.x = offset + _layoutRect.x;
 
       offset = 0;
-      for (int i = 0; i < gridPos.y; i++)
+      for (int i = 0; i < gridPos.Row; i++)
       {
         offset += _rowSizes[i];
       }
       childRect.y = offset + _layoutRect.y;
 
-      childRect.width = _columnSizes[gridPos.x];
-      childRect.height = _rowSizes[gridPos.y];
+      childRect.width = _columnSizes[gridPos.Column];
+      childRect.height = _rowSizes[gridPos.Row];
 
       child->Arrange(childRect);
     }
