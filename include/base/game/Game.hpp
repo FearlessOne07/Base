@@ -1,6 +1,5 @@
 #pragma once
 #include "base/game/GameConfig.hpp"
-#include "base/util/Exception.hpp"
 #include <functional>
 #include <memory>
 #include <type_traits>

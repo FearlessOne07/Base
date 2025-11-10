@@ -54,6 +54,7 @@ namespace Base
     {
       _layerBackPanel->Hide();
     }
+
     if (_root)
     {
       _root->Hide();

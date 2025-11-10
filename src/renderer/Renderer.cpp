@@ -1,5 +1,4 @@
 #include "base/renderer/Renderer.hpp"
-#include "base/renderer/RenderContext.hpp"
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/renderer/RenderLayer.hpp"
 #include "base/scenes/Scene.hpp"

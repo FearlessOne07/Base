@@ -3,7 +3,6 @@
 #include "base/game/GameConfig.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/InputEvent.hpp"
-#include "base/renderer/RenderContext.hpp"
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/systems/System.hpp"

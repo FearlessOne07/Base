@@ -1,10 +1,18 @@
 #pragma once
 #include "base/game/Game.hpp"
-#include "base/renderer/RenderContext.hpp"
 
 namespace Base
 {
-  struct RenderContext;
+  struct RenderContext
+  {
+    float gameWidth = 0.f;
+    float gameHeight = 0.f;
+    float marginX = 0.f;
+    float marginY = 0.f;
+    float scale = 0.f;
+    Vector2 mousePosition = {0, 0};
+  };
+
   class RenderContextSingleton
   {
   public:
