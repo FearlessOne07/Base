@@ -172,7 +172,6 @@ namespace Base
         }
       }
     }
-
     OnElementInputEvent(event);
   }
 
@@ -222,7 +221,10 @@ namespace Base
   {
     for (auto &child : _childElements)
     {
-      child->Update(dt);
+      if (child->IsVisible())
+      {
+        child->Update(dt);
+      }
     }
   }
 

@@ -15,7 +15,10 @@ namespace Base
     {
       if (!event->isHandled)
       {
-        _root->OnInputEvent(event);
+        if (_root->IsVisible())
+        {
+          _root->OnInputEvent(event);
+        }
       }
     }
   }
@@ -44,7 +47,11 @@ namespace Base
       Size rSize = _root->Measure();
       Vector2 rPos = _root->GetPosition();
       _root->Arrange({_layerPosition.x + rPos.x, _layerPosition.y + rPos.y, _layerSize.x, _layerSize.y});
-      _root->Update(dt);
+
+      if (_root->IsVisible())
+      {
+        _root->Update(dt);
+      }
     }
   }
 
@@ -64,7 +71,6 @@ namespace Base
 
   void UILayer::Show()
   {
-
     if (_layerBackPanel)
     {
       _layerBackPanel->Show();

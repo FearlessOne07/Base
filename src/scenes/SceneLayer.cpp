@@ -66,6 +66,7 @@ namespace Base
   {
     return _renderLayer->GetCameraZoom();
   }
+
   Vector2 SceneLayer::GetLayerMousePosition() const
   {
     auto windowWidth = static_cast<float>(GetScreenWidth());
@@ -81,6 +82,7 @@ namespace Base
       (GetMousePosition().y - marginY) / scale,
     };
   }
+
   void SceneLayer::SetCameraPauseMask()
   {
     _renderLayer->SetCameraPauseMask(_pauseMask);

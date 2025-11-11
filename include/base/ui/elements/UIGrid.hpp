@@ -44,7 +44,7 @@ namespace Base
     std::vector<float> _columnSizes = {0};
 
     // Color
-    Color _backgroundColor = BLANK;
+    Color _backgroundColor = GREEN;
 
   public:
     void SetRowDefinitions(const std::vector<GridDefinition> &definitions);
