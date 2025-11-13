@@ -11,20 +11,20 @@ namespace Base
   public:
     enum struct ParticleShape : uint8_t
     {
-      RECT = 0,
-      CIRCLE,
-      POLYGON,
-      TEXTURE
+      Rect = 0,
+      Circle,
+      Polygon,
+      Texture
     };
 
     enum struct EmissionType : uint8_t
     {
-      POINT = 0,
-      LINE,
-      AREA
+      Point = 0,
+      Line,
+      Area
     };
 
-    EmissionType emissionType = ParticleEmitter::EmissionType::POINT;
+    EmissionType emissionType = ParticleEmitter::EmissionType::Point;
     bool isEmitting = true;
     float emissionRate = 1.f;
     float emissionTimer = 0.f;
@@ -35,7 +35,7 @@ namespace Base
     std::function<void(ParticleEmitter &emitter)> initialisationFunction = nullptr;
 
     // Particle Spec
-    ParticleShape particleShape = ParticleEmitter::ParticleShape::RECT;
+    ParticleShape particleShape = ParticleEmitter::ParticleShape::Rect;
     Vector2 particleDirection = {0, 0};
     float particleLifeTime = 1.f;
 

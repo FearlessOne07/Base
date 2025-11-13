@@ -78,27 +78,27 @@ namespace Base
     particle->endColor = emitter.particleEndColor;
     particle->shape = emitter.particleShape;
     if (                                                           //
-      particle->shape == ParticleEmitter::ParticleShape::CIRCLE || //
-      particle->shape == ParticleEmitter::ParticleShape::POLYGON   //
+      particle->shape == ParticleEmitter::ParticleShape::Circle || //
+      particle->shape == ParticleEmitter::ParticleShape::Polygon   //
     )
     {
       particle->startRadius = emitter.particleStartRadius;
       particle->endRadius = emitter.particleEndRadius;
 
-      if (particle->shape == ParticleEmitter::ParticleShape::POLYGON)
+      if (particle->shape == ParticleEmitter::ParticleShape::Polygon)
       {
         particle->sideNumber = emitter.particleSideNumber;
       }
     }
     else if ( //
-      particle->shape == ParticleEmitter::ParticleShape::RECT ||
-      particle->shape == ParticleEmitter::ParticleShape::TEXTURE //
+      particle->shape == ParticleEmitter::ParticleShape::Rect ||
+      particle->shape == ParticleEmitter::ParticleShape::Texture //
     )
     {
       particle->startSize = emitter.particleStartSize;
       particle->endSize = emitter.particleEndSize;
 
-      if (particle->shape == ParticleEmitter::ParticleShape::TEXTURE)
+      if (particle->shape == ParticleEmitter::ParticleShape::Texture)
       {
         if (!emitter.particleSprite)
         {
@@ -111,18 +111,18 @@ namespace Base
     // Position
     switch (emitter.emissionType)
     {
-    case ParticleEmitter::EmissionType::POINT: {
+    case ParticleEmitter::EmissionType::Point: {
       particle->position = emitter.emissionPoint;
       break;
     }
-    case ParticleEmitter::EmissionType::LINE: {
+    case ParticleEmitter::EmissionType::Line: {
     }
       particle->position.x =
         std::uniform_real_distribution<float>(emitter.emissionLineStart.x, emitter.emissionLineEnd.x)(_randomGenerator);
       particle->position.y =
         std::uniform_real_distribution<float>(emitter.emissionLineStart.y, emitter.emissionLineEnd.y)(_randomGenerator);
       break;
-    case ParticleEmitter::EmissionType::AREA: {
+    case ParticleEmitter::EmissionType::Area: {
     }
       Vector2 minPosition = {
         emitter.emissionAreaPosition.x,
@@ -156,7 +156,6 @@ namespace Base
 
       if (emitter.isEmitting)
       {
-
         if (!emitter.burst)
         {
           if (                                                                            //
@@ -193,7 +192,6 @@ namespace Base
 
           for (int i = 0; i < emitter.burstEmissionCount; i++)
           {
-
             Particle *particle = nullptr;
             for (auto &part : _particles)
             {
@@ -262,12 +260,12 @@ namespace Base
 
       // Size
       if (                                                            //
-        particle->shape == ParticleEmitter::ParticleShape::POLYGON || //
-        particle->shape == ParticleEmitter::ParticleShape::CIRCLE     //
+        particle->shape == ParticleEmitter::ParticleShape::Polygon || //
+        particle->shape == ParticleEmitter::ParticleShape::Circle     //
       )
       {
         float radius = Lerp(particle->startRadius, particle->endRadius, lifePoint);
-        if (particle->shape == ParticleEmitter::ParticleShape::POLYGON)
+        if (particle->shape == ParticleEmitter::ParticleShape::Polygon)
         {
           DrawPoly(particle->position, particle->sideNumber, radius, particle->rotation, color);
         }
@@ -277,13 +275,13 @@ namespace Base
         }
       }
       else if ( //
-        particle->shape == ParticleEmitter::ParticleShape::RECT ||
-        particle->shape == ParticleEmitter::ParticleShape::TEXTURE //
+        particle->shape == ParticleEmitter::ParticleShape::Rect ||
+        particle->shape == ParticleEmitter::ParticleShape::Texture //
       )
       {
         Vector2 size = Vector2Lerp(particle->startSize, particle->endSize, lifePoint);
 
-        if (particle->shape == ParticleEmitter::ParticleShape::RECT)
+        if (particle->shape == ParticleEmitter::ParticleShape::Rect)
         {
           DrawRectangleBase( //
             {
@@ -295,7 +293,7 @@ namespace Base
             {size.x / 2, size.y / 2}, particle->rotation, color //
           );
         }
-        else if (particle->shape == ParticleEmitter::ParticleShape::TEXTURE)
+        else if (particle->shape == ParticleEmitter::ParticleShape::Texture)
         {
           particle->sprite.SetTargetSize(size);
           particle->sprite.Render(particle->position, particle->rotation, color);

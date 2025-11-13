@@ -55,7 +55,6 @@ namespace Base
           if (event->key == key)
           {
             action();
-            event->isHandled = true;
           }
         }
       }
@@ -66,7 +65,6 @@ namespace Base
           if (event->key == key)
           {
             action();
-            event->isHandled = true;
           }
         }
       }
@@ -77,7 +75,6 @@ namespace Base
           if (event->key == key)
           {
             action();
-            event->isHandled = true;
           }
         }
       }
@@ -102,7 +99,6 @@ namespace Base
           if (event->button == key)
           {
             action();
-            event->isHandled = true;
           }
         }
       }
@@ -113,7 +109,6 @@ namespace Base
           if (event->button == key)
           {
             action();
-            event->isHandled = true;
           }
         }
       }
@@ -124,7 +119,6 @@ namespace Base
           if (event->button == key)
           {
             action();
-            event->isHandled = true;
           }
         }
       }

@@ -3,6 +3,7 @@
 #include "base/particles/ParticleManager.hpp"
 #include "internal/particles/Particle.hpp"
 #include <array>
+#include <list>
 #include <random>
 #include <vector>
 
@@ -18,7 +19,7 @@ class Scene;
   private:
     std::array<Particle, MAX_PARTICLES> _particles;
     std::vector<Particle *> _activeParticles;
-    std::vector<ParticleEmitter> _emitters;
+    std::list<ParticleEmitter> _emitters;
     std::random_device _randomDevice;
     std::mt19937_64 _randomGenerator;
 
