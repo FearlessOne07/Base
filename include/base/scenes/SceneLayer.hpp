@@ -40,6 +40,7 @@ namespace Base
 
     Vector2 GetSize() const;
     Vector2 GetLayerMousePosition() const;
+    Vector2 GetLayerCameraMousePosition() const;
     float GetCameraZoom() const;
     Scene *GetOwner();
 

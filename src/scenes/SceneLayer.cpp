@@ -68,7 +68,7 @@ namespace Base
     return _renderLayer->GetCameraZoom();
   }
 
-  Vector2 SceneLayer::GetLayerMousePosition() const
+  Vector2 SceneLayer::GetLayerCameraMousePosition() const
   {
     auto windowWidth = static_cast<float>(GetScreenWidth());
     auto windowHeight = static_cast<float>(GetScreenHeight());
@@ -82,6 +82,21 @@ namespace Base
       (GetMousePosition().x - marginX) / scale,
       (GetMousePosition().y - marginY) / scale,
     });
+  }
+  Vector2 SceneLayer::GetLayerMousePosition() const
+  {
+    auto windowWidth = static_cast<float>(GetScreenWidth());
+    auto windowHeight = static_cast<float>(GetScreenHeight());
+    float scale = std::min( //
+      (float)windowWidth / _size.x,
+      (float)windowHeight / _size.y //
+    );
+    float marginX = (windowWidth - (_size.x * scale)) / 2;
+    float marginY = (windowHeight - (_size.y * scale)) / 2;
+    return {
+      (GetMousePosition().x - marginX) / scale,
+      (GetMousePosition().y - marginY) / scale,
+    };
   }
 
   void SceneLayer::SetCameraPauseMask()

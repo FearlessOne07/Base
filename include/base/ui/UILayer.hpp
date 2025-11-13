@@ -26,9 +26,8 @@ namespace Base
   public:
     UILayer() = default;
     UILayer(UILayer &other) = delete;
-    UILayer &operator=(UILayer &other) = delete;
+    UILayer operator=(UILayer &other) = delete;
     UILayer(Vector2 layerSize, Vector2 layerPosition, const Base::SceneLayer &parentSceneLayer);
-
     template <typename T>
       requires(std::is_base_of_v<UIElement, T>)
     std::shared_ptr<T> SetRootElement()
@@ -64,7 +63,5 @@ namespace Base
 
     void Hide();
     void Show();
-
-    Vector2 GetMousePosition() const;
   };
 } // namespace Base

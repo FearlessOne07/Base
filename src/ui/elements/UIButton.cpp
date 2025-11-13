@@ -149,7 +149,7 @@ namespace Base
     }
   }
 
-  void UIButton::UpdateElement(float dt)
+  void UIButton::UpdateElement(float dt, UIContext uiContext)
   {
     _color = _isHovered ? _hoverColor : _normalColor;
   }

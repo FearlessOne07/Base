@@ -30,7 +30,7 @@ namespace Base
     _textBinding = std::move(binding);
   }
 
-  void UILabel::UpdateElement(float dt)
+  void UILabel::UpdateElement(float dt, UIContext uiContext)
   {
     if (_textBinding)
     {

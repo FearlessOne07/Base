@@ -52,7 +52,7 @@ namespace Base
 
       if (_root->IsVisible())
       {
-        _root->Update(dt);
+        _root->Update(dt, {.MousePosition = _parentSceneLayer->GetLayerMousePosition()});
       }
     }
   }
@@ -94,10 +94,5 @@ namespace Base
   {
     _layerBackPanel = std::make_shared<UIPanel>();
     return _layerBackPanel;
-  }
-
-  Vector2 UILayer::GetMousePosition() const
-  {
-    return _parentSceneLayer->GetLayerMousePosition();
   }
 } // namespace Base
