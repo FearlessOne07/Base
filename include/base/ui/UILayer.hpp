@@ -1,8 +1,10 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
+#include "base/scenes/SceneLayer.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIPanel.hpp"
 #include "base/util/Exception.hpp"
+#include "base/util/Ref.hpp"
 #include "raylib.h"
 #include <memory>
 #include <type_traits>
@@ -19,9 +21,14 @@ namespace Base
     Vector2 _layerSize = {0, 0};
     Vector2 _layerPosition = {0, 0};
 
+    ConstRef<SceneLayer> _parentSceneLayer;
+
   public:
     UILayer() = default;
-    UILayer(Vector2 layerSize, Vector2 layerPosition);
+    UILayer(UILayer &other) = delete;
+    UILayer &operator=(UILayer &other) = delete;
+    UILayer(Vector2 layerSize, Vector2 layerPosition, const Base::SceneLayer &parentSceneLayer);
+
     template <typename T>
       requires(std::is_base_of_v<UIElement, T>)
     std::shared_ptr<T> SetRootElement()
@@ -57,5 +64,7 @@ namespace Base
 
     void Hide();
     void Show();
+
+    Vector2 GetMousePosition() const;
   };
 } // namespace Base

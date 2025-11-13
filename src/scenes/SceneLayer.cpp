@@ -52,6 +52,7 @@ namespace Base
   {
     _layerIndex = index;
   }
+
   void SceneLayer::_onDetach()
   {
     OnDetach();
@@ -77,10 +78,10 @@ namespace Base
     );
     float marginX = (windowWidth - (_size.x * scale)) / 2;
     float marginY = (windowHeight - (_size.y * scale)) / 2;
-    return {
+    return GetScreenToWorld({
       (GetMousePosition().x - marginX) / scale,
       (GetMousePosition().y - marginY) / scale,
-    };
+    });
   }
 
   void SceneLayer::SetCameraPauseMask()

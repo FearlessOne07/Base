@@ -1,11 +1,15 @@
 #include "base/ui/UIManager.hpp"
+#include "base/scenes/SceneLayer.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/ui/UILayer.hpp"
 #include "base/util/Exception.hpp"
+#include "base/util/Ref.hpp"
 #include "base/util/Strings.hpp"
 #include "raylib.h"
+#include <utility>
 
 namespace Base
 {
@@ -47,7 +51,10 @@ namespace Base
     }
   }
 
-  UILayer *UIManager::AddLayer(const std::string &layerID, Vector2 layerSize, Vector2 layerPosition)
+  Ref<UILayer> UIManager::AddLayer( //
+    const std::string &layerID, Vector2 layerSize, Vector2 layerPosition,
+    const SceneLayer &parentLayer //
+  )
   {
     std::string lowerID = Base::Strings::ToLower(layerID);
     if (_currentScene)
@@ -58,11 +65,15 @@ namespace Base
       }
       else
       {
-        _layers.at(_currentScene)[layerID] = UILayer(layerSize, layerPosition);
-        return &_layers.at(_currentScene)[layerID];
+        _layers.at(_currentScene)
+          .emplace( //
+            std::piecewise_construct, std::forward_as_tuple(layerID),
+            std::forward_as_tuple(layerSize, layerPosition, parentLayer) //
+          );
+        return _layers.at(_currentScene)[layerID];
       }
     }
-    return nullptr;
+    return Ref<UILayer>();
   }
 
   void UIManager::RenderLayer(const std::string &layerID)

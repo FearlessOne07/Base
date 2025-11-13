@@ -5,6 +5,7 @@
 #include "base/textures/Font.hpp"
 #include "base/util/AntagonisticFunction.hpp"
 #include "base/util/Exception.hpp"
+#include "base/util/Ref.hpp"
 #include "base/util/Strings.hpp"
 #include <algorithm>
 #include <functional>
@@ -110,12 +111,15 @@ namespace Base
     Auto
   };
 
+  class UILayer;
   class UIElement
   {
   private:
     Rectangle GetCombinedHoverRect() const;
 
   protected:
+    ConstRef<UILayer> _parentLayer;
+
     AssetHandle<BaseFont> _font;
     NinePatchSprite _sprite;
 

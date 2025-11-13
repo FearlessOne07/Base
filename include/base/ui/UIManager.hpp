@@ -2,6 +2,7 @@
 
 #include "base/input/InputEvent.hpp"
 #include "base/ui/UILayer.hpp"
+#include "base/util/Ref.hpp"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -18,7 +19,10 @@ namespace Base
   public:
     void Init();
     void OnInputEvent(std::shared_ptr<InputEvent> &event);
-    UILayer *AddLayer(const std::string &layerID, Vector2 layerSize, Vector2 layerPosition = {0, 0});
+    Ref<UILayer> AddLayer( //
+      const std::string &layerID, Vector2 layerSize, Vector2 layerPosition,
+      const SceneLayer &parentLayer //
+    );
     void RenderLayer(const std::string &layerId);
     void Update(float dt);
     void UpdateCurrentScene(const Scene *scene);
