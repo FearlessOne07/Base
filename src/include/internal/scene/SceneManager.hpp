@@ -61,5 +61,7 @@ namespace Base
     void OnInputEvent(std::shared_ptr<InputEvent> event) override;
 
     void SetQuitCallBack(QuitCallBack quitCallback);
+
+    std::weak_ptr<const Scene> GetCurrentScene() const;
   };
 } // namespace Base

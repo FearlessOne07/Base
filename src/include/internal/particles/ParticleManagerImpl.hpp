@@ -1,6 +1,7 @@
 #pragma once
 #include "base/particles/ParticleEmitter.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/scenes/SceneID.hpp"
 #include "internal/particles/Particle.hpp"
 #include <array>
 #include <list>
@@ -13,7 +14,7 @@
 
 namespace Base
 {
-class Scene;
+  class SceneManager;
   class ParticleManager::ParticleManagerImpl
   {
   private:
@@ -23,16 +24,15 @@ class Scene;
     std::random_device _randomDevice;
     std::mt19937_64 _randomGenerator;
 
-    const Scene* _currentScene;
+    Ref<SceneManager> _sceneManager;
 
   private:
     void InitParticleFromEmitter(ParticleEmitter &emitter, Particle *particle);
 
   public:
-    void Init();
+    void Init(Ref<SceneManager> sceneManager);
     void Update(float dt);
     void Render();
-    ParticleEmitter *AddEmitter();
-    void UpdateCurrentScene(const Scene* scene);
+    Ref<ParticleEmitter> AddEmitter();
   };
 } // namespace Base

@@ -1,8 +1,10 @@
 #pragma once
+#include "base/util/Ref.hpp"
 #include <raylib.h>
 namespace Base
 {
   class Scene;
+  class ShaderManager;
   class ShaderEffect
   {
   protected:
@@ -11,7 +13,7 @@ namespace Base
 
   public:
     virtual ~ShaderEffect() = default;
-    virtual void Setup(const Scene *) = 0;
+    virtual void Setup(Ref<ShaderManager> shaderManager) = 0;
     virtual void Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resolution) = 0;
     virtual void Update(float dt) {};
 

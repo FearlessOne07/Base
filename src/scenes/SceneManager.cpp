@@ -34,7 +34,7 @@ namespace Base
     if (!_scenes.empty())
     {
       std::shared_ptr<SceneSuspendedSignal> sig = std::make_shared<SceneSuspendedSignal>();
-      sig->scene = _scenes.top().get();
+      sig->Scene = _scenes.top()->GetSceneID();
       bus->BroadCastSignal(sig);
 
       // Supspend the current scene
@@ -52,7 +52,7 @@ namespace Base
     }
 
     std::shared_ptr<ScenePushedSignal> sig = std::make_shared<ScenePushedSignal>();
-    sig->scene = _scenes.top().get();
+    sig->Scene = _scenes.top()->GetSceneID();
     bus->BroadCastSignal(sig);
 
     _scenes.top()->SetRenderer(_renderer);
@@ -73,7 +73,7 @@ namespace Base
     {
       // Broadcast Scene Popped Signal
       std::shared_ptr<ScenePoppedSignal> sig = std::make_shared<ScenePoppedSignal>();
-      sig->scene = _scenes.top().get();
+      sig->Scene = _scenes.top()->GetSceneID();
       bus->BroadCastSignal(sig);
 
       // Exit the current scene and pop it off the stack
@@ -83,7 +83,7 @@ namespace Base
 
     // Enter the scene below it if there is one
     std::shared_ptr<SceneResumedSignal> sig = std::make_shared<SceneResumedSignal>();
-    sig->scene = _scenes.top().get();
+    sig->Scene = _scenes.top()->GetSceneID();
     bus->BroadCastSignal(sig);
     if (!_scenes.empty())
     {
@@ -98,7 +98,7 @@ namespace Base
 
       auto bus = SignalBus::GetInstance();
       std::shared_ptr<ScenePoppedSignal> sig = std::make_shared<ScenePoppedSignal>();
-      sig->scene = _scenes.top().get();
+      sig->Scene = _scenes.top()->GetSceneID();
       bus->BroadCastSignal(sig);
 
       // Exit the current scene and pop it
@@ -207,5 +207,14 @@ namespace Base
     {
       _scenes.top()->_OnInputEvent(event);
     }
+  }
+
+  std::weak_ptr<const Scene> SceneManager::GetCurrentScene() const
+  {
+    if (!_scenes.empty())
+    {
+      return _scenes.top();
+    }
+    return {};
   }
 } // namespace Base

@@ -1,20 +1,22 @@
 #pragma once
 #include "base/particles/ParticleEmitter.hpp"
+#include "base/util/Ref.hpp"
 namespace Base
 {
   class Particle;
+  class SceneManager;
   class ParticleManager
   {
   private:
     friend class Game;
     ParticleManager();
-    void Init();
+    void Init(Ref<SceneManager> sceneManager);
     void Update(float dt);
 
   public:
     ~ParticleManager();
     void Render();
-    ParticleEmitter *AddEmitter();
+    Ref<ParticleEmitter> AddEmitter();
 
   private:
     class ParticleManagerImpl;

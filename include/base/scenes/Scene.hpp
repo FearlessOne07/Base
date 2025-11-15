@@ -24,22 +24,6 @@ namespace Base
   class ParticleManager;
   class Renderer;
 
-  class SceneID
-  {
-  private:
-    int64_t _id = -1;
-    friend class Entity;
-
-  private:
-    explicit SceneID(int64_t id);
-
-  public:
-    SceneID();
-    operator bool();
-    operator int64_t() const;
-    bool operator==(const SceneID &other);
-  };
-
   class Scene
   {
 
@@ -97,7 +81,7 @@ namespace Base
   protected:
     // Rendering
     void SetClearColor(Color color);
-    RenderLayer *AddRenderLayer(Vector2 size, Color clearColor = BLANK);
+    Ref<RenderLayer> AddRenderLayer(Vector2 size, Color clearColor = BLANK);
 
     ShaderEffectChain _postProcessingEffects;
 
@@ -185,14 +169,3 @@ namespace Base
     const ShaderEffectChain &GetPostProcessingEffects() const;
   };
 } // namespace Base
-
-namespace std
-{
-  template <> struct hash<Base::SceneID>
-  {
-    std::size_t operator()(const Base::SceneID &id) const
-    {
-      return std::hash<uint64_t>()((uint64_t)id);
-    }
-  };
-} // namespace std

@@ -1,5 +1,6 @@
 #pragma once
 #include "TweenKey.hpp"
+#include "base/scenes/SceneID.hpp"
 #include "base/tween/Tween.hpp"
 #include "base/util/Easings.hpp"
 #include <functional>
@@ -9,7 +10,7 @@
 
 namespace Base
 {
-  class Scene;
+  class SceneID;
   class TweenManager
   {
   public:
@@ -31,14 +32,14 @@ namespace Base
     };
 
   private:
-    std::unordered_map<const Scene *, std::unordered_map<TweenKey, std::unique_ptr<ITween>>> _tweens;
+    std::unordered_map<SceneID, std::unordered_map<TweenKey, std::unique_ptr<ITween>>> _tweens;
     std::vector<std::function<void()>> _pendingTweens;
     bool _isUpdatingTweens = false;
-    const Scene *_currentScene = nullptr;
+    SceneID _currentScene;
 
   private:
-    void UpdateCurrentScene(const Scene *scene);
-    void UnloadSceneTweens(const Scene *scene);
+    void UpdateCurrentScene(SceneID scene);
+    void UnloadSceneTweens(SceneID scene);
 
   public:
     void Update(float dt);

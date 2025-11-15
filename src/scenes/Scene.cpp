@@ -218,7 +218,7 @@ namespace Base
     Exit();
   }
 
-  RenderLayer *Scene::AddRenderLayer(Vector2 size, Color clearColor)
+  Ref<RenderLayer> Scene::AddRenderLayer(Vector2 size, Color clearColor)
   {
     return GetRenderer()->InitLayer(this, {0, 0}, size, clearColor);
   }

@@ -1,6 +1,6 @@
 #include "base/shaders/ShaderManager.hpp"
 #include "base/assets/AssetHandle.hpp"
-#include "base/scenes/Scene.hpp"
+#include "base/scenes/SceneID.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/scenes/signals/SceneResumedSignal.hpp"
@@ -12,7 +12,7 @@
 
 namespace Base
 {
-  ShaderManager::ShaderManager(AssetManager *assetManager) : _assetManager(assetManager)
+  ShaderManager::ShaderManager(Ref<AssetManager> assetManager) : _assetManager(assetManager)
   {
   }
 
@@ -27,21 +27,21 @@ namespace Base
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig) {
       auto scenePushed = std::static_pointer_cast<ScenePushedSignal>(sig);
-      UpdateCurrentScene(scenePushed->scene);
+      UpdateCurrentScene(scenePushed->Scene);
     });
 
     bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> sig) {
       auto sceneResumed = std::static_pointer_cast<SceneResumedSignal>(sig);
-      UpdateCurrentScene(sceneResumed->scene);
+      UpdateCurrentScene(sceneResumed->Scene);
     });
 
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
       auto scenePopped = std::static_pointer_cast<ScenePoppedSignal>(signal);
-      ClearSceneShaderCache(scenePopped->scene);
+      ClearSceneShaderCache(scenePopped->Scene);
     });
   }
 
-  void ShaderManager::UpdateCurrentScene(const Scene *scene)
+  void ShaderManager::UpdateCurrentScene(SceneID scene)
   {
     if (!_shaderCache.contains(_currentScene))
     {
@@ -50,7 +50,7 @@ namespace Base
     _currentScene = scene;
   }
 
-  void ShaderManager::ClearSceneShaderCache(const Scene *scene)
+  void ShaderManager::ClearSceneShaderCache(SceneID scene)
   {
     _shaderCache.erase(scene);
   }

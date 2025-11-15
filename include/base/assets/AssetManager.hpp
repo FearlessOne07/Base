@@ -3,6 +3,7 @@
 #include "base/assets/BaseAsset.hpp"
 #include "base/audio/AudioStream.hpp"
 #include "base/audio/Sound.hpp"
+#include "base/scenes/SceneID.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
 #include <filesystem>
@@ -10,10 +11,10 @@
 #include <string>
 #include <type_traits>
 #include <unordered_map>
+
 namespace Base
 {
   namespace fs = std::filesystem;
-  class Scene;
   class AssetManager
   {
     struct AssetSlot
@@ -29,9 +30,9 @@ namespace Base
 
   private:
     std::unordered_map<std::string, AssetSlot> _globalAssets;
-    std::unordered_map<const Scene *, std::unordered_map<std::string, AssetSlot>> _sceneAssets;
+    std::unordered_map<SceneID, std::unordered_map<std::string, AssetSlot>> _sceneAssets;
 
-    const Scene *_currentScene = nullptr;
+    SceneID _currentScene;
 
     // Sound Settings
     uint64_t _sampleRate = 48000;
@@ -39,8 +40,8 @@ namespace Base
   private:
     std::shared_ptr<Sound> LoadSound(const std::filesystem::path &);
     std::shared_ptr<AudioStream> LoadAudioStream(const std::filesystem::path &);
-    void UnloadScene(const Scene *);
-    void SetCurrentScene(const Scene *);
+    void UnloadScene(SceneID);
+    void SetCurrentScene(SceneID);
 
   public:
     void Init();
@@ -53,7 +54,7 @@ namespace Base
 
     template <typename T>
       requires(std::is_base_of_v<BaseAsset, T>)
-    AssetHandle<T> GetAsset(const std::string &assetName, const Scene *scene = nullptr)
+    AssetHandle<T> GetAsset(const std::string &assetName, SceneID scene = SceneID())
     {
       std::string name = Base::Strings::ToLower(assetName);
       if (scene)

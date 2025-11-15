@@ -1,4 +1,5 @@
 #include "base/signals/SignalBus.hpp"
+#include "base/scenes/SceneID.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include <memory>
@@ -20,13 +21,13 @@ namespace Base
   {
     if (auto it = std::dynamic_pointer_cast<ScenePushedSignal>(event))
     {
-      _currentScene = it->scene;
+      _currentScene = it->Scene;
     }
     else if (auto it = std::dynamic_pointer_cast<ScenePoppedSignal>(event))
     {
-      if (_handlers.contains(it->scene))
+      if (_handlers.contains(it->Scene))
       {
-        _handlers.erase(it->scene);
+        _handlers.erase(it->Scene);
       }
     }
 
@@ -45,10 +46,10 @@ namespace Base
       }
     }
 
-    it = _handlers.at(0).find(handlerId);
-    if (it != _handlers.at(0).end())
+    it = _handlers.at(SceneID()).find(handlerId);
+    if (it != _handlers.at(SceneID()).end())
     {
-      for (SignalHandler &handler : _handlers.at(0).at(handlerId))
+      for (SignalHandler &handler : _handlers.at(SceneID()).at(handlerId))
       {
         handler(event);
       }

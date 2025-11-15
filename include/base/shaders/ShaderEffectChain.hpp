@@ -1,5 +1,6 @@
 #pragma once
 #include "base/shaders/ShaderEffect.hpp"
+#include "base/shaders/ShaderManager.hpp"
 #include "base/util/Exception.hpp"
 #include <algorithm>
 #include <iterator>
@@ -20,7 +21,7 @@ namespace Base
   public:
     template <typename T, typename... Args>
       requires(std::is_base_of_v<ShaderEffect, T>)
-    void AddEffect(const Scene *currentScene, Args &&...args)
+    void AddEffect(Ref<ShaderManager> shaderManager, Args &&...args)
     {
       auto id = std::type_index(typeid(T));
 
@@ -28,7 +29,7 @@ namespace Base
       {
         _effectIds.push_back(id);
         std::shared_ptr<T> effect = std::make_shared<T>(std::forward<Args>(args)...);
-        effect->Setup(currentScene);
+        effect->Setup(shaderManager);
         _effects.emplace_back(std::move(effect));
       }
       else

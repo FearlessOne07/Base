@@ -2,6 +2,7 @@
 #include "base/camera/Camera2DExt.hpp"
 #include "base/shaders/ShaderEffect.hpp"
 #include "base/shaders/ShaderEffectChain.hpp"
+#include "base/shaders/ShaderManager.hpp"
 #include "raylib.h"
 #include <bitset>
 #include <deque>
@@ -29,7 +30,7 @@ namespace Base
     Vector2 _size = {0, 0};
 
     // Scene
-    const Scene *_ownerScene = nullptr;
+    Ref<ShaderManager> _shaderManager;
 
     // Shaders
     RenderTexture _ping;
@@ -39,7 +40,7 @@ namespace Base
     void Update(float dt);
 
   public:
-    RenderLayer(const Scene *ownerScene, Vector2 position, Vector2 size, Color clearColor);
+    RenderLayer(Ref<ShaderManager> shaderManager, Vector2 position, Vector2 size, Color clearColor);
     RenderLayer(RenderLayer &&other) noexcept;
     RenderLayer &operator=(RenderLayer &&other) noexcept;
     ~RenderLayer();
@@ -68,7 +69,7 @@ namespace Base
     // Shader Effect Management
     template <typename T, typename... Args> void AddShaderEffect(Args &&...args)
     {
-      _effectChain.AddEffect<T>(_ownerScene, std::forward<Args>(args)...);
+      _effectChain.AddEffect<T>(_shaderManager, std::forward<Args>(args)...);
     }
 
     template <typename T> std::shared_ptr<T> GetShaderEffect()

@@ -1,6 +1,6 @@
 #pragma once
 #include "Signal.hpp"
-#include "base/util/Exception.hpp"
+#include "base/scenes/SceneID.hpp"
 #include <functional>
 #include <memory>
 #include <type_traits>
@@ -20,8 +20,8 @@ namespace Base
     static SignalBus *_instance;
 
   private:
-    std::unordered_map<const Scene *, std::unordered_map<std::type_index, std::vector<SignalHandler>>> _handlers = {};
-    const Scene *_currentScene = nullptr;
+    std::unordered_map<SceneID, std::unordered_map<std::type_index, std::vector<SignalHandler>>> _handlers = {};
+    SceneID _currentScene;
 
   public:
     static SignalBus *GetInstance();

@@ -58,9 +58,9 @@ namespace Base
     _running = true;
 
     // Init Systems
-    _uiManager.Init();
-    _particleManager.Init();
     _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
+    _uiManager.Init();
+    _particleManager.Init(_sceneManager);
 
     // Initialise InputManager
     _inpMan.Init();

@@ -8,8 +8,8 @@
 
 namespace Base
 {
-  RenderLayer::RenderLayer(const Scene *ownerScene, Vector2 position, Vector2 size, Color clearColor)
-    : _position(position), _size(size), _ownerScene(ownerScene), _clearColor(clearColor)
+  RenderLayer::RenderLayer(Ref<ShaderManager> shaderManager, Vector2 position, Vector2 size, Color clearColor)
+    : _position(position), _size(size), _shaderManager(shaderManager), _clearColor(clearColor)
   {
     _renderTexture = LoadRenderTexture(_size.x, _size.y);
     _ping = LoadRenderTexture(_size.x, _size.y);
@@ -19,8 +19,8 @@ namespace Base
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
     : _position(other._position), _size(other._size), _renderFunctions(std::move(other._renderFunctions)),
-      _ownerScene(other._ownerScene), _renderTexture(other._renderTexture), _effectChain(std::move(other._effectChain)),
-      _ping(other._ping)
+      _shaderManager(other._shaderManager), _renderTexture(other._renderTexture),
+      _effectChain(std::move(other._effectChain)), _ping(other._ping)
   {
     other._renderTexture.id = 0;
     other._ping.id = 0;
@@ -43,7 +43,7 @@ namespace Base
       _position = other._position;
       _size = other._size;
       _renderFunctions = std::move(other._renderFunctions);
-      _ownerScene = other._ownerScene;
+      _shaderManager = other._shaderManager;
       _renderTexture = other._renderTexture;
       _effectChain = std::move(other._effectChain);
       _ping = other._ping;
