@@ -1,6 +1,7 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
 #include "base/signals/Signal.hpp"
+#include "base/util/Ref.hpp"
 #include "internal/input/InputListener.hpp"
 #include <memory>
 #include <unordered_map>
@@ -16,7 +17,7 @@ namespace Base
     std::vector<int> _handledMousePresses;
 
     std::shared_ptr<InputEvent> _lastEvent = nullptr;
-    std::vector<InputListener *> _listenrs;
+    std::vector<Ref<InputListener>> _listenrs;
 
   private:
     void ResetInput(const std::shared_ptr<Signal> &sig);
@@ -25,7 +26,7 @@ namespace Base
     void Init();
     void PollAndDispatch();
     void PostUpdate();
-    void RegisterListener(InputListener *listener);
+    void RegisterListener(InputListener &listener);
     void DispatchEvent(std::shared_ptr<InputEvent> event);
   };
 } // namespace Base

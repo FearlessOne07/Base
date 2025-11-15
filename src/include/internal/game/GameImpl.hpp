@@ -47,8 +47,8 @@ namespace Base
     ShaderManager _shaderManager = ShaderManager(&_assetManager);
     SystemManager _systemManager = SystemManager(&_entityManager);
     SceneManager _sceneManager = SceneManager( //
-      &_renderer, &_entityManager, &_systemManager, &_assetManager, &_particleManager, &_uiManager, &_tweenManager,
-      &_shaderManager //
+      _renderer, _entityManager, _systemManager, _assetManager, _particleManager, _uiManager, _tweenManager,
+      _shaderManager //
     );
 
   private: // Methods

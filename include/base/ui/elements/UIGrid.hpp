@@ -42,6 +42,8 @@ namespace Base
     std::vector<GridPosition> _elementGridPositions = {};
     std::vector<float> _rowSizes = {0};
     std::vector<float> _columnSizes = {0};
+    float _rowGap = 0;
+    float _columnGap = 0;
 
     // Color
     Color _backgroundColor = GREEN;
@@ -49,6 +51,10 @@ namespace Base
   public:
     void SetRowDefinitions(const std::vector<GridDefinition> &definitions);
     void SetColumnDefinitions(const std::vector<GridDefinition> &definitions);
+
+    void SetRowGap(float rowGap);
+    void SetColumnGap(float rowColumn);
+    void SetCellGap(float cellGap);
 
     Size Measure() override;
     void Arrange(Rectangle finalRect) override;

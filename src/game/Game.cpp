@@ -64,7 +64,7 @@ namespace Base
 
     // Initialise InputManager
     _inpMan.Init();
-    _inpMan.RegisterListener(this);
+    _inpMan.RegisterListener(*this);
 
     // Initialise Shader Manager
     _shaderManager.Init();

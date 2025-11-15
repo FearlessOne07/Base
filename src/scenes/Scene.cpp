@@ -10,6 +10,32 @@
 
 namespace Base
 {
+
+  SceneID::operator bool()
+  {
+    return _id >= 0;
+  }
+
+  SceneID::operator int64_t() const
+  {
+    return _id;
+  }
+
+  bool SceneID::operator==(const SceneID &other)
+  {
+    return _id == other._id;
+  }
+
+  SceneID::SceneID(int64_t id)
+  {
+    _id = id;
+  }
+
+  SceneID::SceneID()
+  {
+    _id = -1;
+  }
+
   void Scene::_setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data)
   {
     _state->sceneTransition = {
@@ -17,6 +43,16 @@ namespace Base
       .sceneID = sceneID,
       .data = data,
     };
+  }
+
+  void Scene::SetSceneID(SceneID id)
+  {
+    _state->sceneID = id;
+  }
+
+  SceneID Scene::GetSceneID() const
+  {
+    return _state->sceneID;
   }
 
   const SceneTransition &Scene::GetSceneTransition() const
@@ -28,7 +64,7 @@ namespace Base
     _state->sceneTransition = {.request = SceneRequest::None, .sceneID = typeid(-1)};
   }
 
-  void Scene::SetRenderer(Renderer *manager)
+  void Scene::SetRenderer(Ref<Renderer> manager)
   {
     if (manager)
     {
@@ -36,7 +72,7 @@ namespace Base
     }
   }
 
-  void Scene::SetShaderManager(ShaderManager *manager)
+  void Scene::SetShaderManager(Ref<ShaderManager> manager)
   {
     if (manager)
     {
@@ -44,7 +80,7 @@ namespace Base
     }
   }
 
-  void Scene::SetSystemManager(SystemManager *manager)
+  void Scene::SetSystemManager(Ref<SystemManager> manager)
   {
     if (manager)
     {
@@ -52,7 +88,7 @@ namespace Base
     }
   }
 
-  void Scene::SetAssetManager(AssetManager *manager)
+  void Scene::SetAssetManager(Ref<AssetManager> manager)
   {
     if (manager)
     {
@@ -60,7 +96,7 @@ namespace Base
     }
   }
 
-  void Scene::SetUIManager(UIManager *manager)
+  void Scene::SetUIManager(Ref<UIManager> manager)
   {
     if (manager)
     {
@@ -68,7 +104,7 @@ namespace Base
     }
   }
 
-  void Scene::SetParticleManager(ParticleManager *manager)
+  void Scene::SetParticleManager(Ref<ParticleManager> manager)
   {
     if (manager)
     {
@@ -76,7 +112,7 @@ namespace Base
     }
   }
 
-  void Scene::SetEntityManager(EntityManager *manager)
+  void Scene::SetEntityManager(Ref<EntityManager> manager)
   {
     if (manager)
     {
@@ -84,7 +120,7 @@ namespace Base
     }
   }
 
-  void Scene::SetTweenManager(TweenManager *manager)
+  void Scene::SetTweenManager(Ref<TweenManager> manager)
   {
     if (manager)
     {
@@ -102,42 +138,42 @@ namespace Base
     return _state->clearColor;
   }
 
-  Renderer *Scene::GetRenderer() const
+  Ref<Renderer> Scene::GetRenderer() const
   {
     return _state->renderer;
   }
 
-  ShaderManager *Scene::GetShaderManager() const
+  Ref<ShaderManager> Scene::GetShaderManager() const
   {
     return _state->shaderManager;
   }
 
-  EntityManager *Scene::GetEntityManager() const
+  Ref<EntityManager> Scene::GetEntityManager() const
   {
     return _state->entityManager;
   }
 
-  SystemManager *Scene::GetSystemManager() const
+  Ref<SystemManager> Scene::GetSystemManager() const
   {
     return _state->systemManager;
   }
 
-  AssetManager *Scene::GetAssetManager() const
+  Ref<AssetManager> Scene::GetAssetManager() const
   {
     return _state->assetManager;
   }
 
-  ParticleManager *Scene::GetParticleManager() const
+  Ref<ParticleManager> Scene::GetParticleManager() const
   {
     return _state->particleManager;
   }
 
-  UIManager *Scene::GetUIManager() const
+  Ref<UIManager> Scene::GetUIManager() const
   {
     return _state->uiManager;
   }
 
-  TweenManager *Scene::GetTweenManager() const
+  Ref<TweenManager> Scene::GetTweenManager() const
   {
     return _state->tweenManager;
   }

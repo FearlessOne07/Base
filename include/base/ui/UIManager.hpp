@@ -13,7 +13,7 @@ namespace Base
   class UIManager
   {
     std::unordered_map<const Scene *, std::unordered_map<std::string, UILayer>> _layers;
-    const Scene *_currentScene = nullptr;
+    const Scene *_currentScene;
 
     void UnloadSceneUI(const Scene *scene);
 

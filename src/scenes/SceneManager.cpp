@@ -17,9 +17,10 @@
 namespace Base
 {
   SceneManager::SceneManager( //
-    Renderer *renderer, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager,
-    ParticleManager *particleManager, UIManager *uiManager, TweenManager *tweenManager,
-    ShaderManager *shaderManager //
+    Ref<Renderer> renderer, Ref<EntityManager> entityManager, Ref<SystemManager> systemManager,
+    Ref<AssetManager> assetManager, //
+    Ref<ParticleManager> particleManager, Ref<UIManager> uiManager, Ref<TweenManager> tweenManager,
+    Ref<ShaderManager> shaderManager //
     )
     : _renderer(renderer), _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
       _particleManager(particleManager), _uiManager(uiManager), _tweenManager(tweenManager),

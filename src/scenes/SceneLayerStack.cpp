@@ -4,7 +4,6 @@
 
 namespace Base
 {
-
   SceneLayerStack::SceneLayerStack(Scene *owner) : _owner(owner)
   {
   }
@@ -13,7 +12,10 @@ namespace Base
   {
     for (auto &layer : _layers)
     {
-      layer->OnInputEvent(event);
+      if (!layer->IsPaused())
+      {
+        layer->OnInputEvent(event);
+      }
       if (event->isHandled)
       {
         break;
@@ -25,7 +27,10 @@ namespace Base
   {
     for (auto &layer : _layers)
     {
-      layer->Update(dt);
+      if (!layer->IsPaused())
+      {
+        layer->Update(dt);
+      }
     }
   }
 

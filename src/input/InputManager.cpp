@@ -185,7 +185,7 @@ namespace Base
     }
   }
 
-  void InputManager::RegisterListener(InputListener *listener)
+  void InputManager::RegisterListener(InputListener &listener)
   {
     _listenrs.push_back(listener);
   }

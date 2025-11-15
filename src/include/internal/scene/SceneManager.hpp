@@ -27,14 +27,14 @@ namespace Base
   private:
     QuitCallBack _quitCallBack = nullptr;
     std::unordered_map<std::type_index, FactoryCallBack> _factories;
-    Renderer *_renderer = nullptr;
-    EntityManager *_entityManager = nullptr;
-    SystemManager *_systemManager = nullptr;
-    AssetManager *_assetManager = nullptr;
-    ParticleManager *_particleManager = nullptr;
-    UIManager *_uiManager = nullptr;
-    TweenManager *_tweenManager = nullptr;
-    ShaderManager *_shaderManager = nullptr;
+    Ref<Renderer> _renderer;
+    Ref<EntityManager> _entityManager;
+    Ref<SystemManager> _systemManager;
+    Ref<AssetManager> _assetManager;
+    Ref<ParticleManager> _particleManager;
+    Ref<UIManager> _uiManager;
+    Ref<TweenManager> _tweenManager;
+    Ref<ShaderManager> _shaderManager;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
@@ -45,10 +45,11 @@ namespace Base
     void PopScene();
 
   public:
-    SceneManager(                                                                                                 //
-      Renderer *renderer, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
-      ParticleManager *particleManager, UIManager *uiManager, TweenManager *tweenManager,
-      ShaderManager *shaderManager //
+    SceneManager( //
+      Ref<Renderer> renderer, Ref<EntityManager> entityManager, Ref<SystemManager> systemManager,
+      Ref<AssetManager> assetManager, //
+      Ref<ParticleManager> particleManager, Ref<UIManager> uiManager, Ref<TweenManager> tweenManager,
+      Ref<ShaderManager> shaderManager //
     );
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);
