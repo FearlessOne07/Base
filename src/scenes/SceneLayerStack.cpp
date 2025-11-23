@@ -4,7 +4,7 @@
 
 namespace Base
 {
-  SceneLayerStack::SceneLayerStack(Scene *owner) : _owner(owner)
+  SceneLayerStack::SceneLayerStack(std::weak_ptr<Scene> owner) : _owner(owner)
   {
   }
 

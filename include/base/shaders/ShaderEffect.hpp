@@ -1,5 +1,5 @@
 #pragma once
-#include "base/util/Ref.hpp"
+#include <memory>
 #include <raylib.h>
 namespace Base
 {
@@ -8,12 +8,12 @@ namespace Base
   class ShaderEffect
   {
   protected:
-    const Scene *_currentScene;
+    std::weak_ptr<const Scene> _currentScene;
     bool _active = true;
 
   public:
     virtual ~ShaderEffect() = default;
-    virtual void Setup(Ref<ShaderManager> shaderManager) = 0;
+    virtual void Setup(std::weak_ptr<const Scene> shaderManager) = 0;
     virtual void Apply(RenderTexture2D *input, RenderTexture2D *output, Vector2 resolution) = 0;
     virtual void Update(float dt) {};
 

@@ -8,7 +8,6 @@
 #include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
 #include <algorithm>
-#include <memory>
 #include <random>
 #include <raymath.h>
 
@@ -139,7 +138,7 @@ namespace Base
     // Emitters
     for (auto &emitter : _emitters)
     {
-      auto A = _sceneManager->GetCurrentScene().lock()->GetPauseMask();
+      auto A = _sceneManager->GetCurrentScene()->GetPauseMask();
       auto B = emitter.GetPauseMask();
       if (emitter.GetPauseMask().count() != 0 && (A & B) == B)
       {
@@ -213,7 +212,7 @@ namespace Base
     // Particles
     for (auto particle : _activeParticles)
     {
-      auto A = _sceneManager->GetCurrentScene().lock()->GetPauseMask();
+      auto A = _sceneManager->GetCurrentScene()->GetPauseMask();
       auto B = particle->GetPauseMask();
       if (particle->GetPauseMask().count() != 0 && (A & B) == B)
       {

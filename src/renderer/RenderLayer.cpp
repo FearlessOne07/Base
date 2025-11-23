@@ -1,6 +1,7 @@
 #include "base/renderer/RenderLayer.hpp"
 #include "base/camera/Camera2DExt.hpp"
 #include "base/scenes/Scene.hpp"
+#include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
 #include "rlgl.h"
 #include <ranges>
@@ -8,8 +9,12 @@
 
 namespace Base
 {
-  RenderLayer::RenderLayer(Ref<ShaderManager> shaderManager, Vector2 position, Vector2 size, Color clearColor)
-    : _position(position), _size(size), _shaderManager(shaderManager), _clearColor(clearColor)
+  RenderLayer::RenderLayer( //
+    Ref<ShaderManager> shaderManager, Ref<SceneManager> sceneManager, Vector2 position, Vector2 size,
+    Color clearColor //
+    )
+    : _position(position), _size(size), _shaderManager(shaderManager), _sceneManager(sceneManager),
+      _clearColor(clearColor)
   {
     _renderTexture = LoadRenderTexture(_size.x, _size.y);
     _ping = LoadRenderTexture(_size.x, _size.y);
@@ -155,10 +160,6 @@ namespace Base
     _layerCamera.Shake(config);
   }
 
-  const Scene *RenderLayer::GetOwnerScene() const
-  {
-    return _ownerScene;
-  }
   Vector2 RenderLayer::GetScreenToWorld(Vector2 position) const
   {
     return _layerCamera.GetScreenToWorld(position);
@@ -185,7 +186,7 @@ namespace Base
 
   void RenderLayer::Update(float dt)
   {
-    auto A = _ownerScene->GetPauseMask();
+    auto A = _sceneManager->GetCurrentScene()->GetPauseMask();
     auto B = _layerCamera.GetPauseMask();
     if (!(B.count() != 0 && (A & B) == B))
     {

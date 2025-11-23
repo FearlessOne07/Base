@@ -23,7 +23,12 @@ namespace Base
     // Shaders
     RenderTexture2D _ping;
 
+    Ref<ShaderManager> _shaderManager;
+    Ref<SceneManager> _sceneManager;
+
   private:
+    Renderer(Ref<ShaderManager> shaderManager);
+    void SetSceneManager(Ref<SceneManager> sceneManager);
     void Init(int width, int height);
     void DeInit();
     void Update(float dt);
@@ -38,6 +43,5 @@ namespace Base
     Ref<RenderLayer> InitLayer(                                                                     //
       const std::weak_ptr<const Scene> ownerScene, Vector2 position, Vector2 size, Color clearColor //
     );
-    void SetClearColor();
   };
 } // namespace Base

@@ -178,8 +178,10 @@ namespace Base
     return _state->tweenManager;
   }
 
-  Scene::Scene() : _layerStack(this), _state(std::make_unique<SceneState>())
+  void Scene::Init()
   {
+    _state = std::make_unique<SceneState>();
+    _layerStack = SceneLayerStack(shared_from_this());
   }
 
   void Scene::OnInputEvent(std::shared_ptr<InputEvent> event)
@@ -220,7 +222,7 @@ namespace Base
 
   Ref<RenderLayer> Scene::AddRenderLayer(Vector2 size, Color clearColor)
   {
-    return GetRenderer()->InitLayer(this, {0, 0}, size, clearColor);
+    return GetRenderer()->InitLayer(shared_from_this(), {0, 0}, size, clearColor);
   }
 
   void Scene::SuspendSystems()

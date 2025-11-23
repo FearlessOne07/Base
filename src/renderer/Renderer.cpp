@@ -8,19 +8,30 @@
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Ref.hpp"
+#include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
 #include <memory>
 #include <ranges>
 
 namespace Base
 {
-  Ref<RenderLayer> Renderer::InitLayer(                                                     //
-    std::weak_ptr<const Scene> ownerScene, Vector2 position, Vector2 size, Color clearColor //
+  Renderer::Renderer(Ref<ShaderManager> shaderManager) : _shaderManager(shaderManager)
+  {
+  }
+
+  void Renderer::SetSceneManager(Ref<SceneManager> sceneManager)
+  {
+    _sceneManager = sceneManager;
+  }
+
+  Ref<RenderLayer> Renderer::InitLayer(                                                           //
+    const std::weak_ptr<const Scene> ownerScene, Vector2 position, Vector2 size, Color clearColor //
   )
   {
     if (_renderLayers.contains(ownerScene.lock()->GetSceneID()))
     {
-      _renderLayers.at(ownerScene.lock()->GetSceneID()).emplace_back(ownerScene, position, size, clearColor);
+      _renderLayers.at(ownerScene.lock()->GetSceneID())
+        .emplace_back(_shaderManager, _sceneManager, position, size, clearColor);
       return _renderLayers.at(ownerScene.lock()->GetSceneID()).back();
     }
     return Ref<RenderLayer>();
@@ -105,7 +116,7 @@ namespace Base
   void Renderer::CompositeLayers()
   {
     BeginTextureMode(_renderTexture);
-    ClearBackground(_currentScene->GetClearColor());
+    ClearBackground(_sceneManager->GetCurrentScene()->GetClearColor());
     auto layers = std::ranges::reverse_view(_renderLayers.at(_currentScene));
     for (auto &layer : layers)
     {
@@ -118,7 +129,7 @@ namespace Base
     }
     EndTextureMode();
 
-    const auto &scenePost = _currentScene->GetPostProcessingEffects();
+    const auto &scenePost = _sceneManager->GetCurrentScene()->GetPostProcessingEffects();
     RenderTexture2D *input = &_renderTexture;
     RenderTexture2D *output = &_ping;
 

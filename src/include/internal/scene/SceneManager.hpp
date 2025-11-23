@@ -1,11 +1,7 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
-#include "base/particles/ParticleManager.hpp"
-#include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneData.hpp"
-#include "base/shaders/ShaderManager.hpp"
-#include "base/tween/TweenManager.hpp"
-#include "base/ui/UIManager.hpp"
+#include "base/util/Ref.hpp"
 #include "internal/input/InputListener.hpp"
 #include <functional>
 #include <memory>
@@ -18,11 +14,16 @@ namespace Base
   class EntityManager;
   class SystemManager;
   class AssetManager;
+  class TweenManager;
+  class ParticleManager;
+  class UIManager;
+  class Renderer;
+  class ShaderManager;
   class SceneManager : public InputListener
   {
     // Type Defs
     using QuitCallBack = std::function<void()>;
-    using FactoryCallBack = std::function<std::unique_ptr<Scene>()>;
+    using FactoryCallBack = std::function<std::shared_ptr<Scene>()>;
 
   private:
     QuitCallBack _quitCallBack = nullptr;
@@ -39,6 +40,7 @@ namespace Base
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
     std::type_index _startScene = typeid(nullptr);
+    int64_t _currentSceneID = 0;
 
     void PushScene(std::type_index sceneID, const SceneData &sceneData = SceneData());
     void ReplaceScene(std::type_index sceneId, const SceneData &sceneData = SceneData());
@@ -62,6 +64,6 @@ namespace Base
 
     void SetQuitCallBack(QuitCallBack quitCallback);
 
-    std::weak_ptr<const Scene> GetCurrentScene() const;
+    std::shared_ptr<const Scene> GetCurrentScene() const;
   };
 } // namespace Base

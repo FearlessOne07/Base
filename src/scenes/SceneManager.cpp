@@ -51,6 +51,9 @@ namespace Base
       THROW_BASE_RUNTIME_ERROR("Specified Scene is not registered");
     }
 
+    _scenes.top()->Init();
+    _scenes.top()->SetSceneID((SceneID)_currentSceneID++);
+
     std::shared_ptr<ScenePushedSignal> sig = std::make_shared<ScenePushedSignal>();
     sig->Scene = _scenes.top()->GetSceneID();
     bus->BroadCastSignal(sig);
@@ -209,12 +212,12 @@ namespace Base
     }
   }
 
-  std::weak_ptr<const Scene> SceneManager::GetCurrentScene() const
+  std::shared_ptr<const Scene> SceneManager::GetCurrentScene() const
   {
     if (!_scenes.empty())
     {
       return _scenes.top();
     }
-    return {};
+    return nullptr;
   }
 } // namespace Base

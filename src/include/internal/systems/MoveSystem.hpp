@@ -1,6 +1,6 @@
 #pragma once
-#include "base/systems/System.hpp"
 #include "base/entities/Entity.hpp"
+#include "base/systems/System.hpp"
 #include <memory>
 
 namespace Base
@@ -9,9 +9,9 @@ namespace Base
   {
   private:
     void ResolveBoxBox(std::shared_ptr<Entity> &e1, std::shared_ptr<Entity> &e2, int axis);
-    void HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager);
+    void HandleCollisions(std::shared_ptr<Entity> &e, int axis, Ref<EntityManager> entityManager);
 
   public:
-    void Update(float dt, EntityManager *entityManager,const Scene *) override;
+    void Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> scene) override;
   };
 } // namespace Base

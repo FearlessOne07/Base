@@ -9,23 +9,23 @@
 #include <unordered_map>
 namespace Base
 {
-  class Scene;
+  class SceneID;
   class UIManager
   {
-    std::unordered_map<const Scene *, std::unordered_map<std::string, UILayer>> _layers;
-    const Scene *_currentScene;
+    std::unordered_map<SceneID, std::unordered_map<std::string, UILayer>> _layers;
+    SceneID _currentScene;
 
-    void UnloadSceneUI(const Scene *scene);
+    void UnloadSceneUI(SceneID scene);
 
   public:
     void Init();
     void OnInputEvent(std::shared_ptr<InputEvent> &event);
     Ref<UILayer> AddLayer( //
       const std::string &layerID, Vector2 layerSize, Vector2 layerPosition,
-      const SceneLayer &parentLayer //
+      ConstRef<SceneLayer> parentLayer //
     );
     void RenderLayer(const std::string &layerId);
     void Update(float dt);
-    void UpdateCurrentScene(const Scene *scene);
+    void UpdateCurrentScene(SceneID scene);
   };
 } // namespace Base

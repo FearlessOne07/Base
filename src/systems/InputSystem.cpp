@@ -10,13 +10,13 @@ namespace Base
   {
   }
 
-  void InputSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
+  void InputSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
   {
     if (!_eMan)
     {
-      _eMan = entitymanager;
+      _eMan = entityManager;
     }
-    _entities = entitymanager->Query<InputComponent>();
+    _entities = entityManager->Query<InputComponent>();
   }
 
   void InputSystem::OnInputEvent(std::shared_ptr<InputEvent> event)

@@ -15,20 +15,20 @@ namespace Base
   class SceneLayer
   {
     friend class SceneLayerStack;
-    Scene *_owner = nullptr;
-    RenderLayer *_renderLayer = nullptr;
+    std::weak_ptr<Scene> _owner;
+    Ref<RenderLayer> _renderLayer;
     Vector2 _size = {0, 0};
     std::bitset<8> _pauseMask;
     int _layerIndex = 0;
 
   private:
-    void _onAttach(RenderLayer *renderlayer);
+    void _onAttach(Ref<RenderLayer> renderlayer);
     void _onDetach();
     void SetPauseMask(int index);
     void SetLayerIndex(int index);
 
   protected:
-    RenderLayer *GetRenderLayer();
+    Ref<RenderLayer> GetRenderLayer();
     const std::bitset<8> &GetPauseMask();
 
   public:
@@ -42,7 +42,7 @@ namespace Base
     Vector2 GetLayerMousePosition() const;
     Vector2 GetLayerCameraMousePosition() const;
     float GetCameraZoom() const;
-    Scene *GetOwner();
+    std::shared_ptr<Scene> GetOwner();
 
     // Camera
     void SetCameraMode(Camera2DExtMode mode);

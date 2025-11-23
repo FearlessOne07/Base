@@ -12,6 +12,7 @@
 namespace Base
 {
   class Scene;
+  class SceneManager;
   class RenderLayer
   {
     friend class Renderer;
@@ -31,6 +32,7 @@ namespace Base
 
     // Scene
     Ref<ShaderManager> _shaderManager;
+    Ref<SceneManager> _sceneManager;
 
     // Shaders
     RenderTexture _ping;
@@ -40,7 +42,7 @@ namespace Base
     void Update(float dt);
 
   public:
-    RenderLayer(Ref<ShaderManager> shaderManager, Vector2 position, Vector2 size, Color clearColor);
+    RenderLayer(Ref<ShaderManager> shaderManager, Ref<SceneManager>, Vector2 position, Vector2 size, Color clearColor);
     RenderLayer(RenderLayer &&other) noexcept;
     RenderLayer &operator=(RenderLayer &&other) noexcept;
     ~RenderLayer();
@@ -67,9 +69,9 @@ namespace Base
     float GetCameraZoom() const;
 
     // Shader Effect Management
-    template <typename T, typename... Args> void AddShaderEffect(Args &&...args)
+    template <typename T, typename... Args> void AddShaderEffect(std::weak_ptr<const Scene> ownerScene, Args &&...args)
     {
-      _effectChain.AddEffect<T>(_shaderManager, std::forward<Args>(args)...);
+      _effectChain.AddEffect<T>(ownerScene, std::forward<Args>(args)...);
     }
 
     template <typename T> std::shared_ptr<T> GetShaderEffect()

@@ -69,6 +69,9 @@ namespace Base
     // Initialise Shader Manager
     _shaderManager.Init();
 
+    _renderer.SetSceneManager(_sceneManager);
+    _systemManager.SetSceneManager(_sceneManager);
+
     // Load Global Assets
     _assetManager.Init();
     if (config.GlobalAssets.size() > 0)
@@ -313,7 +316,7 @@ namespace Base
   }
 
   void Game::RegisterSceneImpl(                                                               //
-    std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory, bool startScene //
+    std::type_index sceneID, std::function<std::shared_ptr<Scene>()> factory, bool startScene //
   )
   {
     _impl->RegisterScene(sceneID, std::move(factory), startScene);

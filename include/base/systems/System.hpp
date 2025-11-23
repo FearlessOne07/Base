@@ -2,6 +2,8 @@
 #include "base/entities/Entity.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/input/InputEvent.hpp"
+#include "base/util/Ref.hpp"
+#include <memory>
 
 namespace Base
 {
@@ -20,7 +22,7 @@ namespace Base
     virtual ~System() = default;
 
     // Update Function
-    virtual void Update(float dt, EntityManager *entityManager, const Scene *currentScene) = 0;
+    virtual void Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene) = 0;
 
   public: // Implemented
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);

@@ -17,17 +17,18 @@ namespace Base
     friend class Scene;
     std::vector<std::shared_ptr<SceneLayer>> _layers;
     std::vector<std::type_index> _layerIds;
-    Scene *_owner = nullptr;
+    std::weak_ptr<Scene> _owner;
     int _currentLayer = 0;
 
     // Methods
     void DetachLayers();
 
   public:
-    SceneLayerStack(Scene *owner);
+    SceneLayerStack() = default;
+    SceneLayerStack(std::weak_ptr<Scene> owner);
     template <typename T>
       requires(std::is_base_of_v<SceneLayer, T>)
-    T *AttachLayer(RenderLayer *renderLayer)
+    T *AttachLayer(Base::Ref<RenderLayer> renderLayer)
     {
       auto id = std::type_index(typeid(T));
       if (std::ranges::find(_layerIds, id) == _layerIds.end())

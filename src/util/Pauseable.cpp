@@ -7,6 +7,7 @@ namespace Base
   {
     _pauseMask = mask;
   }
+
   const std::bitset<8> &Pauseable::GetPauseMask() const
   {
     return _pauseMask;

@@ -22,13 +22,15 @@ namespace Base
   class SystemManager;
   class AssetManager;
   class ParticleManager;
+  class RenderLayer;
   class Renderer;
 
-  class Scene
+  class Scene : public std::enable_shared_from_this<Scene>
   {
 
   private:
     friend class SceneManager;
+    void Init();
     void SetEntityManager(Ref<EntityManager>);
     void SetSceneID(SceneID id);
     void SetParticleManager(Ref<ParticleManager>);
@@ -101,7 +103,7 @@ namespace Base
     }
 
   public:
-    Scene();
+    Scene() = default;
     virtual ~Scene() = default;
     virtual void Enter(const SceneData &sceneData = SceneData()) = 0;
     virtual void Exit() = 0;
@@ -148,7 +150,7 @@ namespace Base
     }
 
     // Layer Management
-    template <typename T> void AttachLayer(RenderLayer *renderLayer)
+    template <typename T> void AttachLayer(Base::Ref<RenderLayer> renderLayer)
     {
       _layerStack.AttachLayer<T>(renderLayer);
     }

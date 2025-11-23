@@ -9,11 +9,9 @@ namespace Base
     int64_t _id = -1;
     friend class Entity;
 
-  private:
-    explicit SceneID(int64_t id);
-
   public:
     SceneID();
+    explicit SceneID(int64_t id);
     operator bool();
     operator int64_t() const;
     bool operator==(const SceneID &other);

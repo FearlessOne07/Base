@@ -2,15 +2,16 @@
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include "raylib.h"
+#include <memory>
 
 namespace Base
 {
-  Scene *SceneLayer::GetOwner()
+  std::shared_ptr<Scene> SceneLayer::GetOwner()
   {
-    return _owner;
+    return _owner.lock();
   }
 
-  RenderLayer *SceneLayer::GetRenderLayer()
+  Ref<RenderLayer> SceneLayer::GetRenderLayer()
   {
     return _renderLayer;
   }
@@ -20,7 +21,7 @@ namespace Base
     return _pauseMask;
   }
 
-  void SceneLayer::_onAttach(RenderLayer *renderLayer)
+  void SceneLayer::_onAttach(Ref<RenderLayer> renderLayer)
   {
     _renderLayer = renderLayer;
     _size = _renderLayer->GetSize();
@@ -83,6 +84,7 @@ namespace Base
       (GetMousePosition().y - marginY) / scale,
     });
   }
+
   Vector2 SceneLayer::GetLayerMousePosition() const
   {
     auto windowWidth = static_cast<float>(GetScreenWidth());
