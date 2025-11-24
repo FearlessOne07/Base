@@ -52,7 +52,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->keyPressedBinds)
         {
-          if (event->key == key)
+          if (event->Key == key)
           {
             action();
           }
@@ -62,7 +62,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->keyDownBinds)
         {
-          if (event->key == key)
+          if (event->Key == key)
           {
             action();
           }
@@ -72,7 +72,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->keyReleasedBinds)
         {
-          if (event->key == key)
+          if (event->Key == key)
           {
             action();
           }
@@ -96,7 +96,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->mousePressedBinds)
         {
-          if (event->button == key)
+          if (event->Button == key)
           {
             action();
           }
@@ -106,7 +106,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->mouseDownBinds)
         {
-          if (event->button == key)
+          if (event->Button == key)
           {
             action();
           }
@@ -116,7 +116,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->mouseReleasedBinds)
         {
-          if (event->button == key)
+          if (event->Button == key)
           {
             action();
           }

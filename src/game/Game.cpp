@@ -3,6 +3,7 @@
 #include "base/game/GameConfig.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/InputEvent.hpp"
+#include "base/input/Keys.hpp"
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/systems/System.hpp"
@@ -246,7 +247,7 @@ namespace Base
   {
     if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(event))
     {
-      if (keyEvent->key == KEY_F11 && keyEvent->action == InputEvent::Action::Pressed)
+      if (keyEvent->Key == Key::F11 && keyEvent->action == InputEvent::Action::Pressed)
       {
         ToggleBorderlessWindowed();
         event->isHandled = true;
