@@ -46,7 +46,7 @@ namespace Base
     float _columnGap = 0;
 
     // Color
-    Color _backgroundColor = GREEN;
+    Color _backgroundColor = BLANK;
 
   public:
     void SetRowDefinitions(const std::vector<GridDefinition> &definitions);
