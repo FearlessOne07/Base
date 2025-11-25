@@ -28,6 +28,6 @@ namespace Base
     Size Measure() override;
     void Arrange(Rectangle finalRect) override;
 
-    void UpdateElement(float dt) override;
+    void UpdateElement(float dt, UIContext uiContext) override;
   };
 } // namespace Base

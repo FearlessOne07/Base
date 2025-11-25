@@ -18,17 +18,17 @@ namespace Base
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig) {
       auto scenePushed = std::static_pointer_cast<ScenePushedSignal>(sig);
-      UpdateCurrentScene(scenePushed->scene);
+      UpdateCurrentScene(scenePushed->Scene);
     });
 
     bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> sig) {
       auto sceneResumed = std::static_pointer_cast<SceneResumedSignal>(sig);
-      UpdateCurrentScene(sceneResumed->scene);
+      UpdateCurrentScene(sceneResumed->Scene);
     });
 
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
       auto scenePopped = std::static_pointer_cast<ScenePoppedSignal>(signal);
-      UnloadSceneUI(scenePopped->scene);
+      UnloadSceneUI(scenePopped->Scene);
     });
   }
 
@@ -53,7 +53,7 @@ namespace Base
 
   Ref<UILayer> UIManager::AddLayer( //
     const std::string &layerID, Vector2 layerSize, Vector2 layerPosition,
-    const SceneLayer &parentLayer //
+    ConstRef<SceneLayer> parentLayer //
   )
   {
     std::string lowerID = Base::Strings::ToLower(layerID);
@@ -100,13 +100,13 @@ namespace Base
     }
   }
 
-  void UIManager::UnloadSceneUI(const Scene *scene)
+  void UIManager::UnloadSceneUI(SceneID scene)
   {
     _layers.erase(_currentScene);
-    _currentScene = nullptr;
+    _currentScene = SceneID();
   }
 
-  void UIManager::UpdateCurrentScene(const Scene *scene)
+  void UIManager::UpdateCurrentScene(SceneID scene)
   {
     _currentScene = scene;
     _layers[_currentScene];

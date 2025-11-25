@@ -15,9 +15,9 @@
 
 namespace Base
 {
-  void MoveSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
+  void MoveSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
   {
-    auto entities = entitymanager->Query<RigidBodyComponent, MoveComponent>();
+    auto entities = entityManager->Query<RigidBodyComponent, MoveComponent>();
     for (auto &item : entities)
     {
       auto e = item->item;
@@ -86,17 +86,17 @@ namespace Base
 
         // Update Positions
         transcmp->position.x += rbcmp->velocity.x * dt;
-        HandleCollisions(e, 0, entitymanager);
+        HandleCollisions(e, 0, entityManager);
 
         transcmp->position.y += rbcmp->velocity.y * dt;
-        HandleCollisions(e, 1, entitymanager);
+        HandleCollisions(e, 1, entityManager);
 
-        entitymanager->UpdateEntity(item);
+        entityManager->UpdateEntity(item);
       }
     }
   }
 
-  void MoveSystem::HandleCollisions(std::shared_ptr<Entity> &e, int axis, EntityManager *entityManager)
+  void MoveSystem::HandleCollisions(std::shared_ptr<Entity> &e, int axis, Ref<EntityManager> entityManager)
   {
     auto mvcmp1 = e->GetComponent<MoveComponent>();
     auto abbcmp1 = e->GetComponent<ColliderComponent>();

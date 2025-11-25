@@ -3,6 +3,7 @@
 #include "base/game/GameConfig.hpp"
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/InputEvent.hpp"
+#include "base/input/Keys.hpp"
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/systems/System.hpp"
@@ -58,16 +59,19 @@ namespace Base
     _running = true;
 
     // Init Systems
-    _uiManager.Init();
-    _particleManager.Init();
     _sceneManager.SetQuitCallBack([this]() { this->Quit(); });
+    _uiManager.Init();
+    _particleManager.Init(_sceneManager);
 
     // Initialise InputManager
     _inpMan.Init();
-    _inpMan.RegisterListener(this);
+    _inpMan.RegisterListener(*this);
 
     // Initialise Shader Manager
     _shaderManager.Init();
+
+    _renderer.SetSceneManager(_sceneManager);
+    _systemManager.SetSceneManager(_sceneManager);
 
     // Load Global Assets
     _assetManager.Init();
@@ -243,7 +247,7 @@ namespace Base
   {
     if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(event))
     {
-      if (keyEvent->key == KEY_F11 && keyEvent->action == InputEvent::Action::Pressed)
+      if (keyEvent->Key == Key::F11 && keyEvent->action == InputEvent::Action::Pressed)
       {
         ToggleBorderlessWindowed();
         event->isHandled = true;
@@ -313,7 +317,7 @@ namespace Base
   }
 
   void Game::RegisterSceneImpl(                                                               //
-    std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory, bool startScene //
+    std::type_index sceneID, std::function<std::shared_ptr<Scene>()> factory, bool startScene //
   )
   {
     _impl->RegisterScene(sceneID, std::move(factory), startScene);

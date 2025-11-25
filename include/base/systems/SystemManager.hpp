@@ -1,5 +1,7 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
+#include "base/scenes/SceneID.hpp"
+#include "base/util/Ref.hpp"
 #include <map>
 #include <memory>
 #include <typeindex>
@@ -8,24 +10,25 @@ namespace Base
 {
   class EntityManager;
   class System;
-  class Scene;
+  class SceneID;
+  class SceneManager;
   class SystemManager
   {
   private: // References
     friend class Game;
     std::map<std::type_index, std::shared_ptr<System>> _systems;
-    EntityManager *_entityManager = nullptr;
+    Ref<EntityManager> _entityManager;
+    Ref<SceneManager> _sceneManager;
     std::type_index _renderSystemID = typeid(nullptr);
 
-    const Scene *_currentScene = nullptr;
     bool _isSuspended = false;
 
   private: // Methods
-    SystemManager(EntityManager *entityManager);
+    SystemManager(Ref<EntityManager> entityManager);
     void RegisterSystem(std::type_index, std::shared_ptr<System> system, bool isRenderSystem);
     void Update(float dt);
     void Init();
-    void UpdateCurrentScene(const Scene *scene);
+    void SetSceneManager(Ref<SceneManager> sceneManager);
 
   public:
     void Suspend();

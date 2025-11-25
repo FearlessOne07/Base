@@ -3,6 +3,7 @@
 #include "base/input/InputEvent.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
 #include "base/textures/Font.hpp"
+#include "base/ui/UIConext.hpp"
 #include "base/util/AntagonisticFunction.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Ref.hpp"
@@ -159,7 +160,7 @@ namespace Base
     virtual ~UIElement();
 
     void OnInputEvent(std::shared_ptr<InputEvent> &event);
-    void Update(float dt);
+    void Update(float dt, UIContext uiContext);
     // Setters
     void SetHAlignment(HAlign hAlign);
     void SetVAlignment(VAlign vAlign);
@@ -201,7 +202,7 @@ namespace Base
     virtual void Arrange(Rectangle finalRect);
 
     virtual void OnElementInputEvent(std::shared_ptr<InputEvent> &event);
-    virtual void UpdateElement(float dt);
+    virtual void UpdateElement(float dt, UIContext uiContext);
 
     // Render Tranform
     RenderTransform &GetRenderTransform();

@@ -8,13 +8,13 @@
 namespace Base
 {
 
-  void ProximitySystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
+  void ProximitySystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
   {
-    auto entities_proxentry = entitymanager->Query<StateComponent, ProximityEntry>();
+    auto entities_proxentry = entityManager->Query<StateComponent, ProximityEntry>();
     for (auto &item : entities_proxentry)
     {
       auto proxentry = item->item->GetComponent<ProximityEntry>();
-      auto radiusEntity = entitymanager->GetEntity(proxentry->GetRadiusEntity());
+      auto radiusEntity = entityManager->GetEntity(proxentry->GetRadiusEntity());
 
       Vector2 radiusEntityPosition = radiusEntity->GetComponent<TransformComponent>()->position;
 
@@ -28,11 +28,11 @@ namespace Base
       }
     }
 
-    auto entities_proxexit = entitymanager->Query<StateComponent, ProximityExit>();
+    auto entities_proxexit = entityManager->Query<StateComponent, ProximityExit>();
     for (auto &item : entities_proxexit)
     {
       auto proxexit = item->item->GetComponent<ProximityExit>();
-      auto radiusEntity = entitymanager->GetEntity(proxexit->GetRadiusEntity());
+      auto radiusEntity = entityManager->GetEntity(proxexit->GetRadiusEntity());
 
       Vector2 radiusEntityPosition = radiusEntity->GetComponent<TransformComponent>()->position;
 

@@ -22,9 +22,9 @@ namespace Base
            (circle.position.y + circle.radius) <= (container.y + container.height);
   }
 
-  void AreaSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
+  void AreaSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
   {
-    auto entities_arentry = entitymanager->Query<StateComponent, AreaEntry>();
+    auto entities_arentry = entityManager->Query<StateComponent, AreaEntry>();
     for (auto &item : entities_arentry)
     {
       auto arentry = item->item->GetComponent<AreaEntry>();
@@ -58,7 +58,7 @@ namespace Base
       }
     }
 
-    auto entities_arexit = entitymanager->Query<StateComponent, AreaExit>();
+    auto entities_arexit = entityManager->Query<StateComponent, AreaExit>();
     for (auto &item : entities_arexit)
     {
       auto arexit = item->item->GetComponent<AreaExit>();

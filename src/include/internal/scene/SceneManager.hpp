@@ -1,11 +1,7 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
-#include "base/particles/ParticleManager.hpp"
-#include "base/renderer/Renderer.hpp"
 #include "base/scenes/SceneData.hpp"
-#include "base/shaders/ShaderManager.hpp"
-#include "base/tween/TweenManager.hpp"
-#include "base/ui/UIManager.hpp"
+#include "base/util/Ref.hpp"
 #include "internal/input/InputListener.hpp"
 #include <functional>
 #include <memory>
@@ -18,37 +14,44 @@ namespace Base
   class EntityManager;
   class SystemManager;
   class AssetManager;
+  class TweenManager;
+  class ParticleManager;
+  class UIManager;
+  class Renderer;
+  class ShaderManager;
   class SceneManager : public InputListener
   {
     // Type Defs
     using QuitCallBack = std::function<void()>;
-    using FactoryCallBack = std::function<std::unique_ptr<Scene>()>;
+    using FactoryCallBack = std::function<std::shared_ptr<Scene>()>;
 
   private:
     QuitCallBack _quitCallBack = nullptr;
     std::unordered_map<std::type_index, FactoryCallBack> _factories;
-    Renderer *_renderer = nullptr;
-    EntityManager *_entityManager = nullptr;
-    SystemManager *_systemManager = nullptr;
-    AssetManager *_assetManager = nullptr;
-    ParticleManager *_particleManager = nullptr;
-    UIManager *_uiManager = nullptr;
-    TweenManager *_tweenManager = nullptr;
-    ShaderManager *_shaderManager = nullptr;
+    Ref<Renderer> _renderer;
+    Ref<EntityManager> _entityManager;
+    Ref<SystemManager> _systemManager;
+    Ref<AssetManager> _assetManager;
+    Ref<ParticleManager> _particleManager;
+    Ref<UIManager> _uiManager;
+    Ref<TweenManager> _tweenManager;
+    Ref<ShaderManager> _shaderManager;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
     std::type_index _startScene = typeid(nullptr);
+    int64_t _currentSceneID = 0;
 
     void PushScene(std::type_index sceneID, const SceneData &sceneData = SceneData());
     void ReplaceScene(std::type_index sceneId, const SceneData &sceneData = SceneData());
     void PopScene();
 
   public:
-    SceneManager(                                                                                                 //
-      Renderer *renderer, EntityManager *entityManager, SystemManager *systemManager, AssetManager *assetManager, //
-      ParticleManager *particleManager, UIManager *uiManager, TweenManager *tweenManager,
-      ShaderManager *shaderManager //
+    SceneManager( //
+      Ref<Renderer> renderer, Ref<EntityManager> entityManager, Ref<SystemManager> systemManager,
+      Ref<AssetManager> assetManager, //
+      Ref<ParticleManager> particleManager, Ref<UIManager> uiManager, Ref<TweenManager> tweenManager,
+      Ref<ShaderManager> shaderManager //
     );
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);
@@ -60,5 +63,7 @@ namespace Base
     void OnInputEvent(std::shared_ptr<InputEvent> event) override;
 
     void SetQuitCallBack(QuitCallBack quitCallback);
+
+    std::shared_ptr<const Scene> GetCurrentScene() const;
   };
 } // namespace Base

@@ -36,27 +36,27 @@ namespace Base
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig) {
       auto scenePushed = std::static_pointer_cast<ScenePushedSignal>(sig);
-      UpdateCurrentScene(scenePushed->scene);
+      UpdateCurrentScene(scenePushed->Scene);
     });
 
     bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> sig) {
       auto sceneResumed = std::static_pointer_cast<SceneResumedSignal>(sig);
-      UpdateCurrentScene(sceneResumed->scene);
+      UpdateCurrentScene(sceneResumed->Scene);
     });
 
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
       auto scenePopped = std::static_pointer_cast<ScenePoppedSignal>(signal);
-      UnloadSceneTweens(scenePopped->scene);
+      UnloadSceneTweens(scenePopped->Scene);
     });
   }
 
-  void TweenManager::UnloadSceneTweens(const Scene *scene)
+  void TweenManager::UnloadSceneTweens(SceneID scene)
   {
     _tweens.erase(_currentScene);
-    _currentScene = nullptr;
+    _currentScene = {};
   }
 
-  void TweenManager::UpdateCurrentScene(const Scene *scene)
+  void TweenManager::UpdateCurrentScene(SceneID scene)
   {
     _currentScene = scene;
     _tweens[_currentScene];

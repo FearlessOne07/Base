@@ -13,10 +13,10 @@
 
 namespace Base
 {
-  void RenderSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
+  void RenderSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
   {
     // Shape Component
-    auto entities_transcmp = entitymanager->Query<TransformComponent>();
+    auto entities_transcmp = entityManager->Query<TransformComponent>();
     for (auto &item : entities_transcmp)
     {
       auto e = item->item;

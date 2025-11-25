@@ -1,12 +1,13 @@
 #include "base/ui/UILayer.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include "base/ui/elements/UICanvas.hpp"
+#include "base/util/Ref.hpp"
 #include "raylib.h"
 #include <memory>
 
 namespace Base
 {
-  UILayer::UILayer(Vector2 layerSize, Vector2 layerPosition, const Base::SceneLayer &parentSceneLayer)
+  UILayer::UILayer(Vector2 layerSize, Vector2 layerPosition, ConstRef<SceneLayer> parentSceneLayer)
     : _layerSize(layerSize), _layerPosition(layerPosition), _parentSceneLayer(parentSceneLayer)
   {
   }
@@ -52,7 +53,7 @@ namespace Base
 
       if (_root->IsVisible())
       {
-        _root->Update(dt);
+        _root->Update(dt, {.MousePosition = _parentSceneLayer->GetLayerMousePosition()});
       }
     }
   }
@@ -94,10 +95,5 @@ namespace Base
   {
     _layerBackPanel = std::make_shared<UIPanel>();
     return _layerBackPanel;
-  }
-
-  Vector2 UILayer::GetMousePosition() const
-  {
-    return _parentSceneLayer->GetLayerMousePosition();
   }
 } // namespace Base

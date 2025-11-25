@@ -2,29 +2,42 @@
 #include "base/renderer/RenderContextSingleton.hpp"
 #include "base/renderer/RenderLayer.hpp"
 #include "base/scenes/Scene.hpp"
+#include "base/scenes/SceneID.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/util/Ref.hpp"
+#include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
 #include <memory>
 #include <ranges>
 
 namespace Base
 {
-  RenderLayer *Renderer::InitLayer(                                           //
-    const Scene *ownerScene, Vector2 position, Vector2 size, Color clearColor //
-  )
+  Renderer::Renderer(Ref<ShaderManager> shaderManager) : _shaderManager(shaderManager)
   {
-    if (_renderLayers.contains(ownerScene))
-    {
-      _renderLayers.at(ownerScene).emplace_back(ownerScene, position, size, clearColor);
-      return &_renderLayers.at(ownerScene).back();
-    }
-    return nullptr;
   }
 
-  void Renderer::SetCurrentScene(const Scene *scene)
+  void Renderer::SetSceneManager(Ref<SceneManager> sceneManager)
+  {
+    _sceneManager = sceneManager;
+  }
+
+  Ref<RenderLayer> Renderer::InitLayer(                                                           //
+    const std::weak_ptr<const Scene> ownerScene, Vector2 position, Vector2 size, Color clearColor //
+  )
+  {
+    if (_renderLayers.contains(ownerScene.lock()->GetSceneID()))
+    {
+      _renderLayers.at(ownerScene.lock()->GetSceneID())
+        .emplace_back(_shaderManager, _sceneManager, position, size, clearColor);
+      return _renderLayers.at(ownerScene.lock()->GetSceneID()).back();
+    }
+    return Ref<RenderLayer>();
+  }
+
+  void Renderer::SetCurrentScene(SceneID scene)
   {
     _currentScene = scene;
 
@@ -34,7 +47,7 @@ namespace Base
     }
   }
 
-  void Renderer::RemoveSceneLayers(const Scene *scene)
+  void Renderer::RemoveSceneLayers(SceneID scene)
   {
     if (_renderLayers.contains(scene))
     {
@@ -55,21 +68,21 @@ namespace Base
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
       if (auto popped = std::dynamic_pointer_cast<ScenePoppedSignal>(signal))
       {
-        this->RemoveSceneLayers(popped->scene);
+        this->RemoveSceneLayers(popped->Scene);
       }
     });
 
     bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> signal) {
       if (auto pushed = std::dynamic_pointer_cast<ScenePushedSignal>(signal))
       {
-        this->SetCurrentScene(pushed->scene);
+        this->SetCurrentScene(pushed->Scene);
       }
     });
 
     bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> signal) {
       if (auto pushed = std::dynamic_pointer_cast<SceneResumedSignal>(signal))
       {
-        this->SetCurrentScene(pushed->scene);
+        this->SetCurrentScene(pushed->Scene);
       }
     });
   }
@@ -99,10 +112,11 @@ namespace Base
       layer.Update(dt);
     }
   }
+
   void Renderer::CompositeLayers()
   {
     BeginTextureMode(_renderTexture);
-    ClearBackground(_currentScene->GetClearColor());
+    ClearBackground(_sceneManager->GetCurrentScene()->GetClearColor());
     auto layers = std::ranges::reverse_view(_renderLayers.at(_currentScene));
     for (auto &layer : layers)
     {
@@ -115,7 +129,7 @@ namespace Base
     }
     EndTextureMode();
 
-    const auto &scenePost = _currentScene->GetPostProcessingEffects();
+    const auto &scenePost = _sceneManager->GetCurrentScene()->GetPostProcessingEffects();
     RenderTexture2D *input = &_renderTexture;
     RenderTexture2D *output = &_ping;
 

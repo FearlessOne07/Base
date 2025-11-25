@@ -1,10 +1,11 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
+#include "base/input/MouseButtons.hpp"
 namespace Base
 {
   class MouseButtonEvent : public InputEvent
   {
   public:
-    int button = 0;
+    MouseKey Button = MouseKey::Null;
   };
 } // namespace Base

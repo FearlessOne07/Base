@@ -3,7 +3,7 @@
 
 namespace Base
 {
-  void InputComponent::BindKeyDown(int key, std::function<void()> action)
+  void InputComponent::BindKeyDown(Key key, std::function<void()> action)
   {
     if (keyDownBinds.find(key) == keyDownBinds.end())
     {
@@ -11,7 +11,7 @@ namespace Base
     }
   }
 
-  void InputComponent::BindKeyReleased(int key, std::function<void()> action)
+  void InputComponent::BindKeyReleased(Key key, std::function<void()> action)
   {
     if (keyReleasedBinds.find(key) == keyReleasedBinds.end())
     {
@@ -19,34 +19,34 @@ namespace Base
     }
   }
 
-  void InputComponent::BindKeyPressed(int key, std::function<void()> action)
+  void InputComponent::BindKeyPressed(Key key, std::function<void()> action)
   {
     if (keyPressedBinds.find(key) == keyPressedBinds.end())
     {
       keyPressedBinds[key] = std::move(action);
     }
   }
-  void InputComponent::BindMouseButtonPressed(int key, std::function<void()> action)
+  void InputComponent::BindMouseButtonPressed(MouseKey button, std::function<void()> action)
   {
-    if (mousePressedBinds.find(key) == mousePressedBinds.end())
+    if (mousePressedBinds.find(button) == mousePressedBinds.end())
     {
-      mousePressedBinds[key] = std::move(action);
+      mousePressedBinds[button] = std::move(action);
     }
   }
 
-  void InputComponent::BindMouseButtonDown(int key, std::function<void()> action)
+  void InputComponent::BindMouseButtonDown(MouseKey button, std::function<void()> action)
   {
-    if (mouseDownBinds.find(key) == mouseDownBinds.end())
+    if (mouseDownBinds.find(button) == mouseDownBinds.end())
     {
-      mouseDownBinds[key] = std::move(action);
+      mouseDownBinds[button] = std::move(action);
     }
   }
 
-  void InputComponent::BindMouseButtonReleased(int key, std::function<void()> action)
+  void InputComponent::BindMouseButtonReleased(MouseKey button, std::function<void()> action)
   {
-    if (mouseReleasedBinds.find(key) == mouseReleasedBinds.end())
+    if (mouseReleasedBinds.find(button) == mouseReleasedBinds.end())
     {
-      mouseReleasedBinds[key] = std::move(action);
+      mouseReleasedBinds[button] = std::move(action);
     }
   }
 } // namespace Base

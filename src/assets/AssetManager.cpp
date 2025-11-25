@@ -2,7 +2,6 @@
 #include "base/assets/AssetHandle.hpp"
 #include "base/audio/AudioStream.hpp"
 #include "base/audio/Sound.hpp"
-#include "base/scenes/Scene.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/scenes/signals/SceneResumedSignal.hpp"
@@ -28,17 +27,17 @@ namespace Base
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
       auto scenePopped = std::static_pointer_cast<ScenePoppedSignal>(signal);
-      UnloadScene(scenePopped->scene);
+      UnloadScene(scenePopped->Scene);
     });
 
     bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig) {
       auto scenePushed = std::static_pointer_cast<ScenePushedSignal>(sig);
-      SetCurrentScene(scenePushed->scene);
+      SetCurrentScene(scenePushed->Scene);
     });
 
     bus->SubscribeSignal<SceneResumedSignal>([this](std::shared_ptr<Signal> sig) {
       auto sceneResumed = std::static_pointer_cast<SceneResumedSignal>(sig);
-      SetCurrentScene(sceneResumed->scene);
+      SetCurrentScene(sceneResumed->Scene);
     });
   }
 
@@ -88,7 +87,7 @@ namespace Base
     _globalAssets.clear();
   }
 
-  void AssetManager::SetCurrentScene(const Scene *scene)
+  void AssetManager::SetCurrentScene(SceneID scene)
   {
     // If scene doesnt exist, it just been pushed
     if (_sceneAssets.find(scene) == _sceneAssets.end())
@@ -106,7 +105,7 @@ namespace Base
     _sampleRate = sampleRate;
   }
 
-  void AssetManager::UnloadScene(const Scene *scene)
+  void AssetManager::UnloadScene(SceneID scene)
   {
     // Unload a scene's if it is being popped
     for (auto &[name, asset] : _sceneAssets[scene])

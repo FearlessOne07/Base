@@ -23,7 +23,7 @@ namespace Base
     {
       auto sceneID = std::type_index(typeid(T));
       RegisterSceneImpl( //
-        sceneID, std::move([]() -> std::unique_ptr<Scene> { return std::make_unique<T>(); }),
+        sceneID, std::move([]() -> std::shared_ptr<Scene> { return std::make_shared<T>(); }),
         startScene //
       );
     };
@@ -43,7 +43,7 @@ namespace Base
 
     // Pointer To Game Implementation
     GameImpl *_impl = nullptr;
-    void RegisterSceneImpl(std::type_index sceneID, std::function<std::unique_ptr<Scene>()> factory, bool startScene);
+    void RegisterSceneImpl(std::type_index sceneID, std::function<std::shared_ptr<Scene>()> factory, bool startScene);
     void RegisterSystemImpl(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem);
   };
 } // namespace Base

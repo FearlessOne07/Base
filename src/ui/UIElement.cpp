@@ -1,7 +1,8 @@
 #include "base/ui/UIElement.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
-#include "base/renderer/RenderContextSingleton.hpp"
+#include "base/input/MouseButtons.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
+#include "base/ui/UIConext.hpp"
 #include "raylib.h"
 #include <algorithm>
 #include <cmath>
@@ -149,16 +150,15 @@ namespace Base
     {
       if (onClick)
       {
-        if ( //
-          mouseEvent->action == Base::InputEvent::Action::Held && mouseEvent->button == MOUSE_BUTTON_LEFT &&
-          _isHovered //
+        if (                                                                                                         //
+          mouseEvent->action == Base::InputEvent::Action::Held && mouseEvent->Button == MouseKey::Left && _isHovered //
         )
         {
           _isActive = true;
           event->isHandled = true;
         }
         else if ( //
-          mouseEvent->action == Base::InputEvent::Action::Released && mouseEvent->button == MOUSE_BUTTON_LEFT &&
+          mouseEvent->action == Base::InputEvent::Action::Released && mouseEvent->Button == MouseKey::Left &&
           _isActive //
         )
         {
@@ -175,10 +175,9 @@ namespace Base
     OnElementInputEvent(event);
   }
 
-  void UIElement::Update(float dt)
+  void UIElement::Update(float dt, UIContext uiContext)
   {
-    const Base::RenderContext *rd = Base::RenderContextSingleton::GetInstance();
-    Vector2 mousePos = rd->mousePosition;
+    Vector2 mousePos = uiContext.MousePosition;
 
     bool isCurrentlyHovered = CheckCollisionPointRec(mousePos, GetCombinedHoverRect());
 
@@ -199,7 +198,7 @@ namespace Base
       }
     }
     _isHovered = isCurrentlyHovered;
-    UpdateElement(dt);
+    UpdateElement(dt, uiContext);
   }
 
   void UIElement::OnElementInputEvent(std::shared_ptr<InputEvent> &event)
@@ -217,13 +216,13 @@ namespace Base
     }
   }
 
-  void UIElement::UpdateElement(float dt)
+  void UIElement::UpdateElement(float dt, UIContext uiContext)
   {
     for (auto &child : _childElements)
     {
       if (child->IsVisible())
       {
-        child->Update(dt);
+        child->Update(dt, uiContext);
       }
     }
   }

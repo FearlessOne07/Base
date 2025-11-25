@@ -1,13 +1,13 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/particles/ParticleEmitter.hpp"
-#include "base/scenes/signals/ScenePushedSignal.hpp"
-#include "base/signals/SignalBus.hpp"
+#include "base/scenes/Scene.hpp"
 #include "base/util/Draw.hpp"
 #include "base/util/Exception.hpp"
+#include "base/util/Ref.hpp"
 #include "internal/particles/ParticleManagerImpl.hpp"
+#include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
 #include <algorithm>
-#include <memory>
 #include <random>
 #include <raymath.h>
 
@@ -23,9 +23,9 @@ namespace Base
     delete _impl;
   }
 
-  void ParticleManager::Init()
+  void ParticleManager::Init(Ref<SceneManager> sceneManager)
   {
-    _impl->Init();
+    _impl->Init(sceneManager);
   }
 
   void ParticleManager::Update(float dt)
@@ -38,27 +38,18 @@ namespace Base
     _impl->Render();
   }
 
-  ParticleEmitter *ParticleManager::AddEmitter()
+  Ref<ParticleEmitter> ParticleManager::AddEmitter()
   {
     return _impl->AddEmitter();
   }
 
-  void ParticleManager::ParticleManagerImpl::Init()
+  void ParticleManager::ParticleManagerImpl::Init(Ref<SceneManager> sceneManager)
   {
+    _sceneManager = sceneManager;
     _randomGenerator = std::mt19937_64(_randomGenerator());
     _activeParticles.reserve(MAX_PARTICLES);
-
-    auto bus = SignalBus::GetInstance();
-    bus->SubscribeSignal<ScenePushedSignal>([this](std::shared_ptr<Signal> sig) {
-      auto scenePushed = std::static_pointer_cast<ScenePushedSignal>(sig);
-      UpdateCurrentScene(scenePushed->scene);
-    });
   }
 
-  void ParticleManager::ParticleManagerImpl::UpdateCurrentScene(const Scene *scene)
-  {
-    _currentScene = scene;
-  }
   void ParticleManager::ParticleManagerImpl::InitParticleFromEmitter(ParticleEmitter &emitter, Particle *particle)
   {
     // General
@@ -147,7 +138,7 @@ namespace Base
     // Emitters
     for (auto &emitter : _emitters)
     {
-      auto A = _currentScene->GetPauseMask();
+      auto A = _sceneManager->GetCurrentScene()->GetPauseMask();
       auto B = emitter.GetPauseMask();
       if (emitter.GetPauseMask().count() != 0 && (A & B) == B)
       {
@@ -221,7 +212,7 @@ namespace Base
     // Particles
     for (auto particle : _activeParticles)
     {
-      auto A = _currentScene->GetPauseMask();
+      auto A = _sceneManager->GetCurrentScene()->GetPauseMask();
       auto B = particle->GetPauseMask();
       if (particle->GetPauseMask().count() != 0 && (A & B) == B)
       {
@@ -302,9 +293,9 @@ namespace Base
     }
   }
 
-  ParticleEmitter *ParticleManager::ParticleManagerImpl::AddEmitter()
+  Ref<ParticleEmitter> ParticleManager::ParticleManagerImpl::AddEmitter()
   {
     _emitters.emplace_back();
-    return &_emitters.back();
+    return _emitters.back();
   }
 } // namespace Base

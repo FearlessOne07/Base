@@ -1,4 +1,5 @@
 #pragma once
+#include "base/ui/UIConext.hpp"
 #include "base/ui/UIElement.hpp"
 #include "raylib.h"
 #include <string>
@@ -25,7 +26,7 @@ namespace Base
 
     // Core
     void Render(float opacity) override;
-    void UpdateElement(float dt) override;
+    void UpdateElement(float dt, UIContext uiContext) override;
 
     // New
     Size Measure() override;

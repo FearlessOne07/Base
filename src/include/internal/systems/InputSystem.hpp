@@ -11,7 +11,7 @@ namespace Base
   {
   private:
     std::vector<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> _entities;
-    EntityManager *_eMan = nullptr;
+    Ref<EntityManager> _eMan;
 
   private:
     void OnKeyEvent(const std::shared_ptr<KeyEvent> &event);
@@ -20,6 +20,6 @@ namespace Base
 
   public:
     void Start() override;
-    void Update(float dt, EntityManager *entityManager, const Scene *) override;
+    void Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> scene) override;
   };
 } // namespace Base

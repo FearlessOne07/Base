@@ -10,13 +10,13 @@ namespace Base
   {
   }
 
-  void InputSystem::Update(float dt, EntityManager *entitymanager, const Scene *currentScene)
+  void InputSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
   {
     if (!_eMan)
     {
-      _eMan = entitymanager;
+      _eMan = entityManager;
     }
-    _entities = entitymanager->Query<InputComponent>();
+    _entities = entityManager->Query<InputComponent>();
   }
 
   void InputSystem::OnInputEvent(std::shared_ptr<InputEvent> event)
@@ -52,7 +52,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->keyPressedBinds)
         {
-          if (event->key == key)
+          if (event->Key == key)
           {
             action();
           }
@@ -62,7 +62,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->keyDownBinds)
         {
-          if (event->key == key)
+          if (event->Key == key)
           {
             action();
           }
@@ -72,7 +72,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->keyReleasedBinds)
         {
-          if (event->key == key)
+          if (event->Key == key)
           {
             action();
           }
@@ -96,7 +96,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->mousePressedBinds)
         {
-          if (event->button == key)
+          if (event->Button == key)
           {
             action();
           }
@@ -106,7 +106,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->mouseDownBinds)
         {
-          if (event->button == key)
+          if (event->Button == key)
           {
             action();
           }
@@ -116,7 +116,7 @@ namespace Base
       {
         for (auto &[key, action] : inpcmp->mouseReleasedBinds)
         {
-          if (event->button == key)
+          if (event->Button == key)
           {
             action();
           }

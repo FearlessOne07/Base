@@ -25,7 +25,7 @@ namespace Base
   class Game::GameImpl : InputListener
   {
     // Type defs
-    using FactoryCallBack = std::function<std::unique_ptr<Scene>()>;
+    using FactoryCallBack = std::function<std::shared_ptr<Scene>()>;
 
   private:
     bool _running = false;
@@ -37,18 +37,19 @@ namespace Base
 
   private: // Systems
     AudioManager _audioMan = AudioManager();
-    Renderer _renderer = Renderer();
     InputManager _inpMan = InputManager();
     EntityManager _entityManager = EntityManager();
     AssetManager _assetManager = AssetManager();
     ParticleManager _particleManager = ParticleManager();
     UIManager _uiManager = UIManager();
     TweenManager _tweenManager = TweenManager();
-    ShaderManager _shaderManager = ShaderManager(&_assetManager);
-    SystemManager _systemManager = SystemManager(&_entityManager);
+    ShaderManager _shaderManager = ShaderManager(_assetManager);
+    Renderer _renderer = Renderer(_shaderManager);
+    SystemManager _systemManager = SystemManager(_entityManager);
+
     SceneManager _sceneManager = SceneManager( //
-      &_renderer, &_entityManager, &_systemManager, &_assetManager, &_particleManager, &_uiManager, &_tweenManager,
-      &_shaderManager //
+      _renderer, _entityManager, _systemManager, _assetManager, _particleManager, _uiManager, _tweenManager,
+      _shaderManager //
     );
 
   private: // Methods

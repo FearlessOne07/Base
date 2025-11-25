@@ -77,15 +77,17 @@ namespace Base
     if (_widthSizeMode == SizeMode::Auto)
     {
       _desiredSize.width = std::accumulate(_columnSizes.begin(), _columnSizes.end(), 0);
-    }
-    else
-    {
+      _desiredSize.width += _columnGap * (_columnDefinitions.size() - 1);
+      _desiredSize.width += _paddingLeft + _paddingRight;
     }
 
     if (_heightSizeMode == SizeMode::Auto)
     {
       _desiredSize.height = std::accumulate(_rowSizes.begin(), _rowSizes.end(), 0);
+      _desiredSize.height += _rowGap * (_rowDefinitions.size() - 1);
+      _desiredSize.height += _paddingBottom + _paddingTop;
     }
+
     return _desiredSize;
   }
 
@@ -140,25 +142,50 @@ namespace Base
       GridPosition gridPos = _elementGridPositions[index];
 
       // Column Pos,
-      float offset = 0;
+      float offset = _paddingLeft;
       for (int i = 0; i < gridPos.Column; i++)
       {
         offset += _columnSizes[i];
       }
       childRect.x = offset + _layoutRect.x;
 
-      offset = 0;
+      offset = _paddingTop;
       for (int i = 0; i < gridPos.Row; i++)
       {
         offset += _rowSizes[i];
       }
       childRect.y = offset + _layoutRect.y;
 
+      if (_elementGridPositions[index].Row != 0)
+      {
+        childRect.y += _rowGap;
+      }
+
+      if (_elementGridPositions[index].Column != 0)
+      {
+        childRect.x += _columnGap;
+      }
+
       childRect.width = _columnSizes[gridPos.Column];
       childRect.height = _rowSizes[gridPos.Row];
-
       child->Arrange(childRect);
     }
+  }
+
+  void UIGrid::SetRowGap(float rowGap)
+  {
+    _rowGap = rowGap;
+  }
+
+  void UIGrid::SetColumnGap(float columnGap)
+  {
+    _columnGap = columnGap;
+  }
+
+  void UIGrid::SetCellGap(float cellGap)
+  {
+    _columnGap = cellGap;
+    _rowGap = cellGap;
   }
 
   void UIGrid::Render(float opacity)
