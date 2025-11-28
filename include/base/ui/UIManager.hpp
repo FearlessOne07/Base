@@ -24,7 +24,7 @@ namespace Base
       const std::string &layerID, Vector2 layerSize, Vector2 layerPosition,
       ConstRef<SceneLayer> parentLayer //
     );
-    void RenderLayer(const std::string &layerId);
+    void RenderLayer(Ref<UILayer> layer);
     void Update(float dt);
     void UpdateCurrentScene(SceneID scene);
   };

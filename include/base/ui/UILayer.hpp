@@ -63,5 +63,10 @@ namespace Base
 
     void Hide();
     void Show();
+
+    inline bool operator==(const UILayer &other) const
+    {
+      return this == &other;
+    };
   };
 } // namespace Base

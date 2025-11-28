@@ -94,6 +94,7 @@ namespace Base
   std::shared_ptr<UIPanel> UILayer::SetLayerBackPanel()
   {
     _layerBackPanel = std::make_shared<UIPanel>();
+    _layerBackPanel->SetSize({_layerSize.x, _layerSize.y});
     return _layerBackPanel;
   }
 } // namespace Base

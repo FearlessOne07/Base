@@ -76,16 +76,11 @@ namespace Base
     return Ref<UILayer>();
   }
 
-  void UIManager::RenderLayer(const std::string &layerID)
+  void UIManager::RenderLayer(Ref<UILayer> layer)
   {
     if (_currentScene)
     {
-      std::string lowerID = Base::Strings::ToLower(layerID);
-      if (!_layers.at(_currentScene).contains(lowerID))
-      {
-        THROW_BASE_RUNTIME_ERROR("Layer " + layerID + " does not exist");
-      }
-      _layers.at(_currentScene).at(lowerID).Render();
+      layer->Render();
     }
   }
 
