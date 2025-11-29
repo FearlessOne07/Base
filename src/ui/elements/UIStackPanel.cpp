@@ -174,6 +174,7 @@ namespace Base
         {
           alpha = _renderTransform.GetOpacity();
         }
+
         DrawRectangleBase( //
           {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
           {

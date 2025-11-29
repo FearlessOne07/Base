@@ -28,7 +28,6 @@ namespace Base
     void SetLayerIndex(int index);
 
   protected:
-    Ref<RenderLayer> GetRenderLayer();
     const std::bitset<8> &GetPauseMask();
 
   public:
@@ -43,6 +42,11 @@ namespace Base
     Vector2 GetLayerCameraMousePosition() const;
     float GetCameraZoom() const;
     std::shared_ptr<Scene> GetOwner();
+
+    template <typename T> std::shared_ptr<T> GetShaderEffect()
+    {
+      return _renderLayer->GetShaderEffect<T>();
+    }
 
     // Camera
     void SetCameraMode(Camera2DExtMode mode);

@@ -5,12 +5,19 @@
 
 namespace Base
 {
-  void UIButton::SetColors(Color hoverColor, Color activeColor, Color normalColor, Color textColor)
+  static bool operator==(Color a, Color b)
+  {
+    return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
+  }
+
+  void UIButton::SetTextColor(Color textColor)
   {
     _textColor = textColor;
-    _hoverColor = hoverColor;
-    _activeColor = activeColor;
-    _normalColor = normalColor;
+  }
+
+  void UIButton::SetBackgroundColor(Color backgroundColor)
+  {
+    _backgroundColor = backgroundColor;
   }
 
   void UIButton::SetText(const std::string &text)
@@ -121,9 +128,24 @@ namespace Base
       }
       else
       {
-        DrawRectangleRec( //
-          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height},
-          {_color.r, _color.g, _color.b, static_cast<unsigned char>(_renderTransform.GetOpacity() * opacity * 255)} //
+        float alpha = 0;
+        if (_backgroundColor == BLANK)
+        {
+          alpha = 0;
+        }
+        else
+        {
+          alpha = _renderTransform.GetOpacity();
+        }
+
+        DrawRectangleBase( //
+          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
+          {
+            _backgroundColor.r,
+            _backgroundColor.g,
+            _backgroundColor.b,
+            static_cast<unsigned char>(alpha * opacity * 255),
+          } //
         );
       }
 
@@ -147,11 +169,6 @@ namespace Base
         } //
       );
     }
-  }
-
-  void UIButton::UpdateElement(float dt, UIContext uiContext)
-  {
-    _color = _isHovered ? _hoverColor : _normalColor;
   }
 
   float UIButton::GetFontSize() const

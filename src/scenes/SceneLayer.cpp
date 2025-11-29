@@ -11,11 +11,6 @@ namespace Base
     return _owner.lock();
   }
 
-  Ref<RenderLayer> SceneLayer::GetRenderLayer()
-  {
-    return _renderLayer;
-  }
-
   const std::bitset<8> &SceneLayer::GetPauseMask()
   {
     return _pauseMask;

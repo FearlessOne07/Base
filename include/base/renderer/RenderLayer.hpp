@@ -51,7 +51,6 @@ namespace Base
     Vector2 GetSize() const;
     Vector2 GetPosition() const;
     void AddRenderFunction(const RenderFunction &);
-    const Scene *GetOwnerScene() const;
 
     // Camera
     void SetCameraMode(Camera2DExtMode mode);
