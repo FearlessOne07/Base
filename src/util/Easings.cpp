@@ -2,6 +2,11 @@
 
 namespace Base::Easings
 {
+  float EaseLinear(float t)
+  {
+    return t;
+  }
+
   float EaseInCubic(float t)
   {
     return t * t * t;

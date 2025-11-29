@@ -14,19 +14,12 @@ namespace Base
   class TweenManager
   {
   public:
-    enum class EasingType : uint8_t
-    {
-      EaseIn,
-      EaseOut,
-      EaseInOut
-    };
-
     template <typename T> struct TweenSettings
     {
       T startValue = 0;
       T endValue = 0;
       float duration = 1.f;
-      EasingType easingType = EasingType::EaseOut;
+      Easings::Type easingType = Easings::Type::EaseOut;
       std::function<void()> onTweenEnd = nullptr;
       TweenPriorityLevel priority = TweenPriorityLevel::Default;
     };
@@ -74,13 +67,13 @@ namespace Base
         std::function<float(float)> easingFunction = nullptr;
         switch (tweenSettings.easingType)
         {
-        case EasingType::EaseIn:
+        case Easings::Type::EaseIn:
           easingFunction = Easings::EaseInCubic;
           break;
-        case EasingType::EaseOut:
+        case Easings::Type::EaseOut:
           easingFunction = Easings::EaseOutCubic;
           break;
-        case EasingType::EaseInOut:
+        case Easings::Type::EaseInOut:
           easingFunction = Easings::EaseInOutCubic;
           break;
         }

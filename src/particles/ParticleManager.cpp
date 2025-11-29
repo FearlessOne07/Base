@@ -107,14 +107,13 @@ namespace Base
       break;
     }
     case ParticleEmitter::EmissionType::Line: {
-    }
       particle->position.x =
         std::uniform_real_distribution<float>(emitter.emissionLineStart.x, emitter.emissionLineEnd.x)(_randomGenerator);
       particle->position.y =
         std::uniform_real_distribution<float>(emitter.emissionLineStart.y, emitter.emissionLineEnd.y)(_randomGenerator);
       break;
-    case ParticleEmitter::EmissionType::Area: {
     }
+    case ParticleEmitter::EmissionType::Area: {
       Vector2 minPosition = {
         emitter.emissionAreaPosition.x,
         emitter.emissionAreaPosition.y,
@@ -126,6 +125,23 @@ namespace Base
 
       particle->position.x = std::uniform_real_distribution<float>(minPosition.x, maxPosition.x)(_randomGenerator);
       particle->position.y = std::uniform_real_distribution<float>(minPosition.y, maxPosition.y)(_randomGenerator);
+      break;
+    }
+    }
+
+    switch (emitter.easingType)
+    {
+    case Easings::Type::Linear:
+      particle->easingFunction = Easings::EaseLinear;
+      break;
+    case Easings::Type::EaseIn:
+      particle->easingFunction = Easings::EaseInCubic;
+      break;
+    case Easings::Type::EaseOut:
+      particle->easingFunction = Easings::EaseOutCubic;
+      break;
+    case Easings::Type::EaseInOut:
+      particle->easingFunction = Easings::EaseInOutCubic;
       break;
     }
 
@@ -219,6 +235,7 @@ namespace Base
         continue;
       }
       float lifePoint = 1.f - (particle->lifeTimer / particle->lifeTime);
+      lifePoint = particle->easingFunction(lifePoint);
       // Position
       particle->position += particle->direction * Lerp(particle->startSpeed, particle->endSpeed, lifePoint) * dt;
       // Rotation

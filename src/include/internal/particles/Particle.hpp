@@ -3,6 +3,7 @@
 #include "base/sprites/Sprite.hpp"
 #include "base/util/Pauseable.hpp"
 #include "raylib.h"
+#include <functional>
 namespace Base
 {
   class Particle : public Pauseable
@@ -39,5 +40,7 @@ namespace Base
     // Rotation
     float rotationSpeed = 0.f;
     float rotation = 0.f;
+
+    std::function<float(float)> easingFunction;
   };
 } // namespace Base

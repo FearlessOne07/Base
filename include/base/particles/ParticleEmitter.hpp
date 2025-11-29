@@ -1,5 +1,6 @@
 #pragma once
 #include "base/sprites/Sprite.hpp"
+#include "base/util/Easings.hpp"
 #include "base/util/Pauseable.hpp"
 #include <cstdint>
 #include <functional>
@@ -28,6 +29,7 @@ namespace Base
     bool isEmitting = true;
     float emissionRate = 1.f;
     float emissionTimer = 0.f;
+    Easings::Type easingType = Easings::Type::Linear;
 
     bool burst = false;
     int burstEmissionCount = 100;
