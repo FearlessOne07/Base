@@ -17,7 +17,7 @@ namespace Base
   private:
     // Layout
     Orientation _orientation = Orientation::Vertical;
-    float _gap = 10;
+    float _gap = 0;
     Color _backgroundColor = BLANK;
 
   public:

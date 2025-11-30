@@ -68,6 +68,25 @@ namespace Base
 
   void NinePatchSprite::Draw(const Rectangle &dest, unsigned char alpha)
   {
+
+    // If all brders are 0
+    bool noBorders = _border.left == 0 && _border.right == 0 && _border.top == 0 && _border.bottom == 0;
+
+    if (noBorders)
+    {
+      Rectangle src = {_sourcePos.x, _sourcePos.y, _sourceSize.x, _sourceSize.y};
+      DrawTexturePro( //
+        *_texture.Get()->GetRaylibTexture(), src, dest, {0, 0}, 0.0f,
+        {
+          static_cast<unsigned char>((255 * alpha) / 255),
+          static_cast<unsigned char>((255 * alpha) / 255),
+          static_cast<unsigned char>((255 * alpha) / 255),
+          alpha,
+        } //
+      );
+      return;
+    }
+
     float x = dest.x;
     float y = dest.y;
     float width = dest.width;
@@ -125,6 +144,18 @@ namespace Base
     // Draw all 9 patches using the sprite sheet
     for (int i = 0; i < 9; i++)
     {
+
+      // Skip patches with no area
+      if (_patches[i].width <= 0 || _patches[i].height <= 0)
+      {
+        continue;
+      }
+
+      if (destRects[i].width <= 0 || destRects[i].height <= 0)
+      {
+        continue;
+      }
+
       DrawTexturePro( //
         *_texture.Get()->GetRaylibTexture(), _patches[i], destRects[i], {0, 0}, 0.0f,
         {

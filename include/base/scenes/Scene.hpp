@@ -88,9 +88,9 @@ namespace Base
     ShaderEffectChain _postProcessingEffects;
 
     // Shader Effect Management
-    template <typename T, typename... Args> void AddPostProcessingEffect(Args &&...args)
+    template <typename T, typename... Args> auto AddPostProcessingEffect(Args &&...args) -> std::shared_ptr<T>
     {
-      _postProcessingEffects.AddEffect<T>(this, std::forward<Args>(args)...);
+      return _postProcessingEffects.AddEffect<T>(shared_from_this(), std::forward<Args>(args)...);
     }
 
     // Shared Data
