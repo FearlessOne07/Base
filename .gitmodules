@@ -18,3 +18,15 @@
 	path = vendor/rubberband
 	url = https://github.com/breakfastquay/rubberband.git
 	branch = default
+[submodule "vendor/msdf-atlas-gen"]
+	path = vendor/msdf-atlas-gen
+	url = https://github.com/Chlumsky/msdf-atlas-gen.git
+[submodule "vendor/freetype"]
+	path = vendor/freetype
+	url = https://github.com/freetype/freetype
+[submodule "vendor/glfw"]
+	path = vendor/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "vendor/glm"]
+	path = vendor/glm
+	url = https://github.com/g-truc/glm.git
