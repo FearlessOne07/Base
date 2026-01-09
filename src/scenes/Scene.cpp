@@ -38,7 +38,7 @@ namespace Base
 
   void Scene::_setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data)
   {
-    _state->sceneTransition = {
+    _sceneTransition = {
       .request = request,
       .sceneID = sceneID,
       .data = data,
@@ -47,140 +47,46 @@ namespace Base
 
   void Scene::SetSceneID(SceneID id)
   {
-    _state->sceneID = id;
+    _sceneID = id;
   }
 
   SceneID Scene::GetSceneID() const
   {
-    return _state->sceneID;
+    return _sceneID;
+  }
+
+  GameContext Scene::GameCtx() const
+  {
+    return _ctx;
   }
 
   const SceneTransition &Scene::GetSceneTransition() const
   {
-    return _state->sceneTransition;
+    return _sceneTransition;
   }
+
   void Scene::ResetSceneTransition()
   {
-    _state->sceneTransition = {.request = SceneRequest::None, .sceneID = typeid(-1)};
-  }
-
-  void Scene::SetRenderer(Ref<Renderer> manager)
-  {
-    if (manager)
-    {
-      _state->renderer = manager;
-    }
-  }
-
-  void Scene::SetShaderManager(Ref<ShaderManager> manager)
-  {
-    if (manager)
-    {
-      _state->shaderManager = manager;
-    }
-  }
-
-  void Scene::SetSystemManager(Ref<SystemManager> manager)
-  {
-    if (manager)
-    {
-      _state->systemManager = manager;
-    }
-  }
-
-  void Scene::SetAssetManager(Ref<AssetManager> manager)
-  {
-    if (manager)
-    {
-      _state->assetManager = manager;
-    }
-  }
-
-  void Scene::SetUIManager(Ref<UIManager> manager)
-  {
-    if (manager)
-    {
-      _state->uiManager = manager;
-    }
-  }
-
-  void Scene::SetParticleManager(Ref<ParticleManager> manager)
-  {
-    if (manager)
-    {
-      _state->particleManager = manager;
-    }
-  }
-
-  void Scene::SetEntityManager(Ref<EntityManager> manager)
-  {
-    if (manager)
-    {
-      _state->entityManager = manager;
-    }
-  }
-
-  void Scene::SetTweenManager(Ref<TweenManager> manager)
-  {
-    if (manager)
-    {
-      _state->tweenManager = manager;
-    }
+    _sceneTransition = {.request = SceneRequest::None, .sceneID = typeid(-1)};
   }
 
   void Scene::SetClearColor(Color color)
   {
-    _state->clearColor = color;
+    _clearColor = color;
+  }
+
+  void Scene::SetGameCtx(const GameContext &ctx)
+  {
+    _ctx = ctx;
   }
 
   Color Scene::GetClearColor() const
   {
-    return _state->clearColor;
-  }
-
-  Ref<Renderer> Scene::GetRenderer() const
-  {
-    return _state->renderer;
-  }
-
-  Ref<ShaderManager> Scene::GetShaderManager() const
-  {
-    return _state->shaderManager;
-  }
-
-  Ref<EntityManager> Scene::GetEntityManager() const
-  {
-    return _state->entityManager;
-  }
-
-  Ref<SystemManager> Scene::GetSystemManager() const
-  {
-    return _state->systemManager;
-  }
-
-  Ref<AssetManager> Scene::GetAssetManager() const
-  {
-    return _state->assetManager;
-  }
-
-  Ref<ParticleManager> Scene::GetParticleManager() const
-  {
-    return _state->particleManager;
-  }
-
-  Ref<UIManager> Scene::GetUIManager() const
-  {
-    return _state->uiManager;
-  }
-
-  Ref<TweenManager> Scene::GetTweenManager() const
-  {
-    return _state->tweenManager;
+    return _clearColor;
   }
 
   void Scene::Init()
   {
-    _state = std::make_unique<SceneState>();
     _layerStack = SceneLayerStack(shared_from_this());
   }
 
@@ -201,7 +107,7 @@ namespace Base
 
   void Scene::Render()
   {
-    ClearBackground(_state->clearColor);
+    ClearBackground(_clearColor);
     _layerStack.Render();
   }
 
@@ -218,31 +124,6 @@ namespace Base
   {
     _layerStack.DetachLayers();
     Exit();
-  }
-
-  Ref<RenderLayer> Scene::AddRenderLayer(Vector2 size, Color clearColor)
-  {
-    return GetRenderer()->InitLayer(shared_from_this(), {0, 0}, size, clearColor);
-  }
-
-  void Scene::SuspendSystems()
-  {
-    GetSystemManager()->Suspend();
-  }
-
-  void Scene::UnsuspendSystems()
-  {
-    GetSystemManager()->Unsuspend();
-  }
-
-  void Scene::StartSystems()
-  {
-    GetSystemManager()->StartSystems();
-  }
-
-  void Scene::StopSystems()
-  {
-    GetSystemManager()->StopSystems();
   }
 
   void Scene::PauseLayer(int layerIndex)

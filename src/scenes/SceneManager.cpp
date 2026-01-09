@@ -16,15 +16,7 @@
 
 namespace Base
 {
-  SceneManager::SceneManager( //
-    Ref<Renderer> renderer, Ref<EntityManager> entityManager, Ref<SystemManager> systemManager,
-    Ref<AssetManager> assetManager, //
-    Ref<ParticleManager> particleManager, Ref<UIManager> uiManager, Ref<TweenManager> tweenManager,
-    Ref<ShaderManager> shaderManager //
-    )
-    : _renderer(renderer), _entityManager(entityManager), _systemManager(systemManager), _assetManager(assetManager),
-      _particleManager(particleManager), _uiManager(uiManager), _tweenManager(tweenManager),
-      _shaderManager(shaderManager)
+  SceneManager::SceneManager(const GameContext &ctx) : _ctx(ctx)
   {
   }
 
@@ -53,19 +45,12 @@ namespace Base
 
     _scenes.top()->Init();
     _scenes.top()->SetSceneID((SceneID)_currentSceneID++);
+    _scenes.top()->SetGameCtx(_ctx);
 
     std::shared_ptr<ScenePushedSignal> sig = std::make_shared<ScenePushedSignal>();
     sig->Scene = _scenes.top()->GetSceneID();
     bus->BroadCastSignal(sig);
 
-    _scenes.top()->SetRenderer(_renderer);
-    _scenes.top()->SetEntityManager(_entityManager);
-    _scenes.top()->SetShaderManager(_shaderManager);
-    _scenes.top()->SetParticleManager(_particleManager);
-    _scenes.top()->SetAssetManager(_assetManager);
-    _scenes.top()->SetSystemManager(_systemManager);
-    _scenes.top()->SetUIManager(_uiManager);
-    _scenes.top()->SetTweenManager(_tweenManager);
     _scenes.top()->Enter(sceneData);
   }
 

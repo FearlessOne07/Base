@@ -1,6 +1,5 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
-#include "base/scenes/SceneLayer.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIPanel.hpp"
 #include "base/util/Exception.hpp"
@@ -11,6 +10,7 @@
 
 namespace Base
 {
+  class SceneLayer;
   class UILayer
   {
   private:

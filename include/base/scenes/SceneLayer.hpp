@@ -1,31 +1,30 @@
 #pragma once
-#include "base/assets/AssetHandle.hpp"
+#include "base/game/GameContext.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/renderer/RenderLayer.hpp"
-#include "base/scenes/SceneTransition.hpp"
 #include "raylib.h"
 #include <bitset>
-#include <filesystem>
 #include <memory>
 
 namespace Base
 {
-  namespace fs = std::filesystem;
   class Scene;
   class SceneLayer
   {
     friend class SceneLayerStack;
-    std::weak_ptr<Scene> _owner;
     Ref<RenderLayer> _renderLayer;
     Vector2 _size = {0, 0};
     std::bitset<8> _pauseMask;
+    Scene *_owner = nullptr;
     int _layerIndex = 0;
+    GameContext _ctx;
 
   private:
     void _onAttach(Ref<RenderLayer> renderlayer);
     void _onDetach();
     void SetPauseMask(int index);
     void SetLayerIndex(int index);
+    void SetGameContext(Scene *scene, const GameContext &ctx);
 
   protected:
     const std::bitset<8> &GetPauseMask();
@@ -41,7 +40,8 @@ namespace Base
     Vector2 GetLayerMousePosition() const;
     Vector2 GetLayerCameraMousePosition() const;
     float GetCameraZoom() const;
-    std::shared_ptr<Scene> GetOwner();
+    GameContext &GameCtx();
+    Scene *GetOwner();
 
     template <typename T> std::shared_ptr<T> GetShaderEffect()
     {
@@ -65,10 +65,5 @@ namespace Base
     void Pause();
     void UnPause();
     bool IsPaused();
-
-    // Assets
-    template <typename T> AssetHandle<T> GetAsset(const std::string &name) const;
-    template <typename T> void LoadAsset(const fs::path &path);
-    template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData());
   };
 } // namespace Base

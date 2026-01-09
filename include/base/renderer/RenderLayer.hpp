@@ -68,7 +68,7 @@ namespace Base
     float GetCameraZoom() const;
 
     // Shader Effect Management
-    template <typename T, typename... Args> void AddShaderEffect(std::weak_ptr<const Scene> ownerScene, Args &&...args)
+    template <typename T, typename... Args> void AddShaderEffect(std::weak_ptr<Scene> ownerScene, Args &&...args)
     {
       _effectChain.AddEffect<T>(ownerScene, std::forward<Args>(args)...);
     }

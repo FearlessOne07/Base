@@ -43,11 +43,7 @@ namespace Base
     void UnloadScene(SceneID);
     void SetCurrentScene(SceneID);
 
-  public:
-    void Init();
-    void Deinit();
-    void SetAudioSampleRate(uint64_t sampleRate);
-
+  private:
     template <typename T>
       requires(std::is_base_of_v<BaseAsset, T>)
     AssetHandle<T> LoadAsset(const fs::path &, bool global = true);
@@ -62,7 +58,7 @@ namespace Base
         if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
         {
           std::stringstream error;
-          error << "Scene-local Font '" << name << "' does not exist";
+          error << "Scene-local Asset '" << name << "' does not exist";
           THROW_BASE_RUNTIME_ERROR(error.str());
         }
         return AssetHandle<T>::Cast(_sceneAssets.at(scene).at(name).handle);
@@ -77,6 +73,39 @@ namespace Base
         }
         return AssetHandle<T>::Cast(_globalAssets.at(name).handle);
       }
+    }
+
+  public:
+    void Init();
+    void Deinit();
+    void SetAudioSampleRate(uint64_t sampleRate);
+
+    template <typename T>
+      requires(std::is_base_of_v<BaseAsset, T>)
+    AssetHandle<T> LoadLocalAsset(const fs::path &path)
+    {
+      return LoadAsset<T>(path, false);
+    }
+
+    template <typename T>
+      requires(std::is_base_of_v<BaseAsset, T>)
+    AssetHandle<T> LoadGlobalAsset(const fs::path &path)
+    {
+      return LoadAsset<T>(path, true);
+    }
+
+    template <typename T>
+      requires(std::is_base_of_v<BaseAsset, T>)
+    AssetHandle<T> GetLocalAsset(const std::string &assetName)
+    {
+      return GetAsset<T>(assetName, _currentScene);
+    }
+
+    template <typename T>
+      requires(std::is_base_of_v<BaseAsset, T>)
+    AssetHandle<T> GetGlobalAsset(const std::string &assetName)
+    {
+      return GetAsset<T>(assetName);
     }
   };
 } // namespace Base

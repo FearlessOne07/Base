@@ -1,16 +1,9 @@
-#include "base/scenes/SceneLayer.tpp"
-#include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.hpp"
+#include "base/scenes/Scene.hpp"
 #include "raylib.h"
-#include <memory>
 
 namespace Base
 {
-  std::shared_ptr<Scene> SceneLayer::GetOwner()
-  {
-    return _owner.lock();
-  }
-
   const std::bitset<8> &SceneLayer::GetPauseMask()
   {
     return _pauseMask;
@@ -27,6 +20,22 @@ namespace Base
   void SceneLayer::SetPauseMask(int index)
   {
     _pauseMask.set(index);
+  }
+
+  GameContext &SceneLayer::GameCtx()
+  {
+    return _ctx;
+  }
+
+  void SceneLayer::SetGameContext(Scene *scene, const GameContext &ctx)
+  {
+    _ctx = ctx;
+    _owner = scene;
+  }
+
+  Scene *SceneLayer::GetOwner()
+  {
+    return _owner;
   }
 
   void SceneLayer::Pause()

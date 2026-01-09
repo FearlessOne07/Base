@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneLayer.hpp"
+#include "base/game/GameContext.hpp"
 #include "base/renderer/RenderLayer.hpp"
 #include "base/util/Exception.hpp"
 #include <algorithm>
@@ -28,16 +29,16 @@ namespace Base
     SceneLayerStack(std::weak_ptr<Scene> owner);
     template <typename T>
       requires(std::is_base_of_v<SceneLayer, T>)
-    T *AttachLayer(Base::Ref<RenderLayer> renderLayer)
+    T *AttachLayer(Base::Ref<RenderLayer> renderLayer, const GameContext &ctx)
     {
       auto id = std::type_index(typeid(T));
       if (std::ranges::find(_layerIds, id) == _layerIds.end())
       {
         _layerIds.push_back(id);
         _layers.emplace_back(std::make_shared<T>());
-        _layers.back()->_owner = _owner;
         _layers.back()->SetPauseMask(_currentLayer);
         _layers.back()->SetLayerIndex(_currentLayer);
+        _layers.back()->SetGameContext(_owner.lock().get(), ctx);
         _layers.back()->_onAttach(renderLayer);
         _currentLayer++;
         return std::static_pointer_cast<T>(_layers.back()).get();

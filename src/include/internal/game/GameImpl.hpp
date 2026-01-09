@@ -47,10 +47,16 @@ namespace Base
     Renderer _renderer = Renderer(_shaderManager);
     SystemManager _systemManager = SystemManager(_entityManager);
 
-    SceneManager _sceneManager = SceneManager( //
-      _renderer, _entityManager, _systemManager, _assetManager, _particleManager, _uiManager, _tweenManager,
-      _shaderManager //
-    );
+    SceneManager _sceneManager = SceneManager({
+      _renderer,
+      _entityManager,
+      _systemManager,
+      _assetManager,
+      _particleManager,
+      _uiManager,
+      _tweenManager,
+      _shaderManager,
+    });
 
   private: // Methods
     void Quit();

@@ -1,7 +1,7 @@
 #pragma once
+#include "base/game/GameContext.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/scenes/SceneData.hpp"
-#include "base/util/Ref.hpp"
 #include "internal/input/InputListener.hpp"
 #include <functional>
 #include <memory>
@@ -10,15 +10,6 @@
 
 namespace Base
 {
-  class Scene;
-  class EntityManager;
-  class SystemManager;
-  class AssetManager;
-  class TweenManager;
-  class ParticleManager;
-  class UIManager;
-  class Renderer;
-  class ShaderManager;
   class SceneManager : public InputListener
   {
     // Type Defs
@@ -28,14 +19,8 @@ namespace Base
   private:
     QuitCallBack _quitCallBack = nullptr;
     std::unordered_map<std::type_index, FactoryCallBack> _factories;
-    Ref<Renderer> _renderer;
-    Ref<EntityManager> _entityManager;
-    Ref<SystemManager> _systemManager;
-    Ref<AssetManager> _assetManager;
-    Ref<ParticleManager> _particleManager;
-    Ref<UIManager> _uiManager;
-    Ref<TweenManager> _tweenManager;
-    Ref<ShaderManager> _shaderManager;
+
+    GameContext _ctx;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;
@@ -47,12 +32,7 @@ namespace Base
     void PopScene();
 
   public:
-    SceneManager( //
-      Ref<Renderer> renderer, Ref<EntityManager> entityManager, Ref<SystemManager> systemManager,
-      Ref<AssetManager> assetManager, //
-      Ref<ParticleManager> particleManager, Ref<UIManager> uiManager, Ref<TweenManager> tweenManager,
-      Ref<ShaderManager> shaderManager //
-    );
+    SceneManager(const GameContext &);
     SceneManager() = default;
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);
     void Update(float dt);

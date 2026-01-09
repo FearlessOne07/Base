@@ -8,9 +8,9 @@
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Ref.hpp"
-#include "internal/scene/SceneManager.hpp"
 #include "raylib.h"
 #include <memory>
+#include "internal/scene/SceneManager.hpp"
 #include <ranges>
 
 namespace Base

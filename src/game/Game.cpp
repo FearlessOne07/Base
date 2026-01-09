@@ -85,31 +85,31 @@ namespace Base
         case AssetType::Texture:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadAsset<Texture>(path);
+            _assetManager.LoadGlobalAsset<Texture>(path);
           }
           break;
         case AssetType::Sound:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadAsset<Sound>(path);
+            _assetManager.LoadGlobalAsset<Sound>(path);
           }
           break;
         case AssetType::AudioStream:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadAsset<AudioStream>(path);
+            _assetManager.LoadGlobalAsset<AudioStream>(path);
           }
           break;
         case AssetType::Font:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadAsset<BaseFont>(path);
+            _assetManager.LoadGlobalAsset<BaseFont>(path);
           }
           break;
         case AssetType::Shader:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadAsset<BaseShader>(path);
+            _assetManager.LoadGlobalAsset<BaseShader>(path);
           }
           break;
         default:
