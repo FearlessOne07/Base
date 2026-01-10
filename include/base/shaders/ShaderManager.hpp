@@ -4,8 +4,6 @@
 #include "base/shaders/Shader.hpp"
 #include "base/shaders/UniformValue.hpp"
 #include "base/util/Ref.hpp"
-#include "raylib.h"
-#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -22,9 +20,9 @@ namespace Base
     Shader *_activeShader = nullptr;
     Ref<AssetManager> _assetManager;
     SceneID _currentScene;
-    std::shared_ptr<Shader> GetShader(AssetHandle<Base::BaseShader> shaderHandle);
+    Ptr<Shader> GetShader(AssetHandle<Base::Shader> shaderHandle);
 
-    std::unordered_map<SceneID, std::vector<AssetHandle<Base::BaseShader>>> _shaderCache;
+    std::unordered_map<SceneID, std::vector<AssetHandle<Base::Shader>>> _shaderCache;
 
   private:
     void Update(float dt);
@@ -34,8 +32,8 @@ namespace Base
 
   public:
     ShaderManager(Ref<AssetManager> assetManager);
-    void ActivateShader(AssetHandle<Base::BaseShader>);
+    void ActivateShader(AssetHandle<Base::Shader>);
     void DeactivateCurrentShader();
-    void SetUniform(AssetHandle<Base::BaseShader> shaderName, const std::string &name, const UniformValue &value);
+    void SetUniform(AssetHandle<Base::Shader> shaderName, const std::string &name, const UniformValue &value);
   };
 } // namespace Base

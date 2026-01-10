@@ -1,5 +1,4 @@
 #include "base/systems/System.hpp"
-#include "raylib.h"
 #include <memory>
 
 namespace Base

@@ -4,7 +4,6 @@
 #include "base/util/Pauseable.hpp"
 #include <cstdint>
 #include <functional>
-#include <raylib.h>
 namespace Base
 {
   class ParticleEmitter : public Pauseable

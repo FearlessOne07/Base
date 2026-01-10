@@ -1,5 +1,4 @@
 #include "base/sprites/NinePatchSprite.hpp"
-#include "raymath.h"
 
 namespace Base
 {

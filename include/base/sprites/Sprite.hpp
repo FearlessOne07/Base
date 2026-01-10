@@ -2,7 +2,6 @@
 
 #include "base/assets/AssetHandle.hpp"
 #include "base/textures/Texture.hpp"
-#include "raylib.h"
 namespace Base
 {
   class Sprite

@@ -2,7 +2,6 @@
 #include "Entity.hpp"
 #include "base/util/QuadTree.hpp"
 #include "base/util/QuadTreeContainer.hpp"
-#include "raylib.h"
 #include <cstddef>
 #include <list>
 #include <memory>

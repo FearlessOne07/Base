@@ -4,9 +4,9 @@ set(SRC
   "./entities/EntityManager.cpp"
   "./entities/Entity.cpp"
 
-  "./renderer/RenderContextSingleton.cpp"
-  "./renderer/Renderer.cpp"
-  "./renderer/RenderLayer.cpp"
+  "./rendering/RenderContextSingleton.cpp"
+  "./rendering/RenderingManager.cpp"
+  "./rendering/RenderLayer.cpp"
 
   "./sprites/Sprite.cpp"
   "./sprites/NinePatchSprite.cpp"
@@ -116,7 +116,12 @@ target_include_directories("${PROJECT_NAME}"
   PUBLIC
     "${ROOT_BASE_DIR}/vendor/miniaudio/"
     "${ROOT_BASE_DIR}/vendor/libsamplerate/include"
-  PRIVATE
+    "${ROOT_BASE_DIR}/vendor/glm/"
+    "${ROOT_BASE_DIR}/vendor/glfw/include/"
+    "${ROOT_BASE_DIR}/vendor/glad/include/"
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/"
     "${ROOT_BASE_DIR}/src/include/"
+  PRIVATE
+    "${ROOT_BASE_DIR}/vendor/stb_image/"
     "${ROOT_BASE_DIR}/include/"
 )

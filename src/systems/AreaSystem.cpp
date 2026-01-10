@@ -4,7 +4,6 @@
 #include "base/components/StateComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
-#include "raylib.h"
 
 namespace Base
 {

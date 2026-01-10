@@ -1,4 +1,3 @@
-#include "raylib.h"
 namespace Base
 {
   void DrawRectangleBase(Rectangle rec, Vector2 origin, float rotation, Color color);

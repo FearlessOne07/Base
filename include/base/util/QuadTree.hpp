@@ -1,6 +1,5 @@
 #pragma once
 #include "Circle.hpp"
-#include "raylib.h"
 #include <array>
 #include <cstdint>
 #include <iterator>

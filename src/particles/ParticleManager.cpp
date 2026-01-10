@@ -6,10 +6,8 @@
 #include "base/util/Ref.hpp"
 #include "internal/particles/ParticleManagerImpl.hpp"
 #include "internal/scene/SceneManager.hpp"
-#include "raylib.h"
 #include <algorithm>
 #include <random>
-#include <raymath.h>
 
 namespace Base
 {

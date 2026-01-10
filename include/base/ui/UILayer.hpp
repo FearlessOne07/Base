@@ -5,7 +5,6 @@
 #include "base/ui/elements/UIPanel.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Ref.hpp"
-#include "raylib.h"
 #include <memory>
 #include <type_traits>
 

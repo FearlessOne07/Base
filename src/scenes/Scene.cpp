@@ -5,7 +5,6 @@
 #include "base/scenes/signals/SceneLayerPausedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/systems/SystemManager.hpp"
-#include "raylib.h"
 #include <memory>
 
 namespace Base

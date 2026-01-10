@@ -4,12 +4,11 @@
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/input/Keys.hpp"
-#include "base/renderer/RenderContextSingleton.hpp"
+#include "base/rendering/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/systems/System.hpp"
 #include "base/util/Exception.hpp"
 #include "internal/game/GameImpl.hpp"
-#include "raylib.h"
 #include <algorithm>
 #include <memory>
 #include <utility>
@@ -33,6 +32,8 @@ namespace Base
     _audioMan.Init();
     _audioMan.SetAssetManager(&_assetManager);
 
+    _renderer.Init(config.Resolution.x, config.Resolution.y);
+
     // Initialize Raylib
     if (config.ResizableWindow)
     {
@@ -51,7 +52,6 @@ namespace Base
     }
 
     // Init Renderer
-    _renderer.Init(config.Resolution.x, config.Resolution.y);
 
     // Initialise Render Texture
     _gameWidth = static_cast<float>(config.Resolution.x);

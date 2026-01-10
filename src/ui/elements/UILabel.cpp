@@ -1,7 +1,6 @@
 #include "base/ui/elements/UILabel.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/util/Draw.hpp"
-#include "raylib.h"
 #include <string>
 
 namespace Base

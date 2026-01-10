@@ -7,7 +7,6 @@
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/SceneSuspendedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
-#include "raylib.h"
 #include <algorithm>
 #include <memory>
 

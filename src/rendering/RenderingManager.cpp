@@ -1,6 +1,6 @@
-#include "base/renderer/Renderer.hpp"
-#include "base/renderer/RenderContextSingleton.hpp"
-#include "base/renderer/RenderLayer.hpp"
+#include "base/rendering/RenderingManager.hpp"
+#include "base/rendering/RenderContextSingleton.hpp"
+#include "base/rendering/RenderLayer.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneID.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
@@ -8,23 +8,24 @@
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Ref.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include "internal/scene/SceneManager.hpp"
-#include "raylib.h"
+#include <algorithm>
 #include <memory>
 #include <ranges>
 
 namespace Base
 {
-  Renderer::Renderer(Ref<ShaderManager> shaderManager) : _shaderManager(shaderManager)
+  RenderingManager::RenderingManager(Ref<ShaderManager> shaderManager) : _shaderManager(shaderManager)
   {
   }
 
-  void Renderer::SetSceneManager(Ref<SceneManager> sceneManager)
+  void RenderingManager::SetSceneManager(Ref<SceneManager> sceneManager)
   {
     _sceneManager = sceneManager;
   }
 
-  Ref<RenderLayer> Renderer::InitLayer(                                                           //
+  Ref<RenderLayer> RenderingManager::InitLayer(                                                   //
     const std::weak_ptr<const Scene> ownerScene, Vector2 position, Vector2 size, Color clearColor //
   )
   {
@@ -37,7 +38,7 @@ namespace Base
     return Ref<RenderLayer>();
   }
 
-  void Renderer::SetCurrentScene(SceneID scene)
+  void RenderingManager::SetCurrentScene(SceneID scene)
   {
     _currentScene = scene;
 
@@ -47,7 +48,7 @@ namespace Base
     }
   }
 
-  void Renderer::RemoveSceneLayers(SceneID scene)
+  void RenderingManager::RemoveSceneLayers(SceneID scene)
   {
     if (_renderLayers.contains(scene))
     {
@@ -55,14 +56,14 @@ namespace Base
     }
   }
 
-  void Renderer::Init(int width, int height)
+  void RenderingManager::Init(int width, int height)
   {
     _renderResolution = {
       static_cast<float>(width),
       static_cast<float>(height),
     };
-    _renderTexture = LoadRenderTexture(width, height);
-    _ping = LoadRenderTexture(width, height);
+    _renderTexture = FrameBuffer::Create({.Width = width, .Height = height});
+    _ping = FrameBuffer::Create({.Width = width, .Height = height});
 
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
@@ -87,14 +88,14 @@ namespace Base
     });
   }
 
-  void Renderer::DeInit()
+  void RenderingManager::DeInit()
   {
     _renderLayers.clear();
-    UnloadRenderTexture(_renderTexture);
-    UnloadRenderTexture(_ping);
+    FrameBuffer::Destroy(_renderTexture);
+    FrameBuffer::Destroy(_ping);
   }
 
-  void Renderer::RenderLayers()
+  void RenderingManager::RenderLayers()
   {
     // Begin rendering of Scenes
     auto &layers = _renderLayers.at(_currentScene);
@@ -104,7 +105,7 @@ namespace Base
     }
   }
 
-  void Renderer::Update(float dt)
+  void RenderingManager::Update(float dt)
   {
     auto &layers = _renderLayers.at(_currentScene);
     for (auto &layer : layers)
@@ -113,15 +114,15 @@ namespace Base
     }
   }
 
-  void Renderer::CompositeLayers()
+  void RenderingManager::CompositeLayers()
   {
-    BeginTextureMode(_renderTexture);
-    ClearBackground(_sceneManager->GetCurrentScene()->GetClearColor());
-    auto layers = std::ranges::reverse_view(_renderLayers.at(_currentScene));
+    Renderer::BeginFramebuffer(_renderTexture);
+    Renderer::Clear(_sceneManager->GetCurrentScene()->GetClearColor());
+    auto layers = std::views::reverse(_renderLayers.at(_currentScene));
     for (auto &layer : layers)
     {
       auto rd = RenderContextSingleton::GetInstance();
-      DrawTexturePro( //
+      Renderer::DrawFramebuffer( //
         layer.GetTexture()->texture, {0, 0, layer.GetSize().x, layer.GetSize().y},
         {layer.GetPosition().x, layer.GetPosition().y, rd->gameWidth, rd->gameHeight}, //
         {0, 0}, 0, WHITE                                                               //
@@ -150,7 +151,7 @@ namespace Base
     }
   }
 
-  void Renderer::Render()
+  void RenderingManager::Render()
   {
     auto rd = RenderContextSingleton::GetInstance();
 

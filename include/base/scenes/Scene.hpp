@@ -8,7 +8,6 @@
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "base/util/Strings.hpp"
-#include "raylib.h"
 #include <bitset>
 #include <filesystem>
 #include <memory>
@@ -62,7 +61,7 @@ namespace Base
       Ref<UIManager> uiManager;
       Ref<TweenManager> tweenManager;
       Ref<ShaderManager> shaderManager;
-      Color clearColor = BLACK;
+      Color clearColor = {0, 0, 0, 255};
       SharedSceneDataStore<void> sharedData;
     };
 
@@ -83,7 +82,7 @@ namespace Base
   protected:
     // Rendering
     void SetClearColor(Color color);
-    Ref<RenderLayer> AddRenderLayer(Vector2 size, Color clearColor = BLANK);
+    Ref<RenderLayer> AddRenderLayer(Vector2 size, Color clearColor = {0, 0, 0, 0});
 
     ShaderEffectChain _postProcessingEffects;
 

@@ -1,7 +1,6 @@
 #include "base/camera/Camera2DExt.hpp"
 #include "base/camera/CameraModes.hpp"
-#include "raylib.h"
-#include "raymath.h"
+#include "base/util/Type.hpp"
 #include <algorithm>
 
 namespace Base

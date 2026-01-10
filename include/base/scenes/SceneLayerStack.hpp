@@ -1,6 +1,6 @@
 #pragma once
 #include "SceneLayer.hpp"
-#include "base/renderer/RenderLayer.hpp"
+#include "base/rendering/RenderLayer.hpp"
 #include "base/util/Exception.hpp"
 #include <algorithm>
 #include <memory>

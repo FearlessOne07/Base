@@ -1,12 +1,11 @@
 #pragma once
 #include "base/ui/UIElement.hpp"
-#include "raylib.h"
 namespace Base
 {
   class UIPanel : public UIElement
   {
   private:
-    Color _color = WHITE;
+    Color _color = {255, 255, 255, 255};
 
   public:
     void SetColor(Color color);

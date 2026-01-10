@@ -1,9 +1,8 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
 #include "base/input/InputEvent.hpp"
-#include "base/renderer/RenderLayer.hpp"
+#include "base/rendering/RenderLayer.hpp"
 #include "base/scenes/SceneTransition.hpp"
-#include "raylib.h"
 #include <bitset>
 #include <filesystem>
 #include <memory>
@@ -49,7 +48,7 @@ namespace Base
     }
 
     // Camera
-    void SetCameraMode(Camera2DExtMode mode);
+    void SetCameraMode(CameraMode mode);
     void SetCameraOffset(Vector2 offset);
     void SetCameraTarget(Vector2 target);
     void SetCameraRotation(float rotation);

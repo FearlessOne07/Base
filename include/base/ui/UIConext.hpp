@@ -1,6 +1,5 @@
 #pragma once
 
-#include "raylib.h"
 namespace Base
 {
   struct UIContext

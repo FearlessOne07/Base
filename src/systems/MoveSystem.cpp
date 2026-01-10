@@ -8,8 +8,6 @@
 #include "base/entities/Entity.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/util/Circle.hpp"
-#include "raylib.h"
-#include "raymath.h"
 #include <cmath>
 #include <memory>
 

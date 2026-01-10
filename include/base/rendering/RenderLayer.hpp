@@ -1,9 +1,10 @@
 #pragma once
-#include "base/camera/Camera2DExt.hpp"
+#include "base/camera/CameraController.hpp"
+#include "base/rendering/FrameBuffer.hpp"
 #include "base/shaders/ShaderEffect.hpp"
 #include "base/shaders/ShaderEffectChain.hpp"
 #include "base/shaders/ShaderManager.hpp"
-#include "raylib.h"
+#include "base/util/Type.hpp"
 #include <bitset>
 #include <deque>
 #include <functional>
@@ -15,16 +16,16 @@ namespace Base
   class SceneManager;
   class RenderLayer
   {
-    friend class Renderer;
+    friend class RenderingManager;
     using RenderFunction = std::function<void()>;
 
     // Rendering
-    RenderTexture _renderTexture;
+    Ptr<FrameBuffer> _framebuffer;
     std::deque<RenderFunction> _renderFunctions;
-    Color _clearColor = BLANK;
+    Color _clearColor = {0, 0, 0, 0};
 
     // Camera
-    Camera2DExt _layerCamera;
+    CameraController _layerCamera;
 
     // Spec
     Vector2 _position = {0, 0};
@@ -35,7 +36,7 @@ namespace Base
     Ref<SceneManager> _sceneManager;
 
     // Shaders
-    RenderTexture _ping;
+    Ptr<FrameBuffer> _ping;
     ShaderEffectChain _effectChain;
 
   private:
@@ -47,13 +48,13 @@ namespace Base
     RenderLayer &operator=(RenderLayer &&other) noexcept;
     ~RenderLayer();
     void Render();
-    const RenderTexture *GetTexture() const;
+    const Ptr<FrameBuffer> GetFramebuffer() const;
     Vector2 GetSize() const;
     Vector2 GetPosition() const;
     void AddRenderFunction(const RenderFunction &);
 
     // Camera
-    void SetCameraMode(Camera2DExtMode mode);
+    void SetCameraMode(CameraMode mode);
     void SetCameraOffset(Vector2 offset);
     void SetCameraTarget(Vector2 target);
     void SetCameraRotation(float rotation);

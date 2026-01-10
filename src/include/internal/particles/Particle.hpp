@@ -2,7 +2,6 @@
 #include "base/particles/ParticleEmitter.hpp"
 #include "base/sprites/Sprite.hpp"
 #include "base/util/Pauseable.hpp"
-#include "raylib.h"
 #include <functional>
 namespace Base
 {

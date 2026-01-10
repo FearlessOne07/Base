@@ -5,8 +5,6 @@
 #include "base/entities/signals/EntityCollisionSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Circle.hpp"
-#include "raylib.h"
-#include "raymath.h"
 #include <algorithm>
 #include <memory>
 

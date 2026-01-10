@@ -1,13 +1,12 @@
 #pragma once
 #include "base/assets/BaseAsset.hpp"
-#include "raylib.h"
+#include "base/util/Type.hpp"
 #include <filesystem>
 #include <unordered_map>
 #include <vector>
 
 namespace Base
 {
-
   struct GameConfig
   {
     const char *Title = "New Game";

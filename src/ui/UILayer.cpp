@@ -2,7 +2,6 @@
 #include "base/scenes/SceneLayer.hpp"
 #include "base/ui/elements/UICanvas.hpp"
 #include "base/util/Ref.hpp"
-#include "raylib.h"
 #include <memory>
 
 namespace Base

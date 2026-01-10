@@ -8,7 +8,6 @@
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/util/Draw.hpp"
-#include "raylib.h"
 #include <memory>
 
 namespace Base

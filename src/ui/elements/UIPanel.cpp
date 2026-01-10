@@ -1,6 +1,5 @@
 #include "base/ui/elements/UIPanel.hpp"
 #include "base/util/Draw.hpp"
-#include "raylib.h"
 
 namespace Base
 {

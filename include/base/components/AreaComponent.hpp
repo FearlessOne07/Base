@@ -1,7 +1,6 @@
 #pragma once
 
 #include "base/components/TransitionComponent.hpp"
-#include "raylib.h"
 namespace Base
 {
   class AreaEntry : public TransitionComponent

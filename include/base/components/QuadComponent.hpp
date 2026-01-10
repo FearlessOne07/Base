@@ -1,5 +1,4 @@
 #include "base/components/Component.hpp"
-#include "raylib.h"
 
 namespace Base
 {

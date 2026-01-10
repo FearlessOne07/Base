@@ -1,33 +1,32 @@
 #pragma once
 
-#include "base/renderer/RenderLayer.hpp"
+#include "base/rendering/RenderLayer.hpp"
 #include "base/scenes/SceneID.hpp"
 #include "base/util/Ref.hpp"
-#include "raylib.h"
 #include <deque>
 #include <unordered_map>
 
 namespace Base
 {
   class SceneID;
-  class Renderer
+  class RenderingManager
   {
     friend class Game;
 
   private:
+    Ptr<FrameBuffer> _renderTexture;
     std::unordered_map<SceneID, std::deque<RenderLayer>> _renderLayers;
-    RenderTexture2D _renderTexture;
     SceneID _currentScene;
     Vector2 _renderResolution;
 
     // Shaders
-    RenderTexture2D _ping;
+    Ptr<FrameBuffer> _ping;
 
     Ref<ShaderManager> _shaderManager;
     Ref<SceneManager> _sceneManager;
 
   private:
-    Renderer(Ref<ShaderManager> shaderManager);
+    RenderingManager(Ref<ShaderManager> shaderManager);
     void SetSceneManager(Ref<SceneManager> sceneManager);
     void Init(int width, int height);
     void DeInit();

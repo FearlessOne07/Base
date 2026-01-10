@@ -1,9 +1,9 @@
-#include "base/renderer/RenderLayer.hpp"
-#include "base/camera/Camera2DExt.hpp"
+#include "base/rendering/RenderLayer.hpp"
+#include "base/camera/CameraController.hpp"
+#include "base/rendering/FrameBuffer.hpp"
 #include "base/scenes/Scene.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include "internal/scene/SceneManager.hpp"
-#include "raylib.h"
-#include "rlgl.h"
 #include <ranges>
 #include <utility>
 
@@ -16,19 +16,19 @@ namespace Base
     : _position(position), _size(size), _shaderManager(shaderManager), _sceneManager(sceneManager),
       _clearColor(clearColor)
   {
-    _renderTexture = LoadRenderTexture(_size.x, _size.y);
-    _ping = LoadRenderTexture(_size.x, _size.y);
+    _framebuffer = FrameBuffer::Create({.Width = _size.x, .Height = _size.y});
+    _ping = FrameBuffer::Create({.Width = _size.x, .Height = _size.y});
 
-    _layerCamera = Camera2DExt();
+    _layerCamera = CameraController();
   }
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
     : _position(other._position), _size(other._size), _renderFunctions(std::move(other._renderFunctions)),
-      _shaderManager(other._shaderManager), _renderTexture(other._renderTexture),
+      _shaderManager(other._shaderManager), _framebuffer(other._framebuffer),
       _effectChain(std::move(other._effectChain)), _ping(other._ping)
   {
-    other._renderTexture.id = 0;
-    other._ping.id = 0;
+    FrameBuffer::Destroy(other._framebuffer);
+    FrameBuffer::Destroy(other._ping);
   }
 
   RenderLayer &RenderLayer::operator=(RenderLayer &&other) noexcept
@@ -36,55 +36,53 @@ namespace Base
     if (this != &other)
     {
       // Clean up current texture
-      if (_renderTexture.id != 0)
+      if (_framebuffer->GetRenderId() != RenderID(0))
       {
-        UnloadRenderTexture(_renderTexture);
+        FrameBuffer::Destroy(_framebuffer);
       }
-      if (_ping.id != 0)
+      if (_ping->GetRenderId() != RenderID(0))
       {
-        UnloadRenderTexture(_ping);
+        FrameBuffer::Destroy(_ping);
       }
 
       _position = other._position;
       _size = other._size;
       _renderFunctions = std::move(other._renderFunctions);
       _shaderManager = other._shaderManager;
-      _renderTexture = other._renderTexture;
+      _framebuffer = other._framebuffer;
       _effectChain = std::move(other._effectChain);
       _ping = other._ping;
 
-      other._renderTexture.id = 0;
-      other._ping.id = 0;
+      FrameBuffer::Destroy(_framebuffer);
+      FrameBuffer::Destroy(_ping);
     }
     return *this;
   }
 
   RenderLayer::~RenderLayer()
   {
-    UnloadRenderTexture(_renderTexture);
-    UnloadRenderTexture(_ping);
+    FrameBuffer::Destroy(_framebuffer);
+    FrameBuffer::Destroy(_ping);
   }
 
   void RenderLayer::Render()
   {
-    BeginTextureMode(_renderTexture);
-    ClearBackground(_clearColor);
-    BeginBlendMode(BLEND_ALPHA_PREMULTIPLY);
+    Renderer::BeginFramebuffer(_framebuffer);
+    Renderer::Clear(_clearColor);
     auto functions = std::ranges::reverse_view(_renderFunctions);
     for (auto &function : functions)
     {
       function();
     }
-    EndBlendMode();
-    EndTextureMode();
+    Renderer::EndFramebuffer();
 
     if (_effectChain.Empty())
     {
       return;
     }
 
-    RenderTexture2D *input = &_renderTexture;
-    RenderTexture2D *output = &_ping;
+    Ptr<FrameBuffer> input = _framebuffer;
+    Ptr<FrameBuffer> output = _ping;
 
     for (auto &effect : _effectChain)
     {
@@ -95,19 +93,17 @@ namespace Base
       }
     }
 
-    if (input != &_renderTexture)
+    if (input != _framebuffer)
     {
-      BeginTextureMode(_renderTexture);
-      DrawTexturePro(                                                                                          //
-        input->texture, {0, 0, (float)_size.x, -(float)_size.y}, {0, 0, _size.x, _size.y}, {0, 0}, 0.0f, WHITE //
-      );
-      EndTextureMode();
+      Renderer::BeginFramebuffer(_framebuffer);
+      Renderer::DrawFramebuffer(input, {_size.x, _size.y}, FramebufferAttachmentIndex::Color0);
+      Renderer::EndFramebuffer();
     }
   }
 
-  const RenderTexture *RenderLayer::GetTexture() const
+  const Ptr<FrameBuffer> RenderLayer::GetFramebuffer() const
   {
-    return &_renderTexture;
+    return _framebuffer;
   }
 
   Vector2 RenderLayer::GetSize() const
@@ -125,7 +121,7 @@ namespace Base
     _renderFunctions.emplace_back(std::move(function));
   }
 
-  void RenderLayer::SetCameraMode(Camera2DExtMode mode)
+  void RenderLayer::SetCameraMode(CameraMode mode)
   {
     _layerCamera.SetMode(mode);
   }

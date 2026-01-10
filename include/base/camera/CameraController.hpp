@@ -1,24 +1,20 @@
 #pragma once
+#include "base/camera/Camera.hpp"
 #include "base/camera/CameraModes.hpp"
 #include "base/camera/CameraShakeConfig.hpp"
 #include "base/util/FastNoiseLite.hpp"
 #include "base/util/Pauseable.hpp"
-#include "raylib.h"
+#include "base/util/Type.hpp"
 namespace Base
 {
-  class Camera2DExt : public Pauseable
+  class CameraController : public Pauseable
   {
   private:
     // Base Raylib Camera
-    Camera2D _camera = {
-      .offset = {0, 0},
-      .target = {0, 0},
-      .rotation = 0,
-      .zoom = 1,
-    };
+    Ptr<Camera> _camera;
 
     // Spec
-    Camera2DExtMode _cameraMode;
+    CameraMode _cameraMode;
     Vector2 _target = {0, 0};
     float _maxFollowDistance = 100.f;
     float _cameraSpeed = 0.f;
@@ -46,7 +42,7 @@ namespace Base
     void SmoothFollow(float dt);
 
   public:
-    void SetMode(Camera2DExtMode mode);
+    void SetMode(CameraMode mode);
     void SetOffset(Vector2 offset);
     void SetTarget(Vector2 target);
     void SetRotation(float rotation);

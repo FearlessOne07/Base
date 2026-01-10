@@ -1,8 +1,8 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
+#include "base/assets/Font.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
-#include "base/textures/Font.hpp"
 #include "base/ui/UIConext.hpp"
 #include "base/util/AntagonisticFunction.hpp"
 #include "base/util/Exception.hpp"
@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <functional>
 #include <memory>
-#include <raylib.h>
 #include <type_traits>
 
 namespace Base
@@ -121,7 +120,7 @@ namespace Base
   protected:
     ConstRef<UILayer> _parentLayer;
 
-    AssetHandle<BaseFont> _font;
+    AssetHandle<Font> _font;
     NinePatchSprite _sprite;
 
     Size _desiredSize = {0, 0};
@@ -130,7 +129,7 @@ namespace Base
     std::vector<std::string> _childElementIds;
     std::vector<std::shared_ptr<UIElement>> _childElements;
 
-    Rectangle _layoutRect = {0, 0, 0, 0};
+    Rectangle _layoutRect;
     SizeMode _widthSizeMode = SizeMode::Auto;
     SizeMode _heightSizeMode = SizeMode::Auto;
 
@@ -164,7 +163,7 @@ namespace Base
     // Setters
     void SetHAlignment(HAlign hAlign);
     void SetVAlignment(VAlign vAlign);
-    void SetFont(const AssetHandle<BaseFont> &);
+    void SetFont(const AssetHandle<Font> &);
 
     void SetWidth(float width);
     void SetHeight(float height);
