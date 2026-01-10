@@ -16,8 +16,8 @@ namespace Base
     : _position(position), _size(size), _shaderManager(shaderManager), _sceneManager(sceneManager),
       _clearColor(clearColor)
   {
-    _framebuffer = FrameBuffer::Create({.Width = _size.x, .Height = _size.y});
-    _ping = FrameBuffer::Create({.Width = _size.x, .Height = _size.y});
+    _framebuffer = FrameBuffer::Create({.Width = static_cast<int>(_size.x), .Height = static_cast<int>(_size.y)});
+    _ping = FrameBuffer::Create({.Width = static_cast<int>(_size.x), .Height = static_cast<int>(_size.y)});
 
     _layerCamera = CameraController();
   }

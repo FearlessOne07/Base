@@ -9,6 +9,7 @@
 namespace Base
 {
   class SceneID;
+  class RenderSpec;
   class RenderingManager
   {
     friend class Game;
@@ -28,7 +29,7 @@ namespace Base
   private:
     RenderingManager(Ref<ShaderManager> shaderManager);
     void SetSceneManager(Ref<SceneManager> sceneManager);
-    void Init(int width, int height);
+    void Init(const RenderSpec &);
     void DeInit();
     void Update(float dt);
     void RenderLayers();

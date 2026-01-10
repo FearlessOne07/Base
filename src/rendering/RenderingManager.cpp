@@ -56,14 +56,18 @@ namespace Base
     }
   }
 
-  void RenderingManager::Init(int width, int height)
+  void RenderingManager::Init(const RenderSpec &spec)
   {
+    int width = spec.Width;
+    int height = spec.Height;
     _renderResolution = {
       static_cast<float>(width),
       static_cast<float>(height),
     };
     _renderTexture = FrameBuffer::Create({.Width = width, .Height = height});
     _ping = FrameBuffer::Create({.Width = width, .Height = height});
+
+    Renderer::Init(spec);
 
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {
@@ -123,16 +127,15 @@ namespace Base
     {
       auto rd = RenderContextSingleton::GetInstance();
       Renderer::DrawFramebuffer( //
-        layer.GetTexture()->texture, {0, 0, layer.GetSize().x, layer.GetSize().y},
-        {layer.GetPosition().x, layer.GetPosition().y, rd->gameWidth, rd->gameHeight}, //
-        {0, 0}, 0, WHITE                                                               //
+        layer.GetFramebuffer(), {rd->gameWidth, rd->gameHeight},
+        FramebufferAttachmentIndex::Color0 //
       );
     }
-    EndTextureMode();
+    Renderer::EndFramebuffer();
 
     const auto &scenePost = _sceneManager->GetCurrentScene()->GetPostProcessingEffects();
-    RenderTexture2D *input = &_renderTexture;
-    RenderTexture2D *output = &_ping;
+    Ptr<FrameBuffer> input = _renderTexture;
+    Ptr<FrameBuffer> output = _ping;
 
     for (auto &effect : scenePost)
     {
@@ -140,14 +143,11 @@ namespace Base
       std::swap(input, output); // Ping-pong
     }
 
-    if (input != &_renderTexture)
+    if (input != _renderTexture)
     {
-      BeginTextureMode(_renderTexture);
-      DrawTexturePro( //
-        input->texture, {0, 0, (float)_renderResolution.x, -(float)_renderResolution.y},
-        {0, 0, _renderResolution.x, _renderResolution.y}, {0, 0}, 0.0f, WHITE //
-      );
-      EndTextureMode();
+      Renderer::BeginFramebuffer(_renderTexture);
+      Renderer::DrawFramebuffer(input, _renderResolution, FramebufferAttachmentIndex::Color0);
+      Renderer::EndFramebuffer();
     }
   }
 
@@ -156,13 +156,10 @@ namespace Base
     auto rd = RenderContextSingleton::GetInstance();
 
     // Draw Render texture to the Screen
-    BeginDrawing();
-    ClearBackground(BLACK);
-    DrawTexturePro( //
-      _renderTexture.texture, {0, 0, rd->gameWidth, rd->gameHeight},
-      {(float)rd->marginX, (float)rd->marginY, rd->gameWidth * rd->scale, rd->gameHeight * rd->scale}, {0, 0}, 0.f,
-      WHITE //
+    Renderer::Clear({0, 0, 0, 255});
+    Renderer::DrawFramebuffer( //
+      _renderTexture, {rd->marginX, rd->marginY}, {rd->gameWidth, rd->gameHeight},
+      FramebufferAttachmentIndex::Color0 //
     );
-    EndDrawing();
   }
 } // namespace Base

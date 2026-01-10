@@ -1,5 +1,6 @@
 #pragma once
 #include "Circle.hpp"
+#include "base/rendering/Quad.hpp"
 #include <array>
 #include <cstdint>
 #include <iterator>
@@ -25,7 +26,7 @@ namespace Base
     constexpr static uint8_t MAX_DEPTH = 12;
     constexpr static size_t MAX_ITEMS_PER_NODE = 100;
 
-    Rectangle _area = {0, 0, 0, 0};
+    Rectangle _area;
     uint8_t _depth = 0;
     bool _divided = false;
 
@@ -39,13 +40,29 @@ namespace Base
       if (_divided)
         return;
 
-      Vector2 childSize = {_area.width / 2.0f, _area.height / 2.0f};
+      Vector2 childSize = {_area.GetSize().x / 2.0f, _area.GetSize().y / 2.0f};
 
       _childAreas = {
-        Rectangle{_area.x, _area.y, childSize.x, childSize.y},                            // NW
-        Rectangle{_area.x + childSize.x, _area.y, childSize.x, childSize.y},              // NE
-        Rectangle{_area.x, _area.y + childSize.y, childSize.x, childSize.y},              // SW
-        Rectangle{_area.x + childSize.x, _area.y + childSize.y, childSize.x, childSize.y} // SE
+        Rectangle{{
+                    _area.GetPosition().x,
+                    _area.GetPosition().y,
+                  },
+                  {childSize.x, childSize.y}}, // NW
+        Rectangle{{
+                    _area.GetPosition().x + childSize.x,
+                    _area.GetPosition().y,
+                  },
+                  {childSize.x, childSize.y}}, // NE
+        Rectangle{{
+                    _area.GetPosition().x,
+                    _area.GetPosition().y + childSize.y,
+                  },
+                  {childSize.x, childSize.y}}, // SW
+        Rectangle{{
+                    _area.GetPosition().x + childSize.x,
+                    _area.GetPosition().y + childSize.y,
+                  },
+                  {childSize.x, childSize.y}}, // SE
       };
 
       for (int i = 0; i < 4; i++)
@@ -58,15 +75,17 @@ namespace Base
 
     bool _fitsEntirelyRect(Rectangle rect, Rectangle container)
     {
-      return rect.x >= container.x && rect.y >= container.y && rect.x + rect.width <= container.x + container.width &&
-             rect.y + rect.height <= container.y + container.height;
+      return rect.GetPosition().x >= container.GetPosition().x && rect.GetPosition().y >= container.GetPosition().y &&
+             rect.GetPosition().x + rect.GetSize().x <= container.GetPosition().x + container.GetSize().x &&
+             rect.GetPosition().y + rect.GetPosition().y <= container.GetPosition().y + container.GetSize().y;
     }
 
     bool _fitsEntirelyCircle(Circle circle, Rectangle container)
     {
-      return (circle.position.x - circle.radius) >= container.x && (circle.position.y - circle.radius) >= container.y &&
-             (circle.position.x + circle.radius) <= (container.x + container.width) &&
-             (circle.position.y + circle.radius) <= (container.y + container.height);
+      return (circle.position.x - circle.radius) >= container.GetPosition().x &&
+             (circle.position.y - circle.radius) >= container.GetPosition().y &&
+             (circle.position.x + circle.radius) <= (container.GetPosition().x + container.GetSize().x) &&
+             (circle.position.y + circle.radius) <= (container.GetPosition().y + container.GetSize().y);
     }
 
     void _search(ItemAreaType searchArea, std::list<T> &results)
@@ -211,7 +230,7 @@ namespace Base
     }
 
     // Debug function to visualize the tree structure
-    void DrawBounds(Color color = RED)
+    void DrawBounds(Color color = {255, 0, 0, 0})
     {
       DrawRectangleLinesEx(_area, 1.0f, color);
 

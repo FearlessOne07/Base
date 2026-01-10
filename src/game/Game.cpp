@@ -34,25 +34,6 @@ namespace Base
 
     _renderer.Init(config.Resolution.x, config.Resolution.y);
 
-    // Initialize Raylib
-    if (config.ResizableWindow)
-    {
-      SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    }
-    if (config.Vsync)
-    {
-      SetConfigFlags(FLAG_VSYNC_HINT);
-    }
-    InitWindow(config.MinWindowSize.x, config.MinWindowSize.y, config.Title);
-    SetExitKey(0);
-    SetWindowMinSize(1280, 720);
-    if (config.TargetFps > 0)
-    {
-      SetTargetFPS(config.TargetFps);
-    }
-
-    // Init Renderer
-
     // Initialise Render Texture
     _gameWidth = static_cast<float>(config.Resolution.x);
     _gameHeight = static_cast<float>(config.Resolution.y);

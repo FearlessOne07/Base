@@ -8,6 +8,7 @@
 #include "batchers/CircleBatcher.hpp"
 #include "batchers/QuadBatcher.hpp"
 #include "batchers/TextBatcher.hpp"
+#include <glm/glm.hpp>
 #include <memory>
 #include <queue>
 #include <unordered_set>
@@ -17,11 +18,13 @@ namespace Base
 
   class Window;
 
-  struct AppSpec
+  struct RenderSpec
   {
+    const char *Title = "Window";
     int Width = 1280;
     int Height = 720;
-    std::string Title = "Window";
+    bool Vysnc = false;
+    bool ResizableWindow = true;
   };
 
   class Renderer
@@ -34,7 +37,7 @@ namespace Base
 
     // Window
     std::shared_ptr<Window> _window = nullptr;
-    Vector2 _windowViewPort = {0, 0};
+    glm::vec2 _windowViewPort = {0, 0};
 
     // Batchers
     QuadBatcher _quadBatcher;
@@ -53,12 +56,12 @@ namespace Base
     std::queue<RenderCommand> _renderQueue;
 
   private:
-    void _init(const AppSpec &spec);
+    void _init(const RenderSpec &spec);
     void _shutdown();
     void ExecuteRenderCommands();
 
   public:
-    static void Init(const AppSpec &spec = {});
+    static void Init(const RenderSpec &spec = {});
     static void Deinit();
     static void Shutdown();
     static void Update();
@@ -76,45 +79,56 @@ namespace Base
 
     // Draw
     static void DrawQuad( //
-      const Rectangle &quad, Vector2 position, Vector4 color,
+      const Rectangle &quad, glm::vec2 position, glm::vec4 color,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawQuad( //
-      const Rectangle &quad, Vector2 position, Vector4 color, float rotationDeg,
+      const Rectangle &quad, glm::vec2 position, glm::vec4 color, float rotationDeg,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawSprite( //
-      const Sprite &sprite, Vector2 position, Vector2 size,
+      const Sprite &sprite, glm::vec2 position, glm::vec2 size,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawSprite( //
-      const Sprite &sprite, Vector2 position, Vector2 size, float rotationDeg,
+      const Sprite &sprite, glm::vec2 position, glm::vec2 size, float rotationDeg,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawFramebuffer( //
-      std::shared_ptr<FrameBuffer> framebuffer, Vector2 size,
+      std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 size,
       FramebufferAttachmentIndex attachmentToDraw,                                                             //
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawFramebuffer( //
-      std::shared_ptr<FrameBuffer> framebuffer, Vector2 size, const Material &material,
+      std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 size, const Material &material,
+      FramebufferAttachmentIndex attachmentToDraw,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
+    );
+    static void DrawFramebuffer( //
+      std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 position, glm::vec2 size,
+      FramebufferAttachmentIndex attachmentToDraw,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
+    );
+
+    static void DrawFramebuffer( //
+      std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 position, glm::vec2 size, const Material &material,
       FramebufferAttachmentIndex attachmentToDraw,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawText( //
-      const std::wstring &text, Vector2 position, Vector4 color, float fontSize,
+      const std::wstring &text, glm::vec2 position, glm::vec4 color, float fontSize,
       const std::shared_ptr<Font> font,                                                                        //
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawCircle( //
-      Vector2 position, float radius, Vector4 color,
+      glm::vec2 position, float radius, glm::vec4 color,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawCircle( //
-      Vector2 position, float radius, Vector4 color, float thickness,
+      glm::vec2 position, float radius, glm::vec4 color, float thickness,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
-    static void Clear(Vector4 color, FramebufferAttachmentIndex attachments = FramebufferAttachmentIndex::Color0);
+    static void Clear(glm::vec4 color, FramebufferAttachmentIndex attachments = FramebufferAttachmentIndex::Color0);
 
     // Render State
     static void BeginFrame();
@@ -126,4 +140,5 @@ namespace Base
     static void BeginFramebuffer(std::shared_ptr<FrameBuffer> framebuffer);
     static void EndFramebuffer();
   };
+
 } // namespace Base

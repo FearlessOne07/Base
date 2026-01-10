@@ -15,8 +15,8 @@ namespace Base
 
   struct FrameBufferSpec
   {
-    float Width = 0;
-    float Height = 0;
+    int Width = 0;
+    int Height = 0;
     std::array<TextureFormat, 8> ColorAttachments = {
       TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8,
       TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8,

@@ -1,7 +1,11 @@
 #pragma once
+#include "base/util/Type.hpp"
 
-struct Circle
+namespace Base
 {
-  Vector2 position = {0, 0};
-  float radius = 0;
-};
+  struct Circle
+  {
+    Vector2 position = {0, 0};
+    float radius = 0;
+  };
+} // namespace Base
