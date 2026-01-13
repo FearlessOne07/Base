@@ -40,11 +40,14 @@ namespace Base
     int _frameBufferHeight = 0;
     int _frameBufferWidth = 0;
 
+    Vector2 _mousePosition = {0, 0};
+
     GLContexData _glContexData;
 
   private:
     static void WindowResizeCallBack(GLFWwindow *window, int width, int height);
     static void FrameBufferResizeCallBack(GLFWwindow *window, int width, int height);
+    static void MouseMoveCallBack(GLFWwindow *window, double x, double y);
 
     void UpdateFrameBufferSize(int width, int height);
     void UpdateWindowSize(int width, int height);
@@ -69,6 +72,8 @@ namespace Base
 
     int GetWindowWidth() const;
     int GetWindowHeight() const;
+
+    Vector2 GetMousePosition() const;
   };
 
 } // namespace Base

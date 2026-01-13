@@ -1,89 +1,58 @@
-#include "base/sprites/Sprite.hpp"
-#include "base/rendering/Origin.hpp"
-#include "internal/rendering/Renderer.hpp"
+#include "base/rendering/Sprite.hpp"
 
 namespace Base
 {
+
+  Sprite::Sprite(std::shared_ptr<Texture> texture, Origin origin) : Renderable(), _texture(texture), _origin(origin)
+  {
+    _sourceSize = {_texture->GetWidth(), _texture->GetHeight()};
+  }
+
+  Sprite::Sprite(std::shared_ptr<Texture> texture, glm::vec2 sourcePos, glm::vec2 sourceSize, Origin origin)
+    : Renderable(), _texture(texture), _sourcePosition(sourcePos), _sourceSize(sourceSize), _origin(origin)
+  {
+  }
+
   Sprite::Sprite( //
-    const AssetHandle<Texture> &textureHandle, const Vector2 &sourceIndex, const Vector2 &sourceSize,
-    const Vector2 &destinationSize //
+    std::shared_ptr<Texture> texture, glm::vec2 sourcePos, glm::vec2 sourceSize, const Material &material,
+    Origin origin //
     )
-    : _texture(textureHandle), _sourcePos(sourceIndex), _sourceSize(sourceSize), _targetSize(destinationSize)
+    : Renderable(material), _texture(texture), _sourcePosition(sourcePos), _sourceSize(sourceSize), _origin(origin)
   {
   }
 
-  // Copy constructor
-  Sprite::Sprite(const Sprite &other)
-    : _texture(other._texture), _sourcePos(other._sourcePos), _sourceSize(other._sourceSize),
-      _targetSize(other._targetSize)
+  Sprite::Sprite(std::shared_ptr<Texture> texture, const Material &material, Origin origin)
+    : Renderable(material), _texture(texture), _origin(origin)
   {
+    _sourceSize = {_texture->GetWidth(), _texture->GetHeight()};
+  }
+  glm::vec2 Sprite::GetSourceSize() const
+  {
+    return _sourceSize;
   }
 
-  // Move constructor
-  Sprite::Sprite(Sprite &&other) noexcept
-    : _texture(std::move(other._texture)), _sourcePos(std::move(other._sourcePos)),
-      _sourceSize(std::move(other._sourceSize)), _targetSize(std::move(other._targetSize))
+  glm::vec2 Sprite::GetSourcePos() const
   {
+    return _sourcePosition;
   }
 
-  // Copy assignment operator
-  Sprite &Sprite::operator=(const Sprite &other)
+  std::shared_ptr<Texture> Sprite::GetTexture() const
   {
-    if (this != &other)
-    {
-      _texture = other._texture;
-      _sourcePos = other._sourcePos;
-      _sourceSize = other._sourceSize;
-      _targetSize = other._targetSize;
-    }
-    return *this;
+    return _texture;
   }
 
-  // Move assignment operator
-  Sprite &Sprite::operator=(Sprite &&other) noexcept
+  Origin Sprite::GetOrigin() const
   {
-    if (this != &other)
-    {
-      _texture = std::move(other._texture);
-      _sourcePos = std::move(other._sourcePos);
-      _sourceSize = std::move(other._sourceSize);
-      _targetSize = std::move(other._targetSize);
-    }
-    return *this;
+    return _origin;
   }
 
-  void Sprite::SetTargetSize(Vector2 size)
+  void Sprite::SetSourceSize(const Vector2 size)
   {
-    _targetSize = size;
+    _sourceSize = size;
   }
 
-  void Sprite::SetSourceRect(const Rectangle &rect)
+  void Sprite::SetSourcePos(const Vector2 pos)
   {
-    _sourcePos = {rect.GetPosition().x, rect.GetPosition().y};
-    _sourceSize = {rect.GetSize().x, rect.GetSize().y};
-  }
-
-  Vector2 Sprite::GetTargetSize() const
-  {
-    return _targetSize;
-  }
-
-  void Sprite::Render(Vector2 position, float rotatation, Color tint) const
-  {
-    Renderer::DrawSprite( //
-      Sprite{_texture.Get(), _sourcePos, _sourceSize, Origin::Center}, position, _targetSize,
-      {Base::FramebufferAttachmentIndex::Color0, Base::FramebufferAttachmentIndex::Color1} //
-    );
-
-    DrawTexturePro( //
-      *_texture.Get()->GetRaylibTexture(), {_sourcePos.x, _sourcePos.y, _sourceSize.x, _sourceSize.y},
-      {position.x, position.y, _targetSize.x, _targetSize.y}, {_targetSize.x / 2, _targetSize.y / 2}, rotatation,
-      {
-        static_cast<unsigned char>((tint.r * tint.a) / 255),
-        static_cast<unsigned char>((tint.g * tint.a) / 255),
-        static_cast<unsigned char>((tint.b * tint.a) / 255),
-        tint.a,
-      } //
-    );
+    _sourcePosition = pos;
   }
 } // namespace Base

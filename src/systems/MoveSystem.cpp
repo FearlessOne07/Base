@@ -8,6 +8,7 @@
 #include "base/entities/Entity.hpp"
 #include "base/entities/EntityManager.hpp"
 #include "base/util/Circle.hpp"
+#include "internal/utils/Collisions.hpp"
 #include <cmath>
 #include <memory>
 
@@ -31,17 +32,17 @@ namespace Base
           {
             Vector2 totalForce = {0, 0};
 
-            Vector2 direction = Vector2Normalize(rbcmp->direction);
+            Vector2 direction = glm::normalize(rbcmp->direction);
 
             // Driving force
-            if (Vector2Length(direction) > 0)
+            if (glm::length(direction) > 0)
             {
               totalForce += direction * mvcmp->driveForce;
             }
-            else if (Vector2Length(rbcmp->velocity) > 0)
+            else if (glm::length(rbcmp->velocity) > 0)
             {
               // Braking force opposite to velocity
-              Vector2 velDir = Vector2Normalize(rbcmp->velocity);
+              Vector2 velDir = glm::normalize(rbcmp->velocity);
               totalForce += velDir * -mvcmp->brakeForce;
             }
 
@@ -56,7 +57,7 @@ namespace Base
               auto impcmp = e->GetComponent<ImpulseComponent>();
               if (impcmp->force > 0)
               {
-                Vector2 impDirection = Vector2Normalize(impcmp->direction);
+                Vector2 impDirection = glm::normalize(impcmp->direction);
                 float impulse = impcmp->force;
                 rbcmp->velocity += impDirection * (impulse / rbcmp->mass);
 
@@ -69,15 +70,15 @@ namespace Base
         }
         else
         {
-          Vector2 direction = Vector2Normalize(rbcmp->direction);
+          Vector2 direction = glm::normalize(rbcmp->direction);
           rbcmp->velocity = direction * mvcmp->speed;
         }
 
-        if (abs(rbcmp->velocity.x) < 5e-10)
+        if (fabs(rbcmp->velocity.x) < 5e-10)
         {
           rbcmp->velocity.x = 0;
         }
-        if (abs(rbcmp->velocity.y) < 5e-10)
+        if (fabs(rbcmp->velocity.y) < 5e-10)
         {
           rbcmp->velocity.y = 0;
         }
@@ -102,12 +103,11 @@ namespace Base
     auto rbcmp1 = e->GetComponent<RigidBodyComponent>();
     std::list<std::list<QuadTreeItem<std::shared_ptr<Entity>>>::iterator> entites;
 
-    if (abbcmp1->shape == ColliderComponent::Shape::BOX)
+    if (abbcmp1->shape == ColliderComponent::Shape::Box)
     {
-      entites = entityManager->QueryArea(
-        Rectangle{transcmp1->position.x, transcmp1->position.y, abbcmp1->size.x, abbcmp1->size.y});
+      entites = entityManager->QueryArea(Rectangle{transcmp1->position, abbcmp1->size});
     }
-    else if (abbcmp1->shape == ColliderComponent::Shape::CIRCLE)
+    else if (abbcmp1->shape == ColliderComponent::Shape::Circle)
     {
       entites = entityManager->QueryArea(Circle(transcmp1->position, abbcmp1->radius));
     }
@@ -119,7 +119,7 @@ namespace Base
       {
         auto abbcmp2 = e2->GetComponent<ColliderComponent>();
 
-        if (abbcmp1->shape == ColliderComponent::Shape::BOX && abbcmp2->shape == ColliderComponent::Shape::BOX)
+        if (abbcmp1->shape == ColliderComponent::Shape::Box && abbcmp2->shape == ColliderComponent::Shape::Box)
         {
           ResolveBoxBox(e, e2, axis);
         }
@@ -157,12 +157,7 @@ namespace Base
       transcmp2->position.y - abbcmp2->positionOffset.y,
     };
 
-    if (                                                                       //
-      CheckCollisionRecs(                                                      //
-        {e2Position.x, e2Position.y, abbcmp2->size.x, abbcmp2->size.y},        //
-        {currentRectPos.x, currentRectPos.y, abbcmp1->size.x, abbcmp1->size.y} //
-        )                                                                      //
-    )
+    if (CheckCollisionRecs({e2Position, abbcmp2->size}, {currentRectPos, abbcmp1->size}))
     {
       if (axis == 0)
       {

@@ -6,6 +6,7 @@
 #include "base/rendering/FramebufferAttachmentIndex.hpp"
 #include "base/rendering/Quad.hpp"
 #include "base/rendering/Sprite.hpp"
+#include "base/util/Circle.hpp"
 #include "glm/ext/vector_float4.hpp"
 #include <string>
 #include <unordered_set>
@@ -33,7 +34,7 @@ namespace Base
 
   struct CircleCommand
   {
-    float Radius;
+    Circle Circle;
     glm::vec3 Position;
     glm::vec4 Color;
     float Thickness;

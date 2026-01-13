@@ -1,5 +1,7 @@
 #include "base/scenes/SceneLayer.hpp"
 #include "base/scenes/Scene.hpp"
+#include "base/util/Type.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include <memory>
 
 namespace Base
@@ -64,33 +66,32 @@ namespace Base
 
   Vector2 SceneLayer::GetLayerCameraMousePosition() const
   {
-    auto windowWidth = static_cast<float>(GetScreenWidth());
-    auto windowHeight = static_cast<float>(GetScreenHeight());
+    auto windowSize = Renderer::GetWindowSize();
     float scale = std::min( //
-      (float)windowWidth / _size.x,
-      (float)windowHeight / _size.y //
+      windowSize.x / _size.x,
+      windowSize.y / _size.y //
     );
-    float marginX = (windowWidth - (_size.x * scale)) / 2;
-    float marginY = (windowHeight - (_size.y * scale)) / 2;
+    float marginX = (windowSize.x - (_size.x * scale)) / 2;
+    float marginY = (windowSize.y - (_size.y * scale)) / 2;
+
     return GetScreenToWorld({
-      (GetMousePosition().x - marginX) / scale,
-      (GetMousePosition().y - marginY) / scale,
+      (Renderer::GetWindowMousePosition().x - marginX) / scale,
+      (Renderer::GetWindowMousePosition().y - marginY) / scale,
     });
   }
 
   Vector2 SceneLayer::GetLayerMousePosition() const
   {
-    auto windowWidth = static_cast<float>(GetScreenWidth());
-    auto windowHeight = static_cast<float>(GetScreenHeight());
+    Vector2 windowSize = Renderer::GetWindowSize();
     float scale = std::min( //
-      (float)windowWidth / _size.x,
-      (float)windowHeight / _size.y //
+      (float)windowSize.x / _size.x,
+      (float)windowSize.y / _size.y //
     );
-    float marginX = (windowWidth - (_size.x * scale)) / 2;
-    float marginY = (windowHeight - (_size.y * scale)) / 2;
+    float marginX = (windowSize.x - (_size.x * scale)) / 2;
+    float marginY = (windowSize.y - (_size.y * scale)) / 2;
     return {
-      (GetMousePosition().x - marginX) / scale,
-      (GetMousePosition().y - marginY) / scale,
+      (Renderer::GetWindowMousePosition().x - marginX) / scale,
+      (Renderer::GetWindowMousePosition().y - marginY) / scale,
     };
   }
 
@@ -99,7 +100,7 @@ namespace Base
     _renderLayer->SetCameraPauseMask(_pauseMask);
   }
 
-  void SceneLayer::SetCameraMode(Camera2DExtMode mode)
+  void SceneLayer::SetCameraMode(CameraMode mode)
   {
     _renderLayer->SetCameraMode(mode);
   }

@@ -19,7 +19,7 @@ namespace Base
 
   private:
     void DrawCircle( //
-      glm::vec3 position, float radius, glm::vec4 color, float lineThickness,
+      const Circle &circle, Vector3 position, glm::vec4 color, float lineThickness,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments //
     );
 

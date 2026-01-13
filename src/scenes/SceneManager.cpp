@@ -1,6 +1,6 @@
 #include "internal/scene/SceneManager.hpp"
-#include "base/entities/EntityManager.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/scenes/Engine.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
@@ -17,14 +17,8 @@
 namespace Base
 {
   SceneManager::SceneManager( //
-    Ref<RenderingManager> renderingManager, Ref<EntityManager> entityManager, Ref<SystemManager> systemManager,
-    Ref<AssetManager> assetManager, //
-    Ref<ParticleManager> particleManager, Ref<UIManager> uiManager, Ref<TweenManager> tweenManager,
-    Ref<ShaderManager> shaderManager //
-    )
-    : _renderingManager(renderingManager), _entityManager(entityManager), _systemManager(systemManager),
-      _assetManager(assetManager), _particleManager(particleManager), _uiManager(uiManager),
-      _tweenManager(tweenManager), _shaderManager(shaderManager)
+    const EngineCtx &engine)
+    : _engine(engine)
   {
   }
 
@@ -51,7 +45,7 @@ namespace Base
       THROW_BASE_RUNTIME_ERROR("Specified Scene is not registered");
     }
 
-    _scenes.top()->Init();
+    _scenes.top()->Init(SceneID(_currentSceneID++), _engine);
 
     std::shared_ptr<ScenePushedSignal> sig = std::make_shared<ScenePushedSignal>();
     sig->Scene = _scenes.top()->GetSceneID();
@@ -199,7 +193,7 @@ namespace Base
   {
     if (!_scenes.empty())
     {
-      _scenes.top()->_OnInputEvent(event);
+      _scenes.top()->_onInputEvent(event);
     }
   }
 

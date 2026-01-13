@@ -1,5 +1,5 @@
 #pragma once
-#include "base/sprites/Sprite.hpp"
+#include "base/rendering/Sprite.hpp"
 #include "base/util/Easings.hpp"
 #include "base/util/Pauseable.hpp"
 #include <cstdint>

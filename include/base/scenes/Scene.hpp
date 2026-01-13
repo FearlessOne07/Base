@@ -1,5 +1,6 @@
 #pragma once
-#include "base/assets/AssetManager.hpp"
+#include "base/scenes/Engine.hpp"
+#include "base/scenes/SceneID.hpp"
 #include "base/scenes/SceneLayerStack.hpp"
 #include "base/scenes/SceneTransition.hpp"
 #include "base/scenes/SharedSceneDataStore.hpp"
@@ -15,8 +16,6 @@
 
 namespace Base
 {
-
-  namespace fs = std::filesystem;
   class EntityManager;
   class SystemManager;
   class AssetManager;
@@ -29,16 +28,10 @@ namespace Base
 
   private:
     friend class SceneManager;
-    void Init();
-    void SetSceneID(SceneID id);
-    void SetParticleManager(Ref<ParticleManager>);
-    void SetAssetManager(Ref<AssetManager>);
-    void SetSystemManager(Ref<SystemManager>);
-    void SetUIManager(Ref<UIManager>);
-    void SetTweenManager(Ref<TweenManager>);
-    void SetRenderer(Ref<Renderer>);
-    void SetShaderManager(Ref<ShaderManager>);
+    void _onInputEvent(std::shared_ptr<InputEvent> event);
     void _setSceneTransition(std::type_index sceneID, SceneRequest request, const SceneData &data = SceneData());
+
+    void Init(SceneID id, const EngineCtx &ctx);
     void ResetSceneTransition();
 
     // Core
@@ -57,10 +50,14 @@ namespace Base
     SceneLayerStack _layerStack;
     std::unordered_map<std::string, AssetHandle<void>> _assets;
 
+    // Private Getters
+    [[nodiscard]] const SceneTransition &GetSceneTransition() const;
+
     // Pause
     std::bitset<8> _pauseMask;
 
-    // Scene Store
+    // Engine
+    EngineCtx _engine;
 
   protected:
     // Rendering
@@ -87,9 +84,11 @@ namespace Base
   public:
     Scene() = default;
     virtual ~Scene() = default;
+
     virtual void Enter(const SceneData &sceneData = SceneData()) = 0;
     virtual void Exit() = 0;
     virtual void Resume();
+
     virtual void Suspend();
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
 
@@ -97,36 +96,17 @@ namespace Base
     void UnPauseLayer(int layerIndex);
     bool IsLayerPaused(int layerIndex);
 
-    void _OnInputEvent(std::shared_ptr<InputEvent> event);
-
     Color GetClearColor() const;
     [[nodiscard]] SceneID GetSceneID() const;
 
-    Ref<Renderer> Rendering;
-    Ref<EntityManager> Entities;
-    Ref<ParticleManager> Particles;
-    Ref<AssetManager> Assets;
-    Ref<SystemManager> Systems;
-    Ref<UIManager> Ui;
-    Ref<TweenManager> Tweens;
-    Ref<ShaderManager> Shaders;
+    [[nodiscard]] const EngineCtx &Engine()
+    {
+      return _engine;
+    }
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())
     {
       _setSceneTransition(typeid(T), request, data);
-    }
-
-    // Asset Management
-    template <typename T> AssetHandle<T> GetAsset(const std::string &name) const
-    {
-      if (_assets.contains(name))
-      {
-        return AssetHandle<T>::Cast(_assets.at(name));
-      }
-      else
-      {
-        return GetAssetManager()->GetAsset<T>(name);
-      }
     }
 
     // Layer Management

@@ -18,9 +18,9 @@ namespace Base
       Vector2 radiusEntityPosition = radiusEntity->GetComponent<TransformComponent>()->position;
 
       auto transcmp = item->item->GetComponent<TransformComponent>();
-      float distance = Vector2DistanceSqr(radiusEntityPosition, transcmp->position);
+      float distance = glm::distance(radiusEntityPosition, transcmp->position);
 
-      if (distance <= proxentry->GetRadiusSq())
+      if (distance * distance <= proxentry->GetRadiusSq())
       {
         auto statecmp = item->item->GetComponent<StateComponent>();
         statecmp->GetCurrentState().transitionBlock.SetIndex(proxentry->GetBlockIndex());
@@ -36,9 +36,9 @@ namespace Base
       Vector2 radiusEntityPosition = radiusEntity->GetComponent<TransformComponent>()->position;
 
       auto transcmp = item->item->GetComponent<TransformComponent>();
-      float distance = Vector2DistanceSqr(radiusEntityPosition, transcmp->position);
+      float distance = glm::distance(radiusEntityPosition, transcmp->position);
 
-      if (distance >= proxexit->GetRadiusSq())
+      if (distance * distance >= proxexit->GetRadiusSq())
       {
         auto statecmp = item->item->GetComponent<StateComponent>();
         statecmp->GetCurrentState().transitionBlock.SetIndex(proxexit->GetBlockIndex());

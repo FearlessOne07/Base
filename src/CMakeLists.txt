@@ -85,8 +85,6 @@ set(SRC
   "./util/Strings.cpp"
   "./util/UUID.cpp"
   "./util/Pauseable.cpp"
-
-  "./shaders/ShaderManager.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 

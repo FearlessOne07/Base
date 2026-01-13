@@ -25,8 +25,11 @@ namespace Base
       Origin origin = Origin::TopLeft //
     );
     std::shared_ptr<Texture> GetTexture() const;
-    glm::vec2 GetSourceSize() const;
-    glm::vec2 GetSourcePos() const;
+    Vector2 GetSourceSize() const;
+    Vector2 GetSourcePos() const;
     Origin GetOrigin() const;
+
+    void SetSourcePos(Vector2 pos);
+    void SetSourceSize(Vector2 size);
   };
 } // namespace Base

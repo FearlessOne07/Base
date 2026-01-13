@@ -5,6 +5,7 @@
 #include "base/camera/Camera.hpp"
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/Sprite.hpp"
+#include "base/util/Circle.hpp"
 #include "base/util/Type.hpp"
 #include "batchers/CircleBatcher.hpp"
 #include "batchers/QuadBatcher.hpp"
@@ -76,14 +77,17 @@ namespace Base
       const CharCallback &charCallback //
     );
     static void SetWindowMode(const WindowMode &state);
+    static IVector2 GetWindowSize();
+    static IVector2 GetFramebufferSize();
+    static Vector2 GetWindowMousePosition();
 
     // Draw
     static void DrawQuad( //
-      const Rectangle &quad, glm::vec2 position, glm::vec4 color,
+      const Rectangle &quad, glm::vec2 position, Color color,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawQuad( //
-      const Rectangle &quad, glm::vec2 position, glm::vec4 color, float rotationDeg,
+      const Rectangle &quad, glm::vec2 position, Color color, float rotationDeg,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawSprite( //
@@ -116,19 +120,19 @@ namespace Base
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawText( //
-      const std::wstring &text, glm::vec2 position, glm::vec4 color, float fontSize,
+      const std::wstring &text, glm::vec2 position, Color color, float fontSize,
       const std::shared_ptr<Font> font,                                                                        //
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawCircle( //
-      glm::vec2 position, float radius, glm::vec4 color,
+      const Circle &circle, Vector2 position, Color color,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawCircle( //
-      glm::vec2 position, float radius, glm::vec4 color, float thickness,
+      const Circle &circle, Vector2 position, Color color, float thickness,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
-    static void Clear(glm::vec4 color, FramebufferAttachmentIndex attachments = FramebufferAttachmentIndex::Color0);
+    static void Clear(Color color, FramebufferAttachmentIndex attachments = FramebufferAttachmentIndex::Color0);
 
     // Render State
     static void BeginFrame();

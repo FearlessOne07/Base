@@ -6,6 +6,7 @@
 #include "base/rendering/Quad.hpp"
 #include "base/rendering/Sprite.hpp"
 #include "base/shaders/Shader.hpp"
+#include "base/util/Circle.hpp"
 #include "glm/common.hpp"
 #include "glm/fwd.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -51,20 +52,20 @@ namespace Base
   }
 
   void Renderer::DrawQuad( //
-    const Rectangle &quad, glm::vec2 position, glm::vec4 color, float rotationDeg,
+    const Rectangle &quad, glm::vec2 position, Color color, float rotationDeg,
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    color = color / 255.f;
-    color = glm::clamp(color, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
+    glm::vec4 colorF = color / Color(255);
+    colorF = glm::clamp(colorF, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
 
     _instance->_renderQueue.push(
-      QuadCommand{quad, glm::vec3(position, _currentZIndex), color, rotationDeg, attachments});
+      QuadCommand{quad, glm::vec3(position, _currentZIndex), colorF, rotationDeg, attachments});
     _currentZIndex += _Zstep;
   }
 
   void Renderer::DrawQuad( //
-    const Rectangle &quad, glm::vec2 position, glm::vec4 color,
+    const Rectangle &quad, glm::vec2 position, Color color,
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
@@ -133,37 +134,37 @@ namespace Base
     );
   }
 
-  void Renderer::DrawText(                                                                                           //
-    const std::wstring &text, glm::vec2 position, glm::vec4 color, float fontSize, const std::shared_ptr<Font> font, //
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments                                                //
+  void Renderer::DrawText(                                                                                       //
+    const std::wstring &text, glm::vec2 position, Color color, float fontSize, const std::shared_ptr<Font> font, //
+    const std::unordered_set<FramebufferAttachmentIndex> &attachments                                            //
   )
   {
-    color = color / 255.f;
-    color = glm::clamp(color, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
+    glm::vec4 colorF = color / Color(255);
+    colorF = glm::clamp(colorF, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
     _instance->_renderQueue.push(
-      TextCommand{text, font, glm::vec3(position, _currentZIndex), color, fontSize, attachments} //
+      TextCommand{text, font, glm::vec3(position, _currentZIndex), colorF, fontSize, attachments} //
     );
     _currentZIndex += _Zstep;
   }
 
   void Renderer::DrawCircle( //
-    glm::vec2 position, float radius, glm::vec4 color,
+    const Circle &circle, Vector2 position, Color color,
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    DrawCircle(position, radius, color, radius, attachments);
+    DrawCircle(circle, position, color, attachments);
   }
 
   void Renderer::DrawCircle( //
-    glm::vec2 position, float radius, glm::vec4 color, float thickness,
+    const Circle &circle, Vector2 position, Color color, float thickness,
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    color = color / 255.f;
-    color = glm::clamp(color, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
+    glm::vec4 colorF = glm::vec4(color) / 255.f;
+    colorF = glm::clamp(colorF, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
 
-    _instance->_renderQueue.push(                                                               //
-      CircleCommand{radius, glm::vec3(position, _currentZIndex), color, thickness, attachments} //
+    _instance->_renderQueue.push(                                                              //
+      CircleCommand{circle, Vector3(position, _currentZIndex), colorF, thickness, attachments} //
     );
     _currentZIndex += _Zstep;
   }
@@ -176,12 +177,12 @@ namespace Base
     glViewport(0, 0, _instance->_window->GetFrameBufferWidth(), _instance->_window->GetFrameBufferHeight());
   }
 
-  void Renderer::Clear(glm::vec4 color, FramebufferAttachmentIndex attachment)
+  void Renderer::Clear(Color color, FramebufferAttachmentIndex attachment)
   {
-    color = color / 255.f;
-    color = glm::clamp(color, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
+    glm::vec4 colorF = glm::vec4(color) / 255.f;
+    colorF = glm::clamp(colorF, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
 
-    _instance->_renderQueue.push(ClearCommand{color, attachment});
+    _instance->_renderQueue.push(ClearCommand{colorF, attachment});
   }
 
   void Renderer::BeginFrame()
@@ -233,6 +234,21 @@ namespace Base
   {
     return _instance->_window->WindowClosed();
   }
+  IVector2 Renderer::GetWindowSize()
+  {
+    return {_instance->_window->GetWindowWidth(), _instance->_window->GetWindowHeight()};
+  };
+
+  IVector2 Renderer::GetFramebufferSize()
+  {
+    return {_instance->_window->GetFrameBufferWidth(), _instance->_window->GetFrameBufferHeight()};
+  }
+
+  Vector2 Renderer::GetWindowMousePosition()
+  {
+    return _instance->_window->GetMousePosition();
+  }
+
   void Renderer::SetWindowCallbacks( //
     const KeyCallback &keyCallback, const MouseButtonCallback &mouseButtonCallback,
     const CursorPosCallback &cursorPosCallback, const ScrollCallback &scrollCallback,

@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.hpp"
-#include "base/sprites/Sprite.hpp"
+#include "base/rendering/Sprite.hpp"
 
 namespace Base
 {
@@ -13,5 +13,6 @@ namespace Base
     SpriteComponent(const Sprite &sprite);
     const Sprite &GetSprite() const;
     void SetSourcePos(const Vector2 source);
+    void SetSourceSize(const Vector2 size);
   };
 } // namespace Base

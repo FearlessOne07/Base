@@ -2,6 +2,7 @@
 #include "internal/rendering/batchers/CircleBatcher.hpp"
 #include "base/rendering/FramebufferAttachmentIndex.hpp"
 #include "base/rendering/GeometryType.hpp"
+#include "base/util/Circle.hpp"
 #include <algorithm>
 #include <unordered_set>
 
@@ -73,7 +74,7 @@ namespace Base
   }
 
   void CircleBatcher::DrawCircle( //
-    glm::vec3 position, float radius, glm::vec4 color, float thickness,
+    const Circle &circle, Vector3 position, glm::vec4 color, float thickness,
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
@@ -88,32 +89,32 @@ namespace Base
     {
       attachmentMask |= 1u << static_cast<uint8_t>(attachment);
     }
-    float thicknessUV = std::clamp<float>(thickness / radius, 0.f, 1.f);
-    float fade = 2.1f / radius;
+    float thicknessUV = std::clamp<float>(thickness / circle.GetRadius(), 0.f, 1.f);
+    float fade = 2.1f / circle.GetRadius();
 
     _vertices.push_back({
-      position - glm::vec3(glm::vec2(radius), 0.f),
+      position - glm::vec3(glm::vec2(circle.GetRadius()), 0.f),
       color,
       {0.0f, 0.0f},
       {thicknessUV, fade},
       attachmentMask,
     });
     _vertices.push_back({
-      {position.x + radius, position.y - radius, position.z},
+      {position.x + circle.GetRadius(), position.y - circle.GetRadius(), position.z},
       color,
       {1.0f, 0.0f},
       {thicknessUV, fade},
       attachmentMask,
     });
     _vertices.push_back({
-      {position + glm::vec3(glm::vec2(radius), 0)},
+      {position + glm::vec3(glm::vec2(circle.GetRadius()), 0)},
       color,
       {1.0f, 1.0f},
       {thicknessUV, fade},
       attachmentMask,
     });
     _vertices.push_back({
-      {position.x - radius, position.y + radius, position.z},
+      {position.x - circle.GetRadius(), position.y + circle.GetRadius(), position.z},
       color,
       {0.0f, 1.0f},
       {thicknessUV, fade},
@@ -128,7 +129,7 @@ namespace Base
     {
       auto &com = std::get<CircleCommand>(command);
       DrawCircle( //
-        com.Position, com.Radius, com.Color, com.Thickness,
+        com.Circle, com.Position, com.Color, com.Thickness,
         com.Attachments //
       );
     }

@@ -20,5 +20,6 @@ namespace Base
 
     float GetRadius() const;
     Vector2 GetPosition() const;
+    float GetThickness() const;
   };
 } // namespace Base
