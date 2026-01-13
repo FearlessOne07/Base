@@ -1,5 +1,6 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
+#include "base/rendering/RenderingManager.hpp"
 #include "base/scenes/SceneData.hpp"
 #include "base/util/Ref.hpp"
 #include "internal/input/InputListener.hpp"
@@ -28,7 +29,7 @@ namespace Base
   private:
     QuitCallBack _quitCallBack = nullptr;
     std::unordered_map<std::type_index, FactoryCallBack> _factories;
-    Ref<Renderer> _renderer;
+    Ref<RenderingManager> _renderingManager;
     Ref<EntityManager> _entityManager;
     Ref<SystemManager> _systemManager;
     Ref<AssetManager> _assetManager;
@@ -48,7 +49,7 @@ namespace Base
 
   public:
     SceneManager( //
-      Ref<Renderer> renderer, Ref<EntityManager> entityManager, Ref<SystemManager> systemManager,
+      Ref<RenderingManager> renderer, Ref<EntityManager> entityManager, Ref<SystemManager> systemManager,
       Ref<AssetManager> assetManager, //
       Ref<ParticleManager> particleManager, Ref<UIManager> uiManager, Ref<TweenManager> tweenManager,
       Ref<ShaderManager> shaderManager //

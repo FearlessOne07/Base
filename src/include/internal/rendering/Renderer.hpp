@@ -5,6 +5,7 @@
 #include "base/camera/Camera.hpp"
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/Sprite.hpp"
+#include "base/util/Type.hpp"
 #include "batchers/CircleBatcher.hpp"
 #include "batchers/QuadBatcher.hpp"
 #include "batchers/TextBatcher.hpp"
@@ -21,8 +22,7 @@ namespace Base
   struct RenderSpec
   {
     const char *Title = "Window";
-    int Width = 1280;
-    int Height = 720;
+    IVector2 MinWindowSize = {0, 0};
     bool Vysnc = false;
     bool ResizableWindow = true;
   };

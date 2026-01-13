@@ -1,4 +1,6 @@
 #pragma once
+#include "FontGeometry.h"
+#include "GlyphGeometry.h"
 #include "msdf-atlas-gen/FontGeometry.h"
 #include <vector>
 

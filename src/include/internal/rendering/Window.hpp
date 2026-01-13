@@ -1,6 +1,7 @@
 #pragma once
 
 #include "WindowMode.hpp"
+#include "base/util/Type.hpp"
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <cstdint>
@@ -19,6 +20,13 @@ namespace Base
   struct GLContexData
   {
     uint8_t MaxTextureUnits = 0;
+  };
+
+  struct WindowSpec
+  {
+    std::string Title = "Window";
+    IVector2 MinSize = {0, 0};
+    bool Vsync = false;
   };
 
   class Window
@@ -43,7 +51,7 @@ namespace Base
 
   public:
     const GLContexData &GetGlContexData() const;
-    void CreateWindow(int minWidth, int minHeight, const std::string &title);
+    void CreateWindow(const WindowSpec &spec);
     void Close();
     bool WindowClosed() const;
     void SwapBuffers();

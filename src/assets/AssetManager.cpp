@@ -1,13 +1,9 @@
 #include "base/assets/AssetManager.hpp"
 #include "base/assets/AssetHandle.hpp"
-#include "base/assets/Font.hpp"
-#include "base/assets/Texture.hpp"
-#include "base/audio/AudioStream.hpp"
-#include "base/audio/Sound.hpp"
+#include "base/rendering/GeometryType.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/scenes/signals/SceneResumedSignal.hpp"
-#include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
@@ -15,7 +11,6 @@
 #include <memory>
 #include <miniaudio.h>
 #include <sstream>
-#include <string.h>
 #include <vector>
 
 namespace Base
@@ -125,7 +120,7 @@ namespace Base
     _sceneAssets.erase(scene);
   }
 
-  std::shared_ptr<Sound> AssetManager::LoadSound(const std::filesystem::path &path)
+  std::shared_ptr<Sound> AssetManager::_loadSound(const std::filesystem::path &path)
   {
     ma_result result;
     ma_decoder decoder;
@@ -164,7 +159,7 @@ namespace Base
     return std::make_shared<Sound>(data, frameCount, _sampleRate);
   }
 
-  std::shared_ptr<AudioStream> AssetManager::LoadAudioStream(const std::filesystem::path &path)
+  std::shared_ptr<AudioStream> AssetManager::_loadAudioStream(const std::filesystem::path &path)
   {
     ma_result result;
     ma_decoder decoder;
@@ -183,7 +178,7 @@ namespace Base
     return std::make_shared<AudioStream>(decoder, decoder.outputSampleRate, _sampleRate);
   }
 
-  template <> AssetHandle<Texture> AssetManager::LoadAsset<Texture>(const fs::path &path, bool global)
+  AssetHandle<Texture> AssetManager::LoadTexture(const fs::path &path, bool global)
   {
     if (fs::exists(Strings::Strip(path.string())))
     {
@@ -244,19 +239,33 @@ namespace Base
     }
   }
 
-  template <> AssetHandle<BaseShader> AssetManager::LoadAsset<Shader>(const fs::path &path, bool global)
+  AssetHandle<Shader> AssetManager::LoadShader(                                      //
+    const fs::path &vertex, const fs::path &fragment, GeometryType type, bool global //
+  )
   {
-    if (fs::exists(Strings::Strip(path.string())))
+    bool vert = fs::exists(Strings::Strip(vertex.string()));
+    bool frag = fs::exists(Strings::Strip(vertex.string()));
+    if (vert || frag)
     {
-      std::string name = Base::Strings::ToLower(path.stem().string());
-      std::string fullpath = Strings::Strip(path.string());
+      std::string name;
+      if (frag)
+      {
+        name = Base::Strings::ToLower(fragment.stem().string());
+      }
+      else if (vert)
+      {
+        name = Base::Strings::ToLower(vertex.stem().string());
+      }
+
+      std::string fullVertPath = Strings::Strip(vertex.string());
+      std::string fullFragPath = Strings::Strip(fragment.string());
 
       if (global)
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto shader = std::make_shared<BaseShader>(LoadShader(nullptr, fullpath.c_str()));
-          AssetHandle<BaseShader> handle(shader);
+          auto shader = Shader::Create(fullVertPath, fullFragPath, type);
+          AssetHandle<Shader> handle(shader);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(shader)};
           return handle;
         }
@@ -273,8 +282,8 @@ namespace Base
         {
           if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto shader = std::make_shared<BaseShader>(LoadShader(nullptr, fullpath.c_str()));
-            AssetHandle<BaseShader> handle(shader);
+            auto shader = Shader::Create(fullVertPath, fullFragPath, type);
+            AssetHandle<Shader> handle(shader);
             _sceneAssets[_currentScene][name] = {
               static_cast<AssetHandle<void>>(handle),
               static_pointer_cast<BaseAsset>(shader),
@@ -297,12 +306,13 @@ namespace Base
     else
     {
       std::stringstream error;
-      error << "Cannot find shader file '" << path.string() << "'";
+      error << "Cannot find Vertex shader file '" << vertex.string() << "' or Fragment Shader file '"
+            << fragment.string() << "\n";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 
-  template <> AssetHandle<Sound> AssetManager::LoadAsset<Sound>(const fs::path &path, bool global)
+  AssetHandle<Sound> AssetManager::LoadSound(const fs::path &path, bool global)
   {
     if (fs::exists(Strings::Strip(path.string())))
     {
@@ -313,7 +323,7 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto sound = LoadSound(fullpath.c_str());
+          auto sound = _loadSound(fullpath.c_str());
           AssetHandle<Sound> handle(sound);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(sound)};
           return handle;
@@ -331,7 +341,7 @@ namespace Base
         {
           if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto sound = LoadSound(fullpath.c_str());
+            auto sound = _loadSound(fullpath.c_str());
             AssetHandle<Sound> handle(sound);
             _sceneAssets[_currentScene][name] = {
               static_cast<AssetHandle<void>>(handle),
@@ -360,7 +370,7 @@ namespace Base
     }
   }
 
-  template <> AssetHandle<AudioStream> AssetManager::LoadAsset<AudioStream>(const fs::path &path, bool global)
+  AssetHandle<AudioStream> AssetManager::LoadAudioStream(const fs::path &path, bool global)
   {
     if (fs::exists(Strings::Strip(path.string())))
     {
@@ -371,7 +381,7 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto stream = LoadAudioStream(fullpath.c_str());
+          auto stream = _loadAudioStream(fullpath.c_str());
           AssetHandle<AudioStream> handle(stream);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(stream)};
           return handle;
@@ -389,7 +399,7 @@ namespace Base
         {
           if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto stream = LoadAudioStream(fullpath.c_str());
+            auto stream = _loadAudioStream(fullpath.c_str());
             AssetHandle<AudioStream> handle(stream);
             _sceneAssets[_currentScene][name] = {
               static_cast<AssetHandle<void>>(handle),
@@ -418,7 +428,7 @@ namespace Base
     }
   }
 
-  template <> AssetHandle<BaseFont> AssetManager::LoadAsset<BaseFont>(const fs::path &path, bool global)
+  AssetHandle<Font> AssetManager::LoadFont(const fs::path &path, bool global)
   {
     if (fs::exists(Strings::Strip(path.string())))
     {
@@ -429,8 +439,8 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto font = std::make_shared<BaseFont>(LoadFontEx(fullpath.c_str(), 512, nullptr, 0));
-          AssetHandle<BaseFont> handle(font);
+          auto font = Font::Create(fullpath);
+          AssetHandle<Font> handle(font);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(font)};
           return handle;
         }
@@ -447,8 +457,8 @@ namespace Base
         {
           if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto font = std::make_shared<BaseFont>(LoadFontEx(fullpath.c_str(), 512, nullptr, 0));
-            AssetHandle<BaseFont> handle(font);
+            auto font = Font::Create(fullpath.c_str());
+            AssetHandle<Font> handle(font);
             _sceneAssets[_currentScene][name] = {
               static_cast<AssetHandle<void>>(handle),
               static_pointer_cast<BaseAsset>(font),

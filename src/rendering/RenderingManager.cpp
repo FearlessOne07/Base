@@ -56,18 +56,19 @@ namespace Base
     }
   }
 
-  void RenderingManager::Init(const RenderSpec &spec)
+  void RenderingManager::Init(const GameConfig &spec)
   {
-    int width = spec.Width;
-    int height = spec.Height;
-    _renderResolution = {
-      static_cast<float>(width),
-      static_cast<float>(height),
-    };
-    _renderTexture = FrameBuffer::Create({.Width = width, .Height = height});
-    _ping = FrameBuffer::Create({.Width = width, .Height = height});
+    _renderResolution = spec.Resolution;
 
-    Renderer::Init(spec);
+    _renderTexture = FrameBuffer::Create({.Width = spec.Resolution.x, .Height = spec.Resolution.y});
+    _ping = FrameBuffer::Create({.Width = spec.Resolution.x, .Height = spec.Resolution.y});
+
+    Renderer::Init({
+      .Title = spec.Title,
+      .MinWindowSize = spec.MinWindowSize,
+      .Vysnc = spec.Vsync,
+      .ResizableWindow = spec.ResizableWindow,
+    });
 
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {

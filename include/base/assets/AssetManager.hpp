@@ -1,9 +1,12 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
 #include "base/assets/BaseAsset.hpp"
+#include "base/assets/Font.hpp"
+#include "base/assets/Texture.hpp"
 #include "base/audio/AudioStream.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/scenes/SceneID.hpp"
+#include "base/shaders/Shader.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
 #include <filesystem>
@@ -38,8 +41,8 @@ namespace Base
     uint64_t _sampleRate = 48000;
 
   private:
-    std::shared_ptr<Sound> LoadSound(const std::filesystem::path &);
-    std::shared_ptr<AudioStream> LoadAudioStream(const std::filesystem::path &);
+    std::shared_ptr<Sound> _loadSound(const std::filesystem::path &);
+    std::shared_ptr<AudioStream> _loadAudioStream(const std::filesystem::path &);
     void UnloadScene(SceneID);
     void SetCurrentScene(SceneID);
 
@@ -47,10 +50,6 @@ namespace Base
     void Init();
     void Deinit();
     void SetAudioSampleRate(uint64_t sampleRate);
-
-    template <typename T>
-      requires(std::is_base_of_v<BaseAsset, T>)
-    AssetHandle<T> LoadAsset(const fs::path &, bool global = true);
 
     template <typename T>
       requires(std::is_base_of_v<BaseAsset, T>)
@@ -78,5 +77,10 @@ namespace Base
         return AssetHandle<T>::Cast(_globalAssets.at(name).handle);
       }
     }
+    AssetHandle<Texture> LoadTexture(const fs::path &path, bool global);
+    AssetHandle<Shader> LoadShader(const fs::path &vertex, const fs::path &fragment, GeometryType type, bool global);
+    AssetHandle<Sound> LoadSound(const fs::path &path, bool global);
+    AssetHandle<AudioStream> LoadAudioStream(const fs::path &path, bool global);
+    AssetHandle<Font> LoadFont(const fs::path &path, bool global);
   };
 } // namespace Base

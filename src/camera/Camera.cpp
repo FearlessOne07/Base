@@ -37,7 +37,7 @@ namespace Base
     RecalculateViewMatrix();
   }
 
-  void Camera::SetRotaion(float rotation)
+  void Camera::SetRotation(float rotation)
   {
     _rotation = rotation;
     RecalculateViewMatrix();

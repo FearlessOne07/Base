@@ -5,7 +5,7 @@
 #include "base/game/GameConfig.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleManager.hpp"
-#include "base/renderer/Renderer.hpp"
+#include "base/rendering/RenderingManager.hpp"
 #include "base/shaders/ShaderManager.hpp"
 #include "base/systems/SystemManager.hpp"
 #include "base/tween/TweenManager.hpp"
@@ -44,7 +44,7 @@ namespace Base
     UIManager _uiManager = UIManager();
     TweenManager _tweenManager = TweenManager();
     ShaderManager _shaderManager = ShaderManager(_assetManager);
-    Renderer _renderer = Renderer(_shaderManager);
+    RenderingManager _renderer = RenderingManager(_shaderManager);
     SystemManager _systemManager = SystemManager(_entityManager);
 
     SceneManager _sceneManager = SceneManager( //

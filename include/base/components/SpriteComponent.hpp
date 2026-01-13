@@ -1,6 +1,5 @@
 #pragma once
 #include "Component.hpp"
-#include "base/rendering/Quad.hpp"
 #include "base/sprites/Sprite.hpp"
 
 namespace Base
@@ -11,9 +10,8 @@ namespace Base
     Sprite _sprite;
 
   public:
-    SpriteComponent(const Sprite & sprite);
+    SpriteComponent(const Sprite &sprite);
     const Sprite &GetSprite() const;
-    Vector2 GetTargetSize() const;
-    void SetSourceRect(const Rectangle &rect);
+    void SetSourcePos(const Vector2 source);
   };
 } // namespace Base

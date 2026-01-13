@@ -1,5 +1,6 @@
 #pragma once
 
+#include "base/game/GameConfig.hpp"
 #include "base/rendering/RenderLayer.hpp"
 #include "base/scenes/SceneID.hpp"
 #include "base/util/Ref.hpp"
@@ -29,7 +30,7 @@ namespace Base
   private:
     RenderingManager(Ref<ShaderManager> shaderManager);
     void SetSceneManager(Ref<SceneManager> sceneManager);
-    void Init(const RenderSpec &);
+    void Init(const GameConfig &);
     void DeInit();
     void Update(float dt);
     void RenderLayers();

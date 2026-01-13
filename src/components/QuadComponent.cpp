@@ -1,17 +1,18 @@
 #include "base/components/QuadComponent.hpp"
+#include "base/rendering/Quad.hpp"
 
 namespace Base
 {
-  QuadComponent::QuadComponent(Color color, Vector2 size) : _color(color), _size(size)
+  QuadComponent::QuadComponent(const Rectangle &rectanlge, Color color) : _color(color), _rectangle(rectanlge)
   {
   }
 
-  Vector2 QuadComponent::GetSize() const
+  const Rectangle &QuadComponent::GetRectangle() const
   {
-    return _size;
+    return _rectangle;
   }
 
-  Color QuadComponent::GetColor() const
+  const Color &QuadComponent::GetColor() const
   {
     return _color;
   }

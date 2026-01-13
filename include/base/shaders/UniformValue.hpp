@@ -4,5 +4,5 @@
 
 namespace Base
 {
-  using UniformValue = std::variant<float, Vector2, Vector3, Vector4, int, Color>;
+  using UniformValue = std::variant<float, Vector2, Vector3, Vector4, int, Color, Mat4>;
 }

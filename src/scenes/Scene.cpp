@@ -1,6 +1,6 @@
 #include "base/scenes/Scene.hpp"
 #include "base/particles/ParticleManager.hpp"
-#include "base/renderer/Renderer.hpp"
+#include "base/rendering/RenderingManager.hpp"
 #include "base/scenes/SceneData.hpp"
 #include "base/scenes/signals/SceneLayerPausedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
@@ -137,7 +137,7 @@ namespace Base
     return _state->clearColor;
   }
 
-  Ref<Renderer> Scene::GetRenderer() const
+  Ref<RenderingManager> Scene::GetRenderer() const
   {
     return _state->renderer;
   }

@@ -9,6 +9,7 @@
 #include "base/systems/System.hpp"
 #include "base/util/Exception.hpp"
 #include "internal/game/GameImpl.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include <algorithm>
 #include <memory>
 #include <utility>
@@ -32,7 +33,7 @@ namespace Base
     _audioMan.Init();
     _audioMan.SetAssetManager(&_assetManager);
 
-    _renderer.Init(config.Resolution.x, config.Resolution.y);
+    _renderer.Init({.Title = config.Title, .Width = config.Resolution.x, .Height = config.Resolution.y});
 
     // Initialise Render Texture
     _gameWidth = static_cast<float>(config.Resolution.x);

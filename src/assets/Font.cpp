@@ -1,6 +1,4 @@
 #include "base/assets/Font.hpp"
-#include "core/BitmapRef.hpp"
-#include "ext/import-font.h"
 #include "internal/utils/MSDFData.hpp"
 #include "msdf-atlas-gen/AtlasGenerator.h"
 #include "msdf-atlas-gen/BitmapAtlasStorage.h"
@@ -9,6 +7,8 @@
 #include "msdf-atlas-gen/GlyphGeometry.h"
 #include "msdf-atlas-gen/TightAtlasPacker.h"
 #include "msdf-atlas-gen/msdf-atlas-gen.h"
+#include "msdfgen/core/BitmapRef.hpp"
+#include "msdfgen/ext/import-font.h"
 #include <cassert>
 #include <cstdint>
 #include <cstdlib>

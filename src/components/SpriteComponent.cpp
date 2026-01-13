@@ -1,5 +1,6 @@
 #include "base/components/SpriteComponent.hpp"
 #include "base/sprites/Sprite.hpp"
+#include "base/util/Type.hpp"
 
 namespace Base
 {
@@ -7,14 +8,9 @@ namespace Base
   {
   }
 
-  void SpriteComponent::SetSourceRect(const Rectangle &rect)
+  void SpriteComponent::SetSourcePos(const Vector2 source)
   {
-    _sprite.SetSourceRect(rect);
-  }
-
-  Vector2 SpriteComponent::GetTargetSize() const
-  {
-    return _sprite.GetTargetSize();
+    _sprite.SetSourcePos(source);
   }
 
   const Sprite &SpriteComponent::GetSprite() const

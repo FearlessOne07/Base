@@ -1,5 +1,6 @@
 #include "base/audio/AudioStream.hpp"
 #include "base/util/Exception.hpp"
+#include "glm/ext/scalar_constants.hpp"
 #include "samplerate.h"
 #include <algorithm>
 #include <cmath>
@@ -90,7 +91,7 @@ namespace Base
     }
 
     // Calculate pan
-    float angle = _pan * (PI / 2.f);
+    float angle = _pan * (glm::pi<float>() / 2.f);
     float leftPan = std::cos(angle);
     float rightPan = std::sin(angle);
 

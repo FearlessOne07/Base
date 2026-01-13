@@ -6,6 +6,10 @@ set(SRC
 
   "./rendering/RenderContextSingleton.cpp"
   "./rendering/RenderingManager.cpp"
+  "./rendering/Renderer.cpp"
+  "./rendering/batchers/QuadBatcher.cpp"
+  "./rendering/batchers/TextBatcher.cpp"
+  "./rendering/batchers/CircleBatcher.cpp"
   "./rendering/RenderLayer.cpp"
 
   "./sprites/Sprite.cpp"
@@ -76,6 +80,7 @@ set(SRC
   "./tween/Tween.cpp"
 
   "./util/Exception.cpp"
+  "./util/Collisions.cpp"
   "./util/Easings.cpp"
   "./util/Strings.cpp"
   "./util/UUID.cpp"
@@ -118,7 +123,8 @@ target_include_directories("${PROJECT_NAME}"
     "${ROOT_BASE_DIR}/vendor/glm/"
     "${ROOT_BASE_DIR}/vendor/glfw/include/"
     "${ROOT_BASE_DIR}/vendor/glad/include/"
-    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/"
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/msdf-atlas-gen/"
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/msdfgen/"
     "${ROOT_BASE_DIR}/src/include/"
   PRIVATE
     "${ROOT_BASE_DIR}/vendor/stb_image/"

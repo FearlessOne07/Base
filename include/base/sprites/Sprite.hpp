@@ -17,16 +17,18 @@ namespace Base
     Origin _origin;
 
   public:
-    Sprite(std::shared_ptr<Texture> texture, Origin origin = Origin::TopLeft);
-    Sprite(std::shared_ptr<Texture> texture, const Material &material, Origin origin = Origin::TopLeft);
-    Sprite(std::shared_ptr<Texture> texture, Vector2 sourcePos, Vector2 sourceSize, Origin origin = Origin::TopLeft);
+    Sprite(Ptr<Texture> texture, Origin origin = Origin::TopLeft);
+    Sprite(Ptr<Texture> texture, const Material &material, Origin origin = Origin::TopLeft);
+    Sprite(Ptr<Texture> texture, Vector2 sourcePos, Vector2 sourceSize, Origin origin = Origin::TopLeft);
     Sprite( //
       std::shared_ptr<Texture> texture, Vector2 sourcePos, Vector2 sourceSize, const Material &material,
       Origin origin = Origin::TopLeft //
     );
-    std::shared_ptr<Texture> GetTexture() const;
+    Ptr<Texture> GetTexture() const;
     Vector2 GetSourceSize() const;
     Vector2 GetSourcePos() const;
     Origin GetOrigin() const;
+
+    void SetSourcePos(Vector2 source);
   };
 } // namespace Base

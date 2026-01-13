@@ -30,7 +30,6 @@ namespace Base
   private:
     friend class SceneManager;
     void Init();
-    void SetEntityManager(Ref<EntityManager>);
     void SetSceneID(SceneID id);
     void SetParticleManager(Ref<ParticleManager>);
     void SetAssetManager(Ref<AssetManager>);
@@ -49,30 +48,14 @@ namespace Base
     // Template Methods
     void _exit();
 
-    struct SceneState
-    {
-      SceneID sceneID;
-      SceneTransition sceneTransition = SceneTransition();
-      Ref<Renderer> renderer;
-      Ref<EntityManager> entityManager;
-      Ref<ParticleManager> particleManager;
-      Ref<AssetManager> assetManager;
-      Ref<SystemManager> systemManager;
-      Ref<UIManager> uiManager;
-      Ref<TweenManager> tweenManager;
-      Ref<ShaderManager> shaderManager;
-      Color clearColor = {0, 0, 0, 255};
-      SharedSceneDataStore<void> sharedData;
-    };
+    SceneID _sceneID;
+    SceneTransition _sceneTransition = SceneTransition();
 
-    std::unique_ptr<SceneState> _state;
+    Color _clearColor = {0, 0, 0, 255};
+    SharedSceneDataStore<void> _sharedData;
+
     SceneLayerStack _layerStack;
     std::unordered_map<std::string, AssetHandle<void>> _assets;
-
-    // Private Getters
-    [[nodiscard]] Ref<Renderer> GetRenderer() const;
-    [[nodiscard]] Ref<AssetManager> GetAssetManager() const;
-    [[nodiscard]] const SceneTransition &GetSceneTransition() const;
 
     // Pause
     std::bitset<8> _pauseMask;
@@ -98,7 +81,7 @@ namespace Base
       auto data = SharedSceneDataStore<T>();
       data.Init();
 
-      _state->sharedData = data;
+      _sharedData = data;
     }
 
   public:
@@ -109,6 +92,7 @@ namespace Base
     virtual void Resume();
     virtual void Suspend();
     virtual void OnInputEvent(std::shared_ptr<InputEvent> event);
+
     void PauseLayer(int layerIndex);
     void UnPauseLayer(int layerIndex);
     bool IsLayerPaused(int layerIndex);
@@ -117,12 +101,15 @@ namespace Base
 
     Color GetClearColor() const;
     [[nodiscard]] SceneID GetSceneID() const;
-    [[nodiscard]] Ref<EntityManager> GetEntityManager() const;
-    [[nodiscard]] Ref<SystemManager> GetSystemManager() const;
-    [[nodiscard]] Ref<ParticleManager> GetParticleManager() const;
-    [[nodiscard]] Ref<UIManager> GetUIManager() const;
-    [[nodiscard]] Ref<TweenManager> GetTweenManager() const;
-    [[nodiscard]] Ref<ShaderManager> GetShaderManager() const;
+
+    Ref<Renderer> Rendering;
+    Ref<EntityManager> Entities;
+    Ref<ParticleManager> Particles;
+    Ref<AssetManager> Assets;
+    Ref<SystemManager> Systems;
+    Ref<UIManager> Ui;
+    Ref<TweenManager> Tweens;
+    Ref<ShaderManager> Shaders;
 
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData())
     {
@@ -142,12 +129,6 @@ namespace Base
       }
     }
 
-    template <typename T> void LoadAsset(const fs::path &path)
-    {
-      std::string name = Base::Strings::ToLower(path.stem().string());
-      _assets[name] = GetAssetManager()->LoadAsset<T>(path, false);
-    }
-
     // Layer Management
     template <typename T> void AttachLayer(Base::Ref<RenderLayer> renderLayer)
     {
@@ -157,14 +138,8 @@ namespace Base
     // Shared Data
     template <typename T> std::shared_ptr<T> GetSharedData()
     {
-      return _state->sharedData.Get<T>();
+      return _sharedData.Get<T>();
     }
-
-    // System Management
-    void SuspendSystems();
-    void UnsuspendSystems();
-    void StartSystems();
-    void StopSystems();
 
     const std::bitset<8> &GetPauseMask() const;
     const ShaderEffectChain &GetPostProcessingEffects() const;

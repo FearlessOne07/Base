@@ -12,8 +12,8 @@ namespace Base
     Color _color = {255, 255, 255, 255};
 
   public:
-    CircleComponent(const Circle &circle);
-    float GetRadius() const;
-    Color GetColor() const;
+    CircleComponent(const Circle &circle, Color color);
+    const Circle &GetCircle() const;
+    const Color &GetColor() const;
   };
 } // namespace Base

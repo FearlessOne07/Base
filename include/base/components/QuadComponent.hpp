@@ -1,4 +1,5 @@
 #include "base/components/Component.hpp"
+#include "base/rendering/Quad.hpp"
 #include "base/util/Type.hpp"
 
 namespace Base
@@ -7,12 +8,11 @@ namespace Base
   {
   private:
     Color _color = {255, 255, 255, 255};
-    Vector2 _size = {100, 100};
+    Rectangle _rectangle;
 
   public:
-    QuadComponent(Color color, Vector2 size);
-
-    Vector2 GetSize() const;
-    Color GetColor() const;
+    QuadComponent(const Rectangle &rectangle, Color color);
+    const Rectangle &GetRectangle() const;
+    const Color &GetColor() const;
   };
 } // namespace Base
