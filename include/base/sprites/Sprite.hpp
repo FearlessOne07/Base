@@ -1,37 +1,32 @@
 #pragma once
+#include "base/assets/Texture.hpp"
+#include "base/rendering/Material.hpp"
+#include "base/rendering/Origin.hpp"
+#include "base/rendering/Renderable.hpp"
+#include "base/util/Type.hpp"
+#include <memory>
 
-#include "base/assets/AssetHandle.hpp"
-#include "base/textures/Texture.hpp"
 namespace Base
 {
-  class Sprite
+  class Sprite : public Renderable
   {
   private:
-    AssetHandle<Texture> _texture;
-    Vector2 _sourcePos = {0, 0};
+    std::shared_ptr<Texture> _texture = nullptr;
+    Vector2 _sourcePosition = {0, 0};
     Vector2 _sourceSize = {0, 0};
-    Vector2 _targetSize = {0, 0};
+    Origin _origin;
 
   public:
-    Sprite() = default;
+    Sprite(std::shared_ptr<Texture> texture, Origin origin = Origin::TopLeft);
+    Sprite(std::shared_ptr<Texture> texture, const Material &material, Origin origin = Origin::TopLeft);
+    Sprite(std::shared_ptr<Texture> texture, Vector2 sourcePos, Vector2 sourceSize, Origin origin = Origin::TopLeft);
     Sprite( //
-      const AssetHandle<Texture> &textureHandle, const Vector2 &sourcePos, const Vector2 &sourceSize,
-      const Vector2 &destinationSize //
+      std::shared_ptr<Texture> texture, Vector2 sourcePos, Vector2 sourceSize, const Material &material,
+      Origin origin = Origin::TopLeft //
     );
-    Sprite(const Sprite &other);
-    Sprite(Sprite &&other) noexcept;
-    Sprite &operator=(const Sprite &other);
-    Sprite &operator=(Sprite &&other) noexcept;
-
-    // Converters
-    inline operator bool()
-    {
-      return _texture;
-    }
-
-    void Render(Vector2 position, float rotatation, Color tint) const;
-    void SetTargetSize(Vector2 size);
-    void SetSourceRect(const Rectangle &rect);
-    Vector2 GetTargetSize() const;
+    std::shared_ptr<Texture> GetTexture() const;
+    Vector2 GetSourceSize() const;
+    Vector2 GetSourcePos() const;
+    Origin GetOrigin() const;
   };
 } // namespace Base

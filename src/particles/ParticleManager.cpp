@@ -1,7 +1,6 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/particles/ParticleEmitter.hpp"
 #include "base/scenes/Scene.hpp"
-#include "base/util/Draw.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Ref.hpp"
 #include "internal/particles/ParticleManagerImpl.hpp"

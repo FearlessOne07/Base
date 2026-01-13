@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.hpp"
+#include "base/rendering/Quad.hpp"
 #include "base/sprites/Sprite.hpp"
 
 namespace Base

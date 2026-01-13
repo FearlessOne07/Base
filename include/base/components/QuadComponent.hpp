@@ -1,11 +1,12 @@
 #include "base/components/Component.hpp"
+#include "base/util/Type.hpp"
 
 namespace Base
 {
   class QuadComponent : public Component
   {
   private:
-    Color _color = WHITE;
+    Color _color = {255, 255, 255, 255};
     Vector2 _size = {100, 100};
 
   public:

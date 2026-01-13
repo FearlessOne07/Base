@@ -7,7 +7,6 @@
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
-#include "base/util/Draw.hpp"
 #include <memory>
 
 namespace Base

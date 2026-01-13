@@ -1,5 +1,7 @@
 #include "base/assets/AssetManager.hpp"
 #include "base/assets/AssetHandle.hpp"
+#include "base/assets/Font.hpp"
+#include "base/assets/Texture.hpp"
 #include "base/audio/AudioStream.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
@@ -7,8 +9,6 @@
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
-#include "base/textures/Font.hpp"
-#include "base/textures/Texture.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
 #include <filesystem>
@@ -49,17 +49,17 @@ namespace Base
       {
         for (auto &[name, asset] : assets)
         {
-          if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))
+          if (auto it = std::dynamic_pointer_cast<Texture>(asset.asset))
           {
-            UnloadTexture(*it->GetRaylibTexture());
+            Texture::Destroy(it);
           }
           else if (auto it = std::dynamic_pointer_cast<Shader>(asset.asset))
           {
-            UnloadShader(*it);
+            Shader::Delete(it);
           }
-          else if (auto it = std::dynamic_pointer_cast<BaseFont>(asset.asset))
+          else if (auto it = std::dynamic_pointer_cast<Font>(asset.asset))
           {
-            UnloadFont(*it->GetRaylibFont());
+            Font::Destroy(it);
           }
         }
       }
@@ -69,17 +69,17 @@ namespace Base
     // Unload Global Assets
     for (auto &[name, asset] : _globalAssets)
     {
-      if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))
+      if (auto it = std::dynamic_pointer_cast<Texture>(asset.asset))
       {
-        UnloadTexture(*it->GetRaylibTexture());
+        Texture::Destroy(it);
       }
       else if (auto it = std::dynamic_pointer_cast<Shader>(asset.asset))
       {
-        UnloadShader(*it);
+        Shader::Delete(it);
       }
-      else if (auto it = std::dynamic_pointer_cast<BaseFont>(asset.asset))
+      else if (auto it = std::dynamic_pointer_cast<Font>(asset.asset))
       {
-        UnloadFont(*it->GetRaylibFont());
+        Font::Destroy(it);
       }
     }
 
@@ -109,17 +109,17 @@ namespace Base
     // Unload a scene's if it is being popped
     for (auto &[name, asset] : _sceneAssets[scene])
     {
-      if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))
+      if (auto it = std::dynamic_pointer_cast<Texture>(asset.asset))
       {
-        UnloadTexture(*it->GetRaylibTexture());
+        Texture::Destroy(it);
       }
       else if (auto it = std::dynamic_pointer_cast<Shader>(asset.asset))
       {
-        UnloadShader(*it);
+        Shader::Delete(it);
       }
-      else if (auto it = std::dynamic_pointer_cast<BaseFont>(asset.asset))
+      else if (auto it = std::dynamic_pointer_cast<Font>(asset.asset))
       {
-        UnloadFont(*it->GetRaylibFont());
+        Font::Destroy(it);
       }
     }
     _sceneAssets.erase(scene);
@@ -194,35 +194,10 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          Image image = LoadImage(fullpath.c_str()); // Load from disk (CPU)
-          Color *pixels = LoadImageColors(image);    // Access raw pixel data
 
-          // Premultiply alpha
-          for (int i = 0; i < image.width * image.height; i++)
-          {
-            if (pixels[i].a == 0)
-            {
-              pixels[i].r = 0;
-              pixels[i].g = 0;
-              pixels[i].b = 0;
-            }
-            else
-            {
-              pixels[i].r = (pixels[i].r * pixels[i].a) / 255;
-              pixels[i].g = (pixels[i].g * pixels[i].a) / 255;
-              pixels[i].b = (pixels[i].b * pixels[i].a) / 255;
-            }
-          }
-
-          // Copy modified pixel data back to the image
-          memcpy(image.data, pixels, image.width * image.height * sizeof(Color));
-
-          auto texture = std::make_shared<Texture>(LoadTextureFromImage(image));
+          auto texture = Texture::Create(fullpath);
 
           // Cleanup
-          UnloadImage(image);
-          UnloadImageColors(pixels);
-
           AssetHandle<Texture> handle(texture);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(texture)};
           return handle;
@@ -240,35 +215,7 @@ namespace Base
         {
           if (_sceneAssets.at(_currentScene).find(name) == _sceneAssets.at(_currentScene).end())
           {
-            Image image = LoadImage(fullpath.c_str()); // Load from disk (CPU)
-            Color *pixels = LoadImageColors(image);    // Access raw pixel data
-
-            // Premultiply alpha
-            for (int i = 0; i < image.width * image.height; i++)
-            {
-              if (pixels[i].a == 0)
-              {
-                pixels[i].r = 0;
-                pixels[i].g = 0;
-                pixels[i].b = 0;
-              }
-              else
-              {
-                pixels[i].r = (pixels[i].r * pixels[i].a) / 255;
-                pixels[i].g = (pixels[i].g * pixels[i].a) / 255;
-                pixels[i].b = (pixels[i].b * pixels[i].a) / 255;
-              }
-            }
-
-            // Copy modified pixel data back to the image
-            memcpy(image.data, pixels, image.width * image.height * sizeof(Color));
-
-            auto texture = std::make_shared<Texture>(LoadTextureFromImage(image));
-
-            // Cleanup
-            UnloadImage(image);
-            UnloadImageColors(pixels);
-
+            auto texture = Texture::Create(fullpath);
             AssetHandle<Texture> handle(texture);
             _sceneAssets.at(_currentScene)[name] = {
               static_cast<AssetHandle<void>>(handle),
@@ -297,7 +244,7 @@ namespace Base
     }
   }
 
-  template <> AssetHandle<BaseShader> AssetManager::LoadAsset<BaseShader>(const fs::path &path, bool global)
+  template <> AssetHandle<BaseShader> AssetManager::LoadAsset<Shader>(const fs::path &path, bool global)
   {
     if (fs::exists(Strings::Strip(path.string())))
     {

@@ -17,7 +17,7 @@ namespace Base
     // Layout
     Orientation _orientation = Orientation::Vertical;
     float _gap = 0;
-    Color _backgroundColor = BLANK;
+    Color _backgroundColor = {0, 0, 0, 0};
 
   public:
     // Layout

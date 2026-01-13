@@ -82,10 +82,10 @@ namespace Base
 
     bool _fitsEntirelyCircle(Circle circle, Rectangle container)
     {
-      return (circle.position.x - circle.radius) >= container.GetPosition().x &&
-             (circle.position.y - circle.radius) >= container.GetPosition().y &&
-             (circle.position.x + circle.radius) <= (container.GetPosition().x + container.GetSize().x) &&
-             (circle.position.y + circle.radius) <= (container.GetPosition().y + container.GetSize().y);
+      return (circle.GetPosition().x - circle.GetRadius()) >= container.GetPosition().x &&
+             (circle.GetPosition().y - circle.GetRadius()) >= container.GetPosition().y &&
+             (circle.GetPosition().x + circle.GetRadius()) <= (container.GetPosition().x + container.GetSize().x) &&
+             (circle.GetPosition().y + circle.GetRadius()) <= (container.GetPosition().y + container.GetSize().y);
     }
 
     void _search(ItemAreaType searchArea, std::list<T> &results)
@@ -104,7 +104,8 @@ namespace Base
         {
           Circle circle1 = std::get<Circle>(area);
           Circle circle2 = std::get<Circle>(searchArea);
-          if (CheckCollisionCircles(circle1.position, circle1.radius, circle2.position, circle2.radius))
+          if (CheckCollisionCircles(circle1.GetPosition(), circle1.GetRadius(), circle2.GetPosition(),
+                                    circle2.GetRadius()))
           {
             results.push_back(item);
           }
@@ -112,12 +113,12 @@ namespace Base
         else if (std::holds_alternative<Circle>(area) && std::holds_alternative<Rectangle>(searchArea))
         {
           Circle circle = std::get<Circle>(area);
-          CheckCollisionCircleRec(circle.position, circle.radius, std::get<Rectangle>(searchArea));
+          CheckCollisionCircleRec(circle.GetPosition(), circle.GetRadius(), std::get<Rectangle>(searchArea));
         }
         else if (std::holds_alternative<Circle>(searchArea) && std::holds_alternative<Rectangle>(area))
         {
           Circle circle = std::get<Circle>(searchArea);
-          if (CheckCollisionCircleRec(circle.position, circle.radius, std::get<Rectangle>(area)))
+          if (CheckCollisionCircleRec(circle.GetPosition(), circle.GetRadius(), std::get<Rectangle>(area)))
           {
             results.push_back(item);
           }
@@ -139,7 +140,7 @@ namespace Base
           else if (std::holds_alternative<Circle>(searchArea))
           {
             Circle circle = std::get<Circle>(searchArea);
-            if (CheckCollisionCircleRec(circle.position, circle.radius, _childAreas[i]))
+            if (CheckCollisionCircleRec(circle.GetPosition(), circle.GetRadius(), _childAreas[i]))
             {
               _children[i]->_search(searchArea, results);
             }

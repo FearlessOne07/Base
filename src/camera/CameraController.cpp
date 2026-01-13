@@ -1,11 +1,14 @@
-#include "base/camera/Camera2DExt.hpp"
+#include "base/camera/CameraController.hpp"
 #include "base/camera/CameraModes.hpp"
 #include "base/util/Type.hpp"
+#include "glm/geometric.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include <algorithm>
+#include <random>
 
 namespace Base
 {
-  void Camera2DExt::Shake(const CameraShakeConfig &config)
+  void CameraController::Shake(const CameraShakeConfig &config)
   {
     // Mark camera as shaking
     _isShaking = true;
@@ -32,12 +35,15 @@ namespace Base
     _initialDuration = _shakeDuration;
 
     // Setup noise
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+    std::uniform_int_distribution<int64_t> dist(-1507525927, 1507525927);
     _noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
     _noise.SetFrequency(_frequency / 100.0f); // Scale the frequency appropriately
-    _seed = GetRandomValue(-1507525927, 1507525927);
+    _seed = dist(gen);
   }
 
-  void Camera2DExt::UpdateShake(float dt)
+  void CameraController::UpdateShake(float dt)
   {
     // If camera isn't shaking or truam is 0
     if (!_isShaking || _trauma <= 0.0f)
@@ -45,8 +51,9 @@ namespace Base
       // Reset camera offset to pre-shake values
       if (_trauma <= 0.0f && _isShaking)
       {
-        _camera.offset = _preShakeOffset;
-        _camera.rotation = _preShakeRotation;
+        // TODO: Implment Camera Offset
+        // _camera->SetViewPort _preShakeOffset;
+        _camera->SetRotation(_preShakeRotation);
         _isShaking = false;
       }
       return;
@@ -60,8 +67,8 @@ namespace Base
       {
         // Force trauma to zero when duration end reset offset and rotation
         _trauma = 0.0f;
-        _camera.offset = _preShakeOffset;
-        _camera.rotation = _preShakeRotation;
+        // _camera.offset = _preShakeOffset;
+        _camera->SetRotation(_preShakeRotation);
         _isShaking = false;
         return;
       }
@@ -96,100 +103,98 @@ namespace Base
     float rotation = noiseRot * _rotationMagnitude * intensity;
 
     // Add offsets values
-    _camera.offset.x = offsetX + _preShakeOffset.x;
-    _camera.offset.y = offsetY + _preShakeOffset.y;
-    _camera.rotation = rotation + _preShakeRotation;
+    Vector2 offset = {offsetX + _preShakeOffset.x, offsetY + _preShakeOffset.y};
+    // _camera.Set
+    _camera->SetRotation(rotation + _preShakeRotation);
   }
 
-  void Camera2DExt::Update(float dt)
+  void CameraController::Update(float dt)
   {
     switch (_cameraMode)
     {
-    case Camera2DExtMode::BASIC_FOLLOW:
+    case CameraMode::BasicFollow:
       BasicFollow(dt);
       break;
-    case Camera2DExtMode::SMOOTH_FOLLOW:
+    case CameraMode::SmoothFollow:
       SmoothFollow(dt);
       break;
-    case Camera2DExtMode::STATIC:
-      _camera.target = _target;
+    case CameraMode::Static:
+      _camera->SetPosition(_target);
       break;
     };
 
     UpdateShake(dt);
   }
 
-  void Camera2DExt::BasicFollow(float dt)
+  void CameraController::BasicFollow(float dt)
   {
-    _camera.target = _target;
+    _camera->SetPosition(_target);
   }
 
-  void Camera2DExt::SmoothFollow(float dt)
+  void CameraController::SmoothFollow(float dt)
   {
     // Get distance to target
-    float distance = Vector2Distance(_target, _camera.target);
+    float distance = glm::distance(_target, _camera->GetPosition());
     // Get speed factor and clamp to 0 - 1.0
     float speedFactor = distance / _maxFollowDistance;
     speedFactor = std::clamp<float>(speedFactor, 0, 1);
 
     // Get direction
-    Vector2 velocity = Vector2Subtract(_target, _camera.target);
+    Vector2 velocity = _target - _camera->GetPosition();
 
     //  scale speed by distance left
-    _camera.target = Vector2Add(                                                                ///
-      _camera.target, Vector2Scale(Vector2Normalize(velocity), _cameraSpeed * speedFactor * dt) //
-    );
+    _camera->SetPosition(_camera->GetPosition() + (glm::normalize(velocity) * _cameraSpeed * speedFactor * dt));
   }
 
-  Vector2 Camera2DExt::GetScreenToWorld(Vector2 position) const
+  Vector2 CameraController::GetScreenToWorld(Vector2 position) const
   {
-    return GetScreenToWorld2D(position, _camera);
+    // return GetScreenToWorld2D(position, _camera);
   }
 
-  Vector2 Camera2DExt::GetWorldToScreen(Vector2 position) const
+  Vector2 CameraController::GetWorldToScreen(Vector2 position) const
   {
-    return GetWorldToScreen2D(position, _camera) / _camera.zoom;
+    // return GetWorldToScreen2D(position, _camera) / _camera.zoom;
   }
 
-  float Camera2DExt::GetZoom() const
+  float CameraController::GetZoom() const
   {
-    return _camera.zoom;
+    return _camera->GetZoom();
   }
 
-  void Camera2DExt::Begin()
+  void CameraController::Begin()
   {
-    BeginMode2D(_camera);
+    Renderer::BeginCamera(_camera);
   }
 
-  void Camera2DExt::End()
+  void CameraController::End()
   {
-    EndMode2D();
+    Renderer::EndCamera();
   }
 
-  void Camera2DExt::SetMode(Camera2DExtMode mode)
+  void CameraController::SetMode(CameraMode mode)
   {
     _cameraMode = mode;
   }
 
-  void Camera2DExt::SetOffset(Vector2 offset)
+  void CameraController::SetOffset(Vector2 offset)
   {
     _preShakeOffset = offset;
-    _camera.offset = offset;
+    // _camera.offset = offset;
   }
 
-  void Camera2DExt::SetTarget(Vector2 target)
+  void CameraController::SetTarget(Vector2 target)
   {
-    _camera.target = target;
+    _camera->SetPosition(target);
   }
 
-  void Camera2DExt::SetRotation(float rotation)
+  void CameraController::SetRotation(float rotation)
   {
     _preShakeRotation = rotation;
-    _camera.rotation = rotation;
+    _camera->SetRotation(rotation);
   }
 
-  void Camera2DExt::SetZoom(float zoom)
+  void CameraController::SetZoom(float zoom)
   {
-    _camera.zoom = zoom;
+    _camera->SetRotation(zoom);
   }
 } // namespace Base

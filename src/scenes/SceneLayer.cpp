@@ -1,6 +1,5 @@
-#include "base/scenes/SceneLayer.tpp"
-#include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneLayer.hpp"
+#include "base/scenes/Scene.hpp"
 #include <memory>
 
 namespace Base

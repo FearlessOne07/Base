@@ -17,6 +17,7 @@ namespace Base
   public:
     ~Font();
     static std::shared_ptr<Font> Create(const std::filesystem::path &);
+    static void Destroy(Ptr<Font> &font);
     const std::shared_ptr<Texture> GetAtlas();
     const MSDFData *GetMSDFData() const;
   };

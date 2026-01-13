@@ -10,8 +10,8 @@ namespace Base
     std::string _text = "Button";
     float _fontSize = 12;
 
-    Color _backgroundColor = WHITE;
-    Color _textColor = BLACK;
+    Color _backgroundColor = {255, 255, 255, 255};
+    Color _textColor = {0, 0, 0, 0};
 
   public:
     void SetText(const std::string &);

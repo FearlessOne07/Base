@@ -1,5 +1,5 @@
 #pragma once
-#include "Camera.hpp"
+#include "base/util/Type.hpp"
 #include "glm/glm.hpp"
 
 namespace Base
@@ -15,10 +15,10 @@ namespace Base
     };
 
   private:
-    glm::vec2 _position{0, 0};
+    Vector2 _position{0, 0};
     float _rotation = 0;
     float _zoom = 1.f;
-    glm::vec2 _viewPort{0, 0};
+    Vector2 _viewPort{0, 0};
 
     glm::mat4 _projection;
     glm::mat4 _view;
@@ -29,15 +29,17 @@ namespace Base
     void RecalculateViewMatrix();
 
   public:
-    Camera(glm::vec2 viewPort);
+    Camera(Vector2 viewPort);
     Camera() = default;
-    void SetPosition(glm::vec2 position);
-    void SetRotaion(float roation);
+    void SetPosition(Vector2 position);
+    void SetRotation(float roation);
     void SetZoom(float zoom);
     void SetOrginPoint(OriginPoint point);
-    void SetViewPort(glm::vec2 viewPort);
+    void SetViewPort(Vector2 viewPort);
 
-    const glm::vec2 GetPosition() const;
+    const Vector2 GetPosition() const;
+    const float GetZoom();
+    const float GetRotation();
     const glm::mat4 GetProjView() const;
   };
 

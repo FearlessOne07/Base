@@ -43,8 +43,8 @@ namespace Base
     float particleStartSpeed = 100.f;
     float particleEndSpeed = 0.f;
 
-    Color particleStartColor = WHITE;
-    Color particleEndColor = BLACK;
+    Color particleStartColor = {255, 255, 255, 255};
+    Color particleEndColor = {0, 0, 0, 255};
 
     // Rect
     Vector2 particleStartSize = {10, 10};

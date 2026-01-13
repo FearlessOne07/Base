@@ -1,5 +1,6 @@
 #include "base/entities/Entity.hpp"
 #include "base/signals/Signal.hpp"
+#include "base/util/Type.hpp"
 #include <memory>
 
 namespace Base

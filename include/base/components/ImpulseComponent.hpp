@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.hpp"
+#include "base/util/Type.hpp"
 
 namespace Base
 {

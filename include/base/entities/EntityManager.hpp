@@ -3,6 +3,7 @@
 #include "base/rendering/Quad.hpp"
 #include "base/util/QuadTree.hpp"
 #include "base/util/QuadTreeContainer.hpp"
+#include "base/util/Type.hpp"
 #include <cstddef>
 #include <list>
 #include <memory>
@@ -14,7 +15,7 @@ namespace Base
   {
   private:
     friend class Game;
-    QuadTreeContainer<std::shared_ptr<Entity>> _entities{{0, 0, 0, 0}};
+    QuadTreeContainer<std::shared_ptr<Entity>> _entities{Rectangle{{0, 0}, {0, 0}}};
     Rectangle _worldBounds;
     size_t _nextID = 0;
     bool _entityPending = false;

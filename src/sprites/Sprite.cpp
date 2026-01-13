@@ -1,4 +1,6 @@
 #include "base/sprites/Sprite.hpp"
+#include "base/rendering/Origin.hpp"
+#include "internal/rendering/Renderer.hpp"
 
 namespace Base
 {
@@ -57,8 +59,8 @@ namespace Base
 
   void Sprite::SetSourceRect(const Rectangle &rect)
   {
-    _sourcePos = {rect.x, rect.y};
-    _sourceSize = {rect.width, rect.height};
+    _sourcePos = {rect.GetPosition().x, rect.GetPosition().y};
+    _sourceSize = {rect.GetSize().x, rect.GetSize().y};
   }
 
   Vector2 Sprite::GetTargetSize() const
@@ -68,6 +70,11 @@ namespace Base
 
   void Sprite::Render(Vector2 position, float rotatation, Color tint) const
   {
+    Renderer::DrawSprite( //
+      Sprite{_texture.Get(), _sourcePos, _sourceSize, Origin::Center}, position, _targetSize,
+      {Base::FramebufferAttachmentIndex::Color0, Base::FramebufferAttachmentIndex::Color1} //
+    );
+
     DrawTexturePro( //
       *_texture.Get()->GetRaylibTexture(), {_sourcePos.x, _sourcePos.y, _sourceSize.x, _sourceSize.y},
       {position.x, position.y, _targetSize.x, _targetSize.y}, {_targetSize.x / 2, _targetSize.y / 2}, rotatation,

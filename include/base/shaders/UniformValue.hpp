@@ -1,5 +1,4 @@
 #pragma once
-#include "base/shaders/Shader.hpp"
 #include "base/util/Type.hpp"
 #include <variant>
 

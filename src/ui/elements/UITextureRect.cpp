@@ -1,5 +1,4 @@
 #include "base/ui/elements/UITextureRect.hpp"
-#include "base/util/Draw.hpp"
 
 namespace Base
 {

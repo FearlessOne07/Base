@@ -1,6 +1,5 @@
 #include "base/ui/elements/UIStackPanel.hpp"
 #include "base/ui/UIElement.hpp"
-#include "base/util/Draw.hpp"
 #include <algorithm>
 #include <iterator>
 #include <ranges>

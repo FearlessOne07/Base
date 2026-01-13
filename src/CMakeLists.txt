@@ -61,7 +61,7 @@ set(SRC
 
   "./particles/ParticleManager.cpp"
 
-  "./camera/Camera2DExt.cpp"
+  "./camera/CameraController.cpp"
 
   "./input/InputManager.cpp"
 
@@ -80,7 +80,6 @@ set(SRC
   "./util/Strings.cpp"
   "./util/UUID.cpp"
   "./util/Pauseable.cpp"
-  "./util/Draw.cpp"
 
   "./shaders/ShaderManager.cpp"
 )
