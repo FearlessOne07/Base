@@ -121,10 +121,9 @@ target_include_directories("${PROJECT_NAME}"
     "${ROOT_BASE_DIR}/vendor/glm/"
     "${ROOT_BASE_DIR}/vendor/glfw/include/"
     "${ROOT_BASE_DIR}/vendor/glad/include/"
-    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/msdf-atlas-gen/"
-    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/msdfgen/"
     "${ROOT_BASE_DIR}/src/include/"
-  PRIVATE
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/"
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/msdfgen/"
     "${ROOT_BASE_DIR}/vendor/stb_image/"
     "${ROOT_BASE_DIR}/include/"
 )

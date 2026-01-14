@@ -24,11 +24,10 @@ namespace Base
     // Shaders
     Ptr<FrameBuffer> _ping;
 
-    Ref<ShaderManager> _shaderManager;
     Ref<SceneManager> _sceneManager;
 
   private:
-    RenderingManager(Ref<ShaderManager> shaderManager);
+    RenderingManager() = default;
     void SetSceneManager(Ref<SceneManager> sceneManager);
     void Init(const GameConfig &);
     void DeInit();

@@ -14,14 +14,146 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
-#include <vector>
 
 namespace Base
 {
+  static bool DecodeUTF8(const char *&it, const char *end, char32_t &out)
+  {
+    if (it >= end)
+      return false;
 
+    unsigned char c = static_cast<unsigned char>(*it++);
+
+    // 1-byte (ASCII)
+    if (c < 0x80)
+    {
+      out = c;
+      return true;
+    }
+
+    // 2-byte
+    if ((c >> 5) == 0x6 && it < end)
+    {
+      out = ((c & 0x1F) << 6) | (static_cast<unsigned char>(*it++) & 0x3F);
+      return true;
+    }
+
+    // 3-byte
+    if ((c >> 4) == 0xE && it + 1 < end)
+    {
+      out = ((c & 0x0F) << 12) | ((static_cast<unsigned char>(*it++) & 0x3F) << 6) |
+            (static_cast<unsigned char>(*it++) & 0x3F);
+      return true;
+    }
+
+    // 4-byte
+    if ((c >> 3) == 0x1E && it + 2 < end)
+    {
+      out = ((c & 0x07) << 18) | ((static_cast<unsigned char>(*it++) & 0x3F) << 12) |
+            ((static_cast<unsigned char>(*it++) & 0x3F) << 6) | (static_cast<unsigned char>(*it++) & 0x3F);
+      return true;
+    }
+
+    // Invalid UTF-8 → replacement character
+    out = U'\uFFFD';
+    return true;
+  }
   std::shared_ptr<Font> Font::Create(const std::filesystem::path &path)
   {
     return std::shared_ptr<Font>(new Font(path));
+  }
+
+  void Font::Destroy(Ptr<Font> &font)
+  {
+    Texture::Destroy(font->_atlas);
+  }
+
+  Vector2 Font::MeasureText(Ptr<Font> &font, std::string_view text, float fontSize)
+  {
+    Vector2 result{};
+
+    if (!font->_data || text.empty())
+      return result;
+
+    const auto &fontGeom = font->_data->FontGeometry;
+    const auto &metrics = fontGeom.getMetrics();
+
+    float scale = fontSize / metrics.emSize;
+    float lineHeight = (metrics.ascender - metrics.descender) * scale;
+
+    // Space advance (for tabs)
+    float spaceAdvance = 0.0f;
+    if (const auto *space = fontGeom.getGlyph(U' '))
+      spaceAdvance = space->getAdvance() * scale;
+    else
+      spaceAdvance = metrics.emSize * 0.25f * scale;
+
+    float x = 0.0f;
+    float maxLineWidth = 0.0f;
+    int lineCount = 1;
+
+    float minY = std::numeric_limits<float>::max();
+    float maxY = std::numeric_limits<float>::lowest();
+
+    char32_t prev = 0;
+
+    const char *it = text.data();
+    const char *end = it + text.size();
+
+    while (it < end)
+    {
+      char32_t ch;
+      DecodeUTF8(it, end, ch);
+
+      // Newline
+      if (ch == U'\n')
+      {
+        maxLineWidth = std::max(maxLineWidth, x);
+        x = 0.0f;
+        prev = 0;
+        lineCount++;
+        continue;
+      }
+
+      // Tab = 4 spaces
+      if (ch == U'\t')
+      {
+        x += spaceAdvance * 4.0f;
+        prev = 0;
+        continue;
+      }
+
+      const msdf_atlas::GlyphGeometry *glyph = fontGeom.getGlyph(ch);
+      if (!glyph)
+        continue;
+
+      // Kerning
+      if (prev)
+        x += fontGeom.getKerning(prev, ch) * scale;
+
+      // Vertical bounds (tight)
+      msdf_atlas::GlyphBox box;
+      double bottom, top, left, right;
+      glyph->getQuadPlaneBounds(left, bottom, right, top);
+      minY = std::min<float>(minY, bottom * scale);
+      maxY = std::max<float>(maxY, top * scale);
+
+      // Advance
+      x += glyph->getAdvance() * scale;
+      prev = ch;
+    }
+
+    maxLineWidth = std::max(maxLineWidth, x);
+
+    result.x = maxLineWidth;
+
+    // Height
+    if (lineCount > 1)
+      result.y = lineCount * lineHeight;
+    else
+      result.y = (maxY > minY) ? (maxY - minY) : lineHeight;
+
+    return result;
   }
 
   Font::Font(const std::filesystem::path &path) : _data(new MSDFData)

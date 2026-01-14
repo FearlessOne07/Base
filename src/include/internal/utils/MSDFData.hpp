@@ -1,7 +1,5 @@
 #pragma once
-#include "FontGeometry.h"
-#include "GlyphGeometry.h"
-#include "msdf-atlas-gen/FontGeometry.h"
+#include "msdf-atlas-gen/GlyphGeometry.h"
 #include <vector>
 
 namespace Base

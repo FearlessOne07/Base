@@ -25,17 +25,7 @@ namespace Base
 
   Size UIButton::Measure()
   {
-    Font font;
-    if (_font.Get())
-    {
-      font = *_font.Get()->GetRaylibFont();
-    }
-    else
-    {
-      font = GetFontDefault();
-    }
-
-    auto textSize = MeasureTextEx(font, _text.c_str(), _fontSize, 1);
+    auto textSize = MeasureTextEx(_font, _text.c_str(), _fontSize, 1);
     _desiredSize = {textSize.x, textSize.y};
     _desiredSize.width += _paddingLeft + _paddingRight;
     _desiredSize.height += _paddingTop + _paddingBottom;

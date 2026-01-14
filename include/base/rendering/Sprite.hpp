@@ -16,6 +16,7 @@ namespace Base
     Origin _origin;
 
   public:
+    Sprite() = default;
     Sprite(std::shared_ptr<Texture> texture, Origin origin = Origin::TopLeft);
     Sprite(std::shared_ptr<Texture> texture, const Material &material, Origin origin = Origin::TopLeft);
     Sprite(std::shared_ptr<Texture> texture, glm::vec2 sourcePos, glm::vec2 sourceSize,
@@ -31,5 +32,7 @@ namespace Base
 
     void SetSourcePos(Vector2 pos);
     void SetSourceSize(Vector2 size);
+
+    operator bool();
   };
 } // namespace Base

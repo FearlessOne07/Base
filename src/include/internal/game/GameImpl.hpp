@@ -6,7 +6,6 @@
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleManager.hpp"
 #include "base/rendering/RenderingManager.hpp"
-#include "base/shaders/ShaderManager.hpp"
 #include "base/systems/SystemManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
@@ -43,14 +42,18 @@ namespace Base
     ParticleManager _particleManager = ParticleManager();
     UIManager _uiManager = UIManager();
     TweenManager _tweenManager = TweenManager();
-    ShaderManager _shaderManager = ShaderManager(_assetManager);
-    RenderingManager _renderer = RenderingManager(_shaderManager);
+    RenderingManager _renderingManager = RenderingManager();
     SystemManager _systemManager = SystemManager(_entityManager);
 
-    SceneManager _sceneManager = SceneManager( //
-      _renderer, _entityManager, _systemManager, _assetManager, _particleManager, _uiManager, _tweenManager,
-      _shaderManager //
-    );
+    SceneManager _sceneManager = SceneManager(EngineCtx{
+      _renderingManager,
+      _entityManager,
+      _particleManager,
+      _assetManager,
+      _systemManager,
+      _uiManager,
+      _tweenManager,
+    });
 
   private: // Methods
     void Quit();

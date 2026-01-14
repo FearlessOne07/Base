@@ -204,7 +204,7 @@ namespace Base
     _audioMan.DeInit();
     _renderer.DeInit();
     _assetManager.Deinit();
-    CloseWindow();
+    _renderer.DeInit();
   }
 
   void Game::GameImpl::Quit()
@@ -231,7 +231,6 @@ namespace Base
     {
       if (keyEvent->Key == Key::F11 && keyEvent->action == InputEvent::Action::Pressed)
       {
-        ToggleBorderlessWindowed();
         event->isHandled = true;
         return;
       }
@@ -241,40 +240,6 @@ namespace Base
 
   void Game::GameImpl::ToggleFullscreenBorderless()
   {
-    int monitor = GetCurrentMonitor();
-    Vector2 monitorPos = GetMonitorPosition(monitor);
-    int monitorWidth = GetMonitorWidth(monitor);
-    int monitorHeight = GetMonitorHeight(monitor);
-
-    if (!_fullscreen)
-    {
-      _lastScreenSize = {(float)GetScreenWidth(), (float)GetScreenHeight()};
-      _lastScreenPosition = {(float)GetWindowPosition().x, (float)GetWindowPosition().y};
-
-      // Clear conflicting window states
-      ClearWindowState(FLAG_WINDOW_MAXIMIZED);
-      ClearWindowState(FLAG_WINDOW_MINIMIZED);
-
-      // Set undecorated + topmost
-      SetWindowState(FLAG_WINDOW_UNDECORATED);
-      SetWindowState(FLAG_WINDOW_TOPMOST);
-
-      SetWindowSize(monitorWidth, monitorHeight);
-      SetWindowPosition((int)monitorPos.x, (int)monitorPos.y);
-
-      _fullscreen = true;
-    }
-    else
-    {
-      // Restore window size and position
-      SetWindowSize((int)_lastScreenSize.x, (int)_lastScreenSize.y);
-      SetWindowPosition((int)_lastScreenPosition.x, (int)_lastScreenPosition.y);
-
-      ClearWindowState(FLAG_WINDOW_UNDECORATED);
-      ClearWindowState(FLAG_WINDOW_TOPMOST);
-
-      _fullscreen = false;
-    }
   }
 
   // Game Class

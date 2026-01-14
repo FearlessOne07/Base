@@ -5,7 +5,6 @@
 namespace Base
 {
   class Scene;
-  class ShaderManager;
   class FrameBuffer;
   class ShaderEffect
   {
@@ -15,7 +14,7 @@ namespace Base
 
   public:
     virtual ~ShaderEffect() = default;
-    virtual void Setup(std::weak_ptr<const Scene> shaderManager) = 0;
+    virtual void Setup() = 0;
     virtual void Apply(Ptr<FrameBuffer> input, Ptr<FrameBuffer> output, Vector2 resolution) = 0;
     virtual void Update(float dt) {};
 

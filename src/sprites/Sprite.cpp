@@ -55,4 +55,9 @@ namespace Base
   {
     _sourcePosition = pos;
   }
+
+  Sprite::operator bool()
+  {
+    return _texture != nullptr;
+  }
 } // namespace Base

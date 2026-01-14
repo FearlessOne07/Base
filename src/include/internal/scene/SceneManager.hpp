@@ -20,7 +20,6 @@ namespace Base
   class ParticleManager;
   class UIManager;
   class Renderer;
-  class ShaderManager;
   class SceneManager : public InputListener
   {
     // Type Defs
@@ -37,7 +36,6 @@ namespace Base
     Ref<ParticleManager> _particleManager;
     Ref<UIManager> _uiManager;
     Ref<TweenManager> _tweenManager;
-    Ref<ShaderManager> _shaderManager;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;

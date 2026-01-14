@@ -19,6 +19,5 @@ namespace Base
     Ref<SystemManager> Systems;
     Ref<UIManager> Ui;
     Ref<TweenManager> Tweens;
-    Ref<ShaderManager> Shaders;
   };
 } // namespace Base

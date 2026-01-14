@@ -10,11 +10,10 @@
 namespace Base
 {
   RenderLayer::RenderLayer( //
-    Ref<ShaderManager> shaderManager, Ref<SceneManager> sceneManager, Vector2 position, Vector2 size,
+    Ref<SceneManager> sceneManager, Vector2 position, Vector2 size,
     Color clearColor //
     )
-    : _position(position), _size(size), _shaderManager(shaderManager), _sceneManager(sceneManager),
-      _clearColor(clearColor)
+    : _position(position), _size(size), _sceneManager(sceneManager), _clearColor(clearColor)
   {
     _framebuffer = FrameBuffer::Create({.Width = static_cast<int>(_size.x), .Height = static_cast<int>(_size.y)});
     _ping = FrameBuffer::Create({.Width = static_cast<int>(_size.x), .Height = static_cast<int>(_size.y)});
@@ -24,8 +23,7 @@ namespace Base
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
     : _position(other._position), _size(other._size), _renderFunctions(std::move(other._renderFunctions)),
-      _shaderManager(other._shaderManager), _framebuffer(other._framebuffer),
-      _effectChain(std::move(other._effectChain)), _ping(other._ping)
+      _framebuffer(other._framebuffer), _effectChain(std::move(other._effectChain)), _ping(other._ping)
   {
     FrameBuffer::Destroy(other._framebuffer);
     FrameBuffer::Destroy(other._ping);
@@ -48,7 +46,6 @@ namespace Base
       _position = other._position;
       _size = other._size;
       _renderFunctions = std::move(other._renderFunctions);
-      _shaderManager = other._shaderManager;
       _framebuffer = other._framebuffer;
       _effectChain = std::move(other._effectChain);
       _ping = other._ping;

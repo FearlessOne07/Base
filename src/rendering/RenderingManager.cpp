@@ -16,9 +16,6 @@
 
 namespace Base
 {
-  RenderingManager::RenderingManager(Ref<ShaderManager> shaderManager) : _shaderManager(shaderManager)
-  {
-  }
 
   void RenderingManager::SetSceneManager(Ref<SceneManager> sceneManager)
   {
@@ -31,8 +28,7 @@ namespace Base
   {
     if (_renderLayers.contains(ownerScene.lock()->GetSceneID()))
     {
-      _renderLayers.at(ownerScene.lock()->GetSceneID())
-        .emplace_back(_shaderManager, _sceneManager, position, size, clearColor);
+      _renderLayers.at(ownerScene.lock()->GetSceneID()).emplace_back(_sceneManager, position, size, clearColor);
       return _renderLayers.at(ownerScene.lock()->GetSceneID()).back();
     }
     return Ref<RenderLayer>();

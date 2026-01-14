@@ -41,18 +41,24 @@ namespace Base
   {
     if (_layerBackPanel)
     {
-      _layerBackPanel->Arrange({_layerPosition.x, _layerPosition.y, _layerSize.x, _layerSize.y});
-    }
+      _layerBackPanel->Arrange({{_layerPosition.x, _layerPosition.y}, {_layerSize.x, _layerSize.y}});
 
-    if (_root)
-    {
-      Size rSize = _root->Measure();
-      Vector2 rPos = _root->GetPosition();
-      _root->Arrange({_layerPosition.x + rPos.x, _layerPosition.y + rPos.y, _layerSize.x, _layerSize.y});
-
-      if (_root->IsVisible())
+      if (_root)
       {
-        _root->Update(dt, {.MousePosition = _parentSceneLayer->GetLayerMousePosition()});
+        Size rSize = _root->Measure();
+        Vector2 rPos = _root->GetPosition();
+        _root->Arrange({
+          {
+            _layerPosition.x + rPos.x,
+            _layerPosition.y + rPos.y,
+          },
+          {_layerSize.x, _layerSize.y},
+        });
+
+        if (_root->IsVisible())
+        {
+          _root->Update(dt, {.MousePosition = _parentSceneLayer->GetLayerMousePosition()});
+        }
       }
     }
   }

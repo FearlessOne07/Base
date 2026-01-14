@@ -18,6 +18,7 @@ namespace Base
     ~Font();
     static std::shared_ptr<Font> Create(const std::filesystem::path &);
     static void Destroy(Ptr<Font> &font);
+    static Vector2 MeasureText(Ptr<Font> &font, std::string_view string, float fontSize);
     const std::shared_ptr<Texture> GetAtlas();
     const MSDFData *GetMSDFData() const;
   };

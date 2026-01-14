@@ -3,7 +3,7 @@
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/shaders/ShaderEffect.hpp"
 #include "base/shaders/ShaderEffectChain.hpp"
-#include "base/shaders/ShaderManager.hpp"
+#include "base/util/Ref.hpp"
 #include "base/util/Type.hpp"
 #include <bitset>
 #include <deque>
@@ -32,7 +32,6 @@ namespace Base
     Vector2 _size = {0, 0};
 
     // Scene
-    Ref<ShaderManager> _shaderManager;
     Ref<SceneManager> _sceneManager;
 
     // Shaders
@@ -43,7 +42,7 @@ namespace Base
     void Update(float dt);
 
   public:
-    RenderLayer(Ref<ShaderManager> shaderManager, Ref<SceneManager>, Vector2 position, Vector2 size, Color clearColor);
+    RenderLayer(Ref<SceneManager>, Vector2 position, Vector2 size, Color clearColor);
     RenderLayer(RenderLayer &&other) noexcept;
     RenderLayer &operator=(RenderLayer &&other) noexcept;
     ~RenderLayer();

@@ -12,6 +12,8 @@ namespace Base
     float _thickness = 0;
 
   public:
+    Circle(float radius);
+    Circle(float radius, const Material &material);
     Circle(Vector2 position, float radius);
     Circle(Vector2 position, float radius, const Material &material);
 

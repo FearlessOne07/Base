@@ -3,6 +3,8 @@
 #include "base/input/MouseButtons.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
 #include "base/ui/UIConext.hpp"
+#include "base/util/Type.hpp"
+#include "internal/utils/Collisions.hpp"
 #include <algorithm>
 #include <cmath>
 
@@ -10,21 +12,23 @@ namespace Base
 {
   static Rectangle RectangleUnion(Rectangle a, Rectangle b)
   {
-    float minX = fminf(a.x, b.x);
-    float minY = fminf(a.y, b.y);
-    float maxX = fmaxf(a.x + a.width, b.x + b.width);
-    float maxY = fmaxf(a.y + a.height, b.y + b.height);
+    float minX = fminf(a.GetPosition().x, b.GetPosition().x);
+    float minY = fminf(a.GetPosition().y, b.GetPosition().y);
+    float maxX = fmaxf(a.GetPosition().x + a.GetSize().x, b.GetPosition().x + b.GetSize().x);
+    float maxY = fmaxf(a.GetPosition().y + a.GetSize().y, b.GetPosition().y + b.GetSize().y);
 
-    return {minX, minY, maxX - minX, maxY - minY};
+    return {{minX, minY}, {maxX - minX, maxY - minY}};
   }
 
   Rectangle UIElement::GetCombinedHoverRect() const
   {
     Rectangle layoutRect = {
-      _layoutRect.x - _renderTransform.GetOffsetx(),
-      _layoutRect.y - _renderTransform.GetOffsetY(),
-      _layoutRect.width,
-      _layoutRect.height,
+      {_layoutRect.GetPosition().x - _renderTransform.GetOffsetx(),
+       _layoutRect.GetPosition().y - _renderTransform.GetOffsetY()},
+      {
+        _layoutRect.GetSize().x,
+        _layoutRect.GetSize().y,
+      },
     };
     return RectangleUnion(layoutRect, _layoutRect);
   }
@@ -43,7 +47,7 @@ namespace Base
     _verticalAlignment = vAlign;
   }
 
-  void UIElement::SetFont(const AssetHandle<BaseFont> &font)
+  void UIElement::SetFont(const AssetHandle<Font> &font)
   {
     if (font.Get())
     {
@@ -242,19 +246,21 @@ namespace Base
     float width = _desiredSize.width * _renderTransform.GetScaleX();
     float height = _desiredSize.height * _renderTransform.GetScaleY();
 
+    Vector2 pos;
+
     // Horizontal alignment
     switch (_horizontalAlignment)
     {
     case HAlign::Left:
       break;
     case HAlign::Center:
-      _layoutRect.x += (finalRect.width - width) / 2;
+      pos.x += (finalRect.GetSize().x - width) / 2;
       break;
     case HAlign::Right:
-      _layoutRect.x += finalRect.width - width;
+      pos.x += finalRect.GetSize().x - width;
       break;
     case HAlign::Stretch:
-      width = finalRect.width;
+      width = finalRect.GetSize().x;
       break;
     }
 
@@ -264,18 +270,17 @@ namespace Base
     case VAlign::Top:
       break;
     case VAlign::Center:
-      _layoutRect.y += (finalRect.height - height) / 2;
+      pos.y += (finalRect.GetSize().y - height) / 2;
       break;
     case VAlign::Bottom:
-      _layoutRect.y += finalRect.height - height;
+      pos.y += finalRect.GetSize().y - height;
       break;
     case VAlign::Stretch:
-      height = finalRect.height;
+      height = finalRect.GetSize().y;
       break;
     }
 
-    _layoutRect.width = width;
-    _layoutRect.height = height;
+    _layoutRect = {{width, height}, pos};
 
     for (auto &child : _childElements)
     {

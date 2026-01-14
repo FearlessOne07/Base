@@ -15,6 +15,8 @@ namespace Base
 
   public:
     Rectangle();
+    Rectangle(Vector2 size, Origin origin = Origin::TopLeft);
+    Rectangle(Vector2 size, const Material &material, Origin origin = Origin::TopLeft);
     Rectangle(Vector2 size, Vector2 position, Origin origin = Origin::TopLeft);
     Rectangle(Vector2 size, Vector2 position, const Material &material, Origin origin = Origin::TopLeft);
     Vector2 GetSize() const;

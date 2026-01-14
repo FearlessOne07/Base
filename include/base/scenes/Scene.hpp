@@ -5,12 +5,9 @@
 #include "base/scenes/SceneTransition.hpp"
 #include "base/scenes/SharedSceneDataStore.hpp"
 #include "base/shaders/ShaderEffectChain.hpp"
-#include "base/shaders/ShaderManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
-#include "base/util/Strings.hpp"
 #include <bitset>
-#include <filesystem>
 #include <memory>
 #include <unordered_map>
 
