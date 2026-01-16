@@ -7,249 +7,266 @@
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/SceneSuspendedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include <algorithm>
 #include <memory>
 
 namespace Base
 {
-  static Key FromRaylibKey(int raylibKey)
+  static Key FromGLFWKey(int glfwKey)
   {
-    switch (raylibKey)
+    switch (glfwKey)
     {
-    case 0:
+    case GLFW_KEY_UNKNOWN:
       return Key::Null;
-    case 39:
+
+    case GLFW_KEY_APOSTROPHE:
       return Key::Apostrophe;
-    case 44:
+    case GLFW_KEY_COMMA:
       return Key::Comma;
-    case 45:
+    case GLFW_KEY_MINUS:
       return Key::Minus;
-    case 46:
+    case GLFW_KEY_PERIOD:
       return Key::Period;
-    case 47:
+    case GLFW_KEY_SLASH:
       return Key::Slash;
-    case 48:
+
+    case GLFW_KEY_0:
       return Key::Zero;
-    case 49:
+    case GLFW_KEY_1:
       return Key::One;
-    case 50:
+    case GLFW_KEY_2:
       return Key::Two;
-    case 51:
+    case GLFW_KEY_3:
       return Key::Three;
-    case 52:
+    case GLFW_KEY_4:
       return Key::Four;
-    case 53:
+    case GLFW_KEY_5:
       return Key::Five;
-    case 54:
+    case GLFW_KEY_6:
       return Key::Six;
-    case 55:
+    case GLFW_KEY_7:
       return Key::Seven;
-    case 56:
+    case GLFW_KEY_8:
       return Key::Eight;
-    case 57:
+    case GLFW_KEY_9:
       return Key::Nine;
-    case 59:
+
+    case GLFW_KEY_SEMICOLON:
       return Key::Semicolon;
-    case 61:
+    case GLFW_KEY_EQUAL:
       return Key::Equal;
-    case 65:
+
+    case GLFW_KEY_A:
       return Key::A;
-    case 66:
+    case GLFW_KEY_B:
       return Key::B;
-    case 67:
+    case GLFW_KEY_C:
       return Key::C;
-    case 68:
+    case GLFW_KEY_D:
       return Key::D;
-    case 69:
+    case GLFW_KEY_E:
       return Key::E;
-    case 70:
+    case GLFW_KEY_F:
       return Key::F;
-    case 71:
+    case GLFW_KEY_G:
       return Key::G;
-    case 72:
+    case GLFW_KEY_H:
       return Key::H;
-    case 73:
+    case GLFW_KEY_I:
       return Key::I;
-    case 74:
+    case GLFW_KEY_J:
       return Key::J;
-    case 75:
+    case GLFW_KEY_K:
       return Key::K;
-    case 76:
+    case GLFW_KEY_L:
       return Key::L;
-    case 77:
+    case GLFW_KEY_M:
       return Key::M;
-    case 78:
+    case GLFW_KEY_N:
       return Key::N;
-    case 79:
+    case GLFW_KEY_O:
       return Key::O;
-    case 80:
+    case GLFW_KEY_P:
       return Key::P;
-    case 81:
+    case GLFW_KEY_Q:
       return Key::Q;
-    case 82:
+    case GLFW_KEY_R:
       return Key::R;
-    case 83:
+    case GLFW_KEY_S:
       return Key::S;
-    case 84:
+    case GLFW_KEY_T:
       return Key::T;
-    case 85:
+    case GLFW_KEY_U:
       return Key::U;
-    case 86:
+    case GLFW_KEY_V:
       return Key::V;
-    case 87:
+    case GLFW_KEY_W:
       return Key::W;
-    case 88:
+    case GLFW_KEY_X:
       return Key::X;
-    case 89:
+    case GLFW_KEY_Y:
       return Key::Y;
-    case 90:
+    case GLFW_KEY_Z:
       return Key::Z;
-    case 91:
+
+    case GLFW_KEY_LEFT_BRACKET:
       return Key::LeftBracket;
-    case 92:
+    case GLFW_KEY_BACKSLASH:
       return Key::Backslash;
-    case 93:
+    case GLFW_KEY_RIGHT_BRACKET:
       return Key::RightBracket;
-    case 96:
+    case GLFW_KEY_GRAVE_ACCENT:
       return Key::Grave;
-    case 32:
+
+    case GLFW_KEY_SPACE:
       return Key::Space;
-    case 256:
+    case GLFW_KEY_ESCAPE:
       return Key::Escape;
-    case 257:
+    case GLFW_KEY_ENTER:
       return Key::Enter;
-    case 258:
+    case GLFW_KEY_TAB:
       return Key::Tab;
-    case 259:
+    case GLFW_KEY_BACKSPACE:
       return Key::Backspace;
-    case 260:
+    case GLFW_KEY_INSERT:
       return Key::Insert;
-    case 261:
+    case GLFW_KEY_DELETE:
       return Key::Delete;
-    case 262:
+
+    case GLFW_KEY_RIGHT:
       return Key::Right;
-    case 263:
+    case GLFW_KEY_LEFT:
       return Key::Left;
-    case 264:
+    case GLFW_KEY_DOWN:
       return Key::Down;
-    case 265:
+    case GLFW_KEY_UP:
       return Key::Up;
-    case 266:
+
+    case GLFW_KEY_PAGE_UP:
       return Key::PageUp;
-    case 267:
+    case GLFW_KEY_PAGE_DOWN:
       return Key::PageDown;
-    case 268:
+    case GLFW_KEY_HOME:
       return Key::Home;
-    case 269:
+    case GLFW_KEY_END:
       return Key::End;
-    case 280:
+
+    case GLFW_KEY_CAPS_LOCK:
       return Key::CapsLock;
-    case 281:
+    case GLFW_KEY_SCROLL_LOCK:
       return Key::ScrollLock;
-    case 282:
+    case GLFW_KEY_NUM_LOCK:
       return Key::NumLock;
-    case 283:
+    case GLFW_KEY_PRINT_SCREEN:
       return Key::PrintScreen;
-    case 284:
+    case GLFW_KEY_PAUSE:
       return Key::Pause;
-    case 290:
+
+    case GLFW_KEY_F1:
       return Key::F1;
-    case 291:
+    case GLFW_KEY_F2:
       return Key::F2;
-    case 292:
+    case GLFW_KEY_F3:
       return Key::F3;
-    case 293:
+    case GLFW_KEY_F4:
       return Key::F4;
-    case 294:
+    case GLFW_KEY_F5:
       return Key::F5;
-    case 295:
+    case GLFW_KEY_F6:
       return Key::F6;
-    case 296:
+    case GLFW_KEY_F7:
       return Key::F7;
-    case 297:
+    case GLFW_KEY_F8:
       return Key::F8;
-    case 298:
+    case GLFW_KEY_F9:
       return Key::F9;
-    case 299:
+    case GLFW_KEY_F10:
       return Key::F10;
-    case 300:
+    case GLFW_KEY_F11:
       return Key::F11;
-    case 301:
+    case GLFW_KEY_F12:
       return Key::F12;
-    case 340:
+
+    case GLFW_KEY_LEFT_SHIFT:
       return Key::LeftShift;
-    case 341:
+    case GLFW_KEY_LEFT_CONTROL:
       return Key::LeftControl;
-    case 342:
+    case GLFW_KEY_LEFT_ALT:
       return Key::LeftAlt;
-    case 343:
+    case GLFW_KEY_LEFT_SUPER:
       return Key::LeftSuper;
-    case 344:
+
+    case GLFW_KEY_RIGHT_SHIFT:
       return Key::RightShift;
-    case 345:
+    case GLFW_KEY_RIGHT_CONTROL:
       return Key::RightControl;
-    case 346:
+    case GLFW_KEY_RIGHT_ALT:
       return Key::RightAlt;
-    case 347:
+    case GLFW_KEY_RIGHT_SUPER:
       return Key::RightSuper;
-    case 348:
+
+    case GLFW_KEY_MENU:
       return Key::KbMenu;
-    case 320:
+
+    case GLFW_KEY_KP_0:
       return Key::Keypad0;
-    case 321:
+    case GLFW_KEY_KP_1:
       return Key::Keypad1;
-    case 322:
+    case GLFW_KEY_KP_2:
       return Key::Keypad2;
-    case 323:
+    case GLFW_KEY_KP_3:
       return Key::Keypad3;
-    case 324:
+    case GLFW_KEY_KP_4:
       return Key::Keypad4;
-    case 325:
+    case GLFW_KEY_KP_5:
       return Key::Keypad5;
-    case 326:
+    case GLFW_KEY_KP_6:
       return Key::Keypad6;
-    case 327:
+    case GLFW_KEY_KP_7:
       return Key::Keypad7;
-    case 328:
+    case GLFW_KEY_KP_8:
       return Key::Keypad8;
-    case 329:
+    case GLFW_KEY_KP_9:
       return Key::Keypad9;
-    case 330:
+
+    case GLFW_KEY_KP_DECIMAL:
       return Key::KeypadDecimal;
-    case 331:
+    case GLFW_KEY_KP_DIVIDE:
       return Key::KeypadDivide;
-    case 332:
+    case GLFW_KEY_KP_MULTIPLY:
       return Key::KeypadMultiply;
-    case 333:
+    case GLFW_KEY_KP_SUBTRACT:
       return Key::KeypadSubtract;
-    case 334:
+    case GLFW_KEY_KP_ADD:
       return Key::KeypadAdd;
-    case 335:
+    case GLFW_KEY_KP_ENTER:
       return Key::KeypadEnter;
-    case 336:
+    case GLFW_KEY_KP_EQUAL:
       return Key::KeypadEqual;
+
     default:
       return Key::Null;
     }
   }
 
-  static MouseKey FromRaylibButton(int raylibButton)
+  static MouseKey FromGLFWMouseButton(int glfwButton)
   {
-    switch (raylibButton)
+    switch (glfwButton)
     {
-    case 0:
+    case GLFW_MOUSE_BUTTON_LEFT:
       return MouseKey::Left;
-    case 1:
+    case GLFW_MOUSE_BUTTON_RIGHT:
       return MouseKey::Right;
-    case 2:
+    case GLFW_MOUSE_BUTTON_MIDDLE:
       return MouseKey::Middle;
-    case 3:
+    case GLFW_MOUSE_BUTTON_4:
       return MouseKey::Side;
-    case 4:
+    case GLFW_MOUSE_BUTTON_5:
       return MouseKey::Extra;
-    case 5:
+    case GLFW_MOUSE_BUTTON_6:
       return MouseKey::Forward;
-    case 6:
+    case GLFW_MOUSE_BUTTON_7:
       return MouseKey::Back;
     default:
       return MouseKey::Left;
@@ -271,17 +288,24 @@ namespace Base
     bus->SubscribeSignal<SceneLayerPausedSignal>([this](const std::shared_ptr<Signal> &signal) {
       this->ResetInput(signal); //
     });
+
+    // Init Renderer Call Backs
+    Renderer::SetKeyCallback(
+      [this](int key, int scancode, int action, int mods) { DispatchKeyEvent(key, scancode, action, mods); } //
+    );
+    Renderer::SetMouseButtonCallback(
+      [this](int button, int action, int mods) { DispatchMouseEvent(button, action, mods); } //
+    );
   }
 
-  void InputManager::PollAndDispatch()
+  void InputManager::DispatchKeyEvent(int keyGLFW, int scancode, int action, int mods)
   {
     // Track key state
-    for (int keyRay = KEY_NULL; keyRay <= KEY_KB_MENU; ++keyRay)
     {
       // Key held
-      if (IsKeyDown(keyRay))
+      if (action == GLFW_KEY_DOWN)
       {
-        Key key = FromRaylibKey(keyRay);
+        Key key = FromGLFWKey(keyGLFW);
 
         // If this is the first time the key is being registered and it haasn't been handled as a PRESS ...
         if (!_heldKeys.contains(key) && std::ranges::find(_handledKeyPresses, key) == _handledKeyPresses.end())
@@ -323,10 +347,10 @@ namespace Base
         }
       }
       // If the key is Released
-      else if (IsKeyReleased(keyRay))
+      else if (action == GLFW_RELEASE)
       {
 
-        Key key = FromRaylibKey(keyRay);
+        Key key = FromGLFWKey(keyGLFW);
 
         // Erase it from held keys
         _heldKeys.erase(key);
@@ -349,13 +373,15 @@ namespace Base
         _lastEvent = event;
       }
     }
+  }
 
+  void InputManager::DispatchMouseEvent(int btnGLFW, int action, int mods)
+  {
     ////// Same Steps for as key events ///////
-    for (int btnRay = 0; btnRay <= MOUSE_BUTTON_RIGHT; ++btnRay)
     {
-      if (IsMouseButtonDown(btnRay))
+      if (action == GLFW_KEY_DOWN)
       {
-        MouseKey btn = FromRaylibButton(btnRay);
+        MouseKey btn = FromGLFWMouseButton(btnGLFW);
         if (!_heldMouseBtns.contains(btn) && std::ranges::find(_handledMousePresses, btn) == _handledMousePresses.end())
         {
           _heldMouseBtns[btn] = 1;
@@ -383,9 +409,9 @@ namespace Base
           }
         }
       }
-      else if (IsMouseButtonReleased(btnRay))
+      else if (action == GLFW_RELEASE)
       {
-        MouseKey btn = FromRaylibButton(btnRay);
+        MouseKey btn = FromGLFWMouseButton(btnGLFW);
         _heldMouseBtns.erase(btn);
 
         auto it = std::ranges::find(_handledMousePresses, btn);
@@ -408,7 +434,6 @@ namespace Base
   {
     if (_lastEvent)
     {
-
       // If the last event was a PRESSED event, dispatch a synthetic RELEASED event
       // so that listeners can reverse the effects of the press
       if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(_lastEvent))

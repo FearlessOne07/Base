@@ -249,15 +249,25 @@ namespace Base
     return _instance->_window->GetMousePosition();
   }
 
-  void Renderer::SetWindowCallbacks( //
-    const KeyCallback &keyCallback, const MouseButtonCallback &mouseButtonCallback,
-    const CursorPosCallback &cursorPosCallback, const ScrollCallback &scrollCallback,
-    const CharCallback &charCallback //
-  )
+  void Renderer::SetKeyCallback(const KeyCallback &keyCallback)
   {
-    _instance->_window->SetCallbacks(keyCallback, mouseButtonCallback, cursorPosCallback, scrollCallback, charCallback);
+    _instance->_window->SetKeyCallback(keyCallback);
   }
 
+  void Renderer::SetMouseButtonCallback(const MouseButtonCallback &mouseButtonCallback)
+  {
+    _instance->_window->SetMouseButtonCallback(mouseButtonCallback);
+  }
+
+  void Renderer::SetScrollCallback(const ScrollCallback &scrollCallback)
+  {
+    _instance->_window->SetScrollCallback(scrollCallback);
+  }
+
+  void Renderer::SetCharCallback(const CharCallback &charCallback)
+  {
+    _instance->_window->SetCharCallback(charCallback);
+  }
   void Renderer::Deinit()
   {
     _instance->_quadBatcher.DeInit();

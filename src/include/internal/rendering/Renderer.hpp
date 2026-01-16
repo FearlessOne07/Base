@@ -71,11 +71,10 @@ namespace Base
     static void PollWindow();
     static void SwapWindowBuffers();
     static bool IsWindowClosed();
-    static void SetWindowCallbacks( //
-      const KeyCallback &keyCallback, const MouseButtonCallback &mouseButtonCallback,
-      const CursorPosCallback &cursorPosCallback, const ScrollCallback &scrollCallback,
-      const CharCallback &charCallback //
-    );
+    static void SetKeyCallback(const KeyCallback &keyCallback);
+    static void SetMouseButtonCallback(const MouseButtonCallback &mouseButtonCallback);
+    static void SetScrollCallback(const ScrollCallback &scrollCallback);
+    static void SetCharCallback(const CharCallback &charCallback);
     static void SetWindowMode(const WindowMode &state);
     static IVector2 GetWindowSize();
     static IVector2 GetFramebufferSize();

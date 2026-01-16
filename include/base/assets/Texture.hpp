@@ -1,5 +1,6 @@
 #pragma once
 
+#include "base/assets/BaseAsset.hpp"
 #include "base/rendering/RenderID.hpp"
 #include <filesystem>
 #include <memory>
@@ -30,7 +31,7 @@ namespace Base
     bool MipMaps = true;
   };
 
-  class Texture
+  class Texture : public BaseAsset
   {
   private:
     RenderID _id = 0;

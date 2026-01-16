@@ -4,7 +4,7 @@
 
 namespace Base
 {
-  SpriteComponent::SpriteComponent(const Sprite &sprite) : _sprite(sprite)
+  SpriteComponent::SpriteComponent(const Sprite &sprite, Vector2 targetSize) : _sprite(sprite), _targetSize(targetSize)
   {
   }
 
@@ -22,4 +22,10 @@ namespace Base
   {
     return _sprite;
   }
+
+  Vector2 SpriteComponent::GetTargetSize() const
+  {
+    return _targetSize;
+  }
+
 } // namespace Base

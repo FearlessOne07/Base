@@ -60,7 +60,8 @@ namespace Base
             auto animcmp = e->GetComponent<AnimationComponent>();
 
             AnimationFrame &frame = animcmp->GetNextFrame();
-            sprtmp->SetSourcePos({frame.origin.x, frame.origin.y, frame.size.x, frame.size.y});
+            sprtmp->SetSourcePos({frame.origin.x, frame.origin.y});
+            sprtmp->SetSourceSize({frame.size.x, frame.size.y});
 
             if (frame.elapsed >= frame.duration)
             {
@@ -75,7 +76,7 @@ namespace Base
 
           if (sprtmp && transcmp)
           {
-            sprtmp->GetSprite().Render(transcmp->position, transcmp->rotation, WHITE);
+            Renderer::DrawSprite(sprtmp->GetSprite(), transcmp->position, sprtmp->GetTargetSize(), transcmp->rotation);
           }
         }
       }

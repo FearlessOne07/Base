@@ -26,7 +26,8 @@ namespace Base
 
   public:
     void Init();
-    void PollAndDispatch();
+    void DispatchKeyEvent(int key, int scancode, int action, int mods);
+    void DispatchMouseEvent(int button, int action, int mods);
     void PostUpdate();
     void RegisterListener(InputListener &listener);
     void DispatchEvent(std::shared_ptr<InputEvent> event);

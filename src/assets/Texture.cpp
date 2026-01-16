@@ -8,7 +8,6 @@
 
 namespace Base
 {
-
   static GLenum GetGLInternalFormat(TextureFormat format)
   {
     switch (format)

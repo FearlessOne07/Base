@@ -1,6 +1,7 @@
 #pragma once
 #include "FragmentShader.hpp"
 #include "VertexShader.hpp"
+#include "base/assets/BaseAsset.hpp"
 #include "base/rendering/GeometryType.hpp"
 #include "base/rendering/RenderID.hpp"
 #include "base/shaders/UniformValue.hpp"
@@ -10,7 +11,7 @@
 
 namespace Base
 {
-  class Shader
+  class Shader : public BaseAsset
   {
   private:
     RenderID _id;

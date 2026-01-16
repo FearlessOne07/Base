@@ -5,7 +5,6 @@
 
 namespace Base
 {
-
   void Window::CreateWindow(const WindowSpec &spec)
   {
     // Initialize GLFW
@@ -50,9 +49,15 @@ namespace Base
     std::cout << glGetString(GL_VERSION) << "\n";
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, (int *)(&_glContexData.MaxTextureUnits));
 
+    // Call Backs
     glfwSetWindowSizeCallback(_window, Window::WindowResizeCallBack);
     glfwSetFramebufferSizeCallback(_window, Window::FrameBufferResizeCallBack);
     glfwSetCursorPosCallback(_window, Window::MouseMoveCallBack);
+
+    glfwSetKeyCallback(_window, Window::KeyCallBack);
+    glfwSetMouseButtonCallback(_window, Window::MouseButtonCallBack);
+    glfwSetCharCallback(_window, Window::CharCallBack);
+    glfwSetScrollCallback(_window, Window::ScrollCallBack);
 
     UpdateFrameBufferSize(spec.MinSize.x, spec.MinSize.y);
     UpdateWindowSize(spec.MinSize.x, spec.MinSize.y);
@@ -151,6 +156,42 @@ namespace Base
     _this->_mousePosition.y = y;
   }
 
+  void Window::KeyCallBack(GLFWwindow *window, int key, int scancode, int action, int mods)
+  {
+    Window *_this = (Window *)glfwGetWindowUserPointer(window);
+    if (_this->_keyCallBack)
+    {
+      _this->_keyCallBack(key, scancode, action, mods);
+    }
+  }
+
+  void Window::MouseButtonCallBack(GLFWwindow *window, int button, int action, int mods)
+  {
+    Window *_this = (Window *)glfwGetWindowUserPointer(window);
+    if (_this->_mouseButtonCallBack)
+    {
+      _this->_mouseButtonCallBack(button, action, mods);
+    }
+  }
+
+  void Window::ScrollCallBack(GLFWwindow *window, double xoffset, double yoffset)
+  {
+    Window *_this = (Window *)glfwGetWindowUserPointer(window);
+    if (_this->_scrollCallBack)
+    {
+      _this->_scrollCallBack(xoffset, yoffset);
+    }
+  }
+
+  void Window::CharCallBack(GLFWwindow *window, unsigned int codepoint)
+  {
+    Window *_this = (Window *)glfwGetWindowUserPointer(window);
+    if (_this->_charCallBack)
+    {
+      _this->_charCallBack(codepoint);
+    }
+  }
+
   void Window::UpdateFrameBufferSize(int width, int height)
   {
     _frameBufferWidth = width;
@@ -174,14 +215,23 @@ namespace Base
     return _glContexData;
   }
 
-  void Window::SetCallbacks( //
-    const KeyCallback &keyCallback, const MouseButtonCallback &mouseButtonCallback,
-    const CursorPosCallback &cursorPosCallback, const ScrollCallback &scrollCallback, const CharCallback &charCallback)
+  void Window::SetKeyCallback(const KeyCallback &keyCallback)
   {
-    glfwSetKeyCallback(_window, *keyCallback.target<GLFWkeyfun>());
-    glfwSetMouseButtonCallback(_window, *mouseButtonCallback.target<GLFWmousebuttonfun>());
-    glfwSetCursorPosCallback(_window, *cursorPosCallback.target<GLFWcursorposfun>());
-    glfwSetScrollCallback(_window, *scrollCallback.target<GLFWscrollfun>());
-    glfwSetCharCallback(_window, *charCallback.target<GLFWcharfun>());
+    _keyCallBack = keyCallback;
+  }
+
+  void Window::SetMouseButtonCallback(const MouseButtonCallback &mouseButtonCallback)
+  {
+    _mouseButtonCallBack = mouseButtonCallback;
+  }
+
+  void Window::SetScrollCallback(const ScrollCallback &scrollCallback)
+  {
+    _scrollCallBack = scrollCallback;
+  }
+
+  void Window::SetCharCallback(const CharCallback &charCallback)
+  {
+    _charCallBack = charCallback;
   }
 } // namespace Base

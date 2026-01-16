@@ -10,7 +10,7 @@
 namespace Base
 {
 
-  SceneID::operator bool()
+  SceneID::operator bool() const
   {
     return _id >= 0;
   }
@@ -20,7 +20,7 @@ namespace Base
     return _id;
   }
 
-  bool SceneID::operator==(const SceneID &other)
+  bool SceneID::operator==(const SceneID &other) const
   {
     return _id == other._id;
   }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "base/assets/BaseAsset.hpp"
 #include "base/assets/Texture.hpp"
 #include "base/util/Type.hpp"
 #include <filesystem>
@@ -8,7 +9,7 @@ namespace Base
 {
 
   struct MSDFData;
-  class Font
+  class Font : public BaseAsset
   {
     MSDFData *_data;
     Ptr<Texture> _atlas = nullptr;

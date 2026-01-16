@@ -11,11 +11,10 @@
 namespace Base
 {
 
-  using KeyCallback = std::function<void(GLFWwindow *, int key, int scancode, int action, int mods)>;
-  using MouseButtonCallback = std::function<void(GLFWwindow *, int button, int action, int mods)>;
-  using CursorPosCallback = std::function<void(GLFWwindow *, double x, double y)>;
-  using ScrollCallback = std::function<void(GLFWwindow *, double xoffset, double yoffset)>;
-  using CharCallback = std::function<void(GLFWwindow *, unsigned int codepoint)>;
+  using KeyCallback = std::function<void(int key, int scancode, int action, int mods)>;
+  using MouseButtonCallback = std::function<void(int button, int action, int mods)>;
+  using ScrollCallback = std::function<void(double xoffset, double yoffset)>;
+  using CharCallback = std::function<void(unsigned int codepoint)>;
 
   struct GLContexData
   {
@@ -44,10 +43,22 @@ namespace Base
 
     GLContexData _glContexData;
 
+    // Call Backs
+
+    KeyCallback _keyCallBack;
+    MouseButtonCallback _mouseButtonCallBack;
+    ScrollCallback _scrollCallBack;
+    CharCallback _charCallBack;
+
   private:
     static void WindowResizeCallBack(GLFWwindow *window, int width, int height);
     static void FrameBufferResizeCallBack(GLFWwindow *window, int width, int height);
     static void MouseMoveCallBack(GLFWwindow *window, double x, double y);
+
+    static void KeyCallBack(GLFWwindow *, int key, int scancode, int action, int mods);
+    static void MouseButtonCallBack(GLFWwindow *, int button, int action, int mods);
+    static void ScrollCallBack(GLFWwindow *, double xoffset, double yoffset);
+    static void CharCallBack(GLFWwindow *, unsigned int codepoint);
 
     void UpdateFrameBufferSize(int width, int height);
     void UpdateWindowSize(int width, int height);
@@ -59,11 +70,10 @@ namespace Base
     bool WindowClosed() const;
     void SwapBuffers();
     void Poll() const;
-    void SetCallbacks( //
-      const KeyCallback &keyCallback, const MouseButtonCallback &mouseButtonCallback,
-      const CursorPosCallback &cursorPosCallback, const ScrollCallback &scrollCallback,
-      const CharCallback &charCallback //
-    );
+    void SetKeyCallback(const KeyCallback &keyCallback);
+    void SetMouseButtonCallback(const MouseButtonCallback &mouseButtonCallback);
+    void SetScrollCallback(const ScrollCallback &scrollCallback);
+    void SetCharCallback(const CharCallback &charCallback);
     void SetMode(const WindowMode &mode);
 
     // Size

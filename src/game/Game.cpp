@@ -49,8 +49,6 @@ namespace Base
     _inpMan.Init();
     _inpMan.RegisterListener(*this);
 
-    // Initialise Shader Manager
-
     _renderingManager.SetSceneManager(_sceneManager);
     _systemManager.SetSceneManager(_sceneManager);
 
@@ -160,9 +158,6 @@ namespace Base
 
       // Delta Time
       float dt = 1.f / 60.f;
-
-      // Update Managers
-      _inpMan.PollAndDispatch();
 
       _sceneManager.Update(dt);
 
