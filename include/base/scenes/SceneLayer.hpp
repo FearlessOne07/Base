@@ -66,8 +66,6 @@ namespace Base
     bool IsPaused();
 
     // Assets
-    template <typename T> AssetHandle<T> GetAsset(const std::string &name) const;
-    template <typename T> void LoadAsset(const fs::path &path);
     template <typename T = void> void SetSceneTransition(SceneRequest request, const SceneData &data = SceneData());
   };
 } // namespace Base

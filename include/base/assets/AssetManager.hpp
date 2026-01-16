@@ -52,11 +52,12 @@ namespace Base
 
     template <typename T>
       requires(std::is_base_of_v<BaseAsset, T>)
-    AssetHandle<T> GetAsset(const std::string &assetName, SceneID scene = SceneID())
+    AssetHandle<T> GetAsset(const std::string &assetName, bool global = false)
     {
       std::string name = Base::Strings::ToLower(assetName);
-      if (scene)
+      if (global)
       {
+        auto &scene = _currentScene;
         if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
         {
           std::stringstream error;

@@ -96,7 +96,7 @@ namespace Base
     Color GetClearColor() const;
     [[nodiscard]] SceneID GetSceneID() const;
 
-    [[nodiscard]] const EngineCtx &Engine()
+    [[nodiscard]] EngineCtx &Engine()
     {
       return _engine;
     }
