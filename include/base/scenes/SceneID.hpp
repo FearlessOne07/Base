@@ -14,7 +14,7 @@ namespace Base
     SceneID();
     operator bool();
     operator int64_t() const;
-    bool operator==(const SceneID &other);
+    bool operator==(const SceneID &other) const;
   };
 } // namespace Base
 

@@ -15,6 +15,6 @@ namespace Base
     int TargetFps = 0;
     bool Vsync = false;
     bool ResizableWindow = true;
-    std::unordered_map<Base::AssetType, std::vector<std::filesystem::path>> GlobalAssets = {};
+    std::unordered_map<Base::AssetType, std::vector<AssetPath>> GlobalAssets = {};
   };
 } // namespace Base

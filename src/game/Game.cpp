@@ -27,13 +27,13 @@ extern "C"
 // TODO: Maybe make a base Manager class for _currentScene functionality
 namespace Base
 {
-  void Game::GameImpl::Init(GameConfig config)
+  void Game::GameImpl::Init(const GameConfig &config)
   {
     // Init Audio
     _audioMan.Init();
     _audioMan.SetAssetManager(&_assetManager);
 
-    _renderer.Init({.Title = config.Title, .Width = config.Resolution.x, .Height = config.Resolution.y});
+    _renderingManager.Init(config);
 
     // Initialise Render Texture
     _gameWidth = static_cast<float>(config.Resolution.x);
@@ -50,9 +50,8 @@ namespace Base
     _inpMan.RegisterListener(*this);
 
     // Initialise Shader Manager
-    _shaderManager.Init();
 
-    _renderer.SetSceneManager(_sceneManager);
+    _renderingManager.SetSceneManager(_sceneManager);
     _systemManager.SetSceneManager(_sceneManager);
 
     // Load Global Assets
@@ -67,31 +66,31 @@ namespace Base
         case AssetType::Texture:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadAsset<Texture>(path);
+            _assetManager.LoadTexture(path, true);
           }
           break;
         case AssetType::Sound:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadAsset<Sound>(path);
+            _assetManager.LoadSound(path, true);
           }
           break;
         case AssetType::AudioStream:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadAsset<AudioStream>(path);
+            _assetManager.LoadAudioStream(path, true);
           }
           break;
         case AssetType::Font:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadAsset<BaseFont>(path);
+            _assetManager.LoadFont(path, true);
           }
           break;
         case AssetType::Shader:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadAsset<BaseShader>(path);
+            _assetManager.LoadShader(path, true);
           }
           break;
         default:
@@ -107,8 +106,8 @@ namespace Base
     _tweenManager.Init();
 
     // Initialize render context
-    auto windowWidth = static_cast<float>(GetScreenWidth());
-    auto windowHeight = static_cast<float>(GetScreenHeight());
+    auto windowWidth = static_cast<float>(Renderer::GetWindowSize().x);
+    auto windowHeight = static_cast<float>(Renderer::GetWindowSize().y);
     float scale = std::min( //
       (float)windowWidth / _gameWidth,
       (float)windowHeight / _gameHeight //
@@ -124,8 +123,8 @@ namespace Base
       .scale = scale,
       .mousePosition =
         {
-          (GetMousePosition().x - marginX) / scale,
-          (GetMousePosition().y - marginY) / scale,
+          (Renderer::GetWindowMousePosition().x - marginX) / scale,
+          (Renderer::GetWindowMousePosition().y - marginY) / scale,
         },
     };
     RenderContextSingleton::UpdateInstance(&rendercontext);
@@ -134,64 +133,62 @@ namespace Base
   void Game::GameImpl::Run()
   {
     // Loop Wule the window is Open
-    while (!WindowShouldClose() && _running)
+    while (!Renderer::IsWindowClosed() && _running)
     {
-      if (!IsWindowMinimized())
-      {
-        float windowWidth = static_cast<float>(GetRenderWidth());
-        float windowHeight = static_cast<float>(GetRenderHeight());
+      // if (!IsWindowMinimized())
+      // {
+      auto windowWidth = static_cast<float>(Renderer::GetWindowSize().x);
+      auto windowHeight = static_cast<float>(Renderer::GetWindowSize().y);
 
-        float scale = std::min(             //
-          (float)windowWidth / _gameWidth,  //
-          (float)windowHeight / _gameHeight //
-        );
-        float marginX = (windowWidth - (_gameWidth * scale)) / 2;
-        float marginY = (windowHeight - (_gameHeight * scale)) / 2;
-        const RenderContext *rd = RenderContextSingleton::GetInstance();
-        RenderContext rendercontext = {
-          .gameWidth = _gameWidth,
-          .gameHeight = _gameHeight,
-          .marginX = (float)marginX,
-          .marginY = (float)marginY,
-          .scale = scale,
-          .mousePosition = {(GetMousePosition().x - marginX) / scale, (GetMousePosition().y - marginY) / scale},
-        };
-        RenderContextSingleton::UpdateInstance(&rendercontext);
+      float scale = std::min(             //
+        (float)windowWidth / _gameWidth,  //
+        (float)windowHeight / _gameHeight //
+      );
+      float marginX = (windowWidth - (_gameWidth * scale)) / 2;
+      float marginY = (windowHeight - (_gameHeight * scale)) / 2;
+      const RenderContext *rd = RenderContextSingleton::GetInstance();
+      RenderContext rendercontext = {
+        .gameWidth = _gameWidth,
+        .gameHeight = _gameHeight,
+        .marginX = (float)marginX,
+        .marginY = (float)marginY,
+        .scale = scale,
+        .mousePosition = {(Renderer::GetWindowMousePosition().x - marginX) / scale,
+                          (Renderer::GetWindowMousePosition().y - marginY) / scale},
+      };
+      RenderContextSingleton::UpdateInstance(&rendercontext);
 
-        // Delta Time
-        float dt = GetFrameTime();
+      // Delta Time
+      float dt = 1.f / 60.f;
 
-        // Update Managers
-        _inpMan.PollAndDispatch();
+      // Update Managers
+      _inpMan.PollAndDispatch();
 
-        _sceneManager.Update(dt);
+      _sceneManager.Update(dt);
 
-        _uiManager.Update(dt);
+      _uiManager.Update(dt);
 
-        _renderer.Update(dt);
+      _renderingManager.Update(dt);
 
-        _systemManager.Update(dt);
+      _systemManager.Update(dt);
 
-        _particleManager.Update(dt);
+      _particleManager.Update(dt);
 
-        _tweenManager.Update(dt);
+      _tweenManager.Update(dt);
 
-        _shaderManager.Update(dt);
+      // Render
+      _renderingManager.RenderLayers();
+      // _renderengManager.CompositeLayers();
+      // _renderengManager.Render();
 
-        // Render
-        _renderer.RenderLayers();
-        _renderer.CompositeLayers();
-        _renderer.Render();
-
-        // Post Update
-        _inpMan.PostUpdate();
-        _entityManager.RemoveDeadEntities();
-        _sceneManager.PostUpdate();
-      }
-      else
-      {
-        PollInputEvents();
-      }
+      // Post Update
+      _inpMan.PostUpdate();
+      _entityManager.RemoveDeadEntities();
+      _sceneManager.PostUpdate();
+      // }
+      // else
+      // {
+      // }
     }
 
     // Cleanup
@@ -202,9 +199,8 @@ namespace Base
   {
     // Deinitilize Systems
     _audioMan.DeInit();
-    _renderer.DeInit();
     _assetManager.Deinit();
-    _renderer.DeInit();
+    _renderingManager.DeInit();
   }
 
   void Game::GameImpl::Quit()

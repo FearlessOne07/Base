@@ -1,4 +1,5 @@
 #include "base/ui/elements/UITextureRect.hpp"
+#include "internal/rendering/Renderer.hpp"
 
 namespace Base
 {
@@ -9,16 +10,13 @@ namespace Base
       if (_sprite)
       {
         _sprite.Draw( //
-          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height},
+          _layoutRect,
           _renderTransform.GetOpacity() * opacity * 255 //
         );
       }
       else
       {
-        DrawRectangleBase( //
-          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
-          {255, 255, 255, static_cast<unsigned char>(_renderTransform.GetOpacity() * opacity * 255)} //
-        );
+        Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), {255, 255, 255, 255});
       }
     }
   }

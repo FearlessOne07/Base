@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base/input/InputEvent.hpp"
+#include "base/scenes/SceneID.hpp"
 #include "base/scenes/SceneLayer.hpp"
 #include "base/ui/UILayer.hpp"
 #include "base/util/Ref.hpp"

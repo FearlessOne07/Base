@@ -63,7 +63,7 @@ namespace Base
 
   public:
     GameImpl() = default;
-    void Init(GameConfig config);
+    void Init(const GameConfig &config);
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);
     void RegisterSystem(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem);
     void OnInputEvent(std::shared_ptr<InputEvent> event) override;

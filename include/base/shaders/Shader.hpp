@@ -14,7 +14,6 @@ namespace Base
   {
   private:
     RenderID _id;
-    GeometryType _type = GeometryType::Quad;
     std::unordered_map<std::string, UniformValue> _pendingUniforms;
     std::unordered_map<std::string, int32_t> _uniformLocationCache;
 
@@ -108,10 +107,7 @@ namespace Base
     void ApplyPendingUniforms();
 
   public:
-    static std::shared_ptr<Shader> Create( //
-      const std::filesystem::path &vertex, const std::filesystem::path &fragment,
-      GeometryType shaderClass //
-    );
+    static std::shared_ptr<Shader> Create(const std::filesystem::path &vertex, const std::filesystem::path &fragment);
     static void Delete(std::shared_ptr<Shader> shader);
     static void SetMaxTextureSlots(uint8_t);
     Shader() = default;

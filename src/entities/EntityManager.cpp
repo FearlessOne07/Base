@@ -38,23 +38,21 @@ namespace Base
     if (e->HasComponent<ColliderComponent>())
     {
       auto colcmp = e->GetComponent<ColliderComponent>();
-      if (colcmp->shape == ColliderComponent::Shape::CIRCLE)
+      if (colcmp->shape == ColliderComponent::Shape::Circle)
       {
         area = Circle(trancmp->position, colcmp->radius);
       }
-      else if (colcmp->shape == ColliderComponent::Shape::BOX)
+      else if (colcmp->shape == ColliderComponent::Shape::Box)
       {
         area = Rectangle{
-          trancmp->position.x - colcmp->positionOffset.x,
-          trancmp->position.y - colcmp->positionOffset.y,
-          colcmp->size.x,
-          colcmp->size.y,
+          {trancmp->position.x - colcmp->positionOffset.x, trancmp->position.y - colcmp->positionOffset.y},
+          {colcmp->size.x, colcmp->size.y},
         };
       }
     }
     else
     {
-      area = Rectangle{trancmp->position.x - 5, trancmp->position.y - 5, 10, 10};
+      area = Rectangle{{trancmp->position.x - 5, trancmp->position.y - 5}, {10, 10}};
     }
     _entities.UpdateItem(item, area);
   }
@@ -70,23 +68,21 @@ namespace Base
       if (e->HasComponent<ColliderComponent>())
       {
         auto colcmp = e->GetComponent<ColliderComponent>();
-        if (colcmp->shape == ColliderComponent::Shape::CIRCLE)
+        if (colcmp->shape == ColliderComponent::Shape::Circle)
         {
           area = Circle(trancmp->position, colcmp->radius);
         }
-        else if (colcmp->shape == ColliderComponent::Shape::BOX)
+        else if (colcmp->shape == ColliderComponent::Shape::Box)
         {
           area = Rectangle{
-            trancmp->position.x - colcmp->positionOffset.x,
-            trancmp->position.y - colcmp->positionOffset.y,
-            colcmp->size.x,
-            colcmp->size.y,
+            {trancmp->position.x - colcmp->positionOffset.x, trancmp->position.y - colcmp->positionOffset.y},
+            {colcmp->size.x, colcmp->size.y},
           };
         }
       }
       else
       {
-        area = Rectangle{trancmp->position.x - 5, trancmp->position.y - 5, 10, 10};
+        area = Rectangle{{trancmp->position.x - 5, trancmp->position.y - 5}, {10, 10}};
       }
       _entities.Insert(e, area);
     }

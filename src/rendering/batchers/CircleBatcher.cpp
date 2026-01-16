@@ -13,7 +13,7 @@ namespace Base
   {
     CircleVertex::Init();
 
-    _defaultShader = Shader::Create("", "", GeometryType::Circle);
+    _defaultShader = Shader::Create("", "");
     _currentShader = _defaultShader;
 
     _vertices.reserve(_maxVertices);
@@ -129,7 +129,7 @@ namespace Base
     {
       auto &com = std::get<CircleCommand>(command);
       DrawCircle( //
-        com.Circle, com.Position, com.Color, com.Thickness,
+        com.CircleToDraw, com.Position, com.Color, com.Thickness,
         com.Attachments //
       );
     }

@@ -6,12 +6,12 @@ namespace Base
   {
   }
 
-  float CircleComponent::GetRadius() const
+  const Circle &CircleComponent::GetCircle() const
   {
-    return _circle.GetRadius();
+    return _circle;
   }
 
-  Color CircleComponent::GetColor() const
+  const Color &CircleComponent::GetColor() const
   {
     return _color;
   }

@@ -14,7 +14,7 @@ namespace Base
 
     uint32_t data = 0xFFFFFFFF;
     _defaultQuadTexture = Texture::Create(&data, TextureSpec{.Width = 1, .Height = 1});
-    _defaultShader = Shader::Create("", "", GeometryType::Quad);
+    _defaultShader = Shader::Create("", "");
     _currentShader = _defaultShader;
 
     _geometryType = GeometryType::Quad;

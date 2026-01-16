@@ -13,7 +13,6 @@
 
 namespace Base
 {
-
   struct QuadCommand
   {
     Rectangle QuadToDraw;
@@ -34,7 +33,7 @@ namespace Base
 
   struct CircleCommand
   {
-    Circle Circle;
+    Circle CircleToDraw;
     glm::vec3 Position;
     glm::vec4 Color;
     float Thickness;

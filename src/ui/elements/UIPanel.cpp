@@ -1,4 +1,5 @@
 #include "base/ui/elements/UIPanel.hpp"
+#include "internal/rendering/Renderer.hpp"
 
 namespace Base
 {
@@ -17,15 +18,7 @@ namespace Base
 
     if (!_isHidden)
     {
-      DrawRectangleBase( //
-        {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
-        {
-          _color.r,
-          _color.g,
-          _color.b,
-          static_cast<unsigned char>(_renderTransform.GetOpacity() * opacity * 255),
-        } //
-      );
+      Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), _color);
     }
   }
 } // namespace Base

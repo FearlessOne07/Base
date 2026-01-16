@@ -1,5 +1,6 @@
 #include "base/ui/elements/UIStackPanel.hpp"
 #include "base/ui/UIElement.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include <algorithm>
 #include <iterator>
 #include <ranges>
@@ -72,43 +73,44 @@ namespace Base
     float width = _desiredSize.width * _renderTransform.GetScaleX();
     float height = _desiredSize.height * _renderTransform.GetScaleY();
 
+    Vector2 finalPos;
+    Vector2 finalSize = {width, height};
+
     // Horizontal alignment
     switch (_horizontalAlignment)
     {
     case HAlign::Left:
       break;
     case HAlign::Center:
-      _layoutRect.x += (finalRect.width - width) / 2;
+      finalPos.x += (finalRect.GetSize().x - width) / 2;
       break;
     case HAlign::Right:
-      _layoutRect.x += finalRect.width - width;
+      finalPos.x += finalRect.GetSize().x - width;
       break;
     case HAlign::Stretch:
-      width = finalRect.width;
+      finalSize.x = finalRect.GetSize().x;
       break;
     }
+
     // Vertical alignment
     switch (_verticalAlignment)
     {
     case VAlign::Top:
       break;
     case VAlign::Center:
-      _layoutRect.y += (finalRect.height - height) / 2;
+      finalPos.y += (finalRect.GetSize().y - height) / 2;
       break;
     case VAlign::Bottom:
-      _layoutRect.y += finalRect.height - height;
+      finalPos.y += finalRect.GetSize().y - height;
       break;
     case VAlign::Stretch:
-      height = finalRect.height;
+      finalSize.y = finalRect.GetSize().y;
       break;
     }
-    _layoutRect.width = std::min(width, finalRect.width);
-    _layoutRect.height = std::min(height, finalRect.height);
+    _layoutRect = {finalPos + Vector2{_renderTransform.GetOffsetx(), _renderTransform.GetOffsetY()}, finalSize};
 
-    _layoutRect.x += _renderTransform.GetOffsetx();
-    _layoutRect.y += _renderTransform.GetOffsetY();
-
-    float offset = (_orientation == Orientation::Vertical) ? _layoutRect.y + _paddingTop : _layoutRect.x + _paddingLeft;
+    float offset = (_orientation == Orientation::Vertical) ? _layoutRect.GetPosition().y + _paddingTop
+                                                           : _layoutRect.GetPosition().x + _paddingLeft;
 
     for (auto &child : _childElements)
     {
@@ -116,23 +118,17 @@ namespace Base
       if (_orientation == Orientation::Vertical)
       {
         child->Arrange({
-          _layoutRect.x + _paddingLeft,
-          offset,
-          _layoutRect.width - (_paddingLeft + _paddingRight),
-          csize.height,
-        } //
-        );
+          {_layoutRect.GetPosition().x + _paddingLeft, offset},
+          {_layoutRect.GetSize().x - (_paddingLeft + _paddingRight), csize.height},
+        });
         offset += csize.height + _gap;
       }
       else
       {
         child->Arrange({
-          offset,
-          _layoutRect.y + _paddingTop,
-          csize.width,
-          _layoutRect.height - (_paddingTop + _paddingBottom),
-        } //
-        );
+          {offset, _layoutRect.GetPosition().y + _paddingTop},
+          {csize.width, _layoutRect.GetSize().y - (_paddingTop + _paddingBottom)},
+        });
         offset += csize.width + _gap;
       }
     }
@@ -164,7 +160,7 @@ namespace Base
       else
       {
         float alpha = 0;
-        if (_backgroundColor == BLANK)
+        if (_backgroundColor == Color{0, 0, 0, 0})
         {
           alpha = 0;
         }
@@ -172,16 +168,7 @@ namespace Base
         {
           alpha = _renderTransform.GetOpacity();
         }
-
-        DrawRectangleBase( //
-          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
-          {
-            _backgroundColor.r,
-            _backgroundColor.g,
-            _backgroundColor.b,
-            static_cast<unsigned char>(alpha * opacity * 255),
-          } //
-        );
+        Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), _backgroundColor);
       }
 
       auto elements = std::ranges::reverse_view(_childElements);

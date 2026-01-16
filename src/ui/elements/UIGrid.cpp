@@ -1,5 +1,6 @@
 #include "base/ui/elements/UIGrid.hpp"
 #include "base/ui/UIElement.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include <algorithm>
 #include <iterator>
 #include <numeric>
@@ -95,19 +96,22 @@ namespace Base
     float width = _desiredSize.width * _renderTransform.GetScaleX();
     float height = _desiredSize.height * _renderTransform.GetScaleY();
 
+    Vector2 finalPos;
+    Vector2 finalSize = {width, height};
+
     // Horizontal alignment
     switch (_horizontalAlignment)
     {
     case HAlign::Left:
       break;
     case HAlign::Center:
-      _layoutRect.x += (finalRect.width - width) / 2;
+      finalPos.x += (finalRect.GetSize().x - width) / 2;
       break;
     case HAlign::Right:
-      _layoutRect.x += finalRect.width - width;
+      finalPos.x += finalRect.GetSize().x - width;
       break;
     case HAlign::Stretch:
-      width = finalRect.width;
+      finalSize.x = finalRect.GetSize().x;
       break;
     }
 
@@ -117,55 +121,50 @@ namespace Base
     case VAlign::Top:
       break;
     case VAlign::Center:
-      _layoutRect.y += (finalRect.height - height) / 2;
+      finalPos.y += (finalRect.GetSize().y - height) / 2;
       break;
     case VAlign::Bottom:
-      _layoutRect.y += finalRect.height - height;
+      finalPos.y += finalRect.GetSize().y - height;
       break;
     case VAlign::Stretch:
-      height = finalRect.height;
+      finalSize.y = finalRect.GetSize().y;
       break;
     }
-
-    _layoutRect.width = std::min(width, finalRect.width);
-    _layoutRect.height = std::min(height, finalRect.height);
-
-    _layoutRect.x += _renderTransform.GetOffsetx();
-    _layoutRect.y += _renderTransform.GetOffsetY();
+    _layoutRect = {finalPos + Vector2{_renderTransform.GetOffsetx(), _renderTransform.GetOffsetY()}, finalSize};
 
     for (int index = 0; index < _childElements.size(); index++)
     {
-      Rectangle childRect = {0, 0, 0, 0};
+      Rectangle childRect;
       auto &child = _childElements[index];
       GridPosition gridPos = _elementGridPositions[index];
 
       // Column Pos,
       float offset = _paddingLeft;
+      Vector2 childPos;
       for (int i = 0; i < gridPos.Column; i++)
       {
         offset += _columnSizes[i];
       }
-      childRect.x = offset + _layoutRect.x;
+      childPos.x = offset + _layoutRect.GetPosition().x;
 
       offset = _paddingTop;
       for (int i = 0; i < gridPos.Row; i++)
       {
         offset += _rowSizes[i];
       }
-      childRect.y = offset + _layoutRect.y;
+      childPos.y = offset + _layoutRect.GetPosition().x;
 
       if (_elementGridPositions[index].Row != 0)
       {
-        childRect.y += _rowGap;
+        childPos.y += _rowGap;
       }
 
       if (_elementGridPositions[index].Column != 0)
       {
-        childRect.x += _columnGap;
+        childPos.x += _columnGap;
       }
 
-      childRect.width = _columnSizes[gridPos.Column];
-      childRect.height = _rowSizes[gridPos.Row];
+      childRect = {childPos, {_columnSizes[gridPos.Column], _rowSizes[gridPos.Row]}};
       child->Arrange(childRect);
     }
   }
@@ -197,7 +196,7 @@ namespace Base
       else
       {
         float alpha = 0;
-        if (_backgroundColor == BLANK)
+        if (_backgroundColor == Color{0, 0, 0, 0})
         {
           alpha = 0;
         }
@@ -205,15 +204,7 @@ namespace Base
         {
           alpha = _renderTransform.GetOpacity();
         }
-        DrawRectangleBase( //
-          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
-          {
-            _backgroundColor.r,
-            _backgroundColor.g,
-            _backgroundColor.b,
-            static_cast<unsigned char>(alpha * opacity * 255),
-          } //
-        );
+        Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), _backgroundColor);
       }
 
       auto elements = std::ranges::reverse_view(_childElements);

@@ -1,4 +1,5 @@
 #include "base/sprites/NinePatchSprite.hpp"
+#include "internal/rendering/Renderer.hpp"
 
 namespace Base
 {
@@ -16,80 +17,67 @@ namespace Base
 
     // Calculate the 9 source rectangles, offset by sprite position
     // Top row
-    _patches[0] = {spriteX, spriteY, _border.left, border.top};                                           // Top-left
-    _patches[1] = {spriteX + border.left, spriteY, spriteWidth - border.left - border.right, border.top}; // Top-center
-    _patches[2] = {spriteX + spriteWidth - border.right, spriteY, border.right, border.top};              // Top-right
+    _patches[0] = {{spriteX, spriteY}, {_border.left, border.top}}; // Top-left
+    _patches[1] = {
+      {spriteX + border.left, spriteY},
+      {spriteWidth - border.left - border.right, border.top},
+    }; // Top-center
+    _patches[2] = {
+      {spriteX + spriteWidth - border.right, spriteY},
+      {border.right, border.top},
+    }; // Top-right
 
     // Middle row
     _patches[3] = {
-      spriteX,
-      spriteY + border.top,
-      border.left,
-      spriteHeight - border.top - border.bottom,
+      {spriteX, spriteY + border.top},
+      {border.left, spriteHeight - border.top - border.bottom},
     }; // Middle-left
 
     _patches[4] = {
-      spriteX + border.left,
-      spriteY + border.top,
-      spriteWidth - border.left - border.right,
-      spriteHeight - border.top - border.bottom,
+      {spriteX + border.left, spriteY + border.top},
+      {spriteWidth - border.left - border.right, spriteHeight - border.top - border.bottom},
     }; // Middle-center
 
     _patches[5] = {
-      spriteX + spriteWidth - border.right,
-      spriteY + border.top,
-      border.right,
-      spriteHeight - border.top - border.bottom,
+      {spriteX + spriteWidth - border.right, spriteY + border.top},
+      {border.right, spriteHeight - border.top - border.bottom},
     }; // Middle-right
 
     // Bottom row
-    _patches[6] = {spriteX, spriteY + spriteHeight - border.bottom, border.left, border.bottom}; // Bottom-left
+    _patches[6] = {{spriteX, spriteY + spriteHeight - border.bottom}, {border.left, border.bottom}}; // Bottom-left
 
     _patches[7] = {
-      spriteX + border.left,
-      spriteY + spriteHeight - border.bottom,
-      spriteWidth - border.left - border.right,
-      border.bottom,
+      {spriteX + border.left, spriteY + spriteHeight - border.bottom},
+      {spriteWidth - border.left - border.right, border.bottom},
     }; // Bottom-center
 
     _patches[8] = {
-      spriteX + spriteWidth - border.right,
-      spriteY + spriteHeight - border.bottom,
-      border.right,
-      border.bottom,
+      {spriteX + spriteWidth - border.right, spriteY + spriteHeight - border.bottom},
+      {border.right, border.bottom},
     }; // Bottom-right
   }
 
   void NinePatchSprite::SetSourcePos(const Vector2 &pos)
   {
-    _sourcePos = Vector2Max(pos, {0});
+    _sourcePos = glm::max(pos, {0, 0});
   }
 
   void NinePatchSprite::Draw(const Rectangle &dest, unsigned char alpha)
   {
-
     // If all brders are 0
     bool noBorders = _border.left == 0 && _border.right == 0 && _border.top == 0 && _border.bottom == 0;
 
     if (noBorders)
     {
-      Rectangle src = {_sourcePos.x, _sourcePos.y, _sourceSize.x, _sourceSize.y};
-      DrawTexturePro( //
-        *_texture.Get()->GetRaylibTexture(), src, dest, {0, 0}, 0.0f,
-        {
-          static_cast<unsigned char>((255 * alpha) / 255),
-          static_cast<unsigned char>((255 * alpha) / 255),
-          static_cast<unsigned char>((255 * alpha) / 255),
-          alpha,
-        } //
-      );
+      Rectangle src = {{_sourcePos.x, _sourcePos.y}, {_sourceSize.x, _sourceSize.y}};
+      Renderer::DrawSprite({_texture.Get(), src.GetPosition(), src.GetSize()}, dest.GetPosition(), dest.GetSize());
       return;
     }
 
-    float x = dest.x;
-    float y = dest.y;
-    float width = dest.width;
-    float height = dest.height;
+    float x = dest.GetPosition().x;
+    float y = dest.GetPosition().y;
+    float width = dest.GetSize().x;
+    float height = dest.GetSize().y;
 
     float destArea = width * height;
     float refArea = 160 * 60;
@@ -106,38 +94,30 @@ namespace Base
     Rectangle destRects[9];
 
     // Top row
-    destRects[0] = {x, y, scaledBorderLeft, scaledBorderTop};
-    destRects[1] = {x + scaledBorderLeft, y, width - scaledBorderLeft - scaledBorderRight, scaledBorderTop};
-    destRects[2] = {x + width - scaledBorderRight, y, scaledBorderRight, scaledBorderTop};
+    destRects[0] = {{x, y}, {scaledBorderLeft, scaledBorderTop}};
+    destRects[1] = {{x + scaledBorderLeft, y}, {width - scaledBorderLeft - scaledBorderRight, scaledBorderTop}};
+    destRects[2] = {{x + width - scaledBorderRight, y}, {scaledBorderRight, scaledBorderTop}};
 
     // Middle row
-    destRects[3] = {x, y + scaledBorderTop, scaledBorderLeft, height - scaledBorderTop - scaledBorderBottom};
+    destRects[3] = {{x, y + scaledBorderTop}, {scaledBorderLeft, height - scaledBorderTop - scaledBorderBottom}};
     destRects[4] = {
-      x + scaledBorderLeft,
-      y + scaledBorderTop,
-      width - scaledBorderLeft - scaledBorderRight,
-      height - scaledBorderTop - scaledBorderBottom,
+      {x + scaledBorderLeft, y + scaledBorderTop},
+      {width - scaledBorderLeft - scaledBorderRight, height - scaledBorderTop - scaledBorderBottom},
     };
     destRects[5] = {
-      x + width - scaledBorderRight,
-      y + scaledBorderTop,
-      scaledBorderRight,
-      height - scaledBorderTop - scaledBorderBottom,
+      {x + width - scaledBorderRight, y + scaledBorderTop},
+      {scaledBorderRight, height - scaledBorderTop - scaledBorderBottom},
     };
 
     // Bottom row
-    destRects[6] = {x, y + height - scaledBorderBottom, scaledBorderLeft, scaledBorderBottom};
+    destRects[6] = {{x, y + height - scaledBorderBottom}, {scaledBorderLeft, scaledBorderBottom}};
     destRects[7] = {
-      x + scaledBorderLeft,
-      y + height - scaledBorderBottom,
-      width - scaledBorderLeft - scaledBorderRight,
-      scaledBorderBottom,
+      {x + scaledBorderLeft, y + height - scaledBorderBottom},
+      {width - scaledBorderLeft - scaledBorderRight, scaledBorderBottom},
     };
     destRects[8] = {
-      x + width - scaledBorderRight,
-      y + height - scaledBorderBottom,
-      scaledBorderRight,
-      scaledBorderBottom,
+      {x + width - scaledBorderRight, y + height - scaledBorderBottom},
+      {scaledBorderRight, scaledBorderBottom},
     };
 
     // Draw all 9 patches using the sprite sheet
@@ -145,24 +125,19 @@ namespace Base
     {
 
       // Skip patches with no area
-      if (_patches[i].width <= 0 || _patches[i].height <= 0)
+      if (_patches[i].GetSize().x <= 0 || _patches[i].GetSize().y <= 0)
       {
         continue;
       }
 
-      if (destRects[i].width <= 0 || destRects[i].height <= 0)
+      if (destRects[i].GetSize().x <= 0 || destRects[i].GetSize().y <= 0)
       {
         continue;
       }
 
-      DrawTexturePro( //
-        *_texture.Get()->GetRaylibTexture(), _patches[i], destRects[i], {0, 0}, 0.0f,
-        {
-          static_cast<unsigned char>((255 * alpha) / 255),
-          static_cast<unsigned char>((255 * alpha) / 255),
-          static_cast<unsigned char>((255 * alpha) / 255),
-          alpha,
-        } //
+      Renderer::DrawSprite( //
+        {_texture.Get(), _patches[i].GetPosition(), _patches[i].GetSize()}, destRects[i].GetPosition(),
+        destRects[i].GetSize() //
       );
     }
   }

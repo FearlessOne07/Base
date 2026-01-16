@@ -1,15 +1,16 @@
 #include "base/ui/elements/UILabel.hpp"
 #include "base/ui/UIElement.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include <string>
 
 namespace Base
 {
-  void UILabel::SetText(const std::string &text)
+  void UILabel::SetText(const std::wstring &text)
   {
     _text = text;
   }
 
-  void UILabel::SetTextInternal(const std::string &text, bool user = false)
+  void UILabel::SetTextInternal(const std::wstring &text, bool user = false)
   {
     _text = text;
     if (user && _textBinding)
@@ -23,7 +24,7 @@ namespace Base
     _textBinding = {};
   }
 
-  void UILabel::Bind(const Binding<std::string> &binding)
+  void UILabel::Bind(const Binding<std::wstring> &binding)
   {
     _textBinding = std::move(binding);
   }
@@ -32,7 +33,7 @@ namespace Base
   {
     if (_textBinding)
     {
-      std::string newText = _textBinding.Get();
+      std::wstring newText = _textBinding.Get();
       if (newText != _cachedText)
       {
         SetTextInternal(newText);
@@ -43,17 +44,7 @@ namespace Base
 
   Size UILabel::Measure()
   {
-    Font font;
-    if (_font)
-    {
-      font = *_font.Get()->GetRaylibFont();
-    }
-    else
-    {
-      font = GetFontDefault();
-    }
-
-    auto textSize = MeasureTextEx(font, _text.c_str(), _fontSize, 1);
+    auto textSize = Font::MeasureText(_font.Get(), _text, _fontSize);
     _desiredSize = {textSize.x, textSize.y};
     _desiredSize.width += _paddingLeft + _paddingRight;
     _desiredSize.height += _paddingTop + _paddingBottom;
@@ -62,17 +53,7 @@ namespace Base
 
   void UILabel::Arrange(Rectangle finalRect)
   {
-    Font font;
-    if (_font.Get())
-    {
-      font = *_font.Get()->GetRaylibFont();
-    }
-    else
-    {
-      font = GetFontDefault();
-    }
-
-    auto textSize = MeasureTextEx(font, _text.c_str(), _fontSize * _renderTransform.GetFontScale(), 1);
+    auto textSize = Font::MeasureText(_font.Get(), _text, _fontSize * _renderTransform.GetFontScale());
 
     _layoutRect = finalRect;
     float width = textSize.x;
@@ -80,8 +61,9 @@ namespace Base
     width += _paddingLeft + _paddingRight;
     height += _paddingTop + _paddingBottom;
 
-    _layoutRect.x += _renderTransform.GetOffsetx();
-    _layoutRect.y += _renderTransform.GetOffsetY();
+    Vector2 pos;
+    pos.x += _renderTransform.GetOffsetx();
+    pos.y += _renderTransform.GetOffsetY();
 
     // Horizontal alignment
     switch (_horizontalAlignment)
@@ -89,13 +71,13 @@ namespace Base
     case HAlign::Left:
       break;
     case HAlign::Center:
-      _layoutRect.x += (finalRect.width - width) / 2;
+      pos.x += (finalRect.GetSize().x - width) / 2;
       break;
     case HAlign::Right:
-      _layoutRect.x += finalRect.width - width;
+      pos.x += finalRect.GetSize().x - width;
       break;
     case HAlign::Stretch:
-      width = finalRect.width;
+      width = finalRect.GetSize().x;
       break;
     }
 
@@ -105,18 +87,17 @@ namespace Base
     case VAlign::Top:
       break;
     case VAlign::Center:
-      _layoutRect.y += (finalRect.height - height) / 2;
+      pos.y += (finalRect.GetSize().y - height) / 2;
       break;
     case VAlign::Bottom:
-      _layoutRect.y += finalRect.height - height;
+      pos.y += finalRect.GetSize().y - height;
       break;
     case VAlign::Stretch:
-      height = finalRect.height;
+      height = finalRect.GetSize().y;
       break;
     }
 
-    _layoutRect.width = width;
-    _layoutRect.height = height;
+    _layoutRect = {pos, {width, height}};
   }
 
   void UILabel::SetFontSize(float size)
@@ -134,24 +115,9 @@ namespace Base
 
     if (!_isHidden)
     {
-      Font font;
-      if (_font.Get())
-      {
-        font = *_font.Get()->GetRaylibFont();
-      }
-      else
-      {
-        font = GetFontDefault();
-      }
-
-      DrawTextBase( //
-        font, _text.c_str(), {_layoutRect.x, _layoutRect.y}, _fontSize * _renderTransform.GetFontScale(), 1,
-        {
-          _textColor.r,
-          _textColor.g,
-          _textColor.b,
-          static_cast<unsigned char>(_renderTransform.GetOpacity() * opacity * 255),
-        } //
+      Renderer::DrawText( //
+        _text.c_str(), _layoutRect.GetPosition(), _textColor, _fontSize * _renderTransform.GetFontScale(),
+        _font.Get() //
       );
     }
   }

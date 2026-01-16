@@ -1,18 +1,21 @@
 #include "base/assets/AssetManager.hpp"
 #include "base/assets/AssetHandle.hpp"
-#include "base/rendering/GeometryType.hpp"
+#include "base/assets/BaseAsset.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
+#include <cassert>
 #include <filesystem>
 #include <memory>
 #include <miniaudio.h>
 #include <sstream>
+#include <variant>
 #include <vector>
 
+namespace fs = std::filesystem;
 namespace Base
 {
   void AssetManager::Init()
@@ -178,8 +181,14 @@ namespace Base
     return std::make_shared<AudioStream>(decoder, decoder.outputSampleRate, _sampleRate);
   }
 
-  AssetHandle<Texture> AssetManager::LoadTexture(const fs::path &path, bool global)
+  AssetHandle<Texture> AssetManager::LoadTexture(const AssetPath &assetPath, bool global)
   {
+    if (!std::holds_alternative<SinglePath>(assetPath))
+    {
+      THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Texture Asset\n");
+    }
+
+    auto &path = std::get<SinglePath>(assetPath);
     if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Strings::ToLower(path.stem().string());
@@ -189,7 +198,6 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-
           auto texture = Texture::Create(fullpath);
 
           // Cleanup
@@ -239,12 +247,21 @@ namespace Base
     }
   }
 
-  AssetHandle<Shader> AssetManager::LoadShader(                                      //
-    const fs::path &vertex, const fs::path &fragment, GeometryType type, bool global //
+  AssetHandle<Shader> AssetManager::LoadShader( //
+    const AssetPath &path, bool global          //
   )
   {
+    if (!std::holds_alternative<DoublePath>(path))
+    {
+      THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Shader Asset\n");
+    }
+
+    auto doublePath = std::get<DoublePath>(path);
+    auto &fragment = doublePath[1];
+    auto &vertex = doublePath[0];
+
     bool vert = fs::exists(Strings::Strip(vertex.string()));
-    bool frag = fs::exists(Strings::Strip(vertex.string()));
+    bool frag = fs::exists(Strings::Strip(fragment.string()));
     if (vert || frag)
     {
       std::string name;
@@ -264,7 +281,7 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto shader = Shader::Create(fullVertPath, fullFragPath, type);
+          auto shader = Shader::Create(fullVertPath, fullFragPath);
           AssetHandle<Shader> handle(shader);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(shader)};
           return handle;
@@ -282,7 +299,7 @@ namespace Base
         {
           if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto shader = Shader::Create(fullVertPath, fullFragPath, type);
+            auto shader = Shader::Create(fullVertPath, fullFragPath);
             AssetHandle<Shader> handle(shader);
             _sceneAssets[_currentScene][name] = {
               static_cast<AssetHandle<void>>(handle),
@@ -312,8 +329,14 @@ namespace Base
     }
   }
 
-  AssetHandle<Sound> AssetManager::LoadSound(const fs::path &path, bool global)
+  AssetHandle<Sound> AssetManager::LoadSound(const AssetPath &assetPath, bool global)
   {
+    if (!std::holds_alternative<SinglePath>(assetPath))
+    {
+      THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Shader Asset\n");
+    }
+    auto &path = std::get<SinglePath>(assetPath);
+
     if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
@@ -370,8 +393,15 @@ namespace Base
     }
   }
 
-  AssetHandle<AudioStream> AssetManager::LoadAudioStream(const fs::path &path, bool global)
+  AssetHandle<AudioStream> AssetManager::LoadAudioStream(const AssetPath &assetPath, bool global)
   {
+    if (!std::holds_alternative<SinglePath>(assetPath))
+    {
+      THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Shader Asset\n");
+    }
+
+    auto &path = std::get<SinglePath>(assetPath);
+
     if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
@@ -428,8 +458,14 @@ namespace Base
     }
   }
 
-  AssetHandle<Font> AssetManager::LoadFont(const fs::path &path, bool global)
+  AssetHandle<Font> AssetManager::LoadFont(const AssetPath &assetPath, bool global)
   {
+    if (!std::holds_alternative<SinglePath>(assetPath))
+    {
+      THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Font Asset\n");
+    }
+
+    auto &path = std::get<SinglePath>(assetPath);
     if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());

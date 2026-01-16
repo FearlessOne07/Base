@@ -13,7 +13,7 @@ namespace Base
 
   void TextBatcher::Init()
   {
-    _defaultShader = Shader::Create("", "", GeometryType::Text);
+    _defaultShader = Shader::Create("", "");
     _currentShader = _defaultShader;
 
     _geometryType = GeometryType::Text;

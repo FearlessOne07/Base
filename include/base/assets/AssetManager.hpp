@@ -17,7 +17,6 @@
 
 namespace Base
 {
-  namespace fs = std::filesystem;
   class AssetManager
   {
     struct AssetSlot
@@ -77,10 +76,10 @@ namespace Base
         return AssetHandle<T>::Cast(_globalAssets.at(name).handle);
       }
     }
-    AssetHandle<Texture> LoadTexture(const fs::path &path, bool global);
-    AssetHandle<Shader> LoadShader(const fs::path &vertex, const fs::path &fragment, GeometryType type, bool global);
-    AssetHandle<Sound> LoadSound(const fs::path &path, bool global);
-    AssetHandle<AudioStream> LoadAudioStream(const fs::path &path, bool global);
-    AssetHandle<Font> LoadFont(const fs::path &path, bool global);
+    AssetHandle<Texture> LoadTexture(const AssetPath &path, bool global = false);
+    AssetHandle<Shader> LoadShader(const AssetPath &path, bool global = false);
+    AssetHandle<Sound> LoadSound(const AssetPath &path, bool global = false);
+    AssetHandle<AudioStream> LoadAudioStream(const AssetPath &path, bool global = false);
+    AssetHandle<Font> LoadFont(const AssetPath &path, bool global = false);
   };
 } // namespace Base

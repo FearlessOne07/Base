@@ -17,11 +17,13 @@ namespace Base
     Rectangle();
     Rectangle(Vector2 size, Origin origin = Origin::TopLeft);
     Rectangle(Vector2 size, const Material &material, Origin origin = Origin::TopLeft);
-    Rectangle(Vector2 size, Vector2 position, Origin origin = Origin::TopLeft);
-    Rectangle(Vector2 size, Vector2 position, const Material &material, Origin origin = Origin::TopLeft);
+    Rectangle(Vector2 position, Vector2 size, Origin origin = Origin::TopLeft);
+    Rectangle(Vector2 position, Vector2 size, const Material &material, Origin origin = Origin::TopLeft);
     Vector2 GetSize() const;
     Vector2 GetPosition() const;
     Origin GetOrigin() const;
+    void SetPosition(Vector2 size);
+    void SetSize(Vector2 size);
   };
 
 } // namespace Base
