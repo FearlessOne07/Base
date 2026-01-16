@@ -89,12 +89,14 @@ set(SRC
 add_library("${PROJECT_NAME}" "${SRC}")
 
 target_link_libraries("${PROJECT_NAME}"
-  PUBLIC
-    raylib
   PRIVATE
+    msdf-atlas-gen
     portaudio
     miniaudio
     samplerate
+    glad
+    glfw
+    glm
 )
 
 target_link_directories("${PROJECT_NAME}"

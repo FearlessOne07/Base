@@ -62,6 +62,11 @@ if (TARGET freetype AND NOT TARGET Freetype::Freetype)
   add_library(Freetype::Freetype ALIAS freetype)
 endif()
 add_subdirectory("./vendor/msdf-atlas-gen")
+target_include_directories( msdf-atlas-gen
+  PUBLIC
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/"
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/msdfgen/"
+)
 
 
 add_subdirectory(

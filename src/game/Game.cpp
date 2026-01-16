@@ -133,6 +133,8 @@ namespace Base
     // Loop Wule the window is Open
     while (!Renderer::IsWindowClosed() && _running)
     {
+      Renderer::PollWindow();
+
       // if (!IsWindowMinimized())
       // {
       auto windowWidth = static_cast<float>(Renderer::GetWindowSize().x);
@@ -172,14 +174,15 @@ namespace Base
       _tweenManager.Update(dt);
 
       // Render
-      _renderingManager.RenderLayers();
-      // _renderengManager.CompositeLayers();
-      // _renderengManager.Render();
+      _renderingManager.Render();
+
+      Renderer::SwapWindowBuffers();
 
       // Post Update
       _inpMan.PostUpdate();
       _entityManager.RemoveDeadEntities();
       _sceneManager.PostUpdate();
+
       // }
       // else
       // {

@@ -16,7 +16,6 @@
 
 namespace Base
 {
-
   void RenderingManager::SetSceneManager(Ref<SceneManager> sceneManager)
   {
     _sceneManager = sceneManager;
@@ -96,18 +95,9 @@ namespace Base
     FrameBuffer::Destroy(_ping);
   }
 
-  void RenderingManager::RenderLayers()
-  {
-    // Begin rendering of Scenes
-    auto &layers = _renderLayers.at(_currentScene);
-    for (auto &layer : layers)
-    {
-      layer.Render();
-    }
-  }
-
   void RenderingManager::Update(float dt)
   {
+    Renderer::Update();
     auto &layers = _renderLayers.at(_currentScene);
     for (auto &layer : layers)
     {
@@ -115,11 +105,22 @@ namespace Base
     }
   }
 
-  void RenderingManager::CompositeLayers()
+  void RenderingManager::Render()
   {
+
+    Renderer::BeginFrame();
+
+    // Begin rendering of Scenes
+    auto &layers = _renderLayers.at(_currentScene);
+    for (auto &layer : layers)
+    {
+      layer.Render();
+    }
+
+    // Composite Layers
     Renderer::BeginFramebuffer(_renderTexture);
     Renderer::Clear(_sceneManager->GetCurrentScene()->GetClearColor());
-    auto layers = std::views::reverse(_renderLayers.at(_currentScene));
+    auto layersRev = std::views::reverse(_renderLayers.at(_currentScene));
     for (auto &layer : layers)
     {
       auto rd = RenderContextSingleton::GetInstance();
@@ -146,10 +147,7 @@ namespace Base
       Renderer::DrawFramebuffer(input, _renderResolution, FramebufferAttachmentIndex::Color0);
       Renderer::EndFramebuffer();
     }
-  }
 
-  void RenderingManager::Render()
-  {
     auto rd = RenderContextSingleton::GetInstance();
 
     // Draw Render texture to the Screen
@@ -158,5 +156,7 @@ namespace Base
       _renderTexture, {rd->marginX, rd->marginY}, {rd->gameWidth, rd->gameHeight},
       FramebufferAttachmentIndex::Color0 //
     );
+
+    Renderer::EndFrame();
   }
 } // namespace Base

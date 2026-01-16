@@ -9,7 +9,6 @@
 
 namespace Base
 {
-  class SceneID;
   class RenderSpec;
   class RenderingManager
   {
@@ -32,14 +31,12 @@ namespace Base
 
     void DeInit();
     void Update(float dt);
-    void RenderLayers();
-    void CompositeLayers();
-    void Render();
 
     void SetCurrentScene(SceneID scene);
     void RemoveSceneLayers(SceneID scene);
 
   public:
+    void Render();
     Ref<RenderLayer> InitLayer(                                                                     //
       const std::weak_ptr<const Scene> ownerScene, Vector2 position, Vector2 size, Color clearColor //
     );
