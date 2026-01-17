@@ -1,3 +1,4 @@
+// Implementation
 #include "internal/audio/AudioManager.hpp"
 #include "base/audio/signals/PlaySoundSignal.hpp"
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
@@ -5,13 +6,12 @@
 #include "base/util/Exception.hpp"
 #include "portaudio.h"
 #include <algorithm>
-#include <cstdint>
 #include <cstring>
 #include <iostream>
-#include <memory>
 
 namespace Base
 {
+
   void AudioManager::Init()
   {
     // Initialize system audio device
@@ -22,10 +22,9 @@ namespace Base
     outputParams.sampleFormat = paInt16;
     outputParams.hostApiSpecificStreamInfo = nullptr;
 
-    std::vector<int> preferredRates = {48000, 44100, 96000}; // Prefer 48k first
+    std::vector<int> preferredRates = {48000, 44100, 96000};
 
 #ifdef _WIN32
-    // Prefer WASAPI on Windows
     int wasapiApiIndex = -1;
     for (int i = 0; i < Pa_GetHostApiCount(); ++i)
     {
@@ -38,7 +37,6 @@ namespace Base
     }
 
     PaDeviceIndex deviceIndex = Pa_GetHostApiInfo(wasapiApiIndex)->defaultOutputDevice;
-
     if (deviceIndex == paNoDevice)
     {
       THROW_BASE_RUNTIME_ERROR("No default WASAPI output device.");
@@ -46,10 +44,9 @@ namespace Base
 
     const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(deviceIndex);
     outputParams.device = deviceIndex;
-    outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency; // ← prioritize low latency
+    outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency;
 
     bool supported = false;
-
     for (int rate : preferredRates)
     {
       if (Pa_IsFormatSupported(nullptr, &outputParams, rate) == paFormatIsSupported)
@@ -64,9 +61,8 @@ namespace Base
     {
       THROW_BASE_RUNTIME_ERROR("Neither 48000 Hz nor 44100 Hz supported with WASAPI and paInt16.");
     }
-#elif defined(__linux__)
 
-    // Preffer PulseAudio on LInux
+#elif defined(__linux__)
     int pulseApiIndex = -1;
     for (int i = 0; i < Pa_GetHostApiCount(); ++i)
     {
@@ -79,7 +75,6 @@ namespace Base
     }
 
     PaDeviceIndex deviceIndex = Pa_GetHostApiInfo(pulseApiIndex)->defaultOutputDevice;
-
     if (deviceIndex == paNoDevice)
     {
       THROW_BASE_RUNTIME_ERROR("No default PulseAudio output device.");
@@ -87,10 +82,9 @@ namespace Base
 
     const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(deviceIndex);
     outputParams.device = deviceIndex;
-    outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency; // ← prioritize low latency
+    outputParams.suggestedLatency = deviceInfo->defaultLowOutputLatency;
 
     bool supported = false;
-
     for (int rate : preferredRates)
     {
       if (Pa_IsFormatSupported(nullptr, &outputParams, rate) == paFormatIsSupported)
@@ -105,13 +99,10 @@ namespace Base
     {
       THROW_BASE_RUNTIME_ERROR("Neither 48000 Hz nor 44100 Hz supported with PulseAudio and paInt16.");
     }
-
 #endif
 
-    // Open audio output stream
-    PaError err = Pa_OpenStream(                                                             //
-      &_audioStream, nullptr, &outputParams, _sampleRate, 64, paClipOff, AudioCallBack, this //
-    );
+    PaError err = Pa_OpenStream(&_audioStream, nullptr, &outputParams, _sampleRate, FRAMES_PER_BUFFER, paClipOff,
+                                AudioCallBack, this);
 
     if (err != paNoError || Pa_StartStream(_audioStream) != paNoError)
     {
@@ -122,6 +113,7 @@ namespace Base
 
     // Register Audio events
     auto bus = Base::SignalBus::GetInstance();
+
     bus->SubscribeSignal<PlaySoundSignal>([this](std::shared_ptr<Signal> signal) {
       if (auto playSoundSig = std::static_pointer_cast<PlaySoundSignal>(signal))
       {
@@ -137,16 +129,15 @@ namespace Base
     });
 
     bus->SubscribeSignal<StopAudioStreamSignal>([this](std::shared_ptr<Signal> signal) {
-      if (auto playStreamSig = std::static_pointer_cast<StopAudioStreamSignal>(signal))
+      if (auto stopStreamSig = std::static_pointer_cast<StopAudioStreamSignal>(signal))
       {
-        StopStream(playStreamSig);
+        StopStream(stopStreamSig);
       }
     });
   }
 
   void AudioManager::SetAssetManager(AssetManager *assetManager)
   {
-    // Set Asset manager to set audio load sample rate
     if (assetManager && !_assetManager)
     {
       _assetManager = assetManager;
@@ -163,228 +154,306 @@ namespace Base
     int16_t *out = static_cast<int16_t *>(outputBuffer);
     AudioManager *_this = static_cast<AudioManager *>(userData);
 
-    // Fill  output buffe with silence
+    // Fill output buffer with silence
     memset(outputBuffer, 0, framesPerBuffer * 2 * sizeof(int16_t));
 
-    // Process queued sounds
-
-    // Get Current Read index
-    size_t read = _this->_soundReadIndex.load();
-    while (read != _this->_soundWriteIndex.load(std::memory_order_acquire))
+    if (!_this->_audioRunning.load(std::memory_order_relaxed))
     {
-      auto sound = _this->_pendingSounds[read];
-      if (sound)
-      {
-        // Create Sound instance from sound
-        _this->_sounds.emplace_back(std::move(sound));
-        _this->_sounds.back()->Play();
-
-        // Mark the sound as playing
-        _this->_pendingSounds[read] = nullptr; // Clear the slot
-      }
-
-      // increment Read index
-      read = (read + 1) % MAX_PENDING_SOUNDS;
+      return paComplete;
     }
-    _this->_soundReadIndex.store(read);
 
-    // Proccess Queued Stream events
-    read = _this->_streamReadIndex.load();
-    while (read != _this->_streamWriteIndex.load(std::memory_order_acquire))
+    // Process sound commands
+    PlaySoundCommand soundCmd;
+    while (_this->_soundCommands.Pop(soundCmd))
     {
-      auto stream = _this->_pendingStreams[read];
-
-      // If Stream isn't already playing
-      if (stream && std::ranges::find(_this->_streams, stream) == _this->_streams.end())
+      int slot = _this->FindFreeSoundSlot();
+      if (slot >= 0)
       {
-        // Add it to the list of playing streams
-        _this->_streams.emplace_back(stream);
-        stream.Get()->Play();
-        _this->_pendingStreams[read] = AssetHandle<AudioStream>(); // Clear the slot
+        soundCmd.instance->SetVolume(soundCmd.volume);
+        soundCmd.instance->SetPan(soundCmd.pan);
+        soundCmd.instance->Play();
+
+        _this->_soundSlots[slot].instance = soundCmd.instance;
+        _this->_soundSlots[slot].active.store(true, std::memory_order_release);
       }
-
-      // Increment read index
-      read = (read + 1) % MAX_PENDING_STREAMS;
     }
-    _this->_streamReadIndex.store(read);
 
-    // Proccess Queued Stream events
-    read = _this->_streamRemoveReadIndex.load();
-    while (read != _this->_streamRemoveWriteIndex.load(std::memory_order_acquire))
+    // Process play stream commands
+    PlayStreamCommand playStreamCmd;
+    while (_this->_playStreamCommands.Pop(playStreamCmd))
     {
-      auto stream = _this->_pendingRemovalStreams[read];
-
-      // If Stream is already playing
-      if (stream)
+      int slot = _this->FindFreeStreamSlot();
+      if (slot >= 0)
       {
-        if (auto it = std::ranges::find(_this->_streams, stream); it != _this->_streams.end())
+        playStreamCmd.stream->SetVolume(playStreamCmd.volume);
+        playStreamCmd.stream->SetPan(playStreamCmd.pan);
+        playStreamCmd.stream->SetLoop(playStreamCmd.loop);
+        playStreamCmd.stream->Play();
+
+        _this->_streamSlots[slot].stream = playStreamCmd.stream;
+        _this->_streamSlots[slot].active.store(true, std::memory_order_release);
+      }
+    }
+
+    // Process stop stream commands
+    StopStreamCommand stopStreamCmd;
+    while (_this->_stopStreamCommands.Pop(stopStreamCmd))
+    {
+      int slot = _this->FindStreamSlot(stopStreamCmd.stream);
+      if (slot >= 0)
+      {
+        _this->_streamSlots[slot].stream->Stop();
+        _this->_streamSlots[slot].pendingRelease.store(true, std::memory_order_release);
+      }
+    }
+
+    // Clear mix buffer
+    _this->_mixBuffer.fill(0);
+
+    // Mix sounds
+    for (size_t frame = 0; frame < framesPerBuffer; frame++)
+    {
+      for (size_t i = 0; i < MAX_SOUNDS; i++)
+      {
+        if (!_this->_soundSlots[i].active.load(std::memory_order_acquire))
         {
-          // Add it to the list of playing streams
-          _this->_streams.erase(it);
-          stream.Get()->Stop();
-          _this->_pendingRemovalStreams[read] = AssetHandle<AudioStream>(); // Clear the slot
+          continue;
         }
-      }
 
-      // Increment read index
-      read = (read + 1) % MAX_PENDING_STREAMS;
-    }
-    _this->_streamRemoveReadIndex.store(read);
-
-    // Higher Res mixing buffer
-    std::vector<float> mixBuffer(framesPerBuffer * 2, 0);
-
-    // Mix Sounds
-    if (_this->_sounds.size() != 0)
-    {
-      // For every audio frame
-      for (size_t frame = 0; frame < framesPerBuffer; frame++)
-      {
-        // Mix sound instances
-        for (auto it = _this->_sounds.begin(); it != _this->_sounds.end();)
+        SoundInstance *sound = _this->_soundSlots[i].instance;
+        if (sound->IsPlaying())
         {
-          std::shared_ptr<SoundInstance> &sound = *it;
-
-          // If sound is still playing
-          if (sound->IsPlaying())
-          {
-            // Get next audio frame
-            auto soundFrame = sound->GetNextFrame();
-
-            // Mix it in
-            mixBuffer[frame * 2] += soundFrame[0];
-            mixBuffer[frame * 2 + 1] += soundFrame[1];
-            it++;
-          }
-          else
-          {
-            // If not, erase the sound form the list
-            it = _this->_sounds.erase(it);
-          }
+          auto soundFrame = sound->GetNextFrame();
+          _this->_mixBuffer[frame * 2] += soundFrame[0];
+          _this->_mixBuffer[frame * 2 + 1] += soundFrame[1];
+        }
+        else
+        {
+          // Mark for cleanup
+          _this->_soundSlots[i].pendingRelease.store(true, std::memory_order_release);
         }
       }
     }
 
-    // mix Streams
-    if (_this->_streams.size() != 0)
+    // Mix streams
+    for (size_t frame = 0; frame < framesPerBuffer; frame++)
     {
-      // For every audio frame
-      for (size_t frame = 0; frame < framesPerBuffer; frame++)
+      for (size_t i = 0; i < MAX_STREAMS; i++)
       {
-        for (auto it = _this->_streams.begin(); it != _this->_streams.end();)
+        if (!_this->_streamSlots[i].active.load(std::memory_order_acquire))
         {
-          std::shared_ptr<AudioStream> stream = it->Get();
+          continue;
+        }
 
-          // if Stream is still playing
-          if (stream->IsPlaying())
-          {
-            // Get next frame
-            auto streamFrame = stream->GetNextFrame();
-
-            // Mix it in
-            mixBuffer[frame * 2] += streamFrame[0];
-            mixBuffer[frame * 2 + 1] += streamFrame[1];
-            it++;
-          }
-          else
-          {
-            // Stream isn't playing; remove it
-            it = _this->_streams.erase(it);
-          }
+        AudioStream *stream = _this->_streamSlots[i].stream;
+        if (stream->IsPlaying())
+        {
+          auto streamFrame = stream->GetNextFrame();
+          _this->_mixBuffer[frame * 2] += streamFrame[0];
+          _this->_mixBuffer[frame * 2 + 1] += streamFrame[1];
+        }
+        else
+        {
+          // Mark for cleanup
+          _this->_streamSlots[i].pendingRelease.store(true, std::memory_order_release);
         }
       }
     }
 
-    // Convert back to 16-bit with clipping protection
+    // Clean up finished sounds/streams
+    for (size_t i = 0; i < MAX_SOUNDS; i++)
+    {
+      if (_this->_soundSlots[i].pendingRelease.load(std::memory_order_acquire))
+      {
+        _this->_soundCleanupQueue.Push(_this->_soundSlots[i].instance);
+        _this->_soundSlots[i].instance = nullptr;
+        _this->_soundSlots[i].active.store(false, std::memory_order_release);
+        _this->_soundSlots[i].pendingRelease.store(false, std::memory_order_release);
+      }
+    }
+
+    for (size_t i = 0; i < MAX_STREAMS; i++)
+    {
+      if (_this->_streamSlots[i].pendingRelease.load(std::memory_order_acquire))
+      {
+        _this->_streamCleanupQueue.Push(_this->_streamSlots[i].stream);
+        _this->_streamSlots[i].stream = nullptr;
+        _this->_streamSlots[i].active.store(false, std::memory_order_release);
+        _this->_streamSlots[i].pendingRelease.store(false, std::memory_order_release);
+      }
+    }
+
+    // Convert to 16-bit with clipping
     for (size_t i = 0; i < framesPerBuffer * 2; i++)
     {
-      out[i] = static_cast<int16_t>(std::clamp<float>(mixBuffer[i], -1.0, 1.0) * 32767.0f);
+      out[i] = static_cast<int16_t>(std::clamp<float>(_this->_mixBuffer[i], -1.0f, 1.0f) * 32767.0f);
     }
 
-    // Continue
     return paContinue;
   }
 
   void AudioManager::PlaySound(const std::shared_ptr<PlaySoundSignal> &signal)
   {
-    // Get wirte index
-    size_t write = _soundWriteIndex.load();
-    size_t nextWrite = (write + 1) % MAX_PENDING_SOUNDS;
-
-    // if sound queue isn't full
-    if (nextWrite != _soundReadIndex.load())
+    // Find a free slot in owned sounds
+    int ownedSlot = -1;
+    for (size_t i = 0; i < MAX_SOUNDS; i++)
     {
-      // Get the sound asset
-      auto sound = signal->soundHandle.Get();
-
-      // Create the sound instance
-      std::shared_ptr<SoundInstance> instance = std::make_shared<SoundInstance>(sound);
-
-      // Set pan / volume settings
-      instance->SetVolume(std::clamp(signal->soundVolume, 0.f, 1.f));
-      instance->SetPan(std::clamp(signal->soundPan, -1.f, 1.f));
-
-      // add it to pending sounds list
-      _pendingSounds[write] = std::move(instance);
-
-      // Store next index
-      _soundWriteIndex.store(nextWrite, std::memory_order_release);
+      if (!_ownedSounds[i].inUse)
+      {
+        ownedSlot = i;
+        break;
+      }
     }
+
+    if (ownedSlot < 0)
+    {
+      return; // No free slots
+    }
+
+    auto sound = signal->soundHandle.Get();
+    auto instance = std::make_shared<SoundInstance>(sound);
+
+    _ownedSounds[ownedSlot].instance = instance;
+    _ownedSounds[ownedSlot].inUse = true;
+
+    PlaySoundCommand cmd;
+    cmd.instance = instance.get();
+    cmd.volume = std::clamp(signal->soundVolume, 0.f, 1.f);
+    cmd.pan = std::clamp(signal->soundPan, -1.f, 1.f);
+
+    _soundCommands.Push(cmd);
   }
 
   void AudioManager::PlayStream(const std::shared_ptr<PlayAudioStreamSignal> &signal)
   {
-    size_t write = _streamWriteIndex.load();
-    size_t nextWrite = (write + 1) % MAX_PENDING_STREAMS;
-
-    // if stream queue isn't full
-    if (nextWrite != _streamReadIndex.load())
+    // Find a free slot in owned streams
+    int ownedSlot = -1;
+    for (size_t i = 0; i < MAX_STREAMS; i++)
     {
-      // Get the stream asset
-      auto stream = signal->streamHandle.Get();
-
-      // Set stream pan / loop / volume settings
-      stream->SetVolume(std::clamp(signal->streamVolume, 0.f, 1.f));
-      stream->SetPan(std::clamp(signal->streamPan, -1.f, 1.f));
-      stream->SetLoop(signal->loopStream);
-
-      // Add stream to queue
-      _pendingStreams[write] = std::move(signal->streamHandle);
-
-      // update stream write index
-      _streamWriteIndex.store(nextWrite, std::memory_order_release);
+      if (!_ownedStreams[i].inUse)
+      {
+        ownedSlot = i;
+        break;
+      }
     }
+
+    if (ownedSlot < 0)
+    {
+      return; // No free slots
+    }
+
+    _ownedStreams[ownedSlot].handle = signal->streamHandle;
+    _ownedStreams[ownedSlot].inUse = true;
+
+    PlayStreamCommand cmd;
+    cmd.stream = signal->streamHandle.Get().get(); // Get raw pointer from shared_ptr
+    cmd.volume = std::clamp(signal->streamVolume, 0.f, 1.f);
+    cmd.pan = std::clamp(signal->streamPan, -1.f, 1.f);
+    cmd.loop = signal->loopStream;
+
+    _playStreamCommands.Push(cmd);
   }
 
   void AudioManager::StopStream(const std::shared_ptr<StopAudioStreamSignal> &signal)
   {
-    size_t write = _streamRemoveWriteIndex.load();
-    size_t nextWrite = (write + 1) % MAX_PENDING_STREAMS;
-
-    // if stream queue isn't full
-    if (nextWrite != _streamRemoveReadIndex.load())
-    {
-      // Get the stream asset
-      auto stream = signal->streamHandle.Get();
-
-      // Add stream to queue
-      _pendingRemovalStreams[write] = std::move(signal->streamHandle);
-
-      // update stream write index
-      _streamRemoveWriteIndex.store(nextWrite, std::memory_order_release);
-    }
+    StopStreamCommand cmd;
+    cmd.stream = signal->streamHandle.Get().get(); // Get raw pointer from shared_ptr
+    _stopStreamCommands.Push(cmd);
   }
 
   bool AudioManager::AllSoundsDone()
   {
-    return _sounds.empty();
+    for (size_t i = 0; i < MAX_SOUNDS; i++)
+    {
+      if (_soundSlots[i].active.load(std::memory_order_acquire))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void AudioManager::ProcessCleanup()
+  {
+    // Clean up finished sounds
+    SoundInstance *soundToClean;
+    while (_soundCleanupQueue.Pop(soundToClean))
+    {
+      for (size_t i = 0; i < MAX_SOUNDS; i++)
+      {
+        if (_ownedSounds[i].inUse && _ownedSounds[i].instance.get() == soundToClean)
+        {
+          _ownedSounds[i].instance.reset();
+          _ownedSounds[i].inUse = false;
+          break;
+        }
+      }
+    }
+
+    // Clean up finished streams
+    AudioStream *streamToClean;
+    while (_streamCleanupQueue.Pop(streamToClean))
+    {
+      for (size_t i = 0; i < MAX_STREAMS; i++)
+      {
+        if (_ownedStreams[i].inUse && _ownedStreams[i].handle.Get().get() == streamToClean)
+        {
+          _ownedStreams[i].handle = AssetHandle<AudioStream>();
+          _ownedStreams[i].inUse = false;
+          break;
+        }
+      }
+    }
   }
 
   void AudioManager::DeInit()
   {
-    // Stop and close output stream
-    Pa_StopStream(_audioStream);
+    _audioRunning.store(false, std::memory_order_release);
+    Pa_Sleep(20);
+
+    if (Pa_IsStreamActive(_audioStream) == 1)
+    {
+      Pa_StopStream(_audioStream);
+    }
+
     Pa_CloseStream(_audioStream);
     Pa_Terminate();
   }
+
+  int AudioManager::FindFreeSoundSlot()
+  {
+    for (size_t i = 0; i < MAX_SOUNDS; i++)
+    {
+      if (!_soundSlots[i].active.load(std::memory_order_relaxed))
+      {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  int AudioManager::FindFreeStreamSlot()
+  {
+    for (size_t i = 0; i < MAX_STREAMS; i++)
+    {
+      if (!_streamSlots[i].active.load(std::memory_order_relaxed))
+      {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  int AudioManager::FindStreamSlot(AudioStream *stream)
+  {
+    for (size_t i = 0; i < MAX_STREAMS; i++)
+    {
+      if (_streamSlots[i].active.load(std::memory_order_relaxed) && _streamSlots[i].stream == stream)
+      {
+        return i;
+      }
+    }
+    return -1;
+  }
+
 } // namespace Base

@@ -205,6 +205,7 @@ namespace Base
         _inpMan.PostUpdate();
         _entityManager.RemoveDeadEntities();
         _sceneManager.PostUpdate();
+        _audioMan.ProcessCleanup(); // Call this regularly
       }
       else
       {

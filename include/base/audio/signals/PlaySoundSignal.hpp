@@ -1,7 +1,7 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
+#include "base/audio/Sound.hpp"
 #include "base/signals/Signal.hpp"
-#include "raylib.h"
 
 namespace Base
 {
