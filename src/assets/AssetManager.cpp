@@ -251,14 +251,15 @@ namespace Base
     const AssetPath &path, bool global          //
   )
   {
-    if (!std::holds_alternative<DoublePath>(path))
+    if (!std::holds_alternative<ShaderPath>(path))
     {
       THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Shader Asset\n");
     }
 
-    auto doublePath = std::get<DoublePath>(path);
-    auto &fragment = doublePath[1];
-    auto &vertex = doublePath[0];
+    auto shaderPath = std::get<ShaderPath>(path);
+    auto &fragment = std::get<1>(shaderPath);
+    auto &vertex = std::get<0>(shaderPath);
+    auto &type = std::get<2>(shaderPath);
 
     bool vert = fs::exists(Strings::Strip(vertex.string()));
     bool frag = fs::exists(Strings::Strip(fragment.string()));
@@ -281,7 +282,7 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto shader = Shader::Create(fullVertPath, fullFragPath);
+          auto shader = Shader::Create(fullVertPath, fullFragPath, type);
           AssetHandle<Shader> handle(shader);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(shader)};
           return handle;
@@ -299,7 +300,7 @@ namespace Base
         {
           if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto shader = Shader::Create(fullVertPath, fullFragPath);
+            auto shader = Shader::Create(fullVertPath, fullFragPath, type);
             AssetHandle<Shader> handle(shader);
             _sceneAssets[_currentScene][name] = {
               static_cast<AssetHandle<void>>(handle),

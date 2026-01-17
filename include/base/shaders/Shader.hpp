@@ -17,6 +17,7 @@ namespace Base
     RenderID _id;
     std::unordered_map<std::string, UniformValue> _pendingUniforms;
     std::unordered_map<std::string, int32_t> _uniformLocationCache;
+    GeometryType _type;
 
     inline static uint8_t _maxTextureSlots = 0;
     inline static std::unordered_map<GeometryType, const std::string> _defaultVertexShaders = {
@@ -104,11 +105,16 @@ namespace Base
     inline static std::unordered_map<GeometryType, const std::string> _defaultFragmentShaders;
 
   private:
-    Shader(const std::shared_ptr<VertexShader> &vertex, const std::shared_ptr<FragmentShader> &fragment);
+    Shader( //
+      const std::shared_ptr<VertexShader> &vertex, const std::shared_ptr<FragmentShader> &fragment,
+      GeometryType type //
+    );
     void ApplyPendingUniforms();
 
   public:
-    static std::shared_ptr<Shader> Create(const std::filesystem::path &vertex, const std::filesystem::path &fragment);
+    static std::shared_ptr<Shader> Create(                                                                 //
+      const std::filesystem::path &vertex, const std::filesystem::path &fragment, GeometryType shaderClass //
+    );
     static void Delete(std::shared_ptr<Shader> shader);
     static void SetMaxTextureSlots(uint8_t);
     Shader() = default;

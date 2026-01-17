@@ -42,7 +42,7 @@ namespace Base
 
   struct TextCommand
   {
-    std::wstring Text;
+    std::string Text;
     std::shared_ptr<Font> FontToUse;
     glm::vec3 Position;
     glm::vec4 Color;

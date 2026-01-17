@@ -3,6 +3,10 @@
 
 namespace Base
 {
+  Circle::Circle(float radius) : _radius(radius)
+  {
+  }
+
   Circle::Circle(Vector2 position, float radius) : _position(position), _radius(radius), _thickness(radius)
   {
   }

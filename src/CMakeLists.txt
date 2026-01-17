@@ -17,6 +17,16 @@ set(SRC
   "./rendering/Material.cpp"
   "./rendering/ShaderEffect.cpp"
   "./rendering/Window.cpp"
+  "./rendering/Vertex.cpp"
+  "./rendering/VertexBuffer.cpp"
+  "./rendering/IndexBuffer.cpp"
+  "./rendering/VertexArray.cpp"
+  "./rendering/RenderID.cpp"
+
+
+  "./shaders/Shader.cpp"
+  "./shaders/VertexShader.cpp"
+  "./shaders/FragmentShader.cpp"
 
   "./sprites/Sprite.cpp"
   "./sprites/NinePatchSprite.cpp"
@@ -72,6 +82,7 @@ set(SRC
   "./particles/ParticleManager.cpp"
 
   "./camera/CameraController.cpp"
+  "./camera/Camera.cpp"
 
   "./input/InputManager.cpp"
 
@@ -81,6 +92,8 @@ set(SRC
 
   "./assets/AssetManager.cpp"
   "./assets/BaseAsset.cpp"
+  "./assets/Texture.cpp"
+  "./assets/Font.cpp"
 
   "./tween/TweenManager.cpp"
   "./tween/Tween.cpp"

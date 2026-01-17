@@ -1,4 +1,5 @@
 #include "base/shaders/Shader.hpp"
+#include "base/rendering/GeometryType.hpp"
 #include "glad/glad.h"
 #include "glm/ext/matrix_float4x4.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -10,7 +11,11 @@
 namespace Base
 {
 
-  Shader::Shader(const std::shared_ptr<VertexShader> &vertex, const std::shared_ptr<FragmentShader> &fragment)
+  Shader::Shader( //
+    const std::shared_ptr<VertexShader> &vertex, const std::shared_ptr<FragmentShader> &fragment,
+    GeometryType type //
+    )
+    : _type(type)
   {
     RenderID vertexID = vertex->GetRenderID();
     RenderID fragID = fragment->GetRenderID();
@@ -32,11 +37,15 @@ namespace Base
     VertexShader::Delete(vertex);
   }
 
-  std::shared_ptr<Shader> Shader::Create(const std::filesystem::path &vertex, const std::filesystem::path &fragment)
+  std::shared_ptr<Shader> Shader::Create( //
+    const std::filesystem::path &vertex, const std::filesystem::path &fragment,
+    GeometryType shaderClass //
+  )
   {
     if (std::filesystem::exists(vertex) && std::filesystem::exists(fragment))
     {
-      return std::shared_ptr<Shader>(new Shader(VertexShader::Create(vertex), FragmentShader::Create(fragment)));
+      return std::shared_ptr<Shader>(
+        new Shader(VertexShader::Create(vertex), FragmentShader::Create(fragment), shaderClass));
     }
     else if (vertex.empty() || fragment.empty())
     {
@@ -45,23 +54,22 @@ namespace Base
         return std::shared_ptr<Shader>( //
           new Shader(                   //
             VertexShader::Create(_defaultVertexShaders[shaderClass]),
-            FragmentShader::Create(_defaultFragmentShaders[shaderClass]) //
-            )                                                            //
+            FragmentShader::Create(_defaultFragmentShaders[shaderClass]), shaderClass //
+            )                                                                         //
         );
       }
       else if (vertex.empty())
       {
-        return std::shared_ptr<Shader>(
-          new Shader(VertexShader::Create(_defaultVertexShaders[shaderClass]), FragmentShader::Create(fragment)) //
+        return std::shared_ptr<Shader>(new Shader(VertexShader::Create(_defaultVertexShaders[shaderClass]),
+                                                  FragmentShader::Create(fragment), shaderClass) //
         );
       }
       else if (fragment.empty())
       {
-        return std::shared_ptr<Shader>( //
-          new Shader(                   //
-            VertexShader::Create(vertex),
-            FragmentShader::Create(_defaultFragmentShaders[shaderClass]) //
-            )                                                            //
+        return std::shared_ptr<Shader>(                                                                             //
+          new Shader(                                                                                               //
+            VertexShader::Create(vertex), FragmentShader::Create(_defaultFragmentShaders[shaderClass]), shaderClass //
+            )                                                                                                       //
         );
       }
     }
@@ -306,5 +314,4 @@ namespace Base
   {
     return _type;
   }
-
 } // namespace Base

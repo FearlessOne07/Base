@@ -7,14 +7,14 @@ namespace Base
   class UIButton : public UIElement
   {
   private:
-    std::wstring _text = L"Button";
+    std::string _text = "Button";
     float _fontSize = 12;
 
     Color _backgroundColor = {255, 255, 255, 255};
     Color _textColor = {0, 0, 0, 0};
 
   public:
-    void SetText(const std::wstring &);
+    void SetText(const std::string &);
     void SetTextColor(Color textColor);
     void SetBackgroundColor(Color color);
 

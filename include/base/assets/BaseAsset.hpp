@@ -1,6 +1,6 @@
 #pragma once
 
-#include <array>
+#include "base/rendering/GeometryType.hpp"
 #include <filesystem>
 #include <variant>
 namespace Base
@@ -21,6 +21,6 @@ namespace Base
   };
 
   using SinglePath = std::filesystem::path;
-  using DoublePath = std::array<std::filesystem::path, 2>;
-  using AssetPath = std::variant<SinglePath, DoublePath>;
+  using ShaderPath = std::tuple<std::filesystem::path, std::filesystem::path, GeometryType>;
+  using AssetPath = std::variant<SinglePath, ShaderPath>;
 } // namespace Base

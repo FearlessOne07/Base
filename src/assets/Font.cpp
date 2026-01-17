@@ -58,6 +58,67 @@ namespace Base
     out = U'\uFFFD';
     return true;
   }
+
+  // Helper function to convert wstring to UTF-8
+  static std::string WStringToUTF8(const std::wstring_view wstr)
+  {
+    if (wstr.empty())
+      return "";
+
+    std::string result;
+    result.reserve(wstr.size() * 3); // Reserve approximate space
+
+    for (wchar_t wc : wstr)
+    {
+      char32_t ch = static_cast<char32_t>(wc);
+
+// Handle UTF-16 surrogate pairs on Windows (where wchar_t is 16-bit)
+#ifdef _WIN32
+      if (ch >= 0xD800 && ch <= 0xDBFF)
+      {
+        // High surrogate - skip for now, will be handled with low surrogate
+        continue;
+      }
+      else if (ch >= 0xDC00 && ch <= 0xDFFF)
+      {
+        // Low surrogate - combine with previous high surrogate
+        if (result.size() >= 1)
+        {
+          // This is simplified; proper implementation would track the high surrogate
+          // For now, treat as replacement character
+          ch = U'\uFFFD';
+        }
+      }
+#endif
+
+      // Encode to UTF-8
+      if (ch < 0x80)
+      {
+        result.push_back(static_cast<char>(ch));
+      }
+      else if (ch < 0x800)
+      {
+        result.push_back(static_cast<char>(0xC0 | (ch >> 6)));
+        result.push_back(static_cast<char>(0x80 | (ch & 0x3F)));
+      }
+      else if (ch < 0x10000)
+      {
+        result.push_back(static_cast<char>(0xE0 | (ch >> 12)));
+        result.push_back(static_cast<char>(0x80 | ((ch >> 6) & 0x3F)));
+        result.push_back(static_cast<char>(0x80 | (ch & 0x3F)));
+      }
+      else if (ch < 0x110000)
+      {
+        result.push_back(static_cast<char>(0xF0 | (ch >> 18)));
+        result.push_back(static_cast<char>(0x80 | ((ch >> 12) & 0x3F)));
+        result.push_back(static_cast<char>(0x80 | ((ch >> 6) & 0x3F)));
+        result.push_back(static_cast<char>(0x80 | (ch & 0x3F)));
+      }
+    }
+
+    return result;
+  }
+
   std::shared_ptr<Font> Font::Create(const std::filesystem::path &path)
   {
     return std::shared_ptr<Font>(new Font(path));
@@ -68,7 +129,7 @@ namespace Base
     Texture::Destroy(font->_atlas);
   }
 
-  Vector2 Font::MeasureText(Ptr<Font> &font, std::string_view text, float fontSize)
+  Vector2 Font::MeasureText(const Ptr<Font> &font, const std::string_view text, float fontSize)
   {
     Vector2 result{};
 
@@ -79,7 +140,7 @@ namespace Base
     const auto &metrics = fontGeom.getMetrics();
 
     float scale = fontSize / metrics.emSize;
-    float lineHeight = (metrics.ascender - metrics.descender) * scale;
+    float lineHeight = (metrics.ascenderY - metrics.descenderY) * scale;
 
     // Space advance (for tabs)
     float spaceAdvance = 0.0f;
@@ -129,7 +190,7 @@ namespace Base
 
       // Kerning
       if (prev)
-        x += fontGeom.getKerning(prev, ch) * scale;
+        x += fontGeom.getKerning().at({prev, ch}) * scale;
 
       // Vertical bounds (tight)
       msdf_atlas::GlyphBox box;
@@ -154,6 +215,13 @@ namespace Base
       result.y = (maxY > minY) ? (maxY - minY) : lineHeight;
 
     return result;
+  }
+
+  // Overload for wstring - converts to UTF-8 and calls the main implementation
+  Vector2 Font::MeasureText(const Ptr<Font> &font, const std::wstring_view text, float fontSize)
+  {
+    std::string utf8Text = WStringToUTF8(text);
+    return MeasureText(font, std::string_view(utf8Text), fontSize);
   }
 
   Font::Font(const std::filesystem::path &path) : _data(new MSDFData)

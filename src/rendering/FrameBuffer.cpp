@@ -85,4 +85,9 @@ namespace Base
     return _height;
   }
 
+  RenderID FrameBuffer::GetRenderId() const
+  {
+    return _id;
+  }
+
 } // namespace Base

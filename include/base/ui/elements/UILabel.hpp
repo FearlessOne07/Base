@@ -6,22 +6,22 @@ namespace Base
 {
   class UILabel : public UIElement
   {
-    std::wstring _text = L"Label";
-    std::wstring _cachedText = L"Label";
-    Binding<std::wstring> _textBinding;
+    std::string _text = "Label";
+    std::string _cachedText = "Label";
+    Binding<std::string> _textBinding;
     Color _textColor = {255, 255, 255, 255};
     float _fontSize = 12;
 
-    void SetTextInternal(const std::wstring &, bool user);
+    void SetTextInternal(const std::string &, bool user);
 
   public:
-    void SetText(const std::wstring &text);
-    void Bind(const Binding<std::wstring> &binding);
+    void SetText(const std::string &text);
+    void Bind(const Binding<std::string> &binding);
     void ClearBinding();
     void SetFontSize(float size);
     void SetTextColor(Color color);
     void Render(float opacity) override;
-    const std::wstring &GetText() const;
+    const std::string &GetText() const;
 
     // New
     Size Measure() override;

@@ -13,7 +13,7 @@ namespace Base
   {
     CircleVertex::Init();
 
-    _defaultShader = Shader::Create("", "");
+    _defaultShader = Shader::Create("", "", GeometryType::Circle);
     _currentShader = _defaultShader;
 
     _vertices.reserve(_maxVertices);

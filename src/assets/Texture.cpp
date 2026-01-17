@@ -1,7 +1,7 @@
 #include "base/assets/Texture.hpp"
 #include "glad/glad.h"
 #include <filesystem>
-#include <memory>
+
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

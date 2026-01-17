@@ -134,9 +134,9 @@ namespace Base
     );
   }
 
-  void Renderer::DrawText(                                                                                       //
-    const std::wstring &text, glm::vec2 position, Color color, float fontSize, const std::shared_ptr<Font> font, //
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments                                            //
+  void Renderer::DrawText(                                                                                      //
+    const std::string &text, glm::vec2 position, Color color, float fontSize, const std::shared_ptr<Font> font, //
+    const std::unordered_set<FramebufferAttachmentIndex> &attachments                                           //
   )
   {
     glm::vec4 colorF = color / Color(255);

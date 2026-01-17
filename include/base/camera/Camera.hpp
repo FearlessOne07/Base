@@ -38,8 +38,8 @@ namespace Base
     void SetViewPort(Vector2 viewPort);
 
     const Vector2 GetPosition() const;
-    const float GetZoom();
-    const float GetRotation();
+    const float GetZoom() const;
+    const float GetRotation() const;
     const glm::mat4 GetProjView() const;
   };
 

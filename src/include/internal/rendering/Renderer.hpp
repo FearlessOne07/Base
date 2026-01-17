@@ -119,7 +119,7 @@ namespace Base
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawText( //
-      const std::wstring &text, glm::vec2 position, Color color, float fontSize,
+      const std::string &text, glm::vec2 position, Color color, float fontSize,
       const std::shared_ptr<Font> font,                                                                        //
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );

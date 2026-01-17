@@ -20,7 +20,7 @@ namespace Base
     _backgroundColor = backgroundColor;
   }
 
-  void UIButton::SetText(const std::wstring &text)
+  void UIButton::SetText(const std::string &text)
   {
     _text = text;
   }

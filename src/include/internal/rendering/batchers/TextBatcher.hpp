@@ -29,7 +29,7 @@ namespace Base
 
   private:
     void DrawText( //
-      const std::wstring &text, glm::vec3 position, glm::vec4 color, float fontSize, const std::shared_ptr<Font> font,
+      const std::string &text, glm::vec3 position, glm::vec4 color, float fontSize, const std::shared_ptr<Font> font,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments //
     );
 

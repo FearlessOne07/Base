@@ -1,5 +1,6 @@
 #include "internal/rendering/batchers/TextBatcher.hpp"
 #include "base/assets/Texture.hpp"
+#include "base/rendering/GeometryType.hpp"
 #include "glm/ext/vector_float2.hpp"
 #include "glm/fwd.hpp"
 #include "internal/rendering/Vertex.hpp"
@@ -10,10 +11,52 @@
 
 namespace Base
 {
+  // UTF-8 decoder
+  static bool DecodeUTF8(const char *&it, const char *end, char32_t &out)
+  {
+    if (it >= end)
+      return false;
+
+    unsigned char c = static_cast<unsigned char>(*it++);
+
+    // 1-byte (ASCII)
+    if (c < 0x80)
+    {
+      out = c;
+      return true;
+    }
+
+    // 2-byte
+    if ((c >> 5) == 0x6 && it < end)
+    {
+      out = ((c & 0x1F) << 6) | (static_cast<unsigned char>(*it++) & 0x3F);
+      return true;
+    }
+
+    // 3-byte
+    if ((c >> 4) == 0xE && it + 1 < end)
+    {
+      out = ((c & 0x0F) << 12) | ((static_cast<unsigned char>(*it++) & 0x3F) << 6) |
+            (static_cast<unsigned char>(*it++) & 0x3F);
+      return true;
+    }
+
+    // 4-byte
+    if ((c >> 3) == 0x1E && it + 2 < end)
+    {
+      out = ((c & 0x07) << 18) | ((static_cast<unsigned char>(*it++) & 0x3F) << 12) |
+            ((static_cast<unsigned char>(*it++) & 0x3F) << 6) | (static_cast<unsigned char>(*it++) & 0x3F);
+      return true;
+    }
+
+    // Invalid UTF-8 → replacement character
+    out = U'\uFFFD';
+    return true;
+  }
 
   void TextBatcher::Init()
   {
-    _defaultShader = Shader::Create("", "");
+    _defaultShader = Shader::Create("", "", GeometryType::Text);
     _currentShader = _defaultShader;
 
     _geometryType = GeometryType::Text;
@@ -60,7 +103,7 @@ namespace Base
   }
 
   void TextBatcher::DrawText( //
-    const std::wstring &text, glm::vec3 position, glm::vec4 color, float fontSize, const std::shared_ptr<Font> font,
+    const std::string &text, glm::vec3 position, glm::vec4 color, float fontSize, const std::shared_ptr<Font> font,
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
@@ -76,12 +119,20 @@ namespace Base
     std::shared_ptr<Texture> fontAtlas = font->GetAtlas();
     float fontScale = fontSize / (metrics.ascenderY - metrics.descenderY);
 
-    auto firstGlyph = fontGeometry.getGlyph(text[0]);
-    double firstLeft, firstBottom, firstRight, firstTop;
-    firstGlyph->getQuadPlaneBounds(firstLeft, firstBottom, firstRight, firstTop);
-
-    position.x = position.x - glm::vec2(firstLeft, 0).x;
-    position.y = position.x - glm::vec2(firstLeft, 0).x;
+    // Decode first character to get left offset
+    const char *it = text.data();
+    const char *end = it + text.size();
+    char32_t firstChar;
+    if (DecodeUTF8(it, end, firstChar))
+    {
+      auto firstGlyph = fontGeometry.getGlyph(firstChar);
+      if (firstGlyph)
+      {
+        double firstLeft, firstBottom, firstRight, firstTop;
+        firstGlyph->getQuadPlaneBounds(firstLeft, firstBottom, firstRight, firstTop);
+        position.x = position.x - static_cast<float>(firstLeft * fontScale);
+      }
+    }
 
     float topLeftOffset = metrics.ascenderY;
 
@@ -94,31 +145,42 @@ namespace Base
       attachmentMask |= 1u << static_cast<uint8_t>(attachment);
     }
 
-    for (int i = 0; i < text.length(); i++)
+    // Reset iterator for main loop
+    it = text.data();
+    char32_t prevCharacter = 0;
+
+    while (it < end)
     {
-      char32_t character = text[i];
+      char32_t character;
+      if (!DecodeUTF8(it, end, character))
+        break;
 
       // Handle newline
-      if (character == L'\n')
+      if (character == U'\n')
       {
         penX = 0.0f;
         penY += metrics.lineHeight; // move down by line height
+        prevCharacter = 0;
         continue;
       }
-      else if (character == L'\t')
+      else if (character == U'\t')
       {
         double spaceAdvance;
-        fontGeometry.getAdvance(spaceAdvance, L' ', L' ');
-        penX += spaceAdvance;
-
-        fontGeometry.getAdvance(spaceAdvance, L' ', i < text.length() ? text[i + 1] : 0);
-        penX += spaceAdvance;
+        fontGeometry.getAdvance(spaceAdvance, U' ', U' ');
+        penX += spaceAdvance * 4.0f; // Tab = 4 spaces
+        prevCharacter = 0;
+        continue;
       }
 
       auto glyphGeometry = fontGeometry.getGlyph(character);
       if (!glyphGeometry)
       {
-        glyphGeometry = fontGeometry.getGlyph(L'?');
+        glyphGeometry = fontGeometry.getGlyph(U'?');
+        if (!glyphGeometry)
+        {
+          prevCharacter = character;
+          continue;
+        }
       }
 
       // Plane-space quad bounds (relative to baseline)
@@ -156,11 +218,21 @@ namespace Base
       _vertices.push_back({tl, uvTL, color, attachmentMask});
       _currentIndex += 6;
 
-      // Advance pen
+      // Advance pen (with kerning)
       double advance;
-      wchar_t nextCharacter = i < text.length() ? text[i + 1] : 0;
+
+      // Peek at next character for kerning
+      const char *peekIt = it;
+      char32_t nextCharacter = 0;
+      if (peekIt < end)
+      {
+        DecodeUTF8(peekIt, end, nextCharacter);
+      }
+
       fontGeometry.getAdvance(advance, character, nextCharacter);
       penX += advance;
+
+      prevCharacter = character;
     }
   }
 

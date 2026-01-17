@@ -5,12 +5,12 @@
 
 namespace Base
 {
-  void UILabel::SetText(const std::wstring &text)
+  void UILabel::SetText(const std::string &text)
   {
     _text = text;
   }
 
-  void UILabel::SetTextInternal(const std::wstring &text, bool user = false)
+  void UILabel::SetTextInternal(const std::string &text, bool user = false)
   {
     _text = text;
     if (user && _textBinding)
@@ -24,7 +24,7 @@ namespace Base
     _textBinding = {};
   }
 
-  void UILabel::Bind(const Binding<std::wstring> &binding)
+  void UILabel::Bind(const Binding<std::string> &binding)
   {
     _textBinding = std::move(binding);
   }
@@ -33,7 +33,7 @@ namespace Base
   {
     if (_textBinding)
     {
-      std::wstring newText = _textBinding.Get();
+      std::string newText = _textBinding.Get();
       if (newText != _cachedText)
       {
         SetTextInternal(newText);
@@ -116,7 +116,7 @@ namespace Base
     if (!_isHidden)
     {
       Renderer::DrawText( //
-        _text.c_str(), _layoutRect.GetPosition(), _textColor, _fontSize * _renderTransform.GetFontScale(),
+        _text, _layoutRect.GetPosition(), _textColor, _fontSize * _renderTransform.GetFontScale(),
         _font.Get() //
       );
     }

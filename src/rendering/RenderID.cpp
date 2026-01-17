@@ -19,6 +19,11 @@ namespace Base
     return _id;
   }
 
+  bool RenderID::operator!=(const RenderID &other)
+  {
+    return _id != other._id;
+  }
+
   bool RenderID::operator==(const RenderID &other)
   {
     return _id == other._id;

@@ -85,4 +85,14 @@ namespace Base
   {
     return _position;
   }
+
+  const float Camera::GetZoom() const
+  {
+    return _zoom;
+  }
+
+  const float Camera::GetRotation() const
+  {
+    return _rotation;
+  }
 } // namespace Base
