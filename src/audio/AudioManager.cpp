@@ -63,18 +63,10 @@ namespace Base
     }
 
 #elif defined(__linux__)
-    int pulseApiIndex = -1;
-    for (int i = 0; i < Pa_GetHostApiCount(); ++i)
-    {
-      const PaHostApiInfo *info = Pa_GetHostApiInfo(i);
-      if (info->type == paPulseAudio)
-      {
-        pulseApiIndex = i;
-        break;
-      }
-    }
+    int ApiIndex = Pa_GetDefaultHostApi();
+    const PaHostApiInfo *info = Pa_GetHostApiInfo(ApiIndex);
+    PaDeviceIndex deviceIndex = Pa_GetHostApiInfo(ApiIndex)->defaultOutputDevice;
 
-    PaDeviceIndex deviceIndex = Pa_GetHostApiInfo(pulseApiIndex)->defaultOutputDevice;
     if (deviceIndex == paNoDevice)
     {
       THROW_BASE_RUNTIME_ERROR("No default PulseAudio output device.");
@@ -101,9 +93,8 @@ namespace Base
     }
 #endif
 
-    PaError err = Pa_OpenStream(//
-        &_audioStream, nullptr, &outputParams, _sampleRate, FRAMES_PER_BUFFER, paClipOff,
-                                AudioCallBack, this//
+    PaError err = Pa_OpenStream(                                                                            //
+      &_audioStream, nullptr, &outputParams, _sampleRate, FRAMES_PER_BUFFER, paClipOff, AudioCallBack, this //
     );
 
     if (err != paNoError || Pa_StartStream(_audioStream) != paNoError)
@@ -210,7 +201,6 @@ namespace Base
     }
 
     // Clear mix buffer
- 
 
     // Mix sounds
     for (size_t frame = 0; frame < framesPerBuffer; frame++)
