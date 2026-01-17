@@ -19,7 +19,7 @@ namespace Base
 
     PaStreamParameters outputParams{};
     outputParams.channelCount = 2;
-    outputParams.sampleFormat = paInt16;
+    outputParams.sampleFormat = paFloat32;
     outputParams.hostApiSpecificStreamInfo = nullptr;
 
     std::vector<int> preferredRates = {48000, 44100, 96000};
@@ -101,8 +101,10 @@ namespace Base
     }
 #endif
 
-    PaError err = Pa_OpenStream(&_audioStream, nullptr, &outputParams, _sampleRate, FRAMES_PER_BUFFER, paClipOff,
-                                AudioCallBack, this);
+    PaError err = Pa_OpenStream(//
+        &_audioStream, nullptr, &outputParams, _sampleRate, FRAMES_PER_BUFFER, paClipOff,
+                                AudioCallBack, this//
+    );
 
     if (err != paNoError || Pa_StartStream(_audioStream) != paNoError)
     {
@@ -151,11 +153,11 @@ namespace Base
     void *userData //
   )
   {
-    int16_t *out = static_cast<int16_t *>(outputBuffer);
+    float *out = static_cast<float *>(outputBuffer);
     AudioManager *_this = static_cast<AudioManager *>(userData);
 
     // Fill output buffer with silence
-    memset(outputBuffer, 0, framesPerBuffer * 2 * sizeof(int16_t));
+    memset(outputBuffer, 0, framesPerBuffer * 2 * sizeof(float));
 
     if (!_this->_audioRunning.load(std::memory_order_relaxed))
     {
@@ -208,7 +210,7 @@ namespace Base
     }
 
     // Clear mix buffer
-    _this->_mixBuffer.fill(0);
+ 
 
     // Mix sounds
     for (size_t frame = 0; frame < framesPerBuffer; frame++)
@@ -224,8 +226,8 @@ namespace Base
         if (sound->IsPlaying())
         {
           auto soundFrame = sound->GetNextFrame();
-          _this->_mixBuffer[frame * 2] += soundFrame[0];
-          _this->_mixBuffer[frame * 2 + 1] += soundFrame[1];
+          out[frame * 2 + 1] += soundFrame[1];
+          out[frame * 2] += soundFrame[0];
         }
         else
         {
@@ -249,8 +251,8 @@ namespace Base
         if (stream->IsPlaying())
         {
           auto streamFrame = stream->GetNextFrame();
-          _this->_mixBuffer[frame * 2] += streamFrame[0];
-          _this->_mixBuffer[frame * 2 + 1] += streamFrame[1];
+          out[frame * 2] += streamFrame[0];
+          out[frame * 2 + 1] += streamFrame[1];
         }
         else
         {
@@ -282,13 +284,6 @@ namespace Base
         _this->_streamSlots[i].pendingRelease.store(false, std::memory_order_release);
       }
     }
-
-    // Convert to 16-bit with clipping
-    for (size_t i = 0; i < framesPerBuffer * 2; i++)
-    {
-      out[i] = static_cast<int16_t>(std::clamp<float>(_this->_mixBuffer[i], -1.0f, 1.0f) * 32767.0f);
-    }
-
     return paContinue;
   }
 

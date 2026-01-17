@@ -119,7 +119,6 @@ namespace Base
     RTCommandQueue<AudioStream *, MAX_STREAMS> _streamCleanupQueue;
 
     static constexpr int FRAMES_PER_BUFFER = 64 * 8;
-    std::array<float, FRAMES_PER_BUFFER * 2> _mixBuffer;
 
     // Storage for owned instances (accessed only from non-RT thread)
     struct OwnedSound
