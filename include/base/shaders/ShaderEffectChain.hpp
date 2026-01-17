@@ -20,7 +20,7 @@ namespace Base
   public:
     template <typename T, typename... Args>
       requires(std::is_base_of_v<ShaderEffect, T>)
-    auto AddEffect(std::weak_ptr<const Scene> ownerScene, Args &&...args) -> std::shared_ptr<T>
+    auto AddEffect(std::weak_ptr<Scene> ownerScene, Args &&...args) -> std::shared_ptr<T>
     {
       auto id = std::type_index(typeid(T));
 
