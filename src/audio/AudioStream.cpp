@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include "samplerate.h"
 #include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -108,7 +109,7 @@ namespace Base
 
   void AudioStream::FillBuffers()
   {
-    while (_fillBuffers.load())
+    while (_fillBuffers.load(std::memory_order_acquire))
     {
       // Find a buffer that needs filling
       int bufferToFill = -1;
@@ -185,7 +186,7 @@ namespace Base
       }
 
       // Mark this buffer as ready
-      _isBufferReady[bufferToFill].store(true);
+      _isBufferReady[bufferToFill].store(true, std::memory_order_release);
     }
   }
 

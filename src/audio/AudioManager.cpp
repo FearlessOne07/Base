@@ -200,8 +200,6 @@ namespace Base
       }
     }
 
-    // Clear mix buffer
-
     // Mix sounds
     for (size_t frame = 0; frame < framesPerBuffer; frame++)
     {
@@ -292,7 +290,7 @@ namespace Base
 
     if (ownedSlot < 0)
     {
-      return; // No free slots
+      return;
     }
 
     auto sound = signal->soundHandle.Get();
@@ -324,14 +322,14 @@ namespace Base
 
     if (ownedSlot < 0)
     {
-      return; // No free slots
+      return;
     }
 
     _ownedStreams[ownedSlot].handle = signal->streamHandle;
     _ownedStreams[ownedSlot].inUse = true;
 
     PlayStreamCommand cmd;
-    cmd.stream = signal->streamHandle.Get().get(); // Get raw pointer from shared_ptr
+    cmd.stream = signal->streamHandle.Get().get();
     cmd.volume = std::clamp(signal->streamVolume, 0.f, 1.f);
     cmd.pan = std::clamp(signal->streamPan, -1.f, 1.f);
     cmd.loop = signal->loopStream;
@@ -342,7 +340,7 @@ namespace Base
   void AudioManager::StopStream(const std::shared_ptr<StopAudioStreamSignal> &signal)
   {
     StopStreamCommand cmd;
-    cmd.stream = signal->streamHandle.Get().get(); // Get raw pointer from shared_ptr
+    cmd.stream = signal->streamHandle.Get().get();
     _stopStreamCommands.Push(cmd);
   }
 
