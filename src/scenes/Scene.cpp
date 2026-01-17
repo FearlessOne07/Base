@@ -132,4 +132,19 @@ namespace Base
   {
     return _postProcessingEffects;
   }
+
+  Color Scene::GetClearColor() const
+  {
+    return _clearColor;
+  }
+
+  void Scene::SetClearColor(Color color)
+  {
+    _clearColor = color;
+  }
+
+  Vector2 Rectangle::GetPosition() const
+  {
+    return _position;
+  }
 } // namespace Base

@@ -14,14 +14,14 @@ namespace Base
     Origin _origin = Origin::TopLeft;
 
   public:
-    Rectangle();
+    Rectangle() = default;
     Rectangle(Vector2 size, Origin origin = Origin::TopLeft);
     Rectangle(Vector2 size, const Material &material, Origin origin = Origin::TopLeft);
     Rectangle(Vector2 position, Vector2 size, Origin origin = Origin::TopLeft);
     Rectangle(Vector2 position, Vector2 size, const Material &material, Origin origin = Origin::TopLeft);
     Vector2 GetSize() const;
-    Vector2 GetPosition() const;
     Origin GetOrigin() const;
+    Vector2 GetPosition() const;
     void SetPosition(Vector2 size);
     void SetSize(Vector2 size);
   };

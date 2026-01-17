@@ -13,7 +13,7 @@ namespace Base
 {
   void EntityCollisionSystem::Update( //
     float dt, Ref<EntityManager> entityManager,
-    std::shared_ptr<const Scene> currentScene //
+    std::shared_ptr<Scene> currentScene //
   )
   {
     auto entities = entityManager->Query<Base::ColliderComponent>();

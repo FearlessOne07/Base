@@ -4,7 +4,7 @@
 
 namespace Base
 {
-  void StateSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
+  void StateSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<Scene> currentScene)
   {
     auto entities_state = entityManager->Query<StateComponent>();
 

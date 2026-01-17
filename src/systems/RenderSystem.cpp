@@ -7,13 +7,12 @@
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
-#include "base/rendering/Origin.hpp"
 #include "internal/rendering/Renderer.hpp"
 #include <memory>
 
 namespace Base
 {
-  void RenderSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
+  void RenderSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<Scene> currentScene)
   {
     // Shape Component
     auto entities_transcmp = entityManager->Query<TransformComponent>();

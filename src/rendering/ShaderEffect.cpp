@@ -3,7 +3,6 @@
 
 namespace Base
 {
-
   void ShaderEffect::BeginFrameBuffer(Ptr<FrameBuffer> framebuffer)
   {
     Renderer::BeginFramebuffer(framebuffer);

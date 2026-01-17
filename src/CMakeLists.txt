@@ -11,6 +11,12 @@ set(SRC
   "./rendering/batchers/TextBatcher.cpp"
   "./rendering/batchers/CircleBatcher.cpp"
   "./rendering/RenderLayer.cpp"
+  "./rendering/Quad.cpp"
+  "./rendering/Circlec.cpp"
+  "./rendering/FrameBuffer.cpp"
+  "./rendering/Material.cpp"
+  "./rendering/ShaderEffect.cpp"
+  "./rendering/Window.cpp"
 
   "./sprites/Sprite.cpp"
   "./sprites/NinePatchSprite.cpp"
@@ -85,6 +91,7 @@ set(SRC
   "./util/Strings.cpp"
   "./util/UUID.cpp"
   "./util/Pauseable.cpp"
+  "./util/Math.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 

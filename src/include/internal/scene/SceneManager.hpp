@@ -61,6 +61,6 @@ namespace Base
 
     void SetQuitCallBack(QuitCallBack quitCallback);
 
-    std::shared_ptr<const Scene> GetCurrentScene() const;
+    std::shared_ptr<Scene> GetCurrentScene() const;
   };
 } // namespace Base

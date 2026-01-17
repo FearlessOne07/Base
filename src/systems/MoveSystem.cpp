@@ -14,7 +14,7 @@
 
 namespace Base
 {
-  void MoveSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
+  void MoveSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<Scene> currentScene)
   {
     auto entities = entityManager->Query<RigidBodyComponent, MoveComponent>();
     for (auto &item : entities)

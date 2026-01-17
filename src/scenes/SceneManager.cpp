@@ -197,7 +197,7 @@ namespace Base
     }
   }
 
-  std::shared_ptr<const Scene> SceneManager::GetCurrentScene() const
+  std::shared_ptr<Scene> SceneManager::GetCurrentScene() const
   {
     if (!_scenes.empty())
     {

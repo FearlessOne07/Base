@@ -23,7 +23,7 @@ namespace Base
            (circle.GetPosition().y + circle.GetRadius()) <= (container.GetPosition().y + container.GetSize().y);
   }
 
-  void AreaSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
+  void AreaSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<Scene> currentScene)
   {
     auto entities_arentry = entityManager->Query<StateComponent, AreaEntry>();
     for (auto &item : entities_arentry)

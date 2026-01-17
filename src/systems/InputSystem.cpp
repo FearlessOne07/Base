@@ -10,7 +10,7 @@ namespace Base
   {
   }
 
-  void InputSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
+  void InputSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<Scene> currentScene)
   {
     if (!_eMan)
     {

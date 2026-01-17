@@ -7,7 +7,7 @@
 namespace Base
 {
 
-  void ProximitySystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
+  void ProximitySystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<Scene> currentScene)
   {
     auto entities_proxentry = entityManager->Query<StateComponent, ProximityEntry>();
     for (auto &item : entities_proxentry)
