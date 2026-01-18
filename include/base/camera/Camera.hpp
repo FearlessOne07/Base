@@ -1,6 +1,5 @@
 #pragma once
 #include "base/util/Type.hpp"
-#include "glm/glm.hpp"
 
 namespace Base
 {

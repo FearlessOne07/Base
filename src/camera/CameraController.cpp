@@ -4,10 +4,16 @@
 #include "glm/geometric.hpp"
 #include "internal/rendering/Renderer.hpp"
 #include <algorithm>
+#include <memory>
 #include <random>
 
 namespace Base
 {
+  CameraController::CameraController(Vector2 viewPort)
+  {
+    _camera = std::make_shared<Camera>(viewPort);
+  }
+
   void CameraController::Shake(const CameraShakeConfig &config)
   {
     // Mark camera as shaking

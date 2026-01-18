@@ -55,7 +55,7 @@ namespace Base
     AssetHandle<T> GetAsset(const std::string &assetName, bool global = false)
     {
       std::string name = Base::Strings::ToLower(assetName);
-      if (global)
+      if (!global)
       {
         auto &scene = _currentScene;
         if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())

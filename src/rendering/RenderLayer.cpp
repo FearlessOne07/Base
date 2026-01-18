@@ -18,7 +18,7 @@ namespace Base
     _framebuffer = FrameBuffer::Create({.Width = static_cast<int>(_size.x), .Height = static_cast<int>(_size.y)});
     _ping = FrameBuffer::Create({.Width = static_cast<int>(_size.x), .Height = static_cast<int>(_size.y)});
 
-    _layerCamera = CameraController();
+    _layerCamera = CameraController(_size);
   }
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept

@@ -54,5 +54,8 @@ namespace Base
     float GetZoom() const;
     void Begin();
     void End();
+    CameraController() = default;
+    CameraController(Vector2 viewPort);
   };
+
 } // namespace Base

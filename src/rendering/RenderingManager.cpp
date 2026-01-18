@@ -53,17 +53,17 @@ namespace Base
 
   void RenderingManager::Init(const GameConfig &spec)
   {
-    _renderResolution = spec.Resolution;
-
-    _renderTexture = FrameBuffer::Create({.Width = spec.Resolution.x, .Height = spec.Resolution.y});
-    _ping = FrameBuffer::Create({.Width = spec.Resolution.x, .Height = spec.Resolution.y});
-
     Renderer::Init({
       .Title = spec.Title,
       .MinWindowSize = spec.MinWindowSize,
       .Vysnc = spec.Vsync,
       .ResizableWindow = spec.ResizableWindow,
     });
+
+    _renderResolution = spec.Resolution;
+
+    _renderTexture = FrameBuffer::Create({.Width = spec.Resolution.x, .Height = spec.Resolution.y});
+    _ping = FrameBuffer::Create({.Width = spec.Resolution.x, .Height = spec.Resolution.y});
 
     auto bus = SignalBus::GetInstance();
     bus->SubscribeSignal<ScenePoppedSignal>([this](std::shared_ptr<Signal> signal) {

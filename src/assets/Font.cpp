@@ -188,19 +188,24 @@ namespace Base
       if (!glyph)
         continue;
 
-      // Kerning
-      if (prev)
-        x += fontGeom.getKerning().at({prev, ch}) * scale;
+      // Get advance with kerning using library's helper method
+      double advance;
+      if (prev && fontGeom.getAdvance(advance, static_cast<msdf_atlas::unicode_t>(prev),
+                                      static_cast<msdf_atlas::unicode_t>(ch)))
+      {
+        x += advance * scale;
+      }
+      else
+      {
+        x += glyph->getAdvance() * scale;
+      }
 
       // Vertical bounds (tight)
-      msdf_atlas::GlyphBox box;
       double bottom, top, left, right;
       glyph->getQuadPlaneBounds(left, bottom, right, top);
       minY = std::min<float>(minY, bottom * scale);
       maxY = std::max<float>(maxY, top * scale);
 
-      // Advance
-      x += glyph->getAdvance() * scale;
       prev = ch;
     }
 
