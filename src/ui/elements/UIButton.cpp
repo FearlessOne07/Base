@@ -43,8 +43,8 @@ namespace Base
     width += _paddingLeft + _paddingRight;
     height += _paddingTop + _paddingBottom;
 
-    Vector2 finalPos;
-    Vector2 finalSize;
+    Vector2 finalPos(0);
+    Vector2 finalSize(0);
 
     // Horizontal alignment
     switch (_horizontalAlignment)
@@ -111,7 +111,7 @@ namespace Base
           alpha = _renderTransform.GetOpacity();
         }
 
-        Renderer::DrawQuad({_layoutRect.GetSize()}, _layoutRect.GetPosition(), _backgroundColor);
+        Renderer::DrawQuad({_layoutRect.GetSize()}, _layoutRect.GetPosition(), {_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, 255 * alpha});
       }
 
       // Measure text size
@@ -120,8 +120,8 @@ namespace Base
 
       // Center text inside padded button area
       Vector2 textPos = {
-        _layoutRect.GetPosition().x + (_layoutRect.GetSize().x - textSize.x) / 2,
-        _layoutRect.GetPosition().y + (_layoutRect.GetSize().y - textSize.y) / 2,
+          _layoutRect.GetPosition().x + (_layoutRect.GetSize().x - textSize.x) / 2,
+          _layoutRect.GetPosition().y + (_layoutRect.GetSize().y - textSize.y) / 2,
       };
 
       Renderer::DrawText(_text, textPos, _textColor, fontSize, _font.Get());

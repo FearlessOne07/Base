@@ -151,7 +151,7 @@ namespace Base
     auto rd = RenderContextSingleton::GetInstance();
 
     // Draw Render texture to the Screen
-    Renderer::Clear({0, 0, 0, 255});
+    Renderer::Clear({0, 0, 255, 255});
     Renderer::DrawFramebuffer( //
       _renderTexture, {rd->marginX, rd->marginY}, {rd->gameWidth, rd->gameHeight},
       FramebufferAttachmentIndex::Color0 //

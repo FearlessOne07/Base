@@ -1,5 +1,6 @@
 #pragma once
 #include "base/camera/CameraController.hpp"
+#include "base/util/Colors.hpp"
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/shaders/ShaderEffect.hpp"
 #include "base/shaders/ShaderEffectChain.hpp"
@@ -22,7 +23,7 @@ namespace Base
     // Rendering
     Ptr<FrameBuffer> _framebuffer;
     std::deque<RenderFunction> _renderFunctions;
-    Color _clearColor = {0, 0, 0, 0};
+    Color _clearColor = Base::Blank ;
 
     // Camera
     CameraController _layerCamera;
@@ -68,12 +69,14 @@ namespace Base
     float GetCameraZoom() const;
 
     // Shader Effect Management
-    template <typename T, typename... Args> void AddShaderEffect(std::weak_ptr<Scene> ownerScene, Args &&...args)
+    template <typename T, typename... Args>
+    void AddShaderEffect(std::weak_ptr<Scene> ownerScene, Args &&...args)
     {
       _effectChain.AddEffect<T>(ownerScene, std::forward<Args>(args)...);
     }
 
-    template <typename T> std::shared_ptr<T> GetShaderEffect()
+    template <typename T>
+    std::shared_ptr<T> GetShaderEffect()
     {
       return _effectChain.GetEffect<T>();
     }

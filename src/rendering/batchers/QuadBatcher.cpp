@@ -29,16 +29,16 @@ namespace Base
     for (int i = 0; i < _maxQuads; i++)
     {
       uint16_t offset = i * 4;
-      _indices.insert(  //
-        _indices.end(), //
-        {
-          static_cast<uint16_t>(offset + 0),
-          static_cast<uint16_t>(offset + 1),
-          static_cast<uint16_t>(offset + 2),
-          static_cast<uint16_t>(offset + 0),
-          static_cast<uint16_t>(offset + 2),
-          static_cast<uint16_t>(offset + 3),
-        } //
+      _indices.insert(    //
+          _indices.end(), //
+          {
+              static_cast<uint16_t>(offset + 0),
+              static_cast<uint16_t>(offset + 1),
+              static_cast<uint16_t>(offset + 2),
+              static_cast<uint16_t>(offset + 0),
+              static_cast<uint16_t>(offset + 2),
+              static_cast<uint16_t>(offset + 3),
+          } //
       );
     }
     _ibo = IndexBuffer::Create(_indices.data(), _indices.size());
@@ -89,8 +89,8 @@ namespace Base
   }
 
   void QuadBatcher::DrawQuad( //
-    const Rectangle &quad, glm::vec3 position, glm::vec4 color, float rotation,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      const Rectangle &quad, glm::vec3 position, glm::vec4 color, float rotation,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
     const std::shared_ptr<Texture> texture = _defaultQuadTexture;
@@ -98,7 +98,6 @@ namespace Base
     {
       Flush();
       Begin();
-      _currentTextureSlot = 1;
     }
 
     uint32_t attachmentMask = 0;
@@ -110,13 +109,13 @@ namespace Base
     glm::vec2 size = quad.GetSize();
 
     glm::vec3 corners[4] = {
-      {position.x, position.y, position.z},
-      {position.x + size.x, position.y, position.z},
-      {position.x + size.x, position.y + size.y, position.z},
-      {position.x, position.y + size.y, position.z},
+        {position.x, position.y, position.z},
+        {position.x + size.x, position.y, position.z},
+        {position.x + size.x, position.y + size.y, position.z},
+        {position.x, position.y + size.y, position.z},
     };
 
-    glm::vec2 pivot;
+    glm::vec2 pivot(0);
     switch (quad.GetOrigin())
     {
     case Origin::Center:
@@ -142,8 +141,8 @@ namespace Base
   }
 
   void QuadBatcher::DrawQuad( //
-    const Sprite &sprite, glm::vec3 position, glm::vec2 size, float rotation,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      const Sprite &sprite, glm::vec3 position, glm::vec2 size, float rotation,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
     if (!sprite.HasMaterial())
@@ -179,12 +178,12 @@ namespace Base
 
       glm::vec2 texCoordMax = texCoordMin + texSize;
       glm::vec3 corners[4] = {
-        {position.x, position.y, position.z},
-        {position.x + size.x, position.y, position.z},
-        {position.x + size.x, position.y + size.y, position.z},
-        {position.x, position.y + size.y, position.z},
+          {position.x, position.y, position.z},
+          {position.x + size.x, position.y, position.z},
+          {position.x + size.x, position.y + size.y, position.z},
+          {position.x, position.y + size.y, position.z},
       };
-      glm::vec2 pivot;
+      glm::vec2 pivot(0);
       switch (sprite.GetOrigin())
       {
       case Origin::Center:
@@ -218,8 +217,8 @@ namespace Base
   }
 
   void QuadBatcher::DrawMaterialedQuad( //
-    glm::vec3 position, glm::vec2 size, const Sprite &sprite, float rotation,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      glm::vec3 position, glm::vec2 size, const Sprite &sprite, float rotation,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
     auto mat = sprite.GetMaterial();
@@ -241,12 +240,12 @@ namespace Base
     glm::vec2 texMax = texMin + texSize;
 
     glm::vec3 corners[4] = {
-      {position.x, position.y, position.z},
-      {position.x + size.x, position.y, position.z},
-      {position.x + size.x, position.y + size.y, position.z},
-      {position.x, position.y + size.y, position.z},
+        {position.x, position.y, position.z},
+        {position.x + size.x, position.y, position.z},
+        {position.x + size.x, position.y + size.y, position.z},
+        {position.x, position.y + size.y, position.z},
     };
-    glm::vec2 pivot;
+    glm::vec2 pivot(0);
     switch (sprite.GetOrigin())
     {
     case Origin::Center:
@@ -265,10 +264,10 @@ namespace Base
     }
 
     QuadVertex quadVerts[4] = {
-      {corners[0], {texMin.x, texMax.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
-      {corners[1], {texMax.x, texMax.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
-      {corners[2], {texMax.x, texMin.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
-      {corners[3], {texMin.x, texMin.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
+        {corners[0], {texMin.x, texMax.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
+        {corners[1], {texMax.x, texMax.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
+        {corners[2], {texMax.x, texMin.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
+        {corners[3], {texMin.x, texMin.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
     };
 
     _materialVao->Bind();
@@ -296,7 +295,7 @@ namespace Base
     {
       _boundTextures[i]->Bind(i);
     }
-    _currentTexture->Bind(0);
+    // _currentTexture->Bind(0);
     glDrawElements(GL_TRIANGLES, _currentIndex, GL_UNSIGNED_SHORT, nullptr);
     _currentShader->Unuse();
     _vao->Unbind();
@@ -308,16 +307,16 @@ namespace Base
     {
       auto &com = std::get<SpriteCommand>(command);
       DrawQuad( //
-        com.SpriteToDraw, com.Position, com.Size, com.Rotation,
-        com.Attachments //
+          com.SpriteToDraw, com.Position, com.Size, com.Rotation,
+          com.Attachments //
       );
     }
     else if (std::holds_alternative<QuadCommand>(command))
     {
       auto &com = std::get<QuadCommand>(command);
       DrawQuad( //
-        com.QuadToDraw, com.Position, com.Color, com.Rotation,
-        com.Attachments //
+          com.QuadToDraw, com.Position, com.Color, com.Rotation,
+          com.Attachments //
       );
     }
   }

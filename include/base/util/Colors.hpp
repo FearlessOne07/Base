@@ -1,3 +1,4 @@
+#pragma once
 #include "base/util/Type.hpp"
 namespace Base
 {

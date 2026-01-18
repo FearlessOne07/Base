@@ -75,7 +75,7 @@ namespace Base
       _horizontalAlignment = HAlign::Stretch;
     }
 
-    Vector2 finalPos;
+    Vector2 finalPos(0);
     Vector2 finalSize = {width, height};
 
     // Horizontal alignment
@@ -121,8 +121,8 @@ namespace Base
       if (_orientation == Orientation::Vertical)
       {
         child->Arrange({
-          {_layoutRect.GetPosition().x + _paddingLeft, offset},
-          {_layoutRect.GetSize().x - (_paddingLeft + _paddingRight), rectHeight},
+            {_layoutRect.GetPosition().x + _paddingLeft, offset},
+            {_layoutRect.GetSize().x - (_paddingLeft + _paddingRight), rectHeight},
         } //
         );
         offset += rectHeight;
@@ -130,8 +130,8 @@ namespace Base
       else
       {
         child->Arrange({
-          {offset, _layoutRect.GetPosition().y + _paddingTop},
-          {rectWidth, _layoutRect.GetSize().y - (_paddingTop + _paddingBottom)},
+            {offset, _layoutRect.GetPosition().y + _paddingTop},
+            {rectWidth, _layoutRect.GetSize().y - (_paddingTop + _paddingBottom)},
         } //
         );
         offset += rectWidth;

@@ -20,8 +20,8 @@
 
 extern "C"
 {
-  _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
-  _declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+  __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+  __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif
 // TODO: Maybe make a base Manager class for _currentScene functionality

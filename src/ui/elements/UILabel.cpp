@@ -61,7 +61,7 @@ namespace Base
     width += _paddingLeft + _paddingRight;
     height += _paddingTop + _paddingBottom;
 
-    Vector2 pos;
+    Vector2 pos(0);
     pos.x += _renderTransform.GetOffsetx();
     pos.y += _renderTransform.GetOffsetY();
 
@@ -116,8 +116,8 @@ namespace Base
     if (!_isHidden)
     {
       Renderer::DrawText( //
-        _text, _layoutRect.GetPosition(), _textColor, _fontSize * _renderTransform.GetFontScale(),
-        _font.Get() //
+          _text, _layoutRect.GetPosition(), _textColor, _fontSize * _renderTransform.GetFontScale(),
+          _font.Get() //
       );
     }
   }

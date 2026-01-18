@@ -65,7 +65,7 @@ namespace Base
   void RenderLayer::Render()
   {
     Renderer::BeginFramebuffer(_framebuffer);
-    Renderer::Clear(_clearColor);
+    Renderer::Clear(Base::Blank);
     auto functions = std::ranges::reverse_view(_renderFunctions);
     for (auto &function : functions)
     {

@@ -1,6 +1,7 @@
 #include "internal/rendering/Renderer.hpp"
 #include "base/camera/Camera.hpp"
 #include "base/rendering/FrameBuffer.hpp"
+#include"base/util/Math.hpp"
 #include "base/rendering/FramebufferAttachmentIndex.hpp"
 #include "base/rendering/GeometryType.hpp"
 #include "base/rendering/Quad.hpp"
@@ -31,9 +32,9 @@ namespace Base
     // Create Window
     _window = std::make_shared<Window>();
     _window->CreateWindow({
-      .Title = spec.Title,
-      .MinSize = spec.MinWindowSize,
-      .Vsync = spec.Vysnc,
+        .Title = spec.Title,
+        .MinSize = spec.MinWindowSize,
+        .Vsync = spec.Vysnc,
     });
 
     Shader::SetMaxTextureSlots(_window->GetGlContexData().MaxTextureUnits);
@@ -52,119 +53,119 @@ namespace Base
   }
 
   void Renderer::DrawQuad( //
-    const Rectangle &quad, glm::vec2 position, Color color, float rotationDeg,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      const Rectangle &quad, glm::vec2 position, Color color, float rotationDeg,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    glm::vec4 colorF = color / Color(255);
-    colorF = glm::clamp(colorF, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
+    Vector4 colorF = Vector4(color) / 255.f;
+    colorF = Math::Clamp(colorF, 0.f, 1.f);
 
     _instance->_renderQueue.push(
-      QuadCommand{quad, glm::vec3(position, _currentZIndex), colorF, rotationDeg, attachments});
+        QuadCommand{quad, glm::vec3(position, _currentZIndex), colorF, rotationDeg, attachments});
     _currentZIndex += _Zstep;
   }
 
   void Renderer::DrawQuad( //
-    const Rectangle &quad, glm::vec2 position, Color color,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      const Rectangle &quad, glm::vec2 position, Color color,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
     DrawQuad(quad, position, color, 0.f, attachments);
   }
 
   void Renderer::DrawSprite( //
-    const Sprite &sprite, glm::vec2 position, glm::vec2 size, float rotationDeg,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      const Sprite &sprite, glm::vec2 position, glm::vec2 size, float rotationDeg,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
     _instance->_renderQueue.push(
-      SpriteCommand{sprite, glm::vec3(position, _currentZIndex), size, rotationDeg, attachments} //
+        SpriteCommand{sprite, glm::vec3(position, _currentZIndex), size, rotationDeg, attachments} //
     );
     _currentZIndex += _Zstep;
   }
 
   void Renderer::DrawSprite( //
-    const Sprite &sprite, glm::vec2 position, glm::vec2 size,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      const Sprite &sprite, glm::vec2 position, glm::vec2 size,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
     DrawSprite(sprite, position, size, 0.f, attachments);
   }
 
   void Renderer::DrawFramebuffer( //
-    std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 size, FramebufferAttachmentIndex attachmentToDraw,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
-  )
-  {
-    DrawSprite(                                                                           //
-      {framebuffer->GetColorAttachment(attachmentToDraw)}, {0, 0}, size, 0.f, attachments //
-    );
-  }
-
-  void Renderer::DrawFramebuffer( //
-    std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 position, glm::vec2 size,
-    FramebufferAttachmentIndex attachmentToDraw,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 size, FramebufferAttachmentIndex attachmentToDraw,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
     DrawSprite(                                                                             //
-      {framebuffer->GetColorAttachment(attachmentToDraw)}, position, size, 0.f, attachments //
+        {framebuffer->GetColorAttachment(attachmentToDraw)}, {0, 0}, size, 0.f, attachments //
     );
   }
 
   void Renderer::DrawFramebuffer( //
-    std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 position, glm::vec2 size, const Material &material,
-    FramebufferAttachmentIndex attachmentToDraw,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 position, glm::vec2 size,
+      FramebufferAttachmentIndex attachmentToDraw,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    DrawSprite(                                                                                       //
-      {framebuffer->GetColorAttachment(attachmentToDraw), material}, position, size, 0.f, attachments //
+    DrawSprite(                                                                               //
+        {framebuffer->GetColorAttachment(attachmentToDraw)}, position, size, 0.f, attachments //
     );
   }
 
   void Renderer::DrawFramebuffer( //
-    std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 size, const Material &material,
-    FramebufferAttachmentIndex attachmentToDraw,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 position, glm::vec2 size, const Material &material,
+      FramebufferAttachmentIndex attachmentToDraw,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    DrawSprite(                                                                                           //
-      Sprite(framebuffer->GetColorAttachment(attachmentToDraw), material), {0, 0}, size, 0.f, attachments //
+    DrawSprite(                                                                                         //
+        {framebuffer->GetColorAttachment(attachmentToDraw), material}, position, size, 0.f, attachments //
     );
   }
 
-  void Renderer::DrawText(                                                                                      //
-    const std::string &text, glm::vec2 position, Color color, float fontSize, const std::shared_ptr<Font> font, //
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments                                           //
+  void Renderer::DrawFramebuffer( //
+      std::shared_ptr<FrameBuffer> framebuffer, glm::vec2 size, const Material &material,
+      FramebufferAttachmentIndex attachmentToDraw,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    glm::vec4 colorF = color / Color(255);
-    colorF = glm::clamp(colorF, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
+    DrawSprite(                                                                                             //
+        Sprite(framebuffer->GetColorAttachment(attachmentToDraw), material), {0, 0}, size, 0.f, attachments //
+    );
+  }
+
+  void Renderer::DrawText(                                                                                        //
+      const std::string &text, glm::vec2 position, Color color, float fontSize, const std::shared_ptr<Font> font, //
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments                                           //
+  )
+  {
+    Vector4 colorF = Vector4(color) / 255.f;
+    colorF = Math::Clamp(colorF, 0.f, 1.f);
     _instance->_renderQueue.push(
-      TextCommand{text, font, glm::vec3(position, _currentZIndex), colorF, fontSize, attachments} //
+        TextCommand{text, font, glm::vec3(position, _currentZIndex), colorF, fontSize, attachments} //
     );
     _currentZIndex += _Zstep;
   }
 
   void Renderer::DrawCircle( //
-    const Circle &circle, Vector2 position, Color color,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      const Circle &circle, Vector2 position, Color color,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
     DrawCircle(circle, position, color, attachments);
   }
 
   void Renderer::DrawCircle( //
-    const Circle &circle, Vector2 position, Color color, float thickness,
-    const std::unordered_set<FramebufferAttachmentIndex> &attachments //
+      const Circle &circle, Vector2 position, Color color, float thickness,
+      const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    glm::vec4 colorF = glm::vec4(color) / 255.f;
-    colorF = glm::clamp(colorF, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
+    Vector4 colorF = Vector4(color) / 255.f;
+    colorF = Math::Clamp(colorF, 0.f, 1.f);
 
-    _instance->_renderQueue.push(                                                              //
-      CircleCommand{circle, Vector3(position, _currentZIndex), colorF, thickness, attachments} //
+    _instance->_renderQueue.push(                                                                //
+        CircleCommand{circle, Vector3(position, _currentZIndex), colorF, thickness, attachments} //
     );
     _currentZIndex += _Zstep;
   }
@@ -179,8 +180,8 @@ namespace Base
 
   void Renderer::Clear(Color color, FramebufferAttachmentIndex attachment)
   {
-    glm::vec4 colorF = glm::vec4(color) / 255.f;
-    colorF = glm::clamp(colorF, {0.f, 0.f, 0.f, 0.f}, {1.f, 1.f, 1.f, 1.f});
+    Vector4 colorF = Vector4(color) / 255.f;
+    colorF = Math::Clamp(colorF, 0.f, 1.f);
 
     _instance->_renderQueue.push(ClearCommand{colorF, attachment});
   }
