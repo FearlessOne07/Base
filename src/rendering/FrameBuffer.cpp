@@ -1,5 +1,4 @@
 #include "base/rendering/FrameBuffer.hpp"
-#include "base/assets/Texture.hpp"
 #include "glad/glad.h"
 #include <iostream>
 #include <memory>
@@ -89,5 +88,4 @@ namespace Base
   {
     return _id;
   }
-
 } // namespace Base

@@ -1,7 +1,6 @@
 
 #include "internal/rendering/VertexBuffer.hpp"
 #include "glad/glad.h"
-#include "internal/rendering/VertexBufferLayout.hpp"
 
 namespace Base
 {

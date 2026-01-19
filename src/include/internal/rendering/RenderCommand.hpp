@@ -2,11 +2,11 @@
 
 #include "base/assets/Font.hpp"
 #include "base/camera/Camera.hpp"
+#include "base/util/Circle.hpp"
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/FramebufferAttachmentIndex.hpp"
 #include "base/rendering/Quad.hpp"
 #include "base/rendering/Sprite.hpp"
-#include "base/util/Circle.hpp"
 #include "glm/ext/vector_float4.hpp"
 #include <string>
 #include <unordered_set>

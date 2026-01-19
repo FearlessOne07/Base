@@ -1,10 +1,8 @@
 #pragma once
-#include "Batcher.hpp"
-#include "base/assets/Font.hpp"
 #include "base/rendering/FramebufferAttachmentIndex.hpp"
-#include "base/shaders/Shader.hpp"
 #include "glm/fwd.hpp"
 #include "internal/rendering/Vertex.hpp"
+#include "internal/rendering/batchers/Batcher.hpp"
 #include <cstdint>
 #include <memory>
 #include <unordered_set>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "WindowMode.hpp"
 #include "base/util/Type.hpp"
 #include "glad/glad.h"
+#include "internal/rendering/WindowMode.hpp"
 #include <GLFW/glfw3.h>
 #include <cstdint>
 #include <functional>
@@ -24,7 +24,7 @@ namespace Base
   struct WindowSpec
   {
     std::string Title = "Window";
-    IVector2 MinSize = {0, 0};
+    IVector2 MinSize = {1280, 720};
     bool Vsync = false;
   };
 
@@ -33,6 +33,7 @@ namespace Base
   private:
     GLFWwindow *_window = nullptr;
 
+    WindowSpec _spec;
     int _windowWidth = 0;
     int _windowHeight = 0;
 
@@ -44,7 +45,6 @@ namespace Base
     GLContexData _glContexData;
 
     // Call Backs
-
     KeyCallback _keyCallBack;
     MouseButtonCallback _mouseButtonCallBack;
     ScrollCallback _scrollCallBack;

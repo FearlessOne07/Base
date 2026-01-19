@@ -1,9 +1,5 @@
 #include "base/util/Math.hpp"
-#include "glm/ext/scalar_constants.hpp"
-#include "glm/trigonometric.hpp"
 #include <algorithm>
-#include <cmath>
-#include <glm/glm.hpp>
 
 namespace Base
 {
@@ -227,6 +223,6 @@ namespace Base
 
   float Math::Pi()
   {
-    return glm::pi<float>();
+    return std::numbers::pi;
   }
 } // namespace Base

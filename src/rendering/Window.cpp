@@ -1,6 +1,4 @@
 #include "internal/rendering/Window.hpp"
-#include "internal/rendering/WindowMode.hpp"
-#include <GLFW/glfw3.h>
 #include <iostream>
 
 namespace Base
@@ -28,6 +26,12 @@ namespace Base
       glfwTerminate();
       exit(-1);
     }
+
+    // Let the WM finish mapping the window
+    glfwShowWindow(_window);
+    glfwPollEvents();
+
+    // THEN apply limits
     glfwSetWindowSizeLimits(_window, spec.MinSize.x, spec.MinSize.y, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
     // Make the window's context current

@@ -1,4 +1,5 @@
 #include "base/assets/Font.hpp"
+#include "base/util/Type.hpp"
 #include "internal/utils/MSDFData.hpp"
 #include "msdf-atlas-gen/AtlasGenerator.h"
 #include "msdf-atlas-gen/BitmapAtlasStorage.h"

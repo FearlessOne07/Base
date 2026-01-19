@@ -1,11 +1,11 @@
 #pragma once
-#include "Batcher.hpp"
 #include "base/assets/Texture.hpp"
 #include "base/rendering/FramebufferAttachmentIndex.hpp"
 #include "base/rendering/Quad.hpp"
 #include "base/rendering/Sprite.hpp"
 #include "glm/fwd.hpp"
 #include "internal/rendering/Vertex.hpp"
+#include "internal/rendering/batchers/Batcher.hpp"
 #include <array>
 #include <cstdint>
 #include <memory>

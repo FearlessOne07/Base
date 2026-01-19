@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Batcher.hpp"
 #include "base/rendering/FramebufferAttachmentIndex.hpp"
 #include "internal/rendering/Vertex.hpp"
+#include "internal/rendering/batchers/Batcher.hpp"
 #include <unordered_set>
 
 namespace Base

@@ -1,15 +1,15 @@
 #pragma once
-#include "Window.hpp"
-#include "WindowMode.hpp"
 #include "base/assets/Font.hpp"
 #include "base/camera/Camera.hpp"
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/Sprite.hpp"
 #include "base/util/Circle.hpp"
 #include "base/util/Type.hpp"
-#include "batchers/CircleBatcher.hpp"
-#include "batchers/QuadBatcher.hpp"
-#include "batchers/TextBatcher.hpp"
+#include "internal/rendering/Window.hpp"
+#include "internal/rendering/WindowMode.hpp"
+#include "internal/rendering/batchers/CircleBatcher.hpp"
+#include "internal/rendering/batchers/QuadBatcher.hpp"
+#include "internal/rendering/batchers/TextBatcher.hpp"
 #include <glm/glm.hpp>
 #include <memory>
 #include <queue>
@@ -23,7 +23,7 @@ namespace Base
   struct RenderSpec
   {
     const char *Title = "Window";
-    IVector2 MinWindowSize = {0, 0};
+    IVector2 MinWindowSize = {1280, 720};
     bool Vysnc = false;
     bool ResizableWindow = true;
   };

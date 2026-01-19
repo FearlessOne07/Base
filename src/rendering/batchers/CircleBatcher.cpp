@@ -1,8 +1,5 @@
 
 #include "internal/rendering/batchers/CircleBatcher.hpp"
-#include "base/rendering/FramebufferAttachmentIndex.hpp"
-#include "base/rendering/GeometryType.hpp"
-#include "base/util/Circle.hpp"
 #include <algorithm>
 #include <unordered_set>
 

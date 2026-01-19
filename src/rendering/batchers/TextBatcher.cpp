@@ -1,13 +1,5 @@
 #include "internal/rendering/batchers/TextBatcher.hpp"
-#include "base/assets/Texture.hpp"
-#include "base/rendering/GeometryType.hpp"
-#include "glm/ext/vector_float2.hpp"
-#include "glm/fwd.hpp"
-#include "internal/rendering/Vertex.hpp"
 #include "internal/utils/MSDFData.hpp"
-#include <cstdint>
-#include <memory>
-#include <unordered_set>
 
 namespace Base
 {

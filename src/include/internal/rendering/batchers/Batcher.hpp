@@ -5,6 +5,7 @@
 #include "internal/rendering/IndexBuffer.hpp"
 #include "internal/rendering/RenderCommand.hpp"
 #include "internal/rendering/VertexArray.hpp"
+#include "internal/rendering/VertexBuffer.hpp"
 #include <cstdint>
 #include <memory>
 #include <vector>
