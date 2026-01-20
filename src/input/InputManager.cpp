@@ -303,7 +303,7 @@ namespace Base
     // Track key state
     {
       // Key held
-      if (action == GLFW_KEY_DOWN)
+      if (action == GLFW_PRESS)
       {
         Key key = FromGLFWKey(keyGLFW);
 
@@ -379,7 +379,7 @@ namespace Base
   {
     ////// Same Steps for as key events ///////
     {
-      if (action == GLFW_KEY_DOWN)
+      if (action == GLFW_PRESS)
       {
         MouseKey btn = FromGLFWMouseButton(btnGLFW);
         if (!_heldMouseBtns.contains(btn) && std::ranges::find(_handledMousePresses, btn) == _handledMousePresses.end())

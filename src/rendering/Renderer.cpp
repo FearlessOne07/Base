@@ -158,8 +158,10 @@ namespace Base
 
   void Renderer::Update()
   {
-    _instance->_windowViewPort = {_instance->_window->GetFrameBufferWidth(),
-                                  _instance->_window->GetFrameBufferHeight()};
+    _instance->_windowViewPort = {
+      _instance->_window->GetFrameBufferWidth(),
+      _instance->_window->GetFrameBufferHeight(),
+    };
     _instance->_defaultCamera->SetViewPort(_instance->_windowViewPort);
     glViewport(0, 0, _instance->_window->GetFrameBufferWidth(), _instance->_window->GetFrameBufferHeight());
   }

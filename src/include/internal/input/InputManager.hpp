@@ -23,6 +23,7 @@ namespace Base
 
   private:
     void ResetInput(const std::shared_ptr<Signal> &sig);
+    void DispatchEvent(std::shared_ptr<InputEvent> event);
 
   public:
     void Init();
@@ -30,6 +31,5 @@ namespace Base
     void DispatchMouseEvent(int button, int action, int mods);
     void PostUpdate();
     void RegisterListener(InputListener &listener);
-    void DispatchEvent(std::shared_ptr<InputEvent> event);
   };
 } // namespace Base

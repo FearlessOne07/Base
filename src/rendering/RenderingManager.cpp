@@ -98,6 +98,7 @@ namespace Base
   void RenderingManager::Update(float dt)
   {
     Renderer::Update();
+
     auto &layers = _renderLayers.at(_currentScene);
     for (auto &layer : layers)
     {
@@ -153,7 +154,7 @@ namespace Base
     // Draw Render texture to the Screen
     Renderer::Clear({0, 0, 255, 255});
     Renderer::DrawFramebuffer( //
-      _renderTexture, {rd->marginX, rd->marginY}, {rd->gameWidth, rd->gameHeight},
+      _renderTexture, {0, 0}, {_renderTexture->GetWidth(), _renderTexture->GetHeight()},
       FramebufferAttachmentIndex::Color0 //
     );
 

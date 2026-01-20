@@ -99,37 +99,22 @@ namespace Base
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    if (_currentFont != font || _vertices.size() >= _maxVertices || _currentIndex >= _maxIndices)
+    if (text.empty() || !font)
+      return;
+
+    if (_currentFont != font || _vertices.size() + (text.size() * 4) >= _maxVertices)
     {
       Flush();
       Begin();
       _currentFont = font;
     }
 
-    const auto &fontGeometry = font->GetMSDFData()->FontGeometry;
+    const auto &msdfData = *font->GetMSDFData();
+    const auto &fontGeometry = msdfData.FontGeometry;
     const auto &metrics = fontGeometry.getMetrics();
     std::shared_ptr<Texture> fontAtlas = font->GetAtlas();
-    float fontScale = fontSize / (metrics.ascenderY - metrics.descenderY);
 
-    // Decode first character to get left offset
-    const char *it = text.data();
-    const char *end = it + text.size();
-    char32_t firstChar;
-    if (DecodeUTF8(it, end, firstChar))
-    {
-      auto firstGlyph = fontGeometry.getGlyph(firstChar);
-      if (firstGlyph)
-      {
-        double firstLeft, firstBottom, firstRight, firstTop;
-        firstGlyph->getQuadPlaneBounds(firstLeft, firstBottom, firstRight, firstTop);
-        position.x = position.x - static_cast<float>(firstLeft * fontScale);
-      }
-    }
-
-    float topLeftOffset = metrics.ascenderY;
-
-    float penX = 0.0f;
-    float penY = 0.0f; // baseline stays at position.y
+    float scaleFactor = fontSize / (float)(metrics.ascenderY - metrics.descenderY);
 
     uint32_t attachmentMask = 0;
     for (auto attachment : attachments)
@@ -137,94 +122,83 @@ namespace Base
       attachmentMask |= 1u << static_cast<uint8_t>(attachment);
     }
 
-    // Reset iterator for main loop
-    it = text.data();
-    char32_t prevCharacter = 0;
+    float initialYOffset = (float)metrics.ascenderY * scaleFactor;
 
-    while (it < end)
+    std::vector<char32_t> codepoints;
+    const char *it = text.data();
+    const char *end = it + text.size();
+    char32_t c;
+    while (DecodeUTF8(it, end, c))
+      codepoints.push_back(c);
+
+    auto firstGlyph = fontGeometry.getGlyph(codepoints[0]);
+    double pl, pb, pr, pt;
+    firstGlyph->getQuadPlaneBounds(pl, pb, pr, pt);
+
+    float leftOverhang = (float)pl;
+
+    float cursorX = position.x - leftOverhang;
+    float cursorY = position.y;
+
+    for (size_t i = 0; i < codepoints.size(); ++i)
     {
-      char32_t character;
-      if (!DecodeUTF8(it, end, character))
-        break;
+      char32_t character = codepoints[i];
 
-      // Handle newline
       if (character == U'\n')
       {
-        penX = 0.0f;
-        penY += metrics.lineHeight; // move down by line height
-        prevCharacter = 0;
+        cursorX = position.x;
+        cursorY += fontSize;
         continue;
       }
       else if (character == U'\t')
       {
         double spaceAdvance;
         fontGeometry.getAdvance(spaceAdvance, U' ', U' ');
-        penX += spaceAdvance * 4.0f; // Tab = 4 spaces
-        prevCharacter = 0;
+        cursorX += (float)spaceAdvance * scaleFactor * 4.0f;
         continue;
       }
 
-      auto glyphGeometry = fontGeometry.getGlyph(character);
-      if (!glyphGeometry)
-      {
-        glyphGeometry = fontGeometry.getGlyph(U'?');
-        if (!glyphGeometry)
-        {
-          prevCharacter = character;
-          continue;
-        }
-      }
+      auto glyph = fontGeometry.getGlyph(character);
+      if (!glyph)
+        glyph = fontGeometry.getGlyph(U'?');
+      if (!glyph)
+        continue;
 
-      // Plane-space quad bounds (relative to baseline)
-      double planeLeft, planeBottom, planeRight, planeTop;
-      glyphGeometry->getQuadPlaneBounds(planeLeft, planeBottom, planeRight, planeTop);
+      double pl, pb, pr, pt;
+      glyph->getQuadPlaneBounds(pl, pb, pr, pt);
 
-      glm::vec2 planeMin = {planeLeft + penX, planeBottom - penY - topLeftOffset};
-      glm::vec2 planeMax = {planeRight + penX, planeTop - penY - topLeftOffset};
+      float x0 = cursorX + (float)pl * scaleFactor;
+      float y0 = cursorY + (initialYOffset - (float)pt * scaleFactor);
+      float x1 = cursorX + (float)pr * scaleFactor;
+      float y1 = cursorY + (initialYOffset - (float)pb * scaleFactor);
 
-      planeMin *= fontScale;
-      planeMax *= fontScale;
+      double al, ab, ar, at;
+      glyph->getQuadAtlasBounds(al, ab, ar, at);
+      float texW = (float)fontAtlas->GetWidth();
+      float texH = (float)fontAtlas->GetHeight();
 
-      // Apply baseline position
-      glm::vec3 bl = position + glm::vec3{planeMin.x, -planeMin.y, position.z}; // bottom-left
-      glm::vec3 br = position + glm::vec3{planeMax.x, -planeMin.y, position.z}; // bottom-right
-      glm::vec3 tl = position + glm::vec3{planeMin.x, -planeMax.y, position.z}; // top-left
-      glm::vec3 tr = position + glm::vec3{planeMax.x, -planeMax.y, position.z}; // top-right
+      glm::vec2 uvMin = {(float)al / texW, (float)ab / texH};
+      glm::vec2 uvMax = {(float)ar / texW, (float)at / texH};
 
-      // Atlas UVs
-      double atlasLeft, atlasBottom, atlasRight, atlasTop;
-      glyphGeometry->getQuadAtlasBounds(atlasLeft, atlasBottom, atlasRight, atlasTop);
+      _vertices.push_back({{x0, y0, position.z}, {uvMin.x, uvMax.y, 0.f}, color, attachmentMask}); // TL
+      _vertices.push_back({{x0, y1, position.z}, {uvMin.x, uvMin.y, 0.f}, color, attachmentMask}); // BL
+      _vertices.push_back({{x1, y1, position.z}, {uvMax.x, uvMin.y, 0.f}, color, attachmentMask}); // BR
+      _vertices.push_back({{x1, y0, position.z}, {uvMax.x, uvMax.y, 0.f}, color, attachmentMask}); // TR
 
-      glm::vec2 atlasMin = {atlasLeft / fontAtlas->GetWidth(), atlasBottom / fontAtlas->GetHeight()};
-      glm::vec2 atlasMax = {atlasRight / fontAtlas->GetWidth(), atlasTop / fontAtlas->GetHeight()};
-
-      glm::vec3 uvBL = {atlasMin.x, atlasMin.y, 0.f};
-      glm::vec3 uvBR = {atlasMax.x, atlasMin.y, 0.f};
-      glm::vec3 uvTL = {atlasMin.x, atlasMax.y, 0.f};
-      glm::vec3 uvTR = {atlasMax.x, atlasMax.y, 0.f};
-
-      // Push quad
-      _vertices.push_back({bl, uvBL, color, attachmentMask});
-      _vertices.push_back({br, uvBR, color, attachmentMask});
-      _vertices.push_back({tr, uvTR, color, attachmentMask});
-      _vertices.push_back({tl, uvTL, color, attachmentMask});
       _currentIndex += 6;
 
-      // Advance pen (with kerning)
       double advance;
-
-      // Peek at next character for kerning
-      const char *peekIt = it;
-      char32_t nextCharacter = 0;
-      if (peekIt < end)
+      if (i + 1 < codepoints.size() && codepoints[i + 1] != U'\n')
       {
-        DecodeUTF8(peekIt, end, nextCharacter);
+        char32_t nextChar = codepoints[i + 1];
+        fontGeometry.getAdvance(advance, character, nextChar);
+      }
+      else
+      {
+        advance = glyph->getAdvance();
       }
 
-      fontGeometry.getAdvance(advance, character, nextCharacter);
-      penX += advance;
-
-      prevCharacter = character;
+      cursorX += (float)advance * scaleFactor;
     }
   }
 

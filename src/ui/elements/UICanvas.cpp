@@ -17,7 +17,7 @@ namespace Base
     float width = _desiredSize.width * _renderTransform.GetScaleX();
     float height = _desiredSize.height * _renderTransform.GetScaleY();
 
-    Vector2 finalPos(0);
+    Vector2 finalPos = _layoutRect.GetPosition();
     Vector2 finalSize = {width, height};
 
     // Horizontal alignment

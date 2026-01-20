@@ -75,7 +75,7 @@ namespace Base
       _horizontalAlignment = HAlign::Stretch;
     }
 
-    Vector2 finalPos(0);
+    Vector2 finalPos = _layoutRect.GetPosition();
     Vector2 finalSize = {width, height};
 
     // Horizontal alignment

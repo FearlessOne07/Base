@@ -130,97 +130,70 @@ namespace Base
     Texture::Destroy(font->_atlas);
   }
 
-  Vector2 Font::MeasureText(const Ptr<Font> &font, const std::string_view text, float fontSize)
+  Vector2 Font::MeasureText(const std::shared_ptr<Font> &font, const std::string_view text, float fontSize)
   {
-    Vector2 result{};
+    if (!font || text.empty())
+      return {0.0f, 0.0f};
 
-    if (!font->_data || text.empty())
-      return result;
+    const auto &fontGeometry = font->GetMSDFData()->FontGeometry;
+    const auto &metrics = fontGeometry.getMetrics();
 
-    const auto &fontGeom = font->_data->FontGeometry;
-    const auto &metrics = fontGeom.getMetrics();
+    // Raylib-style scale factor
+    float scaleFactor = fontSize / (float)(metrics.ascenderY - metrics.descenderY);
 
-    float scale = fontSize / metrics.emSize;
-    float lineHeight = (metrics.ascenderY - metrics.descenderY) * scale;
-
-    // Space advance (for tabs)
-    float spaceAdvance = 0.0f;
-    if (const auto *space = fontGeom.getGlyph(U' '))
-      spaceAdvance = space->getAdvance() * scale;
-    else
-      spaceAdvance = metrics.emSize * 0.25f * scale;
-
-    float x = 0.0f;
-    float maxLineWidth = 0.0f;
-    int lineCount = 1;
-
-    float minY = std::numeric_limits<float>::max();
-    float maxY = std::numeric_limits<float>::lowest();
-
-    char32_t prev = 0;
+    float textWidth = 0.0f;
+    float maxTextWidth = 0.0f;
+    float textHeight = fontSize; // Start with one line height
+    float lineSpacing = 0.0f;    // You can add a custom value here
 
     const char *it = text.data();
     const char *end = it + text.size();
 
     while (it < end)
     {
-      char32_t ch;
-      DecodeUTF8(it, end, ch);
+      char32_t character;
+      if (!DecodeUTF8(it, end, character))
+        break;
 
-      // Newline
-      if (ch == U'\n')
+      if (character == U'\n')
       {
-        maxLineWidth = std::max(maxLineWidth, x);
-        x = 0.0f;
-        prev = 0;
-        lineCount++;
+        if (textWidth > maxTextWidth)
+          maxTextWidth = textWidth;
+        textWidth = 0;
+        // Raylib adds the fontSize + spacing for every new line
+        textHeight += fontSize;
         continue;
       }
 
-      // Tab = 4 spaces
-      if (ch == U'\t')
-      {
-        x += spaceAdvance * 4.0f;
-        prev = 0;
-        continue;
-      }
-
-      const msdf_atlas::GlyphGeometry *glyph = fontGeom.getGlyph(ch);
+      auto glyph = fontGeometry.getGlyph(character);
       if (!glyph)
-        continue;
+        glyph = fontGeometry.getGlyph(U'?');
 
-      // Get advance with kerning using library's helper method
-      double advance;
-      if (prev && fontGeom.getAdvance(advance, static_cast<msdf_atlas::unicode_t>(prev),
-                                      static_cast<msdf_atlas::unicode_t>(ch)))
+      if (glyph)
       {
-        x += advance * scale;
-      }
-      else
-      {
-        x += glyph->getAdvance() * scale;
-      }
+        double advance;
+        char32_t nextChar = 0;
+        const char *peekIt = it;
 
-      // Vertical bounds (tight)
-      double bottom, top, left, right;
-      glyph->getQuadPlaneBounds(left, bottom, right, top);
-      minY = std::min<float>(minY, bottom * scale);
-      maxY = std::max<float>(maxY, top * scale);
+        // Handle kerning if possible, or just get standard advance
+        if (peekIt < end && DecodeUTF8(peekIt, end, nextChar) && nextChar != U'\n')
+        {
+          fontGeometry.getAdvance(advance, character, nextChar);
+        }
+        else
+        {
+          advance = glyph->getAdvance();
+        }
 
-      prev = ch;
+        textWidth += (float)advance;
+      }
     }
 
-    maxLineWidth = std::max(maxLineWidth, x);
+    if (textWidth > maxTextWidth)
+      maxTextWidth = textWidth;
 
-    result.x = maxLineWidth;
-
-    // Height
-    if (lineCount > 1)
-      result.y = lineCount * lineHeight;
-    else
-      result.y = (maxY > minY) ? (maxY - minY) : lineHeight;
-
-    return result;
+    // Apply scale factor to the accumulated "font unit" width
+    return {maxTextWidth * scaleFactor, textHeight};
   }
 
   // Overload for wstring - converts to UTF-8 and calls the main implementation
@@ -272,7 +245,7 @@ namespace Base
     int loaded = _data->FontGeometry.loadCharset(font, fontScale, charset);
     //("Loaded {} out of {}", loaded, charset.size());
 
-    double emSize = 80.0;
+    double emSize = 100;
 
     // PackGlpyhs
     msdf_atlas::TightAtlasPacker atlasPacker;

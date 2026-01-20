@@ -23,12 +23,12 @@ namespace Base
   Rectangle UIElement::GetCombinedHoverRect() const
   {
     Rectangle layoutRect = {
-        {_layoutRect.GetPosition().x - _renderTransform.GetOffsetx(),
-         _layoutRect.GetPosition().y - _renderTransform.GetOffsetY()},
-        {
-            _layoutRect.GetSize().x,
-            _layoutRect.GetSize().y,
-        },
+      {_layoutRect.GetPosition().x - _renderTransform.GetOffsetx(),
+       _layoutRect.GetPosition().y - _renderTransform.GetOffsetY()},
+      {
+        _layoutRect.GetSize().x,
+        _layoutRect.GetSize().y,
+      },
     };
     return RectangleUnion(layoutRect, _layoutRect);
   }
@@ -153,16 +153,16 @@ namespace Base
     {
       if (onClick)
       {
-        if (                                                                                                           //
-            mouseEvent->action == Base::InputEvent::Action::Held && mouseEvent->Button == MouseKey::Left && _isHovered //
+        if (                                                                                                         //
+          mouseEvent->action == Base::InputEvent::Action::Held && mouseEvent->Button == MouseKey::Left && _isHovered //
         )
         {
           _isActive = true;
           event->isHandled = true;
         }
         else if ( //
-            mouseEvent->action == Base::InputEvent::Action::Released && mouseEvent->Button == MouseKey::Left &&
-            _isActive //
+          mouseEvent->action == Base::InputEvent::Action::Released && mouseEvent->Button == MouseKey::Left &&
+          _isActive //
         )
         {
           onClick();
@@ -246,7 +246,7 @@ namespace Base
     float width = _desiredSize.width * _renderTransform.GetScaleX();
     float height = _desiredSize.height * _renderTransform.GetScaleY();
 
-    Vector2 pos(0);
+    Vector2 pos = _layoutRect.GetPosition();
 
     // Horizontal alignment
     switch (_horizontalAlignment)

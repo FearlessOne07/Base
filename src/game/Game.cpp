@@ -48,6 +48,10 @@ namespace Base
     // Initialise InputManager
     _inpMan.Init();
     _inpMan.RegisterListener(*this);
+    Renderer::SetKeyCallback(
+      [this](int key, int scancode, int action, int mods) { _inpMan.DispatchKeyEvent(key, scancode, action, mods); });
+    Renderer::SetMouseButtonCallback(
+      [this](int button, int action, int mods) { _inpMan.DispatchMouseEvent(button, action, mods); });
 
     _renderingManager.SetSceneManager(_sceneManager);
     _systemManager.SetSceneManager(_sceneManager);

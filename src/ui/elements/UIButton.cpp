@@ -5,10 +5,6 @@
 
 namespace Base
 {
-  static bool operator==(Color a, Color b)
-  {
-    return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
-  }
 
   void UIButton::SetTextColor(Color textColor)
   {
@@ -38,13 +34,9 @@ namespace Base
   {
     auto textSize = Font::MeasureText(_font.Get(), _text, _fontSize * _renderTransform.GetFontScale());
     _layoutRect = finalRect;
-    float width = textSize.x;
-    float height = textSize.y;
-    width += _paddingLeft + _paddingRight;
-    height += _paddingTop + _paddingBottom;
 
-    Vector2 finalPos(0);
-    Vector2 finalSize(0);
+    Vector2 finalPos = _layoutRect.GetPosition();
+    Vector2 finalSize{_desiredSize.width, _desiredSize.height};
 
     // Horizontal alignment
     switch (_horizontalAlignment)
@@ -52,10 +44,10 @@ namespace Base
     case HAlign::Left:
       break;
     case HAlign::Center:
-      finalPos.x += (finalRect.GetSize().x - width) / 2;
+      finalPos.x += (finalRect.GetSize().x - finalSize.x) / 2;
       break;
     case HAlign::Right:
-      finalPos.x += finalRect.GetSize().x - width;
+      finalPos.x += finalRect.GetSize().x - finalSize.x;
       break;
     case HAlign::Stretch:
       finalSize.x = finalRect.GetSize().x;
@@ -68,10 +60,10 @@ namespace Base
     case VAlign::Top:
       break;
     case VAlign::Center:
-      finalPos.y += (finalRect.GetSize().y - height) / 2;
+      finalPos.y += (finalRect.GetSize().y - finalSize.y) / 2;
       break;
     case VAlign::Bottom:
-      finalPos.y += finalRect.GetSize().y - height;
+      finalPos.y += finalRect.GetSize().y - finalSize.y;
       break;
     case VAlign::Stretch:
       finalSize.y = finalRect.GetSize().y;
@@ -94,10 +86,10 @@ namespace Base
       {
         // Nine Patch
         // Renderer::DrawSprite(_sprite, _layoutRect.GetPosition(), _layoutRect.GetSize());
-        // _sprite.Draw( //
-        //   {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height},
-        //   _renderTransform.GetOpacity() * opacity * 255 //
-        // );
+        _sprite.Draw( //
+          _layoutRect,
+          _renderTransform.GetOpacity() * opacity * 255 //
+        );
       }
       else
       {
@@ -111,7 +103,10 @@ namespace Base
           alpha = _renderTransform.GetOpacity();
         }
 
-        Renderer::DrawQuad({_layoutRect.GetSize()}, _layoutRect.GetPosition(), {_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, 255 * alpha});
+        Renderer::DrawQuad( //
+          {_layoutRect.GetSize()}, _layoutRect.GetPosition(),
+          {_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, 255 * alpha} //
+        );
       }
 
       // Measure text size
@@ -120,8 +115,8 @@ namespace Base
 
       // Center text inside padded button area
       Vector2 textPos = {
-          _layoutRect.GetPosition().x + (_layoutRect.GetSize().x - textSize.x) / 2,
-          _layoutRect.GetPosition().y + (_layoutRect.GetSize().y - textSize.y) / 2,
+        _layoutRect.GetPosition().x + (_layoutRect.GetSize().x - textSize.x) / 2,
+        _layoutRect.GetPosition().y + (_layoutRect.GetSize().y - textSize.y) / 2,
       };
 
       Renderer::DrawText(_text, textPos, _textColor, fontSize, _font.Get());
