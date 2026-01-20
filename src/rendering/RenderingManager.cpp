@@ -7,6 +7,7 @@
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/scenes/signals/SceneResumedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
+#include "base/util/Colors.hpp"
 #include "base/util/Ref.hpp"
 #include "internal/rendering/Renderer.hpp"
 #include "internal/scene/SceneManager.hpp"
@@ -98,7 +99,6 @@ namespace Base
   void RenderingManager::Update(float dt)
   {
     Renderer::Update();
-
     auto &layers = _renderLayers.at(_currentScene);
     for (auto &layer : layers)
     {
@@ -152,9 +152,9 @@ namespace Base
     auto rd = RenderContextSingleton::GetInstance();
 
     // Draw Render texture to the Screen
-    Renderer::Clear({0, 0, 255, 255});
+    Renderer::Clear(Black);
     Renderer::DrawFramebuffer( //
-      _renderTexture, {0, 0}, {_renderTexture->GetWidth(), _renderTexture->GetHeight()},
+      _renderTexture, {rd->marginX, rd->marginY}, Vector2{rd->gameWidth, rd->gameHeight} * rd->scale,
       FramebufferAttachmentIndex::Color0 //
     );
 
