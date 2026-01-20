@@ -1,6 +1,6 @@
 #include "base/ui/UIElement.hpp"
 #include "base/input/Events/MouseButtonEvent.hpp"
-#include "base/input/MouseButtons.hpp"
+#include "base/input/Keys.hpp"
 #include "base/sprites/NinePatchSprite.hpp"
 #include "base/ui/UIConext.hpp"
 #include "base/util/Type.hpp"
@@ -161,16 +161,13 @@ namespace Base
           event->isHandled = true;
         }
         else if ( //
-          mouseEvent->action == Base::InputEvent::Action::Released && mouseEvent->Button == MouseKey::Left &&
-          _isActive //
-        )
+          mouseEvent->action == Base::InputEvent::Action::Released && mouseEvent->Button == MouseKey::Left)
         {
-          onClick();
-          _isActive = false;
-          event->isHandled = true;
-        }
-        else
-        {
+          if (_isActive && _isHovered)
+          {
+            onClick();
+            event->isHandled = true;
+          }
           _isActive = false;
         }
       }

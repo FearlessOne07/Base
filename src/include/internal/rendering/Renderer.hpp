@@ -1,6 +1,7 @@
 #pragma once
 #include "base/assets/Font.hpp"
 #include "base/camera/Camera.hpp"
+#include "base/input/Keys.hpp"
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/Sprite.hpp"
 #include "base/util/Circle.hpp"
@@ -71,14 +72,14 @@ namespace Base
     static void PollWindow();
     static void SwapWindowBuffers();
     static bool IsWindowClosed();
-    static void SetKeyCallback(const KeyCallback &keyCallback);
-    static void SetMouseButtonCallback(const MouseButtonCallback &mouseButtonCallback);
     static void SetScrollCallback(const ScrollCallback &scrollCallback);
     static void SetCharCallback(const CharCallback &charCallback);
     static void SetWindowMode(const WindowMode &state);
     static IVector2 GetWindowSize();
     static IVector2 GetFramebufferSize();
     static Vector2 GetWindowMousePosition();
+    static bool GetWindowKeyState(const Key &key);
+    static bool GetWindowMouseButtonState(const MouseKey &mouseKey);
 
     // Draw
     static void DrawQuad( //

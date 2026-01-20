@@ -1,5 +1,6 @@
 #pragma once
 
+#include "base/input/Keys.hpp"
 #include "base/util/Type.hpp"
 #include "glad/glad.h"
 #include "internal/rendering/WindowMode.hpp"
@@ -55,8 +56,6 @@ namespace Base
     static void FrameBufferResizeCallBack(GLFWwindow *window, int width, int height);
     static void MouseMoveCallBack(GLFWwindow *window, double x, double y);
 
-    static void KeyCallBack(GLFWwindow *, int key, int scancode, int action, int mods);
-    static void MouseButtonCallBack(GLFWwindow *, int button, int action, int mods);
     static void ScrollCallBack(GLFWwindow *, double xoffset, double yoffset);
     static void CharCallBack(GLFWwindow *, unsigned int codepoint);
 
@@ -75,6 +74,8 @@ namespace Base
     void SetScrollCallback(const ScrollCallback &scrollCallback);
     void SetCharCallback(const CharCallback &charCallback);
     void SetMode(const WindowMode &mode);
+    bool GetKeyState(const Key &key);
+    bool GetMouseButtonState(const MouseKey &key);
 
     // Size
     int GetFrameBufferWidth() const;

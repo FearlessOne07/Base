@@ -238,14 +238,14 @@ namespace Base
     return _instance->_window->GetMousePosition();
   }
 
-  void Renderer::SetKeyCallback(const KeyCallback &keyCallback)
+  bool Renderer::GetWindowKeyState(const Key &key)
   {
-    _instance->_window->SetKeyCallback(keyCallback);
+    return _instance->_window->GetKeyState(key);
   }
 
-  void Renderer::SetMouseButtonCallback(const MouseButtonCallback &mouseButtonCallback)
+  bool Renderer::GetWindowMouseButtonState(const MouseKey &mouseKey)
   {
-    _instance->_window->SetMouseButtonCallback(mouseButtonCallback);
+    return _instance->_window->GetMouseButtonState(mouseKey);
   }
 
   void Renderer::SetScrollCallback(const ScrollCallback &scrollCallback)

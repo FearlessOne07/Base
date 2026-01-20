@@ -17,6 +17,11 @@ namespace Base
     Renderer::DrawFramebuffer(framebuffer, {0, 0}, size, material, attachmentToDraw, attachments);
   }
 
+  void ShaderEffect::ClearFrameBuffer(Color color, const FramebufferAttachmentIndex &attachmentToClear)
+  {
+    Renderer::Clear(color, attachmentToClear);
+  }
+
   void ShaderEffect::EndFrameBuffer()
   {
     Renderer::EndFramebuffer();

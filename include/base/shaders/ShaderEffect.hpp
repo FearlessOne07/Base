@@ -21,6 +21,10 @@ namespace Base
       FramebufferAttachmentIndex attachmentToDraw,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
+    void ClearFrameBuffer( //
+      Color color,
+      const FramebufferAttachmentIndex &attachmentToClear = FramebufferAttachmentIndex::Color0 //
+    );
     void EndFrameBuffer();
 
   public:
