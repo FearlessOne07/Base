@@ -166,9 +166,12 @@ namespace Base
         }
         else
         {
-          alpha = _renderTransform.GetOpacity();
+          alpha = _renderTransform.GetOpacity() * opacity;
         }
-        Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), _backgroundColor);
+        Renderer::DrawQuad( //
+          _layoutRect, _layoutRect.GetPosition(),
+          {_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a * alpha} //
+        );
       }
 
       auto elements = std::ranges::reverse_view(_childElements);

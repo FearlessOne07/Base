@@ -1,5 +1,6 @@
 #include "base/ui/elements/UIGrid.hpp"
 #include "base/ui/UIElement.hpp"
+#include "base/util/Colors.hpp"
 #include "internal/rendering/Renderer.hpp"
 #include <algorithm>
 #include <iterator>
@@ -152,7 +153,7 @@ namespace Base
       {
         offset += _rowSizes[i];
       }
-      childPos.y = offset + _layoutRect.GetPosition().x;
+      childPos.y = offset + _layoutRect.GetPosition().y;
 
       if (_elementGridPositions[index].Row != 0)
       {
@@ -202,9 +203,9 @@ namespace Base
         }
         else
         {
-          alpha = _renderTransform.GetOpacity();
+          alpha = _renderTransform.GetOpacity() * opacity;
         }
-        Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), _backgroundColor);
+        Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), Base::Green);
       }
 
       auto elements = std::ranges::reverse_view(_childElements);

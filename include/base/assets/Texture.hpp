@@ -26,8 +26,8 @@ namespace Base
   {
     int Width = 1, Height = 1;
     TextureFormat Format = TextureFormat::RGBA8;
-    TextureFiltering MagFilter = TextureFiltering::Linear;
-    TextureFiltering MinFilter = TextureFiltering::Linear;
+    TextureFiltering MagFilter = TextureFiltering::Nearest;
+    TextureFiltering MinFilter = TextureFiltering::Nearest;
     bool MipMaps = true;
   };
 

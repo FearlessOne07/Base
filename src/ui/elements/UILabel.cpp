@@ -112,7 +112,7 @@ namespace Base
 
   void UILabel::Render(float opacity)
   {
-
+    _textColor = {_textColor.r, _textColor.g, _textColor.b, _textColor.a * opacity};
     if (!_isHidden)
     {
       Renderer::DrawText( //

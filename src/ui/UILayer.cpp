@@ -27,11 +27,12 @@ namespace Base
 
   void UILayer::Render()
   {
-    if (_layerBackPanel)
+    if (_layerBackPanel && _layerBackPanel->IsVisible())
     {
       _layerBackPanel->Render(1);
     }
-    if (_root)
+
+    if (_root && _root->IsVisible())
     {
       _root->Render(1);
     }
@@ -39,26 +40,26 @@ namespace Base
 
   void UILayer::Update(float dt)
   {
-    if (_layerBackPanel)
+    if (_layerBackPanel && _layerBackPanel->IsVisible())
     {
       _layerBackPanel->Arrange({{_layerPosition.x, _layerPosition.y}, {_layerSize.x, _layerSize.y}});
+    }
 
-      if (_root)
-      {
-        Size rSize = _root->Measure();
-        Vector2 rPos = _root->GetPosition();
-        _root->Arrange({
-          {
-            _layerPosition.x + rPos.x,
-            _layerPosition.y + rPos.y,
-          },
-          {_layerSize.x, _layerSize.y},
-        });
-
-        if (_root->IsVisible())
+    if (_root && _root->IsVisible())
+    {
+      Size rSize = _root->Measure();
+      Vector2 rPos = _root->GetPosition();
+      _root->Arrange({
         {
-          _root->Update(dt, {.MousePosition = _parentSceneLayer->GetLayerMousePosition()});
-        }
+          _layerPosition.x + rPos.x,
+          _layerPosition.y + rPos.y,
+        },
+        {_layerSize.x, _layerSize.y},
+      });
+
+      if (_root->IsVisible())
+      {
+        _root->Update(dt, {.MousePosition = _parentSceneLayer->GetLayerMousePosition()});
       }
     }
   }
