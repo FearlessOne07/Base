@@ -34,6 +34,7 @@ void Camera::SetZoom(float zoom)
 {
   _zoom = zoom;
   _zoom = std::clamp<float>(_zoom, 0.1f, 2.f);
+  SetOrginPoint(_orginPoint);
   RecalculateViewMatrix();
 }
 

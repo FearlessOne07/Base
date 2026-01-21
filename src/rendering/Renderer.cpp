@@ -339,6 +339,7 @@ namespace Base
         if (!_currentBatcher)
         {
           _currentBatcher = &_quadBatcher;
+          _currentBatcher->Begin();
         }
         else if (_currentBatcher->GetGeometryType() != GeometryType::Quad)
         {

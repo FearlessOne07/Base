@@ -136,18 +136,22 @@ namespace Base
     Ptr<FrameBuffer> input = _renderTexture;
     Ptr<FrameBuffer> output = _ping;
 
-    for (auto &effect : scenePost)
-    {
-      effect->Apply(input, output, _renderResolution);
-      std::swap(input, output); // Ping-pong
+    if(!scenePost.Empty()){
+
+      for (auto &effect : scenePost)
+      {
+        effect->Apply(input, output, _renderResolution);
+        std::swap(input, output); // Ping-pong
+      }
+
+      if (input != _renderTexture)
+      {
+        Renderer::BeginFramebuffer(_renderTexture);
+        Renderer::DrawFramebuffer(input, _renderResolution, FramebufferAttachmentIndex::Color0);
+        Renderer::EndFramebuffer();
+      }
     }
 
-    if (input != _renderTexture)
-    {
-      Renderer::BeginFramebuffer(_renderTexture);
-      Renderer::DrawFramebuffer(input, _renderResolution, FramebufferAttachmentIndex::Color0);
-      Renderer::EndFramebuffer();
-    }
 
     auto rd = RenderContextSingleton::GetInstance();
 
