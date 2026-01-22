@@ -36,7 +36,9 @@ namespace Base
     _layoutRect = finalRect;
 
     Vector2 finalPos = _layoutRect.GetPosition();
-    Vector2 finalSize{_desiredSize.width, _desiredSize.height};
+    Vector2 finalSize = textSize;
+    finalSize.x += _paddingLeft + _paddingRight;
+    finalSize.y += _paddingTop + _paddingBottom;
 
     // Horizontal alignment
     switch (_horizontalAlignment)
@@ -80,7 +82,7 @@ namespace Base
   void UIButton::Render(float opacity)
   {
 
-    if (!_isHidden)
+    if (!_isHidden && opacity > 0)
     {
       if (_sprite)
       {
@@ -100,7 +102,7 @@ namespace Base
         }
         else
         {
-          alpha = _renderTransform.GetOpacity();
+          alpha = _renderTransform.GetOpacity() * opacity;
         }
 
         Renderer::DrawQuad( //
@@ -119,7 +121,11 @@ namespace Base
         _layoutRect.GetPosition().y + (_layoutRect.GetSize().y - textSize.y) / 2,
       };
 
-      Renderer::DrawText(_text, textPos, _textColor, fontSize, _font.Get());
+      float alpha = _renderTransform.GetOpacity() * opacity;
+      Renderer::DrawText( //
+        _text, textPos, {_textColor.r, _textColor.g, _textColor.b, _textColor.a * alpha}, fontSize,
+        _font.Get() //
+      );
     }
   }
 

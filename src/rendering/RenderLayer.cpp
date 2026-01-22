@@ -13,17 +13,16 @@ namespace Base
     Ref<SceneManager> sceneManager, Vector2 position, Vector2 size,
     Color clearColor //
     )
-    : _position(position), _size(size), _sceneManager(sceneManager), _clearColor(clearColor)
+    : _position(position), _size(size), _sceneManager(sceneManager), _clearColor(clearColor), _layerCamera(size)
   {
     _framebuffer = FrameBuffer::Create({.Width = static_cast<int>(_size.x), .Height = static_cast<int>(_size.y)});
     _ping = FrameBuffer::Create({.Width = static_cast<int>(_size.x), .Height = static_cast<int>(_size.y)});
-
-    _layerCamera = CameraController(_size);
   }
 
   RenderLayer::RenderLayer(RenderLayer &&other) noexcept
     : _position(other._position), _size(other._size), _renderFunctions(std::move(other._renderFunctions)),
-      _framebuffer(other._framebuffer), _effectChain(std::move(other._effectChain)), _ping(other._ping)
+      _framebuffer(other._framebuffer), _effectChain(std::move(other._effectChain)), _ping(other._ping),
+      _layerCamera(other._layerCamera)
   {
     FrameBuffer::Destroy(other._framebuffer);
     FrameBuffer::Destroy(other._ping);
@@ -49,6 +48,7 @@ namespace Base
       _framebuffer = other._framebuffer;
       _effectChain = std::move(other._effectChain);
       _ping = other._ping;
+      _layerCamera = std::move(other._layerCamera);
 
       FrameBuffer::Destroy(_framebuffer);
       FrameBuffer::Destroy(_ping);
@@ -138,6 +138,11 @@ namespace Base
     _layerCamera.SetRotation(rotation);
   }
 
+  void RenderLayer::SetCamerOriginPoint(Origin origin)
+  {
+    _layerCamera.SetOriginPoint(origin);
+  }
+
   void RenderLayer::SetCameraZoom(float zoom)
   {
     _layerCamera.SetZoom(zoom);
@@ -163,6 +168,17 @@ namespace Base
     return _layerCamera.GetWorldToScreen(position);
   }
 
+  float RenderLayer::GetWorldToScreen(float distance) const
+  {
+
+    return _layerCamera.GetWorldToScreen(distance);
+  }
+
+  float RenderLayer::GetScreenToWorld(float distance) const
+  {
+    return _layerCamera.GetScreenToWorld(distance);
+  }
+
   float RenderLayer::GetCameraZoom() const
   {
     return _layerCamera.GetZoom();
@@ -172,6 +188,7 @@ namespace Base
   {
     _layerCamera.Begin();
   }
+
   void RenderLayer::EndCamera()
   {
     _layerCamera.End();

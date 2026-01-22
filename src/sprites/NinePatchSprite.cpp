@@ -70,7 +70,10 @@ namespace Base
     if (noBorders)
     {
       Rectangle src = {{_sourcePos.x, _sourcePos.y}, {_sourceSize.x, _sourceSize.y}};
-      Renderer::DrawSprite({_texture.Get(), src.GetPosition(), src.GetSize()}, dest.GetPosition(), dest.GetSize());
+      Renderer::DrawSprite( //
+        {_texture.Get(), src.GetPosition(), src.GetSize()}, dest.GetPosition(), dest.GetSize(), 0,
+        {255, 255, 255, alpha} //
+      );
       return;
     }
 
@@ -137,7 +140,7 @@ namespace Base
 
       Renderer::DrawSprite( //
         {_texture.Get(), _patches[i].GetPosition(), _patches[i].GetSize()}, destRects[i].GetPosition(),
-        destRects[i].GetSize() //
+        destRects[i].GetSize(), 0.f, {255, 255, 255, alpha} //
       );
     }
   }

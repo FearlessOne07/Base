@@ -75,7 +75,10 @@ namespace Base
 
           if (sprtmp && transcmp)
           {
-            Renderer::DrawSprite(sprtmp->GetSprite(), transcmp->position, sprtmp->GetTargetSize(), transcmp->rotation);
+            Renderer::DrawSprite( //
+              sprtmp->GetSprite(), transcmp->position, sprtmp->GetTargetSize(), transcmp->rotation, {255, 255, 255, 255}
+              //
+            );
           }
         }
       }

@@ -151,7 +151,7 @@ namespace Base
 
   void UIStackPanel::Render(float opacity)
   {
-    if (!_isHidden)
+    if (!_isHidden && opacity > 0)
     {
       if (_sprite)
       {
@@ -168,6 +168,7 @@ namespace Base
         {
           alpha = _renderTransform.GetOpacity() * opacity;
         }
+
         Renderer::DrawQuad( //
           _layoutRect, _layoutRect.GetPosition(),
           {_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a * alpha} //

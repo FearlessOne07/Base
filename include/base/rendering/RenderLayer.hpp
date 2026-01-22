@@ -1,9 +1,10 @@
 #pragma once
 #include "base/camera/CameraController.hpp"
-#include "base/util/Colors.hpp"
 #include "base/rendering/FrameBuffer.hpp"
+#include "base/rendering/Origin.hpp"
 #include "base/shaders/ShaderEffect.hpp"
 #include "base/shaders/ShaderEffectChain.hpp"
+#include "base/util/Colors.hpp"
 #include "base/util/Ref.hpp"
 #include "base/util/Type.hpp"
 #include <bitset>
@@ -23,7 +24,7 @@ namespace Base
     // Rendering
     Ptr<FrameBuffer> _framebuffer;
     std::deque<RenderFunction> _renderFunctions;
-    Color _clearColor = Base::Blank ;
+    Color _clearColor = Base::Blank;
 
     // Camera
     CameraController _layerCamera;
@@ -59,24 +60,25 @@ namespace Base
     void SetCameraTarget(Vector2 target);
     void SetCameraRotation(float rotation);
     void SetCameraZoom(float zoom);
+    void SetCamerOriginPoint(Origin origin);
     void SetCameraPauseMask(const std::bitset<8> &mask);
     void ShakeCamera(const CameraShakeConfig &config);
     Vector2 GetScreenToWorld(Vector2 position) const;
     Vector2 GetWorldToScreen(Vector2 position) const;
+    float GetWorldToScreen(float distance) const;
+    float GetScreenToWorld(float distance) const;
     void BeginCamera();
     void EndCamera();
 
     float GetCameraZoom() const;
 
     // Shader Effect Management
-    template <typename T, typename... Args>
-    void AddShaderEffect(std::weak_ptr<Scene> ownerScene, Args &&...args)
+    template <typename T, typename... Args> void AddShaderEffect(std::weak_ptr<Scene> ownerScene, Args &&...args)
     {
       _effectChain.AddEffect<T>(ownerScene, std::forward<Args>(args)...);
     }
 
-    template <typename T>
-    std::shared_ptr<T> GetShaderEffect()
+    template <typename T> std::shared_ptr<T> GetShaderEffect()
     {
       return _effectChain.GetEffect<T>();
     }

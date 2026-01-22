@@ -5,7 +5,7 @@ namespace Base
 {
   void UITextureRect::Render(float opacity)
   {
-    if (!_isHidden)
+    if (!_isHidden && opacity > 0)
     {
       if (_sprite)
       {
@@ -16,7 +16,9 @@ namespace Base
       }
       else
       {
-        Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), {255, 255, 255, 255});
+        Renderer::DrawQuad(                                                                                      //
+          _layoutRect, _layoutRect.GetPosition(), {255, 255, 255, 255 * opacity * _renderTransform.GetOpacity()} //
+        );
       }
     }
   }

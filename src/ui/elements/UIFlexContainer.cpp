@@ -121,8 +121,8 @@ namespace Base
       if (_orientation == Orientation::Vertical)
       {
         child->Arrange({
-            {_layoutRect.GetPosition().x + _paddingLeft, offset},
-            {_layoutRect.GetSize().x - (_paddingLeft + _paddingRight), rectHeight},
+          {_layoutRect.GetPosition().x + _paddingLeft, offset},
+          {_layoutRect.GetSize().x - (_paddingLeft + _paddingRight), rectHeight},
         } //
         );
         offset += rectHeight;
@@ -130,8 +130,8 @@ namespace Base
       else
       {
         child->Arrange({
-            {offset, _layoutRect.GetPosition().y + _paddingTop},
-            {rectWidth, _layoutRect.GetSize().y - (_paddingTop + _paddingBottom)},
+          {offset, _layoutRect.GetPosition().y + _paddingTop},
+          {rectWidth, _layoutRect.GetSize().y - (_paddingTop + _paddingBottom)},
         } //
         );
         offset += rectWidth;
@@ -156,9 +156,13 @@ namespace Base
         }
         else
         {
-          alpha = _renderTransform.GetOpacity();
+          alpha = _renderTransform.GetOpacity() * opacity;
         }
-        Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), _backgroundColor);
+
+        Renderer::DrawQuad( //
+          _layoutRect, _layoutRect.GetPosition(),
+          {_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a * alpha} //
+        );
       }
 
       auto elements = std::ranges::reverse_view(_childElements);

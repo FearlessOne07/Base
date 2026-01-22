@@ -2,11 +2,12 @@
 
 #include "base/assets/Font.hpp"
 #include "base/camera/Camera.hpp"
-#include "base/util/Circle.hpp"
 #include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/FramebufferAttachmentIndex.hpp"
 #include "base/rendering/Quad.hpp"
 #include "base/rendering/Sprite.hpp"
+#include "base/util/Circle.hpp"
+#include "base/util/Type.hpp"
 #include "glm/ext/vector_float4.hpp"
 #include <string>
 #include <unordered_set>
@@ -16,8 +17,8 @@ namespace Base
   struct QuadCommand
   {
     Rectangle QuadToDraw;
-    glm::vec3 Position;
-    glm::vec4 Color;
+    Vector3 Position;
+    Vector4 Color;
     float Rotation;
     std::unordered_set<FramebufferAttachmentIndex> Attachments;
   };
@@ -25,9 +26,11 @@ namespace Base
   struct SpriteCommand
   {
     Sprite SpriteToDraw;
-    glm::vec3 Position;
-    glm::vec2 Size;
+    Vector3 Position;
+    Vector2 Size;
+    Vector4 Color;
     float Rotation;
+
     std::unordered_set<FramebufferAttachmentIndex> Attachments;
   };
 

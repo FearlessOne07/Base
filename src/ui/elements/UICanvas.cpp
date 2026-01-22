@@ -109,8 +109,16 @@ namespace Base
       }
       else if (_fillColor.a > 0) // Only draw if not transparent
       {
-        float alpha = _renderTransform.GetOpacity();
-        Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), _fillColor);
+        float alpha = _renderTransform.GetOpacity() * opacity;
+        Renderer::DrawQuad( //
+          _layoutRect, _layoutRect.GetPosition(),
+          {
+            _fillColor.r,
+            _fillColor.g,
+            _fillColor.b,
+            _fillColor.a * alpha,
+          } //
+        );
       }
 
       auto elements = std::ranges::reverse_view(_childElements);

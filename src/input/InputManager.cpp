@@ -36,12 +36,11 @@ namespace Base
     for (uint16_t keyInt = static_cast<uint16_t>(Key::Null); keyInt < static_cast<uint16_t>(Key::Count); keyInt++)
     {
       Key key = static_cast<Key>(keyInt);
-
       // Key held
       if (Renderer::GetWindowKeyState(key))
       {
-        // If this is the first time the key is being registered and it haasn't been handled as a PRESS ...
-        if (_keyStates[keyInt].Position == KeyPosition::Up && !_keyStates[keyInt].Handled)
+        // If this is the first time the key is being registered
+        if (_keyStates[keyInt].Position == KeyPosition::Up)
         {
           // Add key to held keys
           _keyStates[keyInt].Position = KeyPosition::Pressed;
@@ -52,15 +51,9 @@ namespace Base
           event->action = KeyEvent::Action::Pressed;
           _lastEvent = event;
           DispatchEvent(event);
-
-          // If event comes back as handled, add it to handled key PRESSES
-          if (event->isHandled)
-          {
-            _keyStates[keyInt].Handled = true;
-          }
         }
-        // If the key has been pressed before and hasn't been handled
-        else if (_keyStates[keyInt].Position == KeyPosition::Pressed && !_keyStates[keyInt].Handled)
+        // If the key has been pressed before
+        else if (_keyStates[keyInt].Position != KeyPosition::Up)
         {
           // It is now HELD
           _keyStates[keyInt].Position = KeyPosition::Down;
@@ -75,84 +68,68 @@ namespace Base
           _lastEvent = event;
         }
       }
-      // If the key is Released
       else
       {
         // If The Key was previously active
-        if ( //
-          (_keyStates[keyInt].Position == KeyPosition::Down || _keyStates[keyInt].Position == KeyPosition::Down) &&
-          _keyStates[keyInt].Handled //
-        )
+        if ((_keyStates[keyInt].Position == KeyPosition::Down || _keyStates[keyInt].Position == KeyPosition::Pressed))
         {
           // Reset Key
           _keyStates[keyInt].Position = KeyPosition::Up;
-          _keyStates[keyInt].Handled = false;
 
           // Dispath a RELEASED key event
           std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
           event->Key = key;
           event->action = KeyEvent::Action::Released;
           DispatchEvent(event);
-
           _lastEvent = event;
         }
       }
-    }
 
-    ////// Same Steps for as key events ///////
-    {
-      for (uint8_t keyInt = static_cast<uint8_t>(MouseKey::Null); keyInt < static_cast<uint8_t>(MouseKey::Count);
-           keyInt++)
+      ////// Same Steps for as key events ///////
       {
-        MouseKey key = static_cast<MouseKey>(keyInt);
-
-        if (Renderer::GetWindowMouseButtonState(key))
+        for (uint8_t keyInt = static_cast<uint8_t>(MouseKey::Null); keyInt < static_cast<uint8_t>(MouseKey::Count);
+             keyInt++)
         {
-          if (_mouseKeyStates[keyInt].Position == KeyPosition::Up && !_mouseKeyStates[keyInt].Handled)
+          MouseKey key = static_cast<MouseKey>(keyInt);
+
+          if (Renderer::GetWindowMouseButtonState(key))
           {
-            _mouseKeyStates[keyInt].Position = KeyPosition::Pressed;
-
-            std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
-            event->Button = key;
-            event->action = KeyEvent::Action::Pressed;
-            _lastEvent = event;
-            DispatchEvent(event);
-
-            if (event->isHandled)
+            if (_mouseKeyStates[keyInt].Position == KeyPosition::Up)
             {
-              _mouseKeyStates[keyInt].Handled = true;
+              _mouseKeyStates[keyInt].Position = KeyPosition::Pressed;
+
+              std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
+              event->Button = key;
+              event->action = KeyEvent::Action::Pressed;
+              _lastEvent = event;
+              DispatchEvent(event);
+            }
+            else if (_mouseKeyStates[keyInt].Position != KeyPosition::Up)
+            {
+              _mouseKeyStates[keyInt].Position = KeyPosition::Down;
+
+              std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
+              event->Button = key;
+              event->action = KeyEvent::Action::Held;
+              DispatchEvent(event);
+              _lastEvent = event;
             }
           }
-          else if (_mouseKeyStates[keyInt].Position == KeyPosition::Pressed && !_mouseKeyStates[keyInt].Handled)
+          else
           {
-            _mouseKeyStates[keyInt].Position = KeyPosition::Down;
-
-            std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
-            event->Button = key;
-            event->action = KeyEvent::Action::Held;
-            DispatchEvent(event);
-            if (event->isHandled)
+            if ( //
+              _mouseKeyStates[keyInt].Position == KeyPosition::Down ||
+              _mouseKeyStates[keyInt].Position == KeyPosition::Pressed //
+            )
             {
-              _mouseKeyStates[keyInt].Handled = true;
+              _mouseKeyStates[keyInt].Position = KeyPosition::Up;
+
+              std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
+              event->Button = key;
+              event->action = KeyEvent::Action::Released;
+              DispatchEvent(event);
+              _lastEvent = event;
             }
-            _lastEvent = event;
-          }
-        }
-        else
-        {
-          if ( //
-            (_mouseKeyStates[keyInt].Position == KeyPosition::Down ||
-             _mouseKeyStates[keyInt].Position == KeyPosition::Pressed) &&
-            _mouseKeyStates[keyInt].Handled //
-          )
-          {
-            _mouseKeyStates[keyInt].Position = KeyPosition::Up;
-            _mouseKeyStates[keyInt].Handled = false;
-            std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
-            event->Button = key;
-            event->action = KeyEvent::Action::Released;
-            DispatchEvent(event);
-            _lastEvent = event;
           }
         }
       }
@@ -161,34 +138,34 @@ namespace Base
 
   void InputManager::PostUpdate()
   {
-    if (_lastEvent)
-    {
-      // If the last event was a PRESSED event, dispatch a synthetic RELEASED event
-      // so that listeners can reverse the effects of the press
-      if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(_lastEvent))
-      {
-        keyEvent = std::static_pointer_cast<KeyEvent>(_lastEvent);
-        if (keyEvent->isHandled && keyEvent->action == KeyEvent::Action::Pressed)
-        {
-          std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
-          event->Key = keyEvent->Key;
-          event->action = KeyEvent::Action::Released;
-          DispatchEvent(event);
-        }
-      }
-      else if (auto mouseEvent = std::dynamic_pointer_cast<MouseButtonEvent>(_lastEvent))
-      {
-        mouseEvent = std::static_pointer_cast<MouseButtonEvent>(_lastEvent);
-        if (mouseEvent->isHandled && mouseEvent->action == MouseButtonEvent::Action::Pressed)
-        {
-          std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
-          event->Button = mouseEvent->Button;
-          event->action = MouseButtonEvent::Action::Released;
-          DispatchEvent(event);
-        }
-      }
-      _lastEvent = nullptr;
-    }
+    // if (_lastEvent)
+    // {
+    //   // If the last event was a PRESSED event, dispatch a synthetic RELEASED event
+    //   // so that listeners can reverse the effects of the press
+    //   if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(_lastEvent))
+    //   {
+    //     keyEvent = std::static_pointer_cast<KeyEvent>(_lastEvent);
+    //     if (keyEvent->isHandled && keyEvent->action == KeyEvent::Action::Pressed)
+    //     {
+    //       std::shared_ptr<KeyEvent> event = std::make_shared<KeyEvent>();
+    //       event->Key = keyEvent->Key;
+    //       event->action = KeyEvent::Action::Released;
+    //       DispatchEvent(event);
+    //     }
+    //   }
+    //   else if (auto mouseEvent = std::dynamic_pointer_cast<MouseButtonEvent>(_lastEvent))
+    //   {
+    //     mouseEvent = std::static_pointer_cast<MouseButtonEvent>(_lastEvent);
+    //     if (mouseEvent->isHandled && mouseEvent->action == MouseButtonEvent::Action::Pressed)
+    //     {
+    //       std::shared_ptr<MouseButtonEvent> event = std::make_shared<MouseButtonEvent>();
+    //       event->Button = mouseEvent->Button;
+    //       event->action = MouseButtonEvent::Action::Released;
+    //       DispatchEvent(event);
+    //     }
+    //   }
+    //   _lastEvent = nullptr;
+    // }
   }
 
   void InputManager::RegisterListener(InputListener &listener)
@@ -220,11 +197,9 @@ namespace Base
           event->action = InputEvent::Action::Released;
           DispatchEvent(event);
           state.Position = KeyPosition::Up;
-          state.Handled = false;
         }
       }
       {
-
         auto held =
           std::views::iota(std::size_t{0}, _mouseKeyStates.size()) |
           std::views::filter([&](std::size_t i) { return _mouseKeyStates[i].Position == KeyPosition::Down; }) |
@@ -239,7 +214,6 @@ namespace Base
           event->action = InputEvent::Action::Released;
           DispatchEvent(event);
           state.Position = KeyPosition::Up;
-          state.Handled = false;
         }
       }
     }

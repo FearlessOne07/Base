@@ -154,12 +154,22 @@ namespace Base
 
   Vector2 CameraController::GetScreenToWorld(Vector2 position) const
   {
-    // return GetScreenToWorld2D(position, _camera);
+    return _camera->GetScreenToWorld(position);
   }
 
   Vector2 CameraController::GetWorldToScreen(Vector2 position) const
   {
-    // return GetWorldToScreen2D(position, _camera) / _camera.zoom;
+    return _camera->GetWorldToScreen(position);
+  }
+
+  float CameraController::GetScreenToWorld(float distance) const
+  {
+    return _camera->GetScreenToWorld(distance);
+  }
+
+  float CameraController::GetWorldToScreen(float distance) const
+  {
+    return _camera->GetWorldToScreen(distance);
   }
 
   float CameraController::GetZoom() const
@@ -188,6 +198,11 @@ namespace Base
     // _camera.offset = offset;
   }
 
+  void CameraController::SetOriginPoint(Origin origin)
+  {
+    _camera->SetOrginPoint(origin);
+  }
+
   void CameraController::SetTarget(Vector2 target)
   {
     _camera->SetPosition(target);
@@ -201,6 +216,6 @@ namespace Base
 
   void CameraController::SetZoom(float zoom)
   {
-    _camera->SetRotation(zoom);
+    _camera->SetZoom(zoom);
   }
 } // namespace Base

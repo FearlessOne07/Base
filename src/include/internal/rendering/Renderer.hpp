@@ -95,7 +95,7 @@ namespace Base
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawSprite( //
-      const Sprite &sprite, glm::vec2 position, glm::vec2 size, float rotationDeg,
+      const Sprite &sprite, glm::vec2 position, glm::vec2 size, float rotationDeg, Color color,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments = {FramebufferAttachmentIndex::Color0} //
     );
     static void DrawFramebuffer( //

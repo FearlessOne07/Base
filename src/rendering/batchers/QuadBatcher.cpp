@@ -1,11 +1,37 @@
 #include "internal/rendering/batchers/QuadBatcher.hpp"
+#include "base/util/Type.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #include <algorithm>
 #include <unordered_set>
 
 namespace Base
 {
+  static void BuildQuadCorners(glm::vec3 out[4], glm::vec3 position, glm::vec2 size, Origin origin, float rotationDeg)
+  {
+    const glm::vec2 half = size * 0.5f;
 
+    // Local-space quad centered at origin
+    glm::vec3 local[4] = {
+      {-half.x, -half.y, 0.f},
+      {half.x, -half.y, 0.f},
+      {half.x, half.y, 0.f},
+      {-half.x, half.y, 0.f},
+    };
+
+    // If top-left, shift quad so pivot is top-left
+    if (origin == Origin::TopLeft)
+    {
+      for (auto &v : local)
+        v += glm::vec3(half, 0.f);
+    }
+
+    // World transform (pivot is always position)
+    glm::mat4 transform =
+      glm::translate(glm::mat4(1.f), position) * glm::rotate(glm::mat4(1.f), glm::radians(rotationDeg), {0, 0, 1});
+
+    for (int i = 0; i < 4; i++)
+      out[i] = transform * glm::vec4(local[i], 1.f);
+  }
   void QuadBatcher::Init()
   {
     QuadVertex::Init();
@@ -91,119 +117,73 @@ namespace Base
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    const std::shared_ptr<Texture> texture = _defaultQuadTexture;
-    if (_currentTextureSlot >= _maxTextureSlots || _vertices.size() >= _maxVertices || _currentIndex >= _maxIndices)
+    if (_currentTextureSlot >= _maxTextureSlots || _vertices.size() + 4 > _maxVertices ||
+        _currentIndex + 6 > _maxIndices)
     {
       Flush();
       Begin();
     }
 
     uint32_t attachmentMask = 0;
-    for (auto attachment : attachments)
-    {
-      attachmentMask |= 1u << static_cast<uint8_t>(attachment);
-    }
+    for (auto a : attachments)
+      attachmentMask |= 1u << static_cast<uint8_t>(a);
 
-    glm::vec2 size = quad.GetSize();
+    glm::vec3 corners[4];
+    BuildQuadCorners(corners, position, quad.GetSize(), quad.GetOrigin(), rotation);
 
-    glm::vec3 corners[4] = {
-      {position.x, position.y, position.z},
-      {position.x + size.x, position.y, position.z},
-      {position.x + size.x, position.y + size.y, position.z},
-      {position.x, position.y + size.y, position.z},
-    };
+    _vertices.push_back({corners[0], {0, 0, 0}, color, attachmentMask});
+    _vertices.push_back({corners[1], {1, 0, 0}, color, attachmentMask});
+    _vertices.push_back({corners[2], {1, 1, 0}, color, attachmentMask});
+    _vertices.push_back({corners[3], {0, 1, 0}, color, attachmentMask});
 
-    glm::vec2 pivot(0);
-    switch (quad.GetOrigin())
-    {
-    case Origin::Center:
-      pivot = glm::vec2(position.x, position.y) + (size * 0.5f);
-      break;
-    case Origin::TopLeft:
-      pivot = position;
-      break;
-    }
-    glm::mat4 rotationMat = glm::translate(glm::mat4(1.0f), glm::vec3(pivot, 0.0f)) *
-                            glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1)) *
-                            glm::translate(glm::mat4(1.0f), glm::vec3(-pivot, 0.0f));
-    for (int i = 0; i < 4; i++)
-    {
-      corners[i] = rotationMat * glm::vec4(corners[i], 1.f);
-    }
-
-    _vertices.push_back({corners[0], {0.0f, 0.0f, 0.f}, color, attachmentMask});
-    _vertices.push_back({corners[1], {1.0f, 0.0f, 0.f}, color, attachmentMask});
-    _vertices.push_back({corners[2], {1.0f, 1.0f, 0.f}, color, attachmentMask});
-    _vertices.push_back({corners[3], {0.0f, 1.0f, 0.f}, color, attachmentMask});
     _currentIndex += 6;
   }
 
   void QuadBatcher::DrawQuad( //
-    const Sprite &sprite, glm::vec3 position, glm::vec2 size, float rotation,
+    const Sprite &sprite, glm::vec3 position, glm::vec2 size, float rotation, glm::vec4 color,
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
     if (!sprite.HasMaterial())
     {
       auto texture = sprite.GetTexture();
-      if (_currentTextureSlot >= _maxTextureSlots || _vertices.size() >= _maxVertices || _currentIndex >= _maxIndices)
+
+      if (_currentTextureSlot >= _maxTextureSlots || _vertices.size() + 4 > _maxVertices ||
+          _currentIndex + 6 > _maxIndices)
       {
         Flush();
         Begin();
       }
 
-      float slot = 0;
       uint32_t attachmentMask = 0;
-      for (auto attachment : attachments)
-      {
-        attachmentMask |= 1u << static_cast<uint8_t>(attachment);
-      }
+      for (auto a : attachments)
+        attachmentMask |= 1u << static_cast<uint8_t>(a);
 
+      float slot;
       if (auto it = std::ranges::find(_boundTextures, texture); it == _boundTextures.end())
       {
-        slot = _currentTextureSlot++;
-        _boundTextures[slot] = texture;
+        slot = (float)_currentTextureSlot;
+        _boundTextures[_currentTextureSlot++] = texture;
       }
       else
       {
-        slot = std::distance(_boundTextures.begin(), it);
+        slot = (float)std::distance(_boundTextures.begin(), it);
       }
 
-      glm::vec2 texCoordMin = sprite.GetSourcePos() / glm::vec2{texture->GetWidth(), texture->GetHeight()};
-      glm::vec2 texSize = sprite.GetSourceSize() / glm::vec2{texture->GetWidth(), texture->GetHeight()};
+      glm::vec2 texMin = sprite.GetSourcePos() / glm::vec2(texture->GetWidth(), texture->GetHeight());
+      glm::vec2 texSize = sprite.GetSourceSize() / glm::vec2(texture->GetWidth(), texture->GetHeight());
 
-      texCoordMin.y = 1.0f - texCoordMin.y - texSize.y;
+      texMin.y = 1.f - texMin.y - texSize.y;
+      glm::vec2 texMax = texMin + texSize;
 
-      glm::vec2 texCoordMax = texCoordMin + texSize;
-      glm::vec3 corners[4] = {
-        {position.x, position.y, position.z},
-        {position.x + size.x, position.y, position.z},
-        {position.x + size.x, position.y + size.y, position.z},
-        {position.x, position.y + size.y, position.z},
-      };
-      glm::vec2 pivot(0);
-      switch (sprite.GetOrigin())
-      {
-      case Origin::Center:
-        pivot = glm::vec2(position.x, position.y) + (size * 0.5f);
-        break;
-      case Origin::TopLeft:
-        pivot = position;
-        break;
-      }
-      glm::mat4 rotationMat = glm::translate(glm::mat4(1.0f), glm::vec3(pivot, 0.0f)) *
-                              glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1)) *
-                              glm::translate(glm::mat4(1.0f), glm::vec3(-pivot, 0.0f));
+      glm::vec3 corners[4];
+      BuildQuadCorners(corners, position, size, sprite.GetOrigin(), rotation);
 
-      for (int i = 0; i < 4; i++)
-      {
-        corners[i] = rotationMat * glm::vec4(corners[i], 1.f);
-      }
+      _vertices.push_back({corners[0], {texMin.x, texMax.y, slot}, color, attachmentMask});
+      _vertices.push_back({corners[1], {texMax.x, texMax.y, slot}, color, attachmentMask});
+      _vertices.push_back({corners[2], {texMax.x, texMin.y, slot}, color, attachmentMask});
+      _vertices.push_back({corners[3], {texMin.x, texMin.y, slot}, color, attachmentMask});
 
-      _vertices.push_back({corners[0], {texCoordMin.x, texCoordMax.y, slot}, {1.f, 1.f, 1.f, 1.f}, attachmentMask});
-      _vertices.push_back({corners[1], {texCoordMax.x, texCoordMax.y, slot}, {1.f, 1.f, 1.f, 1.f}, attachmentMask});
-      _vertices.push_back({corners[2], {texCoordMax.x, texCoordMin.y, slot}, {1.f, 1.f, 1.f, 1.f}, attachmentMask});
-      _vertices.push_back({corners[3], {texCoordMin.x, texCoordMin.y, slot}, {1.f, 1.f, 1.f, 1.f}, attachmentMask});
       _currentIndex += 6;
     }
     else
@@ -220,16 +200,14 @@ namespace Base
   )
   {
     auto mat = sprite.GetMaterial();
-    const auto &texture = sprite.GetTexture();
+    auto texture = sprite.GetTexture();
 
     mat.SetUniform("uProjView", _currentCamera->GetProjView());
     mat.Bind();
 
     uint32_t attachmentMask = 0;
-    for (auto attachment : attachments)
-    {
-      attachmentMask |= 1u << static_cast<uint8_t>(attachment);
-    }
+    for (auto a : attachments)
+      attachmentMask |= 1u << static_cast<uint8_t>(a);
 
     glm::vec2 texMin = sprite.GetSourcePos() / glm::vec2(texture->GetWidth(), texture->GetHeight());
     glm::vec2 texSize = sprite.GetSourceSize() / glm::vec2(texture->GetWidth(), texture->GetHeight());
@@ -237,43 +215,22 @@ namespace Base
     texMin.y = 1.f - texMin.y - texSize.y;
     glm::vec2 texMax = texMin + texSize;
 
-    glm::vec3 corners[4] = {
-      {position.x, position.y, position.z},
-      {position.x + size.x, position.y, position.z},
-      {position.x + size.x, position.y + size.y, position.z},
-      {position.x, position.y + size.y, position.z},
-    };
-    glm::vec2 pivot(0);
-    switch (sprite.GetOrigin())
-    {
-    case Origin::Center:
-      pivot = glm::vec2(position) + (size * 0.5f);
-    case Origin::TopLeft:
-      glm::vec2 pivot = position;
-      break;
-    }
-    glm::mat4 rotationMat = glm::translate(glm::mat4(1.0f), glm::vec3(pivot, 0.0f)) *
-                            glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1)) *
-                            glm::translate(glm::mat4(1.0f), glm::vec3(-pivot, 0.0f));
+    glm::vec3 corners[4];
+    BuildQuadCorners(corners, position, size, sprite.GetOrigin(), rotation);
 
-    for (int i = 0; i < 4; i++)
-    {
-      corners[i] = rotationMat * glm::vec4(corners[i], 1.f);
-    }
-
-    QuadVertex quadVerts[4] = {
-      {corners[0], {texMin.x, texMax.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
-      {corners[1], {texMax.x, texMax.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
-      {corners[2], {texMax.x, texMin.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
-      {corners[3], {texMin.x, texMin.y, 0.f}, {1, 1, 1, 1}, attachmentMask},
+    QuadVertex verts[4] = {
+      {corners[0], {texMin.x, texMax.y, 0}, {1, 1, 1, 1}, attachmentMask},
+      {corners[1], {texMax.x, texMax.y, 0}, {1, 1, 1, 1}, attachmentMask},
+      {corners[2], {texMax.x, texMin.y, 0}, {1, 1, 1, 1}, attachmentMask},
+      {corners[3], {texMin.x, texMin.y, 0}, {1, 1, 1, 1}, attachmentMask},
     };
 
     _materialVao->Bind();
-    _materialVbo->Update(sizeof(quadVerts), quadVerts);
-
+    _materialVbo->Update(sizeof(verts), verts);
     texture->Bind(0);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+
     mat.Unbind();
     _materialVao->Unbind();
   }
@@ -305,7 +262,7 @@ namespace Base
     {
       auto &com = std::get<SpriteCommand>(command);
       DrawQuad( //
-        com.SpriteToDraw, com.Position, com.Size, com.Rotation,
+        com.SpriteToDraw, com.Position, com.Size, com.Rotation, com.Color,
         com.Attachments //
       );
     }

@@ -56,6 +56,8 @@ namespace Base
     void ShakeCamera(const CameraShakeConfig &config);
     Vector2 GetScreenToWorld(Vector2 position) const;
     Vector2 GetWorldToScreen(Vector2 position) const;
+    float GetWorldToScreen(float distance) const;
+    float GetScreenToWorld(float distance) const;
     void BeginCamera();
     void EndCamera();
     void SetCameraPauseMask();

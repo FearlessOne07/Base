@@ -33,6 +33,7 @@ namespace Base
     bool _fullscreen = false;
     Vector2 _lastScreenSize = {0, 0};
     Vector2 _lastScreenPosition{0, 0};
+    std::chrono::steady_clock::time_point _lastFrameTime;
 
   private: // Systems
     AudioManager _audioMan = AudioManager();

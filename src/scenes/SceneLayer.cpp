@@ -140,6 +140,16 @@ namespace Base
     return _renderLayer->GetWorldToScreen(position);
   };
 
+  float SceneLayer::GetWorldToScreen(float distance) const
+  {
+    return _renderLayer->GetWorldToScreen(distance);
+  }
+
+  float SceneLayer::GetScreenToWorld(float distance) const
+  {
+    return _renderLayer->GetScreenToWorld(distance);
+  }
+
   void SceneLayer::BeginCamera()
   {
     _renderLayer->BeginCamera();

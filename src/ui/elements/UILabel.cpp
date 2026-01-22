@@ -112,13 +112,16 @@ namespace Base
 
   void UILabel::Render(float opacity)
   {
-    _textColor = {_textColor.r, _textColor.g, _textColor.b, _textColor.a * opacity};
-    if (!_isHidden)
+    if (!_isHidden && opacity > 0)
     {
-      Renderer::DrawText( //
-        _text, _layoutRect.GetPosition(), _textColor, _fontSize * _renderTransform.GetFontScale(),
-        _font.Get() //
-      );
+      Color color = {_textColor.r, _textColor.g, _textColor.b, _textColor.a * opacity * _renderTransform.GetOpacity()};
+      if (!_isHidden)
+      {
+        Renderer::DrawText( //
+          _text, _layoutRect.GetPosition(), color, _fontSize * _renderTransform.GetFontScale(),
+          _font.Get() //
+        );
+      }
     }
   }
 } // namespace Base

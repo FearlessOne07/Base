@@ -188,7 +188,7 @@ namespace Base
 
   void UIGrid::Render(float opacity)
   {
-    if (!_isHidden)
+    if (!_isHidden && opacity > 0)
     {
       if (_sprite)
       {
@@ -205,7 +205,7 @@ namespace Base
         {
           alpha = _renderTransform.GetOpacity() * opacity;
         }
-        Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), Base::Green);
+        // Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), Base::Green);
       }
 
       auto elements = std::ranges::reverse_view(_childElements);

@@ -47,7 +47,7 @@ namespace Base
       const std::unordered_set<FramebufferAttachmentIndex> &attachments //
     );
     void DrawQuad( //
-      const Sprite &sprite, glm::vec3 position, glm::vec2 size, float rotationDeg,
+      const Sprite &sprite, glm::vec3 position, glm::vec2 size, float rotation, Vector4 color,
       const std::unordered_set<FramebufferAttachmentIndex> &attachments //
     );
 

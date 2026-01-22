@@ -22,7 +22,6 @@ namespace Base
     struct KeyState
     {
       KeyPosition Position = KeyPosition::Up;
-      bool Handled = false;
     };
 
     std::array<KeyState, static_cast<size_t>(Key::Count)> _keyStates;

@@ -60,12 +60,14 @@ namespace Base
   }
 
   void Renderer::DrawSprite( //
-    const Sprite &sprite, glm::vec2 position, glm::vec2 size, float rotationDeg,
+    const Sprite &sprite, glm::vec2 position, glm::vec2 size, float rotationDeg, Color color,
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
+    Vector4 colorF = Vector4(color) / 255.f;
+    colorF = Math::Clamp(colorF, 0.f, 1.f);
     _instance->_renderQueue.push(
-      SpriteCommand{sprite, glm::vec3(position, _currentZIndex), size, rotationDeg, attachments} //
+      SpriteCommand{sprite, glm::vec3(position, _currentZIndex), size, colorF, rotationDeg, attachments} //
     );
     _currentZIndex += _Zstep;
   }
@@ -75,7 +77,7 @@ namespace Base
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    DrawSprite(sprite, position, size, 0.f, attachments);
+    DrawSprite(sprite, position, size, 0.f, {255, 255, 255, 255}, attachments);
   }
 
   void Renderer::DrawFramebuffer( //
@@ -83,8 +85,8 @@ namespace Base
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    DrawSprite(                                                                           //
-      {framebuffer->GetColorAttachment(attachmentToDraw)}, {0, 0}, size, 0.f, attachments //
+    DrawSprite(                                                                                                 //
+      {framebuffer->GetColorAttachment(attachmentToDraw)}, {0, 0}, size, 0.f, {255, 255, 255, 255}, attachments //
     );
   }
 
@@ -94,8 +96,8 @@ namespace Base
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    DrawSprite(                                                                             //
-      {framebuffer->GetColorAttachment(attachmentToDraw)}, position, size, 0.f, attachments //
+    DrawSprite(                                                                                                   //
+      {framebuffer->GetColorAttachment(attachmentToDraw)}, position, size, 0.f, {255, 255, 255, 255}, attachments //
     );
   }
 
@@ -105,8 +107,9 @@ namespace Base
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    DrawSprite(                                                                                       //
-      {framebuffer->GetColorAttachment(attachmentToDraw), material}, position, size, 0.f, attachments //
+    DrawSprite( //
+      {framebuffer->GetColorAttachment(attachmentToDraw), material}, position, size, 0.f, {255, 255, 255, 255},
+      attachments //
     );
   }
 
@@ -116,8 +119,9 @@ namespace Base
     const std::unordered_set<FramebufferAttachmentIndex> &attachments //
   )
   {
-    DrawSprite(                                                                                           //
-      Sprite(framebuffer->GetColorAttachment(attachmentToDraw), material), {0, 0}, size, 0.f, attachments //
+    DrawSprite( //
+      Sprite(framebuffer->GetColorAttachment(attachmentToDraw), material), {0, 0}, size, 0.f, {255, 255, 255, 255},
+      attachments //
     );
   }
 

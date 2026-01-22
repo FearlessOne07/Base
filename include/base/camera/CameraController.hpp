@@ -45,12 +45,15 @@ namespace Base
     void SetMode(CameraMode mode);
     void SetOffset(Vector2 offset);
     void SetTarget(Vector2 target);
+    void SetOriginPoint(Origin origin);
     void SetRotation(float rotation);
     void SetZoom(float zoom);
     void Shake(const CameraShakeConfig &config);
     void Update(float dt);
     Vector2 GetScreenToWorld(Vector2 position) const;
     Vector2 GetWorldToScreen(Vector2 position) const;
+    float GetScreenToWorld(float distance) const;
+    float GetWorldToScreen(float distance) const;
     float GetZoom() const;
     void Begin();
     void End();

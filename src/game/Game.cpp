@@ -126,6 +126,7 @@ namespace Base
         },
     };
     RenderContextSingleton::UpdateInstance(&rendercontext);
+    _lastFrameTime = std::chrono::steady_clock::now();
   }
 
   void Game::GameImpl::Run()
@@ -159,7 +160,11 @@ namespace Base
       RenderContextSingleton::UpdateInstance(&rendercontext);
 
       // Delta Time
-      float dt = 1.f / 60.f;
+      auto now = std::chrono::steady_clock::now();
+      std::chrono::duration<float> delta = now - _lastFrameTime;
+      _lastFrameTime = now;
+
+      float dt = delta.count();
 
       _inpMan.PollAndDispatch();
 
@@ -184,6 +189,7 @@ namespace Base
       _inpMan.PostUpdate();
       _entityManager.RemoveDeadEntities();
       _sceneManager.PostUpdate();
+      _audioMan.ProcessCleanup();
 
       // }
       // else

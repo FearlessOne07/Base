@@ -121,7 +121,7 @@ namespace Base
     // Composite Layers
     Renderer::BeginFramebuffer(_renderTexture);
     Renderer::Clear(_sceneManager->GetCurrentScene()->GetClearColor());
-    auto layersRev = std::views::reverse(_renderLayers.at(_currentScene));
+    auto &layersRev = _renderLayers.at(_currentScene);
     for (auto &layer : layers)
     {
       auto rd = RenderContextSingleton::GetInstance();
@@ -136,7 +136,8 @@ namespace Base
     Ptr<FrameBuffer> input = _renderTexture;
     Ptr<FrameBuffer> output = _ping;
 
-    if(!scenePost.Empty()){
+    if (!scenePost.Empty())
+    {
 
       for (auto &effect : scenePost)
       {
@@ -151,7 +152,6 @@ namespace Base
         Renderer::EndFramebuffer();
       }
     }
-
 
     auto rd = RenderContextSingleton::GetInstance();
 
