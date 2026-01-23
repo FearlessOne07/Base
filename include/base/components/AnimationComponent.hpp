@@ -1,5 +1,5 @@
 #include "base/components/Component.hpp"
-#include "raylib.h"
+#include "base/util/Type.hpp"
 #include <string>
 #include <unordered_map>
 #include <vector>

@@ -1,6 +1,5 @@
 #include "base/ui/UIElement.hpp"
 #include "base/util/Exception.hpp"
-#include "raylib.h"
 #include <cmath>
 #include <variant>
 
@@ -46,7 +45,7 @@ namespace Base
     float _columnGap = 0;
 
     // Color
-    Color _backgroundColor = BLANK;
+    Color _backgroundColor = {0, 0, 0, 0};
 
   public:
     void SetRowDefinitions(const std::vector<GridDefinition> &definitions);

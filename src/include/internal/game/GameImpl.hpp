@@ -5,9 +5,9 @@
 #include "base/game/GameConfig.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/particles/ParticleManager.hpp"
-#include "base/renderer/Renderer.hpp"
-#include "base/shaders/ShaderManager.hpp"
+#include "base/rendering/RenderingManager.hpp"
 #include "base/systems/SystemManager.hpp"
+#include "base/timing/TimeManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "internal/audio/AudioManager.hpp"
@@ -34,6 +34,7 @@ namespace Base
     bool _fullscreen = false;
     Vector2 _lastScreenSize = {0, 0};
     Vector2 _lastScreenPosition{0, 0};
+    std::chrono::steady_clock::time_point _lastFrameTime;
 
   private: // Systems
     AudioManager _audioMan = AudioManager();
@@ -43,19 +44,19 @@ namespace Base
     ParticleManager _particleManager = ParticleManager();
     UIManager _uiManager = UIManager();
     TweenManager _tweenManager = TweenManager();
-    ShaderManager _shaderManager = ShaderManager(_assetManager);
-    Renderer _renderer = Renderer(_shaderManager);
+    RenderingManager _renderingManager = RenderingManager();
     SystemManager _systemManager = SystemManager(_entityManager);
+    TimeManager _timeManager = TimeManager();
 
-    SceneManager _sceneManager = SceneManager({
-      _renderer,
+    SceneManager _sceneManager = SceneManager(EngineCtx{
+      _renderingManager,
       _entityManager,
-      _systemManager,
-      _assetManager,
       _particleManager,
+      _assetManager,
+      _systemManager,
       _uiManager,
       _tweenManager,
-      _shaderManager,
+      _timeManager,
     });
 
   private: // Methods
@@ -66,7 +67,7 @@ namespace Base
 
   public:
     GameImpl() = default;
-    void Init(GameConfig config);
+    void Init(const GameConfig &config);
     void RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene);
     void RegisterSystem(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem);
     void OnInputEvent(std::shared_ptr<InputEvent> event) override;

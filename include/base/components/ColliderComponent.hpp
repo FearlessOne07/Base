@@ -1,6 +1,6 @@
 #include "Component.hpp"
+#include "base/util/Type.hpp"
 #include <bitset>
-#include <raylib.h>
 
 namespace Base
 {
@@ -9,8 +9,8 @@ namespace Base
   public:
     enum struct Shape : uint8_t
     {
-      BOX = 0,
-      CIRCLE
+      Box = 0,
+      Circle
     };
 
   private:
@@ -20,7 +20,7 @@ namespace Base
 
   public:
     // Shape
-    Shape shape = Shape::BOX;
+    Shape shape = Shape::Box;
 
     // Position
     Vector2 positionOffset = {0, 0};

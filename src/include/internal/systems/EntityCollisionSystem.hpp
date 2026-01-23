@@ -1,5 +1,4 @@
 #include "base/systems/System.hpp"
-#include "raylib.h"
 #include <memory>
 
 namespace Base
@@ -16,6 +15,6 @@ namespace Base
     );
 
   public:
-    void Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> scene) override;
+    void Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<Scene> scene) override;
   };
 } // namespace Base

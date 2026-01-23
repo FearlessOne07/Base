@@ -1,6 +1,7 @@
 #include "base/ui/elements/UICanvas.hpp"
 #include "base/ui/UIElement.hpp"
-#include "base/util/Draw.hpp"
+#include "base/util/Type.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include <ranges>
 
 namespace Base
@@ -16,49 +17,49 @@ namespace Base
     float width = _desiredSize.width * _renderTransform.GetScaleX();
     float height = _desiredSize.height * _renderTransform.GetScaleY();
 
+    Vector2 finalPos = _layoutRect.GetPosition();
+    Vector2 finalSize = {width, height};
+
+    // Horizontal alignment
     switch (_horizontalAlignment)
     {
     case HAlign::Left:
       break;
     case HAlign::Center:
-      _layoutRect.x += (finalRect.width - width) / 2;
+      finalPos.x += (finalRect.GetSize().x - width) / 2;
       break;
     case HAlign::Right:
-      _layoutRect.x += finalRect.width - width;
+      finalPos.x += finalRect.GetSize().x - width;
       break;
     case HAlign::Stretch:
-      width = finalRect.width;
+      finalSize.x = finalRect.GetSize().x;
       break;
     }
 
+    // Vertical alignment
     switch (_verticalAlignment)
     {
     case VAlign::Top:
       break;
     case VAlign::Center:
-      _layoutRect.y += (finalRect.height - height) / 2;
+      finalPos.y += (finalRect.GetSize().y - height) / 2;
       break;
     case VAlign::Bottom:
-      _layoutRect.y += finalRect.height - height;
+      finalPos.y += finalRect.GetSize().y - height;
       break;
     case VAlign::Stretch:
-      height = finalRect.height;
+      finalSize.y = finalRect.GetSize().y;
       break;
     }
-
-    _layoutRect.width = std::min(width, finalRect.width);
-    _layoutRect.height = std::min(height, finalRect.height);
-
-    _layoutRect.x += _renderTransform.GetOffsetx();
-    _layoutRect.y += _renderTransform.GetOffsetY();
+    _layoutRect = {finalPos + Vector2{_renderTransform.GetOffsetx(), _renderTransform.GetOffsetY()}, finalSize};
 
     for (auto &child : _childElements)
     {
       Size childSize = child->GetDesiredSize();
       Vector2 childPos = child->GetPosition();
 
-      float childX = _layoutRect.x + childPos.x;
-      float childY = _layoutRect.y + childPos.y;
+      float childX = _layoutRect.GetPosition().x + childPos.x;
+      float childY = _layoutRect.GetPosition().y + childPos.y;
 
       HAlign childHAlign = child->GetHAlignment();
       VAlign childVAlign = child->GetVAlignment();
@@ -74,7 +75,7 @@ namespace Base
         childX -= childSize.width;
         break;
       case HAlign::Stretch:
-        childSize.width = _layoutRect.width;
+        childSize.width = _layoutRect.GetSize().x;
         break;
       }
 
@@ -89,11 +90,11 @@ namespace Base
         childY -= childSize.height;
         break;
       case VAlign::Stretch:
-        childSize.height = _layoutRect.height;
+        childSize.height = _layoutRect.GetSize().y;
         break;
       }
 
-      child->Arrange({childX, childY, childSize.width, childSize.height});
+      child->Arrange({{childX, childY}, {childSize.width, childSize.height}});
     }
   }
 
@@ -108,14 +109,14 @@ namespace Base
       }
       else if (_fillColor.a > 0) // Only draw if not transparent
       {
-        float alpha = _renderTransform.GetOpacity();
-        DrawRectangleBase( //
-          _layoutRect, {0, 0}, 0,
+        float alpha = _renderTransform.GetOpacity() * opacity;
+        Renderer::DrawQuad( //
+          _layoutRect, _layoutRect.GetPosition(),
           {
             _fillColor.r,
             _fillColor.g,
             _fillColor.b,
-            static_cast<unsigned char>(alpha * opacity * 255),
+            _fillColor.a * alpha,
           } //
         );
       }

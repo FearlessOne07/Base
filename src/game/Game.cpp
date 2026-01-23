@@ -4,12 +4,12 @@
 #include "base/input/Events/KeyEvent.hpp"
 #include "base/input/InputEvent.hpp"
 #include "base/input/Keys.hpp"
-#include "base/renderer/RenderContextSingleton.hpp"
+#include "base/rendering/RenderContextSingleton.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/systems/System.hpp"
 #include "base/util/Exception.hpp"
 #include "internal/game/GameImpl.hpp"
-#include "raylib.h"
+#include "internal/rendering/Renderer.hpp"
 #include <algorithm>
 #include <memory>
 #include <utility>
@@ -20,38 +20,23 @@
 
 extern "C"
 {
-  _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
-  _declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+  __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+  __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif
 // TODO: Maybe make a base Manager class for _currentScene functionality
 namespace Base
 {
-  void Game::GameImpl::Init(GameConfig config)
+  void Game::GameImpl::Init(const GameConfig &config)
   {
+    // Init TimeManager
+    _timeManager.Init();
+
     // Init Audio
     _audioMan.Init();
     _audioMan.SetAssetManager(&_assetManager);
 
-    // Initialize Raylib
-    if (config.ResizableWindow)
-    {
-      SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    }
-    if (config.Vsync)
-    {
-      SetConfigFlags(FLAG_VSYNC_HINT);
-    }
-    InitWindow(config.MinWindowSize.x, config.MinWindowSize.y, config.Title);
-    SetExitKey(0);
-    SetWindowMinSize(1280, 720);
-    if (config.TargetFps > 0)
-    {
-      SetTargetFPS(config.TargetFps);
-    }
-
-    // Init Renderer
-    _renderer.Init(config.Resolution.x, config.Resolution.y);
+    _renderingManager.Init(config);
 
     // Initialise Render Texture
     _gameWidth = static_cast<float>(config.Resolution.x);
@@ -67,10 +52,7 @@ namespace Base
     _inpMan.Init();
     _inpMan.RegisterListener(*this);
 
-    // Initialise Shader Manager
-    _shaderManager.Init();
-
-    _renderer.SetSceneManager(_sceneManager);
+    _renderingManager.SetSceneManager(_sceneManager);
     _systemManager.SetSceneManager(_sceneManager);
 
     // Load Global Assets
@@ -79,37 +61,36 @@ namespace Base
     {
       for (const auto &[type, pathList] : config.GlobalAssets)
       {
-
         switch (type)
         {
         case AssetType::Texture:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadGlobalAsset<Texture>(path);
+            _assetManager.LoadTexture(path, true);
           }
           break;
         case AssetType::Sound:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadGlobalAsset<Sound>(path);
+            _assetManager.LoadSound(path, true);
           }
           break;
         case AssetType::AudioStream:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadGlobalAsset<AudioStream>(path);
+            _assetManager.LoadAudioStream(path, true);
           }
           break;
         case AssetType::Font:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadGlobalAsset<BaseFont>(path);
+            _assetManager.LoadFont(path, true);
           }
           break;
         case AssetType::Shader:
           for (const auto &path : pathList)
           {
-            _assetManager.LoadGlobalAsset<BaseShader>(path);
+            _assetManager.LoadShader(path, true);
           }
           break;
         default:
@@ -125,8 +106,8 @@ namespace Base
     _tweenManager.Init();
 
     // Initialize render context
-    auto windowWidth = static_cast<float>(GetScreenWidth());
-    auto windowHeight = static_cast<float>(GetScreenHeight());
+    auto windowWidth = static_cast<float>(Renderer::GetWindowSize().x);
+    auto windowHeight = static_cast<float>(Renderer::GetWindowSize().y);
     float scale = std::min( //
       (float)windowWidth / _gameWidth,
       (float)windowHeight / _gameHeight //
@@ -142,22 +123,25 @@ namespace Base
       .scale = scale,
       .mousePosition =
         {
-          (GetMousePosition().x - marginX) / scale,
-          (GetMousePosition().y - marginY) / scale,
+          (Renderer::GetWindowMousePosition().x - marginX) / scale,
+          (Renderer::GetWindowMousePosition().y - marginY) / scale,
         },
     };
     RenderContextSingleton::UpdateInstance(&rendercontext);
+    _lastFrameTime = std::chrono::steady_clock::now();
   }
 
   void Game::GameImpl::Run()
   {
     // Loop Wule the window is Open
-    while (!WindowShouldClose() && _running)
+    while (!Renderer::IsWindowClosed() && _running)
     {
-      if (!IsWindowMinimized())
+      Renderer::PollWindow();
+
+      if (!Renderer::IsWindowMinimized())
       {
-        float windowWidth = static_cast<float>(GetRenderWidth());
-        float windowHeight = static_cast<float>(GetRenderHeight());
+        auto windowWidth = static_cast<float>(Renderer::GetWindowSize().x);
+        auto windowHeight = static_cast<float>(Renderer::GetWindowSize().y);
 
         float scale = std::min(             //
           (float)windowWidth / _gameWidth,  //
@@ -172,21 +156,25 @@ namespace Base
           .marginX = (float)marginX,
           .marginY = (float)marginY,
           .scale = scale,
-          .mousePosition = {(GetMousePosition().x - marginX) / scale, (GetMousePosition().y - marginY) / scale},
+          .mousePosition =
+            {
+              (Renderer::GetWindowMousePosition().x - marginX) / scale,
+              (Renderer::GetWindowMousePosition().y - marginY) / scale,
+            },
         };
         RenderContextSingleton::UpdateInstance(&rendercontext);
 
         // Delta Time
-        float dt = GetFrameTime();
 
-        // Update Managers
+        float dt = _timeManager.GetDeltaTime();
+
         _inpMan.PollAndDispatch();
 
         _sceneManager.Update(dt);
 
         _uiManager.Update(dt);
 
-        _renderer.Update(dt);
+        _renderingManager.Update(dt);
 
         _systemManager.Update(dt);
 
@@ -194,22 +182,16 @@ namespace Base
 
         _tweenManager.Update(dt);
 
-        _shaderManager.Update(dt);
-
         // Render
-        _renderer.RenderLayers();
-        _renderer.CompositeLayers();
-        _renderer.Render();
+        _renderingManager.Render();
+
+        Renderer::SwapWindowBuffers();
 
         // Post Update
         _inpMan.PostUpdate();
         _entityManager.RemoveDeadEntities();
         _sceneManager.PostUpdate();
-        _audioMan.ProcessCleanup(); // Call this regularly
-      }
-      else
-      {
-        PollInputEvents();
+        _audioMan.ProcessCleanup();
       }
     }
 
@@ -221,9 +203,8 @@ namespace Base
   {
     // Deinitilize Systems
     _audioMan.DeInit();
-    _renderer.DeInit();
     _assetManager.Deinit();
-    CloseWindow();
+    _renderingManager.DeInit();
   }
 
   void Game::GameImpl::Quit()
@@ -250,7 +231,6 @@ namespace Base
     {
       if (keyEvent->Key == Key::F11 && keyEvent->action == InputEvent::Action::Pressed)
       {
-        ToggleBorderlessWindowed();
         event->isHandled = true;
         return;
       }
@@ -260,40 +240,6 @@ namespace Base
 
   void Game::GameImpl::ToggleFullscreenBorderless()
   {
-    int monitor = GetCurrentMonitor();
-    Vector2 monitorPos = GetMonitorPosition(monitor);
-    int monitorWidth = GetMonitorWidth(monitor);
-    int monitorHeight = GetMonitorHeight(monitor);
-
-    if (!_fullscreen)
-    {
-      _lastScreenSize = {(float)GetScreenWidth(), (float)GetScreenHeight()};
-      _lastScreenPosition = {(float)GetWindowPosition().x, (float)GetWindowPosition().y};
-
-      // Clear conflicting window states
-      ClearWindowState(FLAG_WINDOW_MAXIMIZED);
-      ClearWindowState(FLAG_WINDOW_MINIMIZED);
-
-      // Set undecorated + topmost
-      SetWindowState(FLAG_WINDOW_UNDECORATED);
-      SetWindowState(FLAG_WINDOW_TOPMOST);
-
-      SetWindowSize(monitorWidth, monitorHeight);
-      SetWindowPosition((int)monitorPos.x, (int)monitorPos.y);
-
-      _fullscreen = true;
-    }
-    else
-    {
-      // Restore window size and position
-      SetWindowSize((int)_lastScreenSize.x, (int)_lastScreenSize.y);
-      SetWindowPosition((int)_lastScreenPosition.x, (int)_lastScreenPosition.y);
-
-      ClearWindowState(FLAG_WINDOW_UNDECORATED);
-      ClearWindowState(FLAG_WINDOW_TOPMOST);
-
-      _fullscreen = false;
-    }
   }
 
   // Game Class

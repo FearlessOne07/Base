@@ -1,16 +1,15 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
+#include "base/scenes/SceneLayer.hpp"
 #include "base/ui/UIElement.hpp"
 #include "base/ui/elements/UIPanel.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Ref.hpp"
-#include "raylib.h"
 #include <memory>
 #include <type_traits>
 
 namespace Base
 {
-  class SceneLayer;
   class UILayer
   {
   private:

@@ -1,5 +1,5 @@
 #include "internal/audio/SoundInstance.hpp"
-#include "raylib.h"
+#include "glm/ext/scalar_constants.hpp"
 #include <algorithm>
 #include <cmath>
 
@@ -54,7 +54,7 @@ namespace Base
       float right = frame[1] * _volume;
 
       // Apply pan
-      float angle = _pan * (PI / 2.f);
+      float angle = _pan * (glm::pi<float>() / 2.f);
       float leftPan = std::cos(angle);
       float rightPan = std::sin(angle);
 

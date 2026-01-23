@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project("base" "CXX")
+project("base" LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,19 +23,17 @@ set(HEADER_DEST_DIR "${ROOT_BASE_DIR}/include")
 
 message(STATUS "Base headers location ${ROOT_BASE_DIR}/include")
 
-### RAYLIB OPTIONS
+### GLFW OPTIONS
 # Enable Wayland backend in GLFW
 set(GLFW_BUILD_WAYLAND ON CACHE BOOL "Build GLFW with Wayland support")
 
 # Disable X11 backend in GLFW
 set(GLFW_BUILD_X11 OFF CACHE BOOL "Do not build GLFW with X11 support")
 
-# Set the graphics API (assuming this is a custom variable)
-set(GRAPHICS GRAPHICS_API_OPENGL_43 CACHE STRING "Select the graphics API")
-
-# Disable RAylib Audio Support
-set(CUSTOMIZE_BUILD ON CACHE BOOL "Allow Build Customizatio")
-set(SUPPORT_MODULE_RAUDIO OFF CACHE BOOL "Disable audio device support in raylib")
+# Opengl Stuff
+add_subdirectory("./vendor/glfw/")
+add_subdirectory("./vendor/glad/")
+add_subdirectory("./vendor/glm/")
 
 ## LIBSAMPLE RATE OPTIONS
 set(BUILD_TESTING OFF CACHE  BOOL "Remove libsamplerate tests")
@@ -45,14 +43,35 @@ set(MINIAUDIO_NO_EXTRA_NODES ON CACHE BOOL "Do not build extra node graph nodes"
 set(MINIAUDIO_NO_LIBVORBIS ON CACHE BOOL "Disable miniaudio_libvorbis")
 set(MINIAUDIO_NO_LIBOPUS ON CACHE BOOL "Disable miniaudio_libopus")
 
-add_subdirectory(
-  "./vendor/raylib/"
+if(NOT WIN32)
+set(MSDFGEN_USE_VCPKG OFF CACHE BOOL "" FORCE)
+set(MSDF_ATLAS_USE_VCPKG OFF CACHE BOOL "" FORCE)
+endif()
+
+set(MSDFGEN_CORE_ONLY ON CACHE BOOL "" FORCE)
+set(MSDFGEN_DISABLE_PNG ON CACHE BOOL "" FORCE)
+set(MSDFGEN_BUILD_EXT OFF CACHE BOOL "" FORCE)      # so you get FreeType/PNG/TinyXML2 helpers
+set(MSDFGEN_BUILD_LIBRARY ON CACHE BOOL "" FORCE)  # build library
+set(MSDFGEN_BUILD_EXE OFF CACHE BOOL "" FORCE)     # don’t need CLI tool
+set(MSDF_ATLAS_USE_SKIA OFF CACHE BOOL "" FORCE)
+
+add_subdirectory("./vendor/freetype/")
+
+# Make msdf-atlas-gen see FreeType
+if (TARGET freetype AND NOT TARGET Freetype::Freetype)
+  add_library(Freetype::Freetype ALIAS freetype)
+endif()
+add_subdirectory("./vendor/msdf-atlas-gen")
+target_include_directories( msdf-atlas-gen
+  PUBLIC
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/"
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/msdfgen/"
 )
+
 
 add_subdirectory(
   "./vendor/portaudio/"
 )
-
 
 add_subdirectory(
   "./vendor/miniaudio"

@@ -1,7 +1,8 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
-#include "base/textures/Texture.hpp"
-#include "raylib.h"
+#include "base/assets/Texture.hpp"
+#include "base/rendering/Quad.hpp"
+#include "base/util/Type.hpp"
 namespace Base
 {
   class NinePatchSprite
@@ -26,6 +27,7 @@ namespace Base
       const AssetHandle<Texture> &texture, Border border, Vector2 sourcePos, Vector2 sourceSize,
       float borderScaleMultiplier = 2.f //
     );
+
     NinePatchSprite() = default;
     void Draw(const Rectangle &dest, unsigned char alpha);
     void SetSourcePos(const Vector2 &pos);

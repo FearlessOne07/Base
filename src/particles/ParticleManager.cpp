@@ -1,15 +1,14 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/particles/ParticleEmitter.hpp"
+#include "base/rendering/Origin.hpp"
 #include "base/scenes/Scene.hpp"
-#include "base/util/Draw.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Ref.hpp"
 #include "internal/particles/ParticleManagerImpl.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include "internal/scene/SceneManager.hpp"
-#include "raylib.h"
 #include <algorithm>
 #include <random>
-#include <raymath.h>
 
 namespace Base
 {
@@ -46,7 +45,7 @@ namespace Base
   void ParticleManager::ParticleManagerImpl::Init(Ref<SceneManager> sceneManager)
   {
     _sceneManager = sceneManager;
-    _randomGenerator = std::mt19937_64(_randomGenerator());
+    _randomGenerator = std::mt19937_64(_randomDevice());
     _activeParticles.reserve(MAX_PARTICLES);
   }
 
@@ -237,7 +236,7 @@ namespace Base
       float lifePoint = 1.f - (particle->lifeTimer / particle->lifeTime);
       lifePoint = particle->easingFunction(lifePoint);
       // Position
-      particle->position += particle->direction * Lerp(particle->startSpeed, particle->endSpeed, lifePoint) * dt;
+      particle->position += particle->direction * glm::mix(particle->startSpeed, particle->endSpeed, lifePoint) * dt;
       // Rotation
       particle->rotation += particle->rotationSpeed * dt;
 
@@ -261,10 +260,10 @@ namespace Base
 
       // Color
       Color color;
-      color.r = static_cast<unsigned char>(Lerp(particle->startColor.r, particle->endColor.r, lifePoint));
-      color.g = static_cast<unsigned char>(Lerp(particle->startColor.g, particle->endColor.g, lifePoint));
-      color.b = static_cast<unsigned char>(Lerp(particle->startColor.b, particle->endColor.b, lifePoint));
-      color.a = static_cast<unsigned char>(Lerp(particle->startColor.a, particle->endColor.a, lifePoint));
+      color.r = static_cast<unsigned char>(glm::mix(particle->startColor.r, particle->endColor.r, lifePoint));
+      color.g = static_cast<unsigned char>(glm::mix(particle->startColor.g, particle->endColor.g, lifePoint));
+      color.b = static_cast<unsigned char>(glm::mix(particle->startColor.b, particle->endColor.b, lifePoint));
+      color.a = static_cast<unsigned char>(glm::mix(particle->startColor.a, particle->endColor.a, lifePoint));
 
       // Size
       if (                                                            //
@@ -272,14 +271,14 @@ namespace Base
         particle->shape == ParticleEmitter::ParticleShape::Circle     //
       )
       {
-        float radius = Lerp(particle->startRadius, particle->endRadius, lifePoint);
+        float radius = glm::mix(particle->startRadius, particle->endRadius, lifePoint);
         if (particle->shape == ParticleEmitter::ParticleShape::Polygon)
         {
-          DrawPoly(particle->position, particle->sideNumber, radius, particle->rotation, color);
+          // DrawPoly(particle->position, particle->sideNumber, radius, particle->rotation, color);
         }
         else
         {
-          DrawCircleV(particle->position, radius, color);
+          Renderer::DrawCircle({radius}, particle->position, color);
         }
       }
       else if ( //
@@ -287,24 +286,15 @@ namespace Base
         particle->shape == ParticleEmitter::ParticleShape::Texture //
       )
       {
-        Vector2 size = Vector2Lerp(particle->startSize, particle->endSize, lifePoint);
+        Vector2 size = glm::mix(particle->startSize, particle->endSize, lifePoint);
 
         if (particle->shape == ParticleEmitter::ParticleShape::Rect)
         {
-          DrawRectangleBase( //
-            {
-              particle->position.x,
-              particle->position.y,
-              size.x,
-              size.y,
-            },
-            {size.x / 2, size.y / 2}, particle->rotation, color //
-          );
+          Renderer::DrawQuad({size, Origin::Center}, particle->position, color, particle->rotation);
         }
         else if (particle->shape == ParticleEmitter::ParticleShape::Texture)
         {
-          particle->sprite.SetTargetSize(size);
-          particle->sprite.Render(particle->position, particle->rotation, color);
+          Renderer::DrawSprite(particle->sprite, particle->position, size, particle->rotation, color);
         }
       }
     }

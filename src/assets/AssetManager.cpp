@@ -1,24 +1,21 @@
 #include "base/assets/AssetManager.hpp"
 #include "base/assets/AssetHandle.hpp"
-#include "base/audio/AudioStream.hpp"
-#include "base/audio/Sound.hpp"
+#include "base/assets/BaseAsset.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
 #include "base/scenes/signals/ScenePushedSignal.hpp"
 #include "base/scenes/signals/SceneResumedSignal.hpp"
-#include "base/shaders/Shader.hpp"
 #include "base/signals/SignalBus.hpp"
-#include "base/textures/Font.hpp"
-#include "base/textures/Texture.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
+#include <cassert>
 #include <filesystem>
 #include <memory>
 #include <miniaudio.h>
-#include <raylib.h>
 #include <sstream>
-#include <string.h>
+#include <variant>
 #include <vector>
 
+namespace fs = std::filesystem;
 namespace Base
 {
   void AssetManager::Init()
@@ -50,17 +47,17 @@ namespace Base
       {
         for (auto &[name, asset] : assets)
         {
-          if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))
+          if (auto it = std::dynamic_pointer_cast<Texture>(asset.asset))
           {
-            UnloadTexture(*it->GetRaylibTexture());
+            Texture::Destroy(it);
           }
           else if (auto it = std::dynamic_pointer_cast<Shader>(asset.asset))
           {
-            UnloadShader(*it);
+            Shader::Delete(it);
           }
-          else if (auto it = std::dynamic_pointer_cast<BaseFont>(asset.asset))
+          else if (auto it = std::dynamic_pointer_cast<Font>(asset.asset))
           {
-            UnloadFont(*it->GetRaylibFont());
+            Font::Destroy(it);
           }
         }
       }
@@ -70,17 +67,17 @@ namespace Base
     // Unload Global Assets
     for (auto &[name, asset] : _globalAssets)
     {
-      if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))
+      if (auto it = std::dynamic_pointer_cast<Texture>(asset.asset))
       {
-        UnloadTexture(*it->GetRaylibTexture());
+        Texture::Destroy(it);
       }
       else if (auto it = std::dynamic_pointer_cast<Shader>(asset.asset))
       {
-        UnloadShader(*it);
+        Shader::Delete(it);
       }
-      else if (auto it = std::dynamic_pointer_cast<BaseFont>(asset.asset))
+      else if (auto it = std::dynamic_pointer_cast<Font>(asset.asset))
       {
-        UnloadFont(*it->GetRaylibFont());
+        Font::Destroy(it);
       }
     }
 
@@ -110,23 +107,23 @@ namespace Base
     // Unload a scene's if it is being popped
     for (auto &[name, asset] : _sceneAssets[scene])
     {
-      if (auto it = std::dynamic_pointer_cast<Base::Texture>(asset.asset))
+      if (auto it = std::dynamic_pointer_cast<Texture>(asset.asset))
       {
-        UnloadTexture(*it->GetRaylibTexture());
+        Texture::Destroy(it);
       }
       else if (auto it = std::dynamic_pointer_cast<Shader>(asset.asset))
       {
-        UnloadShader(*it);
+        Shader::Delete(it);
       }
-      else if (auto it = std::dynamic_pointer_cast<BaseFont>(asset.asset))
+      else if (auto it = std::dynamic_pointer_cast<Font>(asset.asset))
       {
-        UnloadFont(*it->GetRaylibFont());
+        Font::Destroy(it);
       }
     }
     _sceneAssets.erase(scene);
   }
 
-  std::shared_ptr<Sound> AssetManager::LoadSound(const std::filesystem::path &path)
+  std::shared_ptr<Sound> AssetManager::_loadSound(const std::filesystem::path &path)
   {
     ma_result result;
     ma_decoder decoder;
@@ -165,7 +162,7 @@ namespace Base
     return std::make_shared<Sound>(data, frameCount, _sampleRate);
   }
 
-  std::shared_ptr<AudioStream> AssetManager::LoadAudioStream(const std::filesystem::path &path)
+  std::shared_ptr<AudioStream> AssetManager::_loadAudioStream(const std::filesystem::path &path)
   {
     ma_result result;
     ma_decoder decoder;
@@ -184,8 +181,14 @@ namespace Base
     return std::make_shared<AudioStream>(decoder, decoder.outputSampleRate, _sampleRate);
   }
 
-  template <> AssetHandle<Texture> AssetManager::LoadAsset<Texture>(const fs::path &path, bool global)
+  AssetHandle<Texture> AssetManager::LoadTexture(const AssetPath &assetPath, bool global)
   {
+    if (!std::holds_alternative<SinglePath>(assetPath))
+    {
+      THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Texture Asset\n");
+    }
+
+    auto &path = std::get<SinglePath>(assetPath);
     if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Strings::ToLower(path.stem().string());
@@ -195,35 +198,9 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          Image image = LoadImage(fullpath.c_str()); // Load from disk (CPU)
-          Color *pixels = LoadImageColors(image);    // Access raw pixel data
-
-          // Premultiply alpha
-          for (int i = 0; i < image.width * image.height; i++)
-          {
-            if (pixels[i].a == 0)
-            {
-              pixels[i].r = 0;
-              pixels[i].g = 0;
-              pixels[i].b = 0;
-            }
-            else
-            {
-              pixels[i].r = (pixels[i].r * pixels[i].a) / 255;
-              pixels[i].g = (pixels[i].g * pixels[i].a) / 255;
-              pixels[i].b = (pixels[i].b * pixels[i].a) / 255;
-            }
-          }
-
-          // Copy modified pixel data back to the image
-          memcpy(image.data, pixels, image.width * image.height * sizeof(Color));
-
-          auto texture = std::make_shared<Texture>(LoadTextureFromImage(image));
+          auto texture = Texture::Create(fullpath);
 
           // Cleanup
-          UnloadImage(image);
-          UnloadImageColors(pixels);
-
           AssetHandle<Texture> handle(texture);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(texture)};
           return handle;
@@ -241,35 +218,7 @@ namespace Base
         {
           if (_sceneAssets.at(_currentScene).find(name) == _sceneAssets.at(_currentScene).end())
           {
-            Image image = LoadImage(fullpath.c_str()); // Load from disk (CPU)
-            Color *pixels = LoadImageColors(image);    // Access raw pixel data
-
-            // Premultiply alpha
-            for (int i = 0; i < image.width * image.height; i++)
-            {
-              if (pixels[i].a == 0)
-              {
-                pixels[i].r = 0;
-                pixels[i].g = 0;
-                pixels[i].b = 0;
-              }
-              else
-              {
-                pixels[i].r = (pixels[i].r * pixels[i].a) / 255;
-                pixels[i].g = (pixels[i].g * pixels[i].a) / 255;
-                pixels[i].b = (pixels[i].b * pixels[i].a) / 255;
-              }
-            }
-
-            // Copy modified pixel data back to the image
-            memcpy(image.data, pixels, image.width * image.height * sizeof(Color));
-
-            auto texture = std::make_shared<Texture>(LoadTextureFromImage(image));
-
-            // Cleanup
-            UnloadImage(image);
-            UnloadImageColors(pixels);
-
+            auto texture = Texture::Create(fullpath);
             AssetHandle<Texture> handle(texture);
             _sceneAssets.at(_currentScene)[name] = {
               static_cast<AssetHandle<void>>(handle),
@@ -298,19 +247,43 @@ namespace Base
     }
   }
 
-  template <> AssetHandle<BaseShader> AssetManager::LoadAsset<BaseShader>(const fs::path &path, bool global)
+  AssetHandle<Shader> AssetManager::LoadShader( //
+    const AssetPath &path, bool global          //
+  )
   {
-    if (fs::exists(Strings::Strip(path.string())))
+    if (!std::holds_alternative<ShaderPath>(path))
     {
-      std::string name = Base::Strings::ToLower(path.stem().string());
-      std::string fullpath = Strings::Strip(path.string());
+      THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Shader Asset\n");
+    }
+
+    auto shaderPath = std::get<ShaderPath>(path);
+    auto &fragment = std::get<1>(shaderPath);
+    auto &vertex = std::get<0>(shaderPath);
+    auto &type = std::get<2>(shaderPath);
+
+    bool vert = fs::exists(Strings::Strip(vertex.string()));
+    bool frag = fs::exists(Strings::Strip(fragment.string()));
+    if (vert || frag)
+    {
+      std::string name;
+      if (frag)
+      {
+        name = Base::Strings::ToLower(fragment.stem().string());
+      }
+      else if (vert)
+      {
+        name = Base::Strings::ToLower(vertex.stem().string());
+      }
+
+      std::string fullVertPath = Strings::Strip(vertex.string());
+      std::string fullFragPath = Strings::Strip(fragment.string());
 
       if (global)
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto shader = std::make_shared<BaseShader>(LoadShader(nullptr, fullpath.c_str()));
-          AssetHandle<BaseShader> handle(shader);
+          auto shader = Shader::Create(fullVertPath, fullFragPath, type);
+          AssetHandle<Shader> handle(shader);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(shader)};
           return handle;
         }
@@ -327,8 +300,8 @@ namespace Base
         {
           if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto shader = std::make_shared<BaseShader>(LoadShader(nullptr, fullpath.c_str()));
-            AssetHandle<BaseShader> handle(shader);
+            auto shader = Shader::Create(fullVertPath, fullFragPath, type);
+            AssetHandle<Shader> handle(shader);
             _sceneAssets[_currentScene][name] = {
               static_cast<AssetHandle<void>>(handle),
               static_pointer_cast<BaseAsset>(shader),
@@ -351,13 +324,20 @@ namespace Base
     else
     {
       std::stringstream error;
-      error << "Cannot find shader file '" << path.string() << "'";
+      error << "Cannot find Vertex shader file '" << vertex.string() << "' or Fragment Shader file '"
+            << fragment.string() << "\n";
       THROW_BASE_RUNTIME_ERROR(error.str());
     }
   }
 
-  template <> AssetHandle<Sound> AssetManager::LoadAsset<Sound>(const fs::path &path, bool global)
+  AssetHandle<Sound> AssetManager::LoadSound(const AssetPath &assetPath, bool global)
   {
+    if (!std::holds_alternative<SinglePath>(assetPath))
+    {
+      THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Shader Asset\n");
+    }
+    auto &path = std::get<SinglePath>(assetPath);
+
     if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
@@ -367,7 +347,7 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto sound = LoadSound(fullpath.c_str());
+          auto sound = _loadSound(fullpath.c_str());
           AssetHandle<Sound> handle(sound);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(sound)};
           return handle;
@@ -385,7 +365,7 @@ namespace Base
         {
           if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto sound = LoadSound(fullpath.c_str());
+            auto sound = _loadSound(fullpath.c_str());
             AssetHandle<Sound> handle(sound);
             _sceneAssets[_currentScene][name] = {
               static_cast<AssetHandle<void>>(handle),
@@ -414,8 +394,15 @@ namespace Base
     }
   }
 
-  template <> AssetHandle<AudioStream> AssetManager::LoadAsset<AudioStream>(const fs::path &path, bool global)
+  AssetHandle<AudioStream> AssetManager::LoadAudioStream(const AssetPath &assetPath, bool global)
   {
+    if (!std::holds_alternative<SinglePath>(assetPath))
+    {
+      THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Shader Asset\n");
+    }
+
+    auto &path = std::get<SinglePath>(assetPath);
+
     if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
@@ -425,7 +412,7 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto stream = LoadAudioStream(fullpath.c_str());
+          auto stream = _loadAudioStream(fullpath.c_str());
           AssetHandle<AudioStream> handle(stream);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(stream)};
           return handle;
@@ -443,7 +430,7 @@ namespace Base
         {
           if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto stream = LoadAudioStream(fullpath.c_str());
+            auto stream = _loadAudioStream(fullpath.c_str());
             AssetHandle<AudioStream> handle(stream);
             _sceneAssets[_currentScene][name] = {
               static_cast<AssetHandle<void>>(handle),
@@ -472,8 +459,14 @@ namespace Base
     }
   }
 
-  template <> AssetHandle<BaseFont> AssetManager::LoadAsset<BaseFont>(const fs::path &path, bool global)
+  AssetHandle<Font> AssetManager::LoadFont(const AssetPath &assetPath, bool global)
   {
+    if (!std::holds_alternative<SinglePath>(assetPath))
+    {
+      THROW_BASE_RUNTIME_ERROR("Invalid Asset Path For Font Asset\n");
+    }
+
+    auto &path = std::get<SinglePath>(assetPath);
     if (fs::exists(Strings::Strip(path.string())))
     {
       std::string name = Base::Strings::ToLower(path.stem().string());
@@ -483,8 +476,8 @@ namespace Base
       {
         if (_globalAssets.find(name) == _globalAssets.end())
         {
-          auto font = std::make_shared<BaseFont>(LoadFontEx(fullpath.c_str(), 512, nullptr, 0));
-          AssetHandle<BaseFont> handle(font);
+          auto font = Font::Create(fullpath);
+          AssetHandle<Font> handle(font);
           _globalAssets[name] = {static_cast<AssetHandle<void>>(handle), std::static_pointer_cast<BaseAsset>(font)};
           return handle;
         }
@@ -501,8 +494,8 @@ namespace Base
         {
           if (_sceneAssets[_currentScene].find(name) == _sceneAssets.at(_currentScene).end())
           {
-            auto font = std::make_shared<BaseFont>(LoadFontEx(fullpath.c_str(), 512, nullptr, 0));
-            AssetHandle<BaseFont> handle(font);
+            auto font = Font::Create(fullpath.c_str());
+            AssetHandle<Font> handle(font);
             _sceneAssets[_currentScene][name] = {
               static_cast<AssetHandle<void>>(handle),
               static_pointer_cast<BaseAsset>(font),

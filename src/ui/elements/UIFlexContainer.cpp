@@ -1,6 +1,6 @@
 #include "base/ui/elements/UIFlexContainer.hpp"
 #include "base/ui/UIElement.hpp"
-#include "base/util/Draw.hpp"
+#include "internal/rendering/Renderer.hpp"
 #include <ranges>
 
 namespace Base
@@ -75,55 +75,54 @@ namespace Base
       _horizontalAlignment = HAlign::Stretch;
     }
 
+    Vector2 finalPos = _layoutRect.GetPosition();
+    Vector2 finalSize = {width, height};
+
     // Horizontal alignment
     switch (_horizontalAlignment)
     {
     case HAlign::Left:
       break;
     case HAlign::Center:
-      _layoutRect.x += (finalRect.width - width) / 2;
+      finalPos.x += (finalRect.GetSize().x - width) / 2;
       break;
     case HAlign::Right:
-      _layoutRect.x += finalRect.width - width;
+      finalPos.x += finalRect.GetSize().x - width;
       break;
     case HAlign::Stretch:
-      width = finalRect.width;
+      finalSize.x = finalRect.GetSize().x;
       break;
     }
+
     // Vertical alignment
     switch (_verticalAlignment)
     {
     case VAlign::Top:
       break;
     case VAlign::Center:
-      _layoutRect.y += (finalRect.height - height) / 2;
+      finalPos.y += (finalRect.GetSize().y - height) / 2;
       break;
     case VAlign::Bottom:
-      _layoutRect.y += finalRect.height - height;
+      finalPos.y += finalRect.GetSize().y - height;
       break;
     case VAlign::Stretch:
-      height = finalRect.height;
+      finalSize.y = finalRect.GetSize().y;
       break;
     }
-    _layoutRect.width = std::min(width, finalRect.width);
-    _layoutRect.height = std::min(height, finalRect.height);
+    _layoutRect = {finalPos + Vector2{_renderTransform.GetOffsetx(), _renderTransform.GetOffsetY()}, finalSize};
 
-    _layoutRect.x += _renderTransform.GetScaleX();
-    _layoutRect.y += _renderTransform.GetOffsetY();
-
-    float rectHeight = (_layoutRect.height - (_paddingTop + _paddingBottom)) / _childElements.size();
-    float rectWidth = (_layoutRect.width - (_paddingLeft + _paddingRight)) / _childElements.size();
-    float offset = (_orientation == Orientation::Vertical) ? _layoutRect.y + _paddingTop : _layoutRect.x + _paddingLeft;
+    float rectHeight = (_layoutRect.GetSize().y - (_paddingTop + _paddingBottom)) / _childElements.size();
+    float rectWidth = (_layoutRect.GetSize().x - (_paddingLeft + _paddingRight)) / _childElements.size();
+    float offset = (_orientation == Orientation::Vertical) ? _layoutRect.GetPosition().y + _paddingTop
+                                                           : _layoutRect.GetPosition().x + _paddingLeft;
     for (auto &child : _childElements)
     {
       Size csize = child->GetDesiredSize();
       if (_orientation == Orientation::Vertical)
       {
         child->Arrange({
-          _layoutRect.x + _paddingLeft,
-          offset,
-          _layoutRect.width - (_paddingLeft + _paddingRight),
-          rectHeight,
+          {_layoutRect.GetPosition().x + _paddingLeft, offset},
+          {_layoutRect.GetSize().x - (_paddingLeft + _paddingRight), rectHeight},
         } //
         );
         offset += rectHeight;
@@ -131,10 +130,8 @@ namespace Base
       else
       {
         child->Arrange({
-          offset,
-          _layoutRect.y + _paddingTop,
-          rectWidth,
-          _layoutRect.height - (_paddingTop + _paddingBottom),
+          {offset, _layoutRect.GetPosition().y + _paddingTop},
+          {rectWidth, _layoutRect.GetSize().y - (_paddingTop + _paddingBottom)},
         } //
         );
         offset += rectWidth;
@@ -148,28 +145,23 @@ namespace Base
     {
       if (_sprite)
       {
-        _sprite.Draw({_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height},
-                     _renderTransform.GetOpacity() * opacity * 255);
+        _sprite.Draw({_layoutRect.GetPosition(), _layoutRect.GetSize()}, _renderTransform.GetOpacity() * opacity * 255);
       }
       else
       {
         float alpha = 0;
-        if (_backgroundColor == BLANK)
+        if (_backgroundColor == Color{0, 0, 0, 0})
         {
           alpha = 0;
         }
         else
         {
-          alpha = _renderTransform.GetOpacity();
+          alpha = _renderTransform.GetOpacity() * opacity;
         }
-        DrawRectangleBase( //
-          {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
-          {
-            _backgroundColor.r,
-            _backgroundColor.g,
-            _backgroundColor.b,
-            static_cast<unsigned char>(alpha * opacity * 255),
-          } //
+
+        Renderer::DrawQuad( //
+          _layoutRect, _layoutRect.GetPosition(),
+          {_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a * alpha} //
         );
       }
 

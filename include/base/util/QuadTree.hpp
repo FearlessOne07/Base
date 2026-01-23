@@ -1,6 +1,7 @@
 #pragma once
 #include "Circle.hpp"
-#include "raylib.h"
+#include "base/rendering/Quad.hpp"
+#include "internal/utils/Collisions.hpp"
 #include <array>
 #include <cstdint>
 #include <iterator>
@@ -26,7 +27,7 @@ namespace Base
     constexpr static uint8_t MAX_DEPTH = 12;
     constexpr static size_t MAX_ITEMS_PER_NODE = 100;
 
-    Rectangle _area = {0, 0, 0, 0};
+    Rectangle _area;
     uint8_t _depth = 0;
     bool _divided = false;
 
@@ -40,13 +41,29 @@ namespace Base
       if (_divided)
         return;
 
-      Vector2 childSize = {_area.width / 2.0f, _area.height / 2.0f};
+      Vector2 childSize = {_area.GetSize().x / 2.0f, _area.GetSize().y / 2.0f};
 
       _childAreas = {
-        Rectangle{_area.x, _area.y, childSize.x, childSize.y},                            // NW
-        Rectangle{_area.x + childSize.x, _area.y, childSize.x, childSize.y},              // NE
-        Rectangle{_area.x, _area.y + childSize.y, childSize.x, childSize.y},              // SW
-        Rectangle{_area.x + childSize.x, _area.y + childSize.y, childSize.x, childSize.y} // SE
+        Rectangle{{
+                    _area.GetPosition().x,
+                    _area.GetPosition().y,
+                  },
+                  {childSize.x, childSize.y}}, // NW
+        Rectangle{{
+                    _area.GetPosition().x + childSize.x,
+                    _area.GetPosition().y,
+                  },
+                  {childSize.x, childSize.y}}, // NE
+        Rectangle{{
+                    _area.GetPosition().x,
+                    _area.GetPosition().y + childSize.y,
+                  },
+                  {childSize.x, childSize.y}}, // SW
+        Rectangle{{
+                    _area.GetPosition().x + childSize.x,
+                    _area.GetPosition().y + childSize.y,
+                  },
+                  {childSize.x, childSize.y}}, // SE
       };
 
       for (int i = 0; i < 4; i++)
@@ -59,15 +76,17 @@ namespace Base
 
     bool _fitsEntirelyRect(Rectangle rect, Rectangle container)
     {
-      return rect.x >= container.x && rect.y >= container.y && rect.x + rect.width <= container.x + container.width &&
-             rect.y + rect.height <= container.y + container.height;
+      return rect.GetPosition().x >= container.GetPosition().x && rect.GetPosition().y >= container.GetPosition().y &&
+             rect.GetPosition().x + rect.GetSize().x <= container.GetPosition().x + container.GetSize().x &&
+             rect.GetPosition().y + rect.GetPosition().y <= container.GetPosition().y + container.GetSize().y;
     }
 
     bool _fitsEntirelyCircle(Circle circle, Rectangle container)
     {
-      return (circle.position.x - circle.radius) >= container.x && (circle.position.y - circle.radius) >= container.y &&
-             (circle.position.x + circle.radius) <= (container.x + container.width) &&
-             (circle.position.y + circle.radius) <= (container.y + container.height);
+      return (circle.GetPosition().x - circle.GetRadius()) >= container.GetPosition().x &&
+             (circle.GetPosition().y - circle.GetRadius()) >= container.GetPosition().y &&
+             (circle.GetPosition().x + circle.GetRadius()) <= (container.GetPosition().x + container.GetSize().x) &&
+             (circle.GetPosition().y + circle.GetRadius()) <= (container.GetPosition().y + container.GetSize().y);
     }
 
     void _search(ItemAreaType searchArea, std::list<T> &results)
@@ -86,7 +105,7 @@ namespace Base
         {
           Circle circle1 = std::get<Circle>(area);
           Circle circle2 = std::get<Circle>(searchArea);
-          if (CheckCollisionCircles(circle1.position, circle1.radius, circle2.position, circle2.radius))
+          if (CheckCollisionCircles(circle1, circle2))
           {
             results.push_back(item);
           }
@@ -94,12 +113,12 @@ namespace Base
         else if (std::holds_alternative<Circle>(area) && std::holds_alternative<Rectangle>(searchArea))
         {
           Circle circle = std::get<Circle>(area);
-          CheckCollisionCircleRec(circle.position, circle.radius, std::get<Rectangle>(searchArea));
+          CheckCollisionCircleRec(circle, std::get<Rectangle>(searchArea));
         }
         else if (std::holds_alternative<Circle>(searchArea) && std::holds_alternative<Rectangle>(area))
         {
           Circle circle = std::get<Circle>(searchArea);
-          if (CheckCollisionCircleRec(circle.position, circle.radius, std::get<Rectangle>(area)))
+          if (CheckCollisionCircleRec(circle, std::get<Rectangle>(area)))
           {
             results.push_back(item);
           }
@@ -121,7 +140,7 @@ namespace Base
           else if (std::holds_alternative<Circle>(searchArea))
           {
             Circle circle = std::get<Circle>(searchArea);
-            if (CheckCollisionCircleRec(circle.position, circle.radius, _childAreas[i]))
+            if (CheckCollisionCircleRec(circle, _childAreas[i]))
             {
               _children[i]->_search(searchArea, results);
             }
@@ -212,17 +231,17 @@ namespace Base
     }
 
     // Debug function to visualize the tree structure
-    void DrawBounds(Color color = RED)
+    void DrawBounds(Color color = {255, 0, 0, 0})
     {
-      DrawRectangleLinesEx(_area, 1.0f, color);
-
-      if (_divided)
-      {
-        for (int i = 0; i < 4; i++)
-        {
-          _children[i]->DrawBounds(color);
-        }
-      }
+      // DrawRectangleLinesEx(_area, 1.0f, color);
+      //
+      // if (_divided)
+      // {
+      //   for (int i = 0; i < 4; i++)
+      //   {
+      //     _children[i]->DrawBounds(color);
+      //   }
+      // }
     }
   };
 } // namespace Base

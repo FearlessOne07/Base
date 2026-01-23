@@ -1,6 +1,5 @@
 #include "base/ui/elements/UIPanel.hpp"
-#include "base/util/Draw.hpp"
-#include "raylib.h"
+#include "internal/rendering/Renderer.hpp"
 
 namespace Base
 {
@@ -16,18 +15,11 @@ namespace Base
 
   void UIPanel::Render(float opacity)
   {
-
-    if (!_isHidden)
+    float alpha = opacity * _renderTransform.GetOpacity();
+    if (!_isHidden && alpha > 0)
     {
-      DrawRectangleBase( //
-        {_layoutRect.x, _layoutRect.y, _layoutRect.width, _layoutRect.height}, {0, 0}, 0,
-        {
-          _color.r,
-          _color.g,
-          _color.b,
-          static_cast<unsigned char>(_renderTransform.GetOpacity() * opacity * 255),
-        } //
-      );
+      Color color = {_color.r, _color.g, _color.b, 255 * alpha};
+      Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), color);
     }
   }
 } // namespace Base

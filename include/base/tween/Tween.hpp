@@ -1,8 +1,6 @@
 #pragma once
 #include <algorithm>
 #include <functional>
-#include <raylib.h>
-#include <raymath.h>
 #include <utility>
 
 namespace Base

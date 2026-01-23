@@ -1,18 +1,19 @@
 #pragma once
 #include "base/components/Component.hpp"
-#include "raylib.h"
+#include "base/util/Circle.hpp"
+#include "base/util/Type.hpp"
 
 namespace Base
 {
   class CircleComponent : public Component
   {
   private:
-    float _radius = 0;
-    Color _color = WHITE;
+    Circle _circle;
+    Color _color = {255, 255, 255, 255};
 
   public:
-    CircleComponent(float radius, Color color);
-    float GetRadius() const;
-    Color GetColor() const;
+    CircleComponent(const Circle &circle, Color color);
+    const Circle &GetCircle() const;
+    const Color &GetColor() const;
   };
 } // namespace Base

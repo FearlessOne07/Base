@@ -1,5 +1,4 @@
 #include "base/components/AreaComponent.hpp"
-#include "raylib.h"
 namespace Base
 {
   AreaEntry::AreaEntry(Rectangle area) : _area(area)

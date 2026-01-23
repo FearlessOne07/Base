@@ -1,9 +1,12 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
 #include "base/assets/BaseAsset.hpp"
+#include "base/assets/Font.hpp"
+#include "base/assets/Texture.hpp"
 #include "base/audio/AudioStream.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/scenes/SceneID.hpp"
+#include "base/shaders/Shader.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
 #include <filesystem>
@@ -14,7 +17,6 @@
 
 namespace Base
 {
-  namespace fs = std::filesystem;
   class AssetManager
   {
     struct AssetSlot
@@ -38,27 +40,28 @@ namespace Base
     uint64_t _sampleRate = 48000;
 
   private:
-    std::shared_ptr<Sound> LoadSound(const std::filesystem::path &);
-    std::shared_ptr<AudioStream> LoadAudioStream(const std::filesystem::path &);
+    std::shared_ptr<Sound> _loadSound(const std::filesystem::path &);
+    std::shared_ptr<AudioStream> _loadAudioStream(const std::filesystem::path &);
     void UnloadScene(SceneID);
     void SetCurrentScene(SceneID);
 
-  private:
-    template <typename T>
-      requires(std::is_base_of_v<BaseAsset, T>)
-    AssetHandle<T> LoadAsset(const fs::path &, bool global = true);
+  public:
+    void Init();
+    void Deinit();
+    void SetAudioSampleRate(uint64_t sampleRate);
 
     template <typename T>
       requires(std::is_base_of_v<BaseAsset, T>)
-    AssetHandle<T> GetAsset(const std::string &assetName, SceneID scene = SceneID())
+    AssetHandle<T> GetAsset(const std::string &assetName, bool global = false)
     {
       std::string name = Base::Strings::ToLower(assetName);
-      if (scene)
+      if (!global)
       {
+        auto &scene = _currentScene;
         if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
         {
           std::stringstream error;
-          error << "Scene-local Asset '" << name << "' does not exist";
+          error << "Scene-local Font '" << name << "' does not exist";
           THROW_BASE_RUNTIME_ERROR(error.str());
         }
         return AssetHandle<T>::Cast(_sceneAssets.at(scene).at(name).handle);
@@ -74,38 +77,10 @@ namespace Base
         return AssetHandle<T>::Cast(_globalAssets.at(name).handle);
       }
     }
-
-  public:
-    void Init();
-    void Deinit();
-    void SetAudioSampleRate(uint64_t sampleRate);
-
-    template <typename T>
-      requires(std::is_base_of_v<BaseAsset, T>)
-    AssetHandle<T> LoadLocalAsset(const fs::path &path)
-    {
-      return LoadAsset<T>(path, false);
-    }
-
-    template <typename T>
-      requires(std::is_base_of_v<BaseAsset, T>)
-    AssetHandle<T> LoadGlobalAsset(const fs::path &path)
-    {
-      return LoadAsset<T>(path, true);
-    }
-
-    template <typename T>
-      requires(std::is_base_of_v<BaseAsset, T>)
-    AssetHandle<T> GetLocalAsset(const std::string &assetName)
-    {
-      return GetAsset<T>(assetName, _currentScene);
-    }
-
-    template <typename T>
-      requires(std::is_base_of_v<BaseAsset, T>)
-    AssetHandle<T> GetGlobalAsset(const std::string &assetName)
-    {
-      return GetAsset<T>(assetName);
-    }
+    AssetHandle<Texture> LoadTexture(const AssetPath &path, bool global = false);
+    AssetHandle<Shader> LoadShader(const AssetPath &path, bool global = false);
+    AssetHandle<Sound> LoadSound(const AssetPath &path, bool global = false);
+    AssetHandle<AudioStream> LoadAudioStream(const AssetPath &path, bool global = false);
+    AssetHandle<Font> LoadFont(const AssetPath &path, bool global = false);
   };
 } // namespace Base

@@ -1,7 +1,6 @@
 #pragma once
 #include "base/ui/Binding.hpp"
 #include "base/ui/UIElement.hpp"
-#include "raylib.h"
 #include <string>
 namespace Base
 {
@@ -10,7 +9,7 @@ namespace Base
     std::string _text = "Label";
     std::string _cachedText = "Label";
     Binding<std::string> _textBinding;
-    Color _textColor = WHITE;
+    Color _textColor = {255, 255, 255, 255};
     float _fontSize = 12;
 
     void SetTextInternal(const std::string &, bool user);

@@ -1,9 +1,8 @@
 #include "base/audio/AudioStream.hpp"
 #include "base/util/Exception.hpp"
-#include "raylib.h"
+#include "glm/ext/scalar_constants.hpp"
 #include "samplerate.h"
 #include <algorithm>
-#include <atomic>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -92,7 +91,7 @@ namespace Base
     }
 
     // Calculate pan
-    float angle = _pan * (PI / 2.f);
+    float angle = _pan * (glm::pi<float>() / 2.f);
     float leftPan = std::cos(angle);
     float rightPan = std::sin(angle);
 
@@ -109,7 +108,7 @@ namespace Base
 
   void AudioStream::FillBuffers()
   {
-    while (_fillBuffers.load(std::memory_order_acquire))
+    while (_fillBuffers.load())
     {
       // Find a buffer that needs filling
       int bufferToFill = -1;
@@ -186,7 +185,7 @@ namespace Base
       }
 
       // Mark this buffer as ready
-      _isBufferReady[bufferToFill].store(true, std::memory_order_release);
+      _isBufferReady[bufferToFill].store(true);
     }
   }
 

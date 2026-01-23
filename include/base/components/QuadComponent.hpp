@@ -1,18 +1,18 @@
 #include "base/components/Component.hpp"
-#include "raylib.h"
+#include "base/rendering/Quad.hpp"
+#include "base/util/Type.hpp"
 
 namespace Base
 {
   class QuadComponent : public Component
   {
   private:
-    Color _color = WHITE;
-    Vector2 _size = {100, 100};
+    Color _color = {255, 255, 255, 255};
+    Rectangle _rectangle;
 
   public:
-    QuadComponent(Color color, Vector2 size);
-
-    Vector2 GetSize() const;
-    Color GetColor() const;
+    QuadComponent(const Rectangle &rectangle, Color color);
+    const Rectangle &GetRectangle() const;
+    const Color &GetColor() const;
   };
 } // namespace Base

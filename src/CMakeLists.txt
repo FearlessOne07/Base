@@ -4,9 +4,30 @@ set(SRC
   "./entities/EntityManager.cpp"
   "./entities/Entity.cpp"
 
-  "./renderer/RenderContextSingleton.cpp"
-  "./renderer/Renderer.cpp"
-  "./renderer/RenderLayer.cpp"
+  "./timing/TimeManager.cpp"
+
+  "./rendering/RenderContextSingleton.cpp"
+  "./rendering/RenderingManager.cpp"
+  "./rendering/Renderer.cpp"
+  "./rendering/batchers/TextureBatcher.cpp"
+  "./rendering/batchers/CircleBatcher.cpp"
+  "./rendering/RenderLayer.cpp"
+  "./rendering/Quad.cpp"
+  "./rendering/Circlec.cpp"
+  "./rendering/FrameBuffer.cpp"
+  "./rendering/Material.cpp"
+  "./rendering/ShaderEffect.cpp"
+  "./rendering/Window.cpp"
+  "./rendering/Vertex.cpp"
+  "./rendering/VertexBuffer.cpp"
+  "./rendering/IndexBuffer.cpp"
+  "./rendering/VertexArray.cpp"
+  "./rendering/RenderID.cpp"
+
+
+  "./shaders/Shader.cpp"
+  "./shaders/VertexShader.cpp"
+  "./shaders/FragmentShader.cpp"
 
   "./sprites/Sprite.cpp"
   "./sprites/NinePatchSprite.cpp"
@@ -61,7 +82,8 @@ set(SRC
 
   "./particles/ParticleManager.cpp"
 
-  "./camera/Camera2DExt.cpp"
+  "./camera/CameraController.cpp"
+  "./camera/Camera.cpp"
 
   "./input/InputManager.cpp"
 
@@ -71,28 +93,31 @@ set(SRC
 
   "./assets/AssetManager.cpp"
   "./assets/BaseAsset.cpp"
+  "./assets/Texture.cpp"
+  "./assets/Font.cpp"
 
   "./tween/TweenManager.cpp"
   "./tween/Tween.cpp"
 
   "./util/Exception.cpp"
+  "./util/Collisions.cpp"
   "./util/Easings.cpp"
   "./util/Strings.cpp"
   "./util/UUID.cpp"
   "./util/Pauseable.cpp"
-  "./util/Draw.cpp"
-
-  "./shaders/ShaderManager.cpp"
+  "./util/Math.cpp"
 )
 add_library("${PROJECT_NAME}" "${SRC}")
 
 target_link_libraries("${PROJECT_NAME}"
-  PUBLIC
-    raylib
   PRIVATE
+    msdf-atlas-gen
     portaudio
     miniaudio
     samplerate
+    glad
+    glfw
+    glm
 )
 
 target_link_directories("${PROJECT_NAME}"
@@ -116,7 +141,12 @@ target_include_directories("${PROJECT_NAME}"
   PUBLIC
     "${ROOT_BASE_DIR}/vendor/miniaudio/"
     "${ROOT_BASE_DIR}/vendor/libsamplerate/include"
-  PRIVATE
+    "${ROOT_BASE_DIR}/vendor/glm/"
+    "${ROOT_BASE_DIR}/vendor/glfw/include/"
+    "${ROOT_BASE_DIR}/vendor/glad/include/"
     "${ROOT_BASE_DIR}/src/include/"
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/"
+    "${ROOT_BASE_DIR}/vendor/msdf-atlas-gen/msdfgen/"
+    "${ROOT_BASE_DIR}/vendor/stb_image/"
     "${ROOT_BASE_DIR}/include/"
 )

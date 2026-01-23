@@ -1,9 +1,16 @@
 #include "base/scenes/SceneLayer.hpp"
 #include "base/scenes/Scene.hpp"
-#include "raylib.h"
+#include "base/util/Type.hpp"
+#include "internal/rendering/Renderer.hpp"
+#include <memory>
 
 namespace Base
 {
+  std::shared_ptr<Scene> SceneLayer::GetOwner()
+  {
+    return _owner.lock();
+  }
+
   const std::bitset<8> &SceneLayer::GetPauseMask()
   {
     return _pauseMask;
@@ -20,22 +27,6 @@ namespace Base
   void SceneLayer::SetPauseMask(int index)
   {
     _pauseMask.set(index);
-  }
-
-  GameContext &SceneLayer::GameCtx()
-  {
-    return _ctx;
-  }
-
-  void SceneLayer::SetGameContext(Scene *scene, const GameContext &ctx)
-  {
-    _ctx = ctx;
-    _owner = scene;
-  }
-
-  Scene *SceneLayer::GetOwner()
-  {
-    return _owner;
   }
 
   void SceneLayer::Pause()
@@ -75,33 +66,32 @@ namespace Base
 
   Vector2 SceneLayer::GetLayerCameraMousePosition() const
   {
-    auto windowWidth = static_cast<float>(GetScreenWidth());
-    auto windowHeight = static_cast<float>(GetScreenHeight());
+    auto windowSize = Renderer::GetWindowSize();
     float scale = std::min( //
-      (float)windowWidth / _size.x,
-      (float)windowHeight / _size.y //
+      windowSize.x / _size.x,
+      windowSize.y / _size.y //
     );
-    float marginX = (windowWidth - (_size.x * scale)) / 2;
-    float marginY = (windowHeight - (_size.y * scale)) / 2;
+    float marginX = (windowSize.x - (_size.x * scale)) / 2;
+    float marginY = (windowSize.y - (_size.y * scale)) / 2;
+
     return GetScreenToWorld({
-      (GetMousePosition().x - marginX) / scale,
-      (GetMousePosition().y - marginY) / scale,
+      (Renderer::GetWindowMousePosition().x - marginX) / scale,
+      (Renderer::GetWindowMousePosition().y - marginY) / scale,
     });
   }
 
   Vector2 SceneLayer::GetLayerMousePosition() const
   {
-    auto windowWidth = static_cast<float>(GetScreenWidth());
-    auto windowHeight = static_cast<float>(GetScreenHeight());
+    Vector2 windowSize = Renderer::GetWindowSize();
     float scale = std::min( //
-      (float)windowWidth / _size.x,
-      (float)windowHeight / _size.y //
+      (float)windowSize.x / _size.x,
+      (float)windowSize.y / _size.y //
     );
-    float marginX = (windowWidth - (_size.x * scale)) / 2;
-    float marginY = (windowHeight - (_size.y * scale)) / 2;
+    float marginX = (windowSize.x - (_size.x * scale)) / 2;
+    float marginY = (windowSize.y - (_size.y * scale)) / 2;
     return {
-      (GetMousePosition().x - marginX) / scale,
-      (GetMousePosition().y - marginY) / scale,
+      (Renderer::GetWindowMousePosition().x - marginX) / scale,
+      (Renderer::GetWindowMousePosition().y - marginY) / scale,
     };
   }
 
@@ -110,14 +100,9 @@ namespace Base
     _renderLayer->SetCameraPauseMask(_pauseMask);
   }
 
-  void SceneLayer::SetCameraMode(Camera2DExtMode mode)
+  void SceneLayer::SetCameraMode(CameraMode mode)
   {
     _renderLayer->SetCameraMode(mode);
-  }
-
-  void SceneLayer::SetCameraOffset(Vector2 offset)
-  {
-    _renderLayer->SetCameraOffset(offset);
   }
 
   void SceneLayer::SetCameraTarget(Vector2 target)
@@ -149,6 +134,16 @@ namespace Base
   {
     return _renderLayer->GetWorldToScreen(position);
   };
+
+  float SceneLayer::GetWorldToScreen(float distance) const
+  {
+    return _renderLayer->GetWorldToScreen(distance);
+  }
+
+  float SceneLayer::GetScreenToWorld(float distance) const
+  {
+    return _renderLayer->GetScreenToWorld(distance);
+  }
 
   void SceneLayer::BeginCamera()
   {

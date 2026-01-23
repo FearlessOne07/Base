@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.hpp"
-#include "base/sprites/Sprite.hpp"
-#include "raylib.h"
+#include "base/rendering/Sprite.hpp"
+#include "base/util/Type.hpp"
 
 namespace Base
 {
@@ -9,11 +9,13 @@ namespace Base
   {
   private:
     Sprite _sprite;
+    Vector2 _targetSize;
 
   public:
-    SpriteComponent(const Sprite & sprite);
+    SpriteComponent(const Sprite &sprite, Vector2 targetSize);
     const Sprite &GetSprite() const;
+    void SetSourcePos(const Vector2 source);
+    void SetSourceSize(const Vector2 size);
     Vector2 GetTargetSize() const;
-    void SetSourceRect(const Rectangle &rect);
   };
 } // namespace Base

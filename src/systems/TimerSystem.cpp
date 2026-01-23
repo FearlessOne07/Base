@@ -6,7 +6,7 @@
 #include "base/scenes/Scene.hpp"
 namespace Base
 {
-  void TimerSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
+  void TimerSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<Scene> currentScene)
   {
     auto entities_timercmp = entityManager->Query<TimerComponent>();
 

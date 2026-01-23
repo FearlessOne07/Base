@@ -1,6 +1,6 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
-#include "base/input/MouseButtons.hpp"
+#include "base/input/Keys.hpp"
 namespace Base
 {
   class MouseButtonEvent : public InputEvent

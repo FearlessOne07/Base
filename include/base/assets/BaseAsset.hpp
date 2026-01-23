@@ -1,5 +1,8 @@
 #pragma once
 
+#include "base/rendering/GeometryType.hpp"
+#include <filesystem>
+#include <variant>
 namespace Base
 {
   class BaseAsset
@@ -16,4 +19,8 @@ namespace Base
     Font,
     Shader
   };
+
+  using SinglePath = std::filesystem::path;
+  using ShaderPath = std::tuple<std::filesystem::path, std::filesystem::path, GeometryType>;
+  using AssetPath = std::variant<SinglePath, ShaderPath>;
 } // namespace Base

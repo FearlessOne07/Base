@@ -1,34 +1,43 @@
 #pragma once
 #include "base/input/InputEvent.hpp"
 #include "base/input/Keys.hpp"
-#include "base/input/MouseButtons.hpp"
 #include "base/signals/Signal.hpp"
 #include "base/util/Ref.hpp"
 #include "internal/input/InputListener.hpp"
+#include <cstddef>
 #include <memory>
-#include <unordered_map>
 #include <vector>
+
 namespace Base
 {
   class InputManager
   {
-    std::unordered_map<Key, int> _heldKeys;
-    std::unordered_map<MouseKey, int> _heldMouseBtns;
+    enum class KeyPosition
+    {
+      Pressed,
+      Down,
+      Up
+    };
 
-    std::vector<Key> _handledKeyPresses;
-    std::vector<MouseKey> _handledMousePresses;
+    struct KeyState
+    {
+      KeyPosition Position = KeyPosition::Up;
+    };
+
+    std::array<KeyState, static_cast<size_t>(Key::Count)> _keyStates;
+    std::array<KeyState, static_cast<size_t>(MouseKey::Count)> _mouseKeyStates;
 
     std::shared_ptr<InputEvent> _lastEvent = nullptr;
     std::vector<Ref<InputListener>> _listenrs;
 
   private:
     void ResetInput(const std::shared_ptr<Signal> &sig);
+    void DispatchEvent(std::shared_ptr<InputEvent> event);
 
   public:
     void Init();
     void PollAndDispatch();
     void PostUpdate();
     void RegisterListener(InputListener &listener);
-    void DispatchEvent(std::shared_ptr<InputEvent> event);
   };
 } // namespace Base

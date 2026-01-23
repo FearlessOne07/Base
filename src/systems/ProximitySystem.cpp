@@ -3,12 +3,11 @@
 #include "base/components/StateComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
-#include "raymath.h"
 
 namespace Base
 {
 
-  void ProximitySystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
+  void ProximitySystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<Scene> currentScene)
   {
     auto entities_proxentry = entityManager->Query<StateComponent, ProximityEntry>();
     for (auto &item : entities_proxentry)
@@ -19,9 +18,9 @@ namespace Base
       Vector2 radiusEntityPosition = radiusEntity->GetComponent<TransformComponent>()->position;
 
       auto transcmp = item->item->GetComponent<TransformComponent>();
-      float distance = Vector2DistanceSqr(radiusEntityPosition, transcmp->position);
+      float distance = glm::distance(radiusEntityPosition, transcmp->position);
 
-      if (distance <= proxentry->GetRadiusSq())
+      if (distance * distance <= proxentry->GetRadiusSq())
       {
         auto statecmp = item->item->GetComponent<StateComponent>();
         statecmp->GetCurrentState().transitionBlock.SetIndex(proxentry->GetBlockIndex());
@@ -37,9 +36,9 @@ namespace Base
       Vector2 radiusEntityPosition = radiusEntity->GetComponent<TransformComponent>()->position;
 
       auto transcmp = item->item->GetComponent<TransformComponent>();
-      float distance = Vector2DistanceSqr(radiusEntityPosition, transcmp->position);
+      float distance = glm::distance(radiusEntityPosition, transcmp->position);
 
-      if (distance >= proxexit->GetRadiusSq())
+      if (distance * distance >= proxexit->GetRadiusSq())
       {
         auto statecmp = item->item->GetComponent<StateComponent>();
         statecmp->GetCurrentState().transitionBlock.SetIndex(proxexit->GetBlockIndex());

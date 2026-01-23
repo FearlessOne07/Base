@@ -1,17 +1,16 @@
 #include "base/scenes/Scene.hpp"
-#include "base/particles/ParticleManager.hpp"
-#include "base/renderer/Renderer.hpp"
+#include "base/rendering/RenderingManager.hpp"
 #include "base/scenes/SceneData.hpp"
 #include "base/scenes/signals/SceneLayerPausedSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/systems/SystemManager.hpp"
-#include "raylib.h"
+#include "internal/rendering/Renderer.hpp"
 #include <memory>
 
 namespace Base
 {
 
-  SceneID::operator bool()
+  SceneID::operator bool() const
   {
     return _id >= 0;
   }
@@ -21,7 +20,7 @@ namespace Base
     return _id;
   }
 
-  bool SceneID::operator==(const SceneID &other)
+  bool SceneID::operator==(const SceneID &other) const
   {
     return _id == other._id;
   }
@@ -45,48 +44,24 @@ namespace Base
     };
   }
 
-  void Scene::SetSceneID(SceneID id)
-  {
-    _sceneID = id;
-  }
-
   SceneID Scene::GetSceneID() const
   {
     return _sceneID;
-  }
-
-  GameContext Scene::GameCtx() const
-  {
-    return _ctx;
   }
 
   const SceneTransition &Scene::GetSceneTransition() const
   {
     return _sceneTransition;
   }
-
   void Scene::ResetSceneTransition()
   {
     _sceneTransition = {.request = SceneRequest::None, .sceneID = typeid(-1)};
   }
 
-  void Scene::SetClearColor(Color color)
+  void Scene::Init(SceneID id, const EngineCtx &ctx)
   {
-    _clearColor = color;
-  }
-
-  void Scene::SetGameCtx(const GameContext &ctx)
-  {
-    _ctx = ctx;
-  }
-
-  Color Scene::GetClearColor() const
-  {
-    return _clearColor;
-  }
-
-  void Scene::Init()
-  {
+    _sceneID = id;
+    _engine = ctx;
     _layerStack = SceneLayerStack(shared_from_this());
   }
 
@@ -94,7 +69,7 @@ namespace Base
   {
   }
 
-  void Scene::_OnInputEvent(std::shared_ptr<InputEvent> event)
+  void Scene::_onInputEvent(std::shared_ptr<InputEvent> event)
   {
     OnInputEvent(event);
     _layerStack.OnInputEvent(event);
@@ -107,7 +82,7 @@ namespace Base
 
   void Scene::Render()
   {
-    ClearBackground(_clearColor);
+    Renderer::Clear(_clearColor);
     _layerStack.Render();
   }
 
@@ -124,6 +99,11 @@ namespace Base
   {
     _layerStack.DetachLayers();
     Exit();
+  }
+
+  Ref<RenderLayer> Scene::AddRenderLayer(Vector2 size, Color clearColor)
+  {
+    return _engine.Rendering->InitLayer(shared_from_this(), {0, 0}, size, clearColor);
   }
 
   void Scene::PauseLayer(int layerIndex)
@@ -153,4 +133,18 @@ namespace Base
     return _postProcessingEffects;
   }
 
+  Color Scene::GetClearColor() const
+  {
+    return _clearColor;
+  }
+
+  void Scene::SetClearColor(Color color)
+  {
+    _clearColor = color;
+  }
+
+  Vector2 Rectangle::GetPosition() const
+  {
+    return _position;
+  }
 } // namespace Base

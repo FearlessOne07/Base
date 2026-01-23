@@ -2,16 +2,16 @@
 
 namespace Base
 {
-  CircleComponent::CircleComponent(float radius, Color color) : _radius(radius), _color(color)
+  CircleComponent::CircleComponent(const Circle &circle, Color color) : _circle(circle), _color(color)
   {
   }
 
-  float CircleComponent::GetRadius() const
+  const Circle &CircleComponent::GetCircle() const
   {
-    return _radius;
+    return _circle;
   }
 
-  Color CircleComponent::GetColor() const
+  const Color &CircleComponent::GetColor() const
   {
     return _color;
   }

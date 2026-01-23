@@ -1,8 +1,9 @@
 #pragma once
 #include "base/particles/ParticleEmitter.hpp"
-#include "base/sprites/Sprite.hpp"
+#include "base/rendering/Sprite.hpp"
+#include "base/util/Circle.hpp"
 #include "base/util/Pauseable.hpp"
-#include "raylib.h"
+#include "base/util/Type.hpp"
 #include <functional>
 namespace Base
 {
@@ -20,12 +21,13 @@ namespace Base
 
     ParticleEmitter::ParticleShape shape;
 
-    Color startColor = WHITE;
-    Color endColor = BLACK;
+    Color startColor = {255, 255, 255, 255};
+    Color endColor = {0, 0, 0, 255};
 
     // Rect
     Vector2 startSize = {10, 10};
     Vector2 endSize = {0, 0};
+    Vector2 Size = {0, 0};
 
     // Circle / Polygon
     float startRadius = 10.f;

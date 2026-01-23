@@ -1,0 +1,90 @@
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/vendor/portaudio/src/hostapi/alsa/pa_linux_alsa.c:183:1: warning: ‘snd_pcm_sw_params_set_xfer_align’ is deprecated [-Wdeprecated-declarations]
+  183 | _PA_DEFINE_FUNC(snd_pcm_sw_params_set_xfer_align);
+      | ^~~~~~~~~~~~~~~
+In file included from /usr/include/alsa/asoundlib.h:58,
+                 from /home/Baraka/Dev/Repos/Spectrum/vendor/Base/vendor/portaudio/src/hostapi/alsa/pa_linux_alsa.c:52:
+/usr/include/alsa/pcm.h:1397:5: note: declared here
+ 1397 | int snd_pcm_sw_params_set_xfer_align(snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val) __attribute__((deprecated));
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/vendor/portaudio/src/hostapi/alsa/pa_linux_alsa.c: In function ‘PaAlsa_LoadLibrary’:
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/vendor/portaudio/src/hostapi/alsa/pa_linux_alsa.c:467:5: warning: ‘snd_pcm_sw_params_set_xfer_align’ is deprecated [-Wdeprecated-declarations]
+  467 |     _PA_LOAD_FUNC(snd_pcm_sw_params_set_xfer_align);
+      |     ^~~~~~~~~~~~~
+/usr/include/alsa/pcm.h:1397:5: note: declared here
+ 1397 | int snd_pcm_sw_params_set_xfer_align(snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val) __attribute__((deprecated));
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/vendor/portaudio/src/hostapi/alsa/pa_linux_alsa.c:183:1: warning: ‘snd_pcm_sw_params_set_xfer_align’ is deprecated [-Wdeprecated-declarations]
+  183 | _PA_DEFINE_FUNC(snd_pcm_sw_params_set_xfer_align);
+      | ^~~~~~~~~~~~~~~
+In file included from /usr/include/alsa/asoundlib.h:58,
+                 from /home/Baraka/Dev/Repos/Spectrum/vendor/Base/vendor/portaudio/src/hostapi/alsa/pa_linux_alsa.c:52:
+/usr/include/alsa/pcm.h:1397:5: note: declared here
+ 1397 | int snd_pcm_sw_params_set_xfer_align(snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val) __attribute__((deprecated));
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/vendor/portaudio/src/hostapi/alsa/pa_linux_alsa.c: In function ‘PaAlsa_LoadLibrary’:
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/vendor/portaudio/src/hostapi/alsa/pa_linux_alsa.c:467:5: warning: ‘snd_pcm_sw_params_set_xfer_align’ is deprecated [-Wdeprecated-declarations]
+  467 |     _PA_LOAD_FUNC(snd_pcm_sw_params_set_xfer_align);
+      |     ^~~~~~~~~~~~~
+/usr/include/alsa/pcm.h:1397:5: note: declared here
+ 1397 | int snd_pcm_sw_params_set_xfer_align(snd_pcm_t *pcm, snd_pcm_sw_params_t *params, snd_pcm_uframes_t val) __attribute__((deprecated));
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp: In member function ‘Base::Vector2 Base::CameraController::GetScreenToWorld(Base::Vector2) const’:
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:152:3: warning: no return statement in function returning non-void [-Wreturn-type]
+  152 |   }
+      |   ^
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp: In member function ‘Base::Vector2 Base::CameraController::GetScreenToWorld(Base::Vector2) const’:
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:152:3: warning: no return statement in function returning non-void [-Wreturn-type]
+  152 |   }
+      |   ^
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp: In member function ‘Base::Vector2 Base::CameraController::GetWorldToScreen(Base::Vector2) const’:
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:157:3: warning: no return statement in function returning non-void [-Wreturn-type]
+  157 |   }
+      |   ^
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp: In member function ‘Base::Vector2 Base::CameraController::GetWorldToScreen(Base::Vector2) const’:
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:157:3: warning: no return statement in function returning non-void [-Wreturn-type]
+  157 |   }
+      |   ^
+In file included from /home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/camera/CameraController.hpp:5,
+                 from /home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:1:
+In member function ‘float FastNoiseLite::SingleCellular(int, FNfloat, FNfloat, FNfloat) const [with FNfloat = float]’,
+    inlined from ‘float FastNoiseLite::GenNoiseSingle(int, FNfloat, FNfloat, FNfloat) const [with FNfloat = float]’ at /home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:691:28:
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1674:21: warning: iteration 2 invokes undefined behavior [-Waggressive-loop-optimizations]
+ 1674 |             zPrimed += PrimeZ;
+      |             ~~~~~~~~^~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1657:36: note: within this loop
+ 1657 |           for (int zi = zr - 1; zi <= zr + 1; zi++)
+      |                                 ~~~^~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1707:21: warning: iteration 2 invokes undefined behavior [-Waggressive-loop-optimizations]
+ 1707 |             zPrimed += PrimeZ;
+      |             ~~~~~~~~^~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1690:36: note: within this loop
+ 1690 |           for (int zi = zr - 1; zi <= zr + 1; zi++)
+      |                                 ~~~^~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1741:21: warning: iteration 2 invokes undefined behavior [-Waggressive-loop-optimizations]
+ 1741 |             zPrimed += PrimeZ;
+      |             ~~~~~~~~^~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1723:36: note: within this loop
+ 1723 |           for (int zi = zr - 1; zi <= zr + 1; zi++)
+      |                                 ~~~^~~~~~~~~
+In file included from /home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/camera/CameraController.hpp:5,
+                 from /home/Baraka/Dev/Repos/Spectrum/vendor/Base/src/camera/CameraController.cpp:1:
+In member function ‘float FastNoiseLite::SingleCellular(int, FNfloat, FNfloat, FNfloat) const [with FNfloat = float]’,
+    inlined from ‘float FastNoiseLite::GenNoiseSingle(int, FNfloat, FNfloat, FNfloat) const [with FNfloat = float]’ at /home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:691:28:
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1674:21: warning: iteration 2 invokes undefined behavior [-Waggressive-loop-optimizations]
+ 1674 |             zPrimed += PrimeZ;
+      |             ~~~~~~~~^~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1657:36: note: within this loop
+ 1657 |           for (int zi = zr - 1; zi <= zr + 1; zi++)
+      |                                 ~~~^~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1707:21: warning: iteration 2 invokes undefined behavior [-Waggressive-loop-optimizations]
+ 1707 |             zPrimed += PrimeZ;
+      |             ~~~~~~~~^~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1690:36: note: within this loop
+ 1690 |           for (int zi = zr - 1; zi <= zr + 1; zi++)
+      |                                 ~~~^~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1741:21: warning: iteration 2 invokes undefined behavior [-Waggressive-loop-optimizations]
+ 1741 |             zPrimed += PrimeZ;
+      |             ~~~~~~~~^~~~~~~~~
+/home/Baraka/Dev/Repos/Spectrum/vendor/Base/include/base/util/FastNoiseLite.hpp:1723:36: note: within this loop
+ 1723 |           for (int zi = zr - 1; zi <= zr + 1; zi++)
+      |                                 ~~~^~~~~~~~~

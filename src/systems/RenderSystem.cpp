@@ -7,13 +7,12 @@
 #include "base/components/SpriteComponent.hpp"
 #include "base/components/TransformComponent.hpp"
 #include "base/entities/EntityManager.hpp"
-#include "base/util/Draw.hpp"
-#include "raylib.h"
+#include "internal/rendering/Renderer.hpp"
 #include <memory>
 
 namespace Base
 {
-  void RenderSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<const Scene> currentScene)
+  void RenderSystem::Update(float dt, Ref<EntityManager> entityManager, std::shared_ptr<Scene> currentScene)
   {
     // Shape Component
     auto entities_transcmp = entityManager->Query<TransformComponent>();
@@ -30,28 +29,27 @@ namespace Base
 
           if (shc->fill)
           {
-            DrawPoly(transcmp->position, shc->points, shc->radius, transcmp->rotation, shc->color);
+            // DrawPoly(transcmp->position, shc->points, shc->radius, transcmp->rotation, shc->color);
           }
           else
           {
-            DrawPolyLinesEx(                                                                                      //
-              transcmp->position, shc->points, shc->radius, transcmp->rotation, shc->nonFillThickness, shc->color //
-            );
+            // DrawPolyLinesEx(                                                                                      //
+            //   transcmp->position, shc->points, shc->radius, transcmp->rotation, shc->nonFillThickness, shc->color //
+            // );
           }
         }
         else if (e->HasComponent<QuadComponent>())
         {
           auto quadcmp = e->GetComponent<QuadComponent>();
-          DrawRectangleBase( //
-            {transcmp->position.x, transcmp->position.y, quadcmp->GetSize().x, quadcmp->GetSize().y},
-            {quadcmp->GetSize().x / 2, quadcmp->GetSize().y / 2}, transcmp->rotation,
-            quadcmp->GetColor() //
+          Renderer::DrawQuad( //
+            quadcmp->GetRectangle(), transcmp->position, quadcmp->GetColor(),
+            transcmp->rotation //
           );
         }
         else if (e->HasComponent<CircleComponent>())
         {
           auto cirlcecmp = e->GetComponent<CircleComponent>();
-          DrawCircleV(transcmp->position, cirlcecmp->GetRadius(), cirlcecmp->GetColor());
+          Renderer::DrawCircle(cirlcecmp->GetCircle(), transcmp->position, cirlcecmp->GetColor());
         }
         else if (e->HasComponent<SpriteComponent>())
         {
@@ -61,7 +59,8 @@ namespace Base
             auto animcmp = e->GetComponent<AnimationComponent>();
 
             AnimationFrame &frame = animcmp->GetNextFrame();
-            sprtmp->SetSourceRect({frame.origin.x, frame.origin.y, frame.size.x, frame.size.y});
+            sprtmp->SetSourcePos({frame.origin.x, frame.origin.y});
+            sprtmp->SetSourceSize({frame.size.x, frame.size.y});
 
             if (frame.elapsed >= frame.duration)
             {
@@ -76,7 +75,10 @@ namespace Base
 
           if (sprtmp && transcmp)
           {
-            sprtmp->GetSprite().Render(transcmp->position, transcmp->rotation, WHITE);
+            Renderer::DrawSprite( //
+              sprtmp->GetSprite(), transcmp->position, sprtmp->GetTargetSize(), transcmp->rotation, {255, 255, 255, 255}
+              //
+            );
           }
         }
       }

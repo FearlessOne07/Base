@@ -1,7 +1,6 @@
 #pragma once
 #include "Component.hpp"
 #include "base/input/Keys.hpp"
-#include "base/input/MouseButtons.hpp"
 #include <functional>
 #include <unordered_map>
 

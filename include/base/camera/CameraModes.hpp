@@ -2,10 +2,10 @@
 #include <cstdint>
 namespace Base
 {
-  enum struct Camera2DExtMode : uint8_t
+  enum struct CameraMode : uint8_t
   {
-    STATIC = 0,
-    BASIC_FOLLOW,
-    SMOOTH_FOLLOW
+    Static = 0,
+    BasicFollow,
+    SmoothFollow
   };
 } // namespace Base

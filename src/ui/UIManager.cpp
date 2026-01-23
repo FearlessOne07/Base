@@ -8,7 +8,6 @@
 #include "base/util/Exception.hpp"
 #include "base/util/Ref.hpp"
 #include "base/util/Strings.hpp"
-#include "raylib.h"
 #include <utility>
 
 namespace Base

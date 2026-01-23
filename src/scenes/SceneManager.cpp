@@ -1,6 +1,6 @@
 #include "internal/scene/SceneManager.hpp"
-#include "base/entities/EntityManager.hpp"
 #include "base/particles/ParticleManager.hpp"
+#include "base/scenes/Engine.hpp"
 #include "base/scenes/Scene.hpp"
 #include "base/scenes/SceneTransition.hpp"
 #include "base/scenes/signals/ScenePoppedSignal.hpp"
@@ -16,7 +16,9 @@
 
 namespace Base
 {
-  SceneManager::SceneManager(const GameContext &ctx) : _ctx(ctx)
+  SceneManager::SceneManager( //
+    const EngineCtx &engine)
+    : _engine(engine)
   {
   }
 
@@ -43,9 +45,7 @@ namespace Base
       THROW_BASE_RUNTIME_ERROR("Specified Scene is not registered");
     }
 
-    _scenes.top()->Init();
-    _scenes.top()->SetSceneID((SceneID)_currentSceneID++);
-    _scenes.top()->SetGameCtx(_ctx);
+    _scenes.top()->Init(SceneID(_currentSceneID++), _engine);
 
     std::shared_ptr<ScenePushedSignal> sig = std::make_shared<ScenePushedSignal>();
     sig->Scene = _scenes.top()->GetSceneID();
@@ -193,11 +193,11 @@ namespace Base
   {
     if (!_scenes.empty())
     {
-      _scenes.top()->_OnInputEvent(event);
+      _scenes.top()->_onInputEvent(event);
     }
   }
 
-  std::shared_ptr<const Scene> SceneManager::GetCurrentScene() const
+  std::shared_ptr<Scene> SceneManager::GetCurrentScene() const
   {
     if (!_scenes.empty())
     {

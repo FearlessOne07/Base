@@ -13,7 +13,7 @@ namespace Base
 
   private:
     Orientation _orientation = Orientation::Horizontal;
-    Color _backgroundColor = BLANK;
+    Color _backgroundColor = {0, 0, 0, 0};
 
   public:
     Size Measure() override;

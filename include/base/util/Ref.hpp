@@ -12,6 +12,7 @@ namespace Base
   public:
     Ref() = default;
     Ref(T &object) : _ref(object) {};
+
     Ref(std::optional<std::reference_wrapper<T>> value) : _ref(value) {};
 
     bool HasValue() const

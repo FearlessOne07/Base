@@ -1,11 +1,10 @@
 #include "base/ui/UIElement.hpp"
-#include "raylib.h"
 
 namespace Base
 {
   class UICanvas : public UIElement
   {
-    Color _fillColor = BLANK;
+    Color _fillColor = {0, 0, 0, 0};
 
   public:
     void Arrange(Rectangle finalRect) override;
