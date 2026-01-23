@@ -57,8 +57,7 @@ namespace Base
       // Reset camera offset to pre-shake values
       if (_trauma <= 0.0f && _isShaking)
       {
-        // TODO: Implment Camera Offset
-        // _camera->SetViewPort _preShakeOffset;
+        _camera->SetOffset(_preShakeOffset);
         _camera->SetRotation(_preShakeRotation);
         _isShaking = false;
       }
@@ -73,7 +72,7 @@ namespace Base
       {
         // Force trauma to zero when duration end reset offset and rotation
         _trauma = 0.0f;
-        // _camera.offset = _preShakeOffset;
+        _camera->SetOffset(_preShakeOffset);
         _camera->SetRotation(_preShakeRotation);
         _isShaking = false;
         return;
@@ -110,7 +109,7 @@ namespace Base
 
     // Add offsets values
     Vector2 offset = {offsetX + _preShakeOffset.x, offsetY + _preShakeOffset.y};
-    // _camera.Set
+    _camera->SetOffset(offset);
     _camera->SetRotation(rotation + _preShakeRotation);
   }
 
@@ -190,12 +189,6 @@ namespace Base
   void CameraController::SetMode(CameraMode mode)
   {
     _cameraMode = mode;
-  }
-
-  void CameraController::SetOffset(Vector2 offset)
-  {
-    _preShakeOffset = offset;
-    // _camera.offset = offset;
   }
 
   void CameraController::SetOriginPoint(Origin origin)

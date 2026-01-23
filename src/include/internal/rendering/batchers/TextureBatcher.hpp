@@ -30,7 +30,7 @@ namespace Base
 
     // Defaults
     std::shared_ptr<Texture> _defaultQuadTexture = nullptr;
-    std::array<std::shared_ptr<Texture>, 16> _boundTextures;
+    std::vector<std::shared_ptr<Texture>> _boundTextures;
 
     std::shared_ptr<VertexBuffer> _materialVbo;
     std::shared_ptr<IndexBuffer> _materialIbo;

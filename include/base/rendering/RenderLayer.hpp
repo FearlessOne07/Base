@@ -56,7 +56,6 @@ namespace Base
 
     // Camera
     void SetCameraMode(CameraMode mode);
-    void SetCameraOffset(Vector2 offset);
     void SetCameraTarget(Vector2 target);
     void SetCameraRotation(float rotation);
     void SetCameraZoom(float zoom);

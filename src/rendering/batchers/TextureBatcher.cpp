@@ -24,14 +24,12 @@ namespace Base
   {
     const glm::vec2 half = size * 0.5f;
 
-    // Local-space quad centered at origin
     glm::vec3 local[4] = {
       {-half.x, -half.y, 0.f},
       {half.x, -half.y, 0.f},
       {half.x, half.y, 0.f},
       {-half.x, half.y, 0.f},
     };
-
     // If top-left, shift quad so pivot is top-left
     if (origin == Origin::TopLeft)
     {
@@ -49,12 +47,10 @@ namespace Base
 
   uint32_t TextureBatcher::ResolveTextureSlot(const std::shared_ptr<Texture> &texture)
   {
-    // Try to find existing
     auto it = std::ranges::find(_boundTextures, texture);
     if (it != _boundTextures.end())
       return static_cast<uint32_t>(std::distance(_boundTextures.begin(), it));
 
-    // Need a new slot → flush if full
     if (_currentTextureSlot >= _maxTextureSlots)
     {
       Flush();
@@ -134,6 +130,7 @@ namespace Base
   void TextureBatcher::SetMaxTextureSlots(uint8_t slots)
   {
     _maxTextureSlots = slots;
+    _boundTextures.resize(slots);
   }
 
   void TextureBatcher::Begin()
@@ -142,7 +139,7 @@ namespace Base
     _currentIndex = 0;
     _currentTextureSlot = 1;
 
-    _boundTextures.fill(nullptr);
+    std::ranges::fill(_boundTextures, nullptr);
     _boundTextures[0] = _defaultQuadTexture;
   }
 
@@ -259,7 +256,6 @@ namespace Base
     {
       _boundTextures[i]->Bind(i);
     }
-    // _currentTexture->Bind(0);
     glDrawElements(GL_TRIANGLES, _currentIndex, GL_UNSIGNED_SHORT, nullptr);
     _currentShader->Unuse();
     _vao->Unbind();
@@ -424,10 +420,10 @@ namespace Base
       glm::vec2 uvMin = {(float)al / texW, (float)at / texH};
       glm::vec2 uvMax = {(float)ar / texW, (float)ab / texH};
       glm::vec3 corners[4] = {
-        {x0, y1, position.z}, // bottom-left  (was corners[1])
-        {x1, y1, position.z}, // bottom-right (was corners[2])
-        {x1, y0, position.z}, // top-right    (was corners[3])
-        {x0, y0, position.z}, // top-left     (was corners[0])
+        {x0, y1, position.z},
+        {x1, y1, position.z},
+        {x1, y0, position.z},
+        {x0, y0, position.z},
       };
 
       EmitQuad(corners, uvMin, uvMax, slot, TextureMode::Text, color, attachmentMask);

@@ -43,7 +43,6 @@ namespace Base
 
   public:
     void SetMode(CameraMode mode);
-    void SetOffset(Vector2 offset);
     void SetTarget(Vector2 target);
     void SetOriginPoint(Origin origin);
     void SetRotation(float rotation);

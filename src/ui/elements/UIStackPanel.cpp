@@ -169,16 +169,22 @@ namespace Base
           alpha = _renderTransform.GetOpacity() * opacity;
         }
 
-        Renderer::DrawQuad( //
-          _layoutRect, _layoutRect.GetPosition(),
-          {_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, _backgroundColor.a * alpha} //
-        );
+        if (alpha > 0)
+        {
+          Renderer::DrawQuad( //
+            _layoutRect, _layoutRect.GetPosition(),
+            {_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, 255 * alpha} //
+          );
+        }
       }
 
       auto elements = std::ranges::reverse_view(_childElements);
       for (auto &element : elements)
       {
-        element->Render(_renderTransform.GetOpacity() * opacity);
+        if (element->IsVisible())
+        {
+          element->Render(_renderTransform.GetOpacity() * opacity);
+        }
       }
     }
   }

@@ -123,11 +123,6 @@ namespace Base
     _layerCamera.SetMode(mode);
   }
 
-  void RenderLayer::SetCameraOffset(Vector2 offset)
-  {
-    _layerCamera.SetOffset(offset);
-  }
-
   void RenderLayer::SetCameraTarget(Vector2 target)
   {
     _layerCamera.SetTarget(target);

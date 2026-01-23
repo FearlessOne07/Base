@@ -28,6 +28,7 @@ namespace Base
     Camera() = default;
     void SetPosition(Vector2 position);
     void SetRotation(float roation);
+    void SetOffset(Vector2 offset);
     void SetZoom(float zoom);
     void SetOrginPoint(Origin point);
     void SetViewPort(Vector2 viewPort);

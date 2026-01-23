@@ -27,9 +27,9 @@ namespace Base
     _defaultCamera = std::make_shared<Camera>(glm::vec2{_window->GetWindowWidth(), _window->GetWindowHeight()});
     _currentCamera = _defaultCamera;
 
+    _quadBatcher.SetMaxTextureSlots(_window->GetGlContexData().MaxTextureUnits);
     _quadBatcher.Init();
     _quadBatcher.SetCamera(_defaultCamera);
-    _quadBatcher.SetMaxTextureSlots(_window->GetGlContexData().MaxTextureUnits);
 
     _circleBatcher.Init();
     _circleBatcher.SetCamera(_defaultCamera);
@@ -333,26 +333,15 @@ namespace Base
           _currentBatcher->Begin();
         }
       }
-      else if (std::holds_alternative<QuadCommand>(command))
+      else if ( //
+        std::holds_alternative<QuadCommand>(command) || std::holds_alternative<SpriteCommand>(command) ||
+        std::holds_alternative<TextCommand>(command) //
+      )
       {
         if (!_currentBatcher)
         {
           _currentBatcher = &_quadBatcher;
           _currentBatcher->Begin();
-        }
-        else if (_currentBatcher->GetGeometryType() != GeometryType::Texture)
-        {
-          _currentBatcher->Flush();
-          _currentBatcher = &_quadBatcher;
-          _currentBatcher->Begin();
-        }
-        _currentBatcher->Submit(command);
-      }
-      else if (std::holds_alternative<SpriteCommand>(command))
-      {
-        if (!_currentBatcher)
-        {
-          _currentBatcher = &_quadBatcher;
         }
         else if (_currentBatcher->GetGeometryType() != GeometryType::Texture)
         {
@@ -367,25 +356,12 @@ namespace Base
         if (!_currentBatcher)
         {
           _currentBatcher = &_circleBatcher;
+          _circleBatcher.Begin();
         }
         else if (_currentBatcher->GetGeometryType() != GeometryType::Circle)
         {
           _currentBatcher->Flush();
           _currentBatcher = &_circleBatcher;
-          _currentBatcher->Begin();
-        }
-        _currentBatcher->Submit(command);
-      }
-      else if (std::holds_alternative<TextCommand>(command))
-      {
-        if (!_currentBatcher)
-        {
-          _currentBatcher = &_quadBatcher;
-        }
-        else if (_currentBatcher->GetGeometryType() != GeometryType::Texture)
-        {
-          _currentBatcher->Flush();
-          _currentBatcher = &_quadBatcher;
           _currentBatcher->Begin();
         }
         _currentBatcher->Submit(command);

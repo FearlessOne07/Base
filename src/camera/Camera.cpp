@@ -36,7 +36,6 @@ namespace Base
   {
     _zoom = std::clamp(zoom, 0.1f, 2.f);
     SetOrginPoint(_orginPoint);
-    RecalculateMatrices();
   }
 
   void Camera::SetRotation(float rotation)
@@ -49,7 +48,6 @@ namespace Base
   {
     _viewPort = viewPort;
     SetOrginPoint(_orginPoint);
-    RecalculateMatrices();
   }
 
   void Camera::SetOrginPoint(Origin point)
@@ -91,6 +89,12 @@ namespace Base
     RecalculateMatrices();
   }
 
+  void Camera::SetOffset(Vector2 offset)
+  {
+    _offset = offset;
+    SetOrginPoint(_orginPoint);
+  }
+
   glm::vec2 Camera::GetWorldToScreen(glm::vec2 world) const
   {
     glm::vec4 clip = _projView * glm::vec4(world, 0.f, 1.f);
@@ -99,7 +103,6 @@ namespace Base
     glm::vec2 screen;
     screen.x = (ndc.x + 1.f) * 0.5f * _viewPort.x;
     screen.y = (1.f - ndc.y) * 0.5f * _viewPort.y;
-
     return screen;
   }
 

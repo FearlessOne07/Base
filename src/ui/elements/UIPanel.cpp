@@ -15,10 +15,10 @@ namespace Base
 
   void UIPanel::Render(float opacity)
   {
-
-    if (!_isHidden && opacity > 0)
+    float alpha = opacity * _renderTransform.GetOpacity();
+    if (!_isHidden && alpha > 0)
     {
-      Color color = {_color.r, _color.g, _color.b, _color.a * opacity * _renderTransform.GetOpacity()};
+      Color color = {_color.r, _color.g, _color.b, 255 * alpha};
       Renderer::DrawQuad(_layoutRect, _layoutRect.GetPosition(), color);
     }
   }

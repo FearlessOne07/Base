@@ -17,9 +17,9 @@ namespace Base
   {
     int Width = 0;
     int Height = 0;
-    std::array<TextureFormat, 8> ColorAttachments = {
-      TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8,
-      TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8,
+    std::array<TextureFormat, 1> ColorAttachments = {
+      TextureFormat::RGBA8
+      // TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8,
     };
   };
 
@@ -30,7 +30,7 @@ namespace Base
     RenderID _id;
     RenderID _depthAttachment;
 
-    std::array<std::shared_ptr<Texture>, 8> _colorAttachments;
+    std::array<std::shared_ptr<Texture>, 1> _colorAttachments;
     uint8_t _colorAttachmentCount = 0;
 
     int _width = 0, _height = 0;

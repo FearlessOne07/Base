@@ -105,11 +105,6 @@ namespace Base
     _renderLayer->SetCameraMode(mode);
   }
 
-  void SceneLayer::SetCameraOffset(Vector2 offset)
-  {
-    _renderLayer->SetCameraOffset(offset);
-  }
-
   void SceneLayer::SetCameraTarget(Vector2 target)
   {
     _renderLayer->SetCameraTarget(target);
