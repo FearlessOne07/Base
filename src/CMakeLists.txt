@@ -4,6 +4,8 @@ set(SRC
   "./entities/EntityManager.cpp"
   "./entities/Entity.cpp"
 
+  "./timing/TimeManager.cpp"
+
   "./rendering/RenderContextSingleton.cpp"
   "./rendering/RenderingManager.cpp"
   "./rendering/Renderer.cpp"

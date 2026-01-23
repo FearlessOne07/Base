@@ -7,6 +7,7 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/rendering/RenderingManager.hpp"
 #include "base/systems/SystemManager.hpp"
+#include "base/timing/TimeManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
 #include "internal/audio/AudioManager.hpp"
@@ -45,6 +46,7 @@ namespace Base
     TweenManager _tweenManager = TweenManager();
     RenderingManager _renderingManager = RenderingManager();
     SystemManager _systemManager = SystemManager(_entityManager);
+    TimeManager _timeManager = TimeManager();
 
     SceneManager _sceneManager = SceneManager(EngineCtx{
       _renderingManager,
@@ -54,6 +56,7 @@ namespace Base
       _systemManager,
       _uiManager,
       _tweenManager,
+      _timeManager,
     });
 
   private: // Methods

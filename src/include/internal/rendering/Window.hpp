@@ -66,7 +66,8 @@ namespace Base
     const GLContexData &GetGlContexData() const;
     void CreateWindow(const WindowSpec &spec);
     void Close();
-    bool WindowClosed() const;
+    bool IsClosed() const;
+    bool IsMinimized();
     void SwapBuffers();
     void Poll() const;
     void SetKeyCallback(const KeyCallback &keyCallback);

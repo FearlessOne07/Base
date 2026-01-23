@@ -70,6 +70,7 @@ namespace Base
     static void PollWindow();
     static void SwapWindowBuffers();
     static bool IsWindowClosed();
+    static bool IsWindowMinimized();
     static void SetScrollCallback(const ScrollCallback &scrollCallback);
     static void SetCharCallback(const CharCallback &charCallback);
     static void SetWindowMode(const WindowMode &state);

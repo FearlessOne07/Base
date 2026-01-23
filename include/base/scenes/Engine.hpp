@@ -5,8 +5,10 @@
 #include "base/particles/ParticleManager.hpp"
 #include "base/rendering/RenderingManager.hpp"
 #include "base/systems/SystemManager.hpp"
+#include "base/timing/TimeManager.hpp"
 #include "base/tween/TweenManager.hpp"
 #include "base/ui/UIManager.hpp"
+#include "base/util/Ref.hpp"
 
 namespace Base
 {
@@ -19,5 +21,6 @@ namespace Base
     Ref<SystemManager> Systems;
     Ref<UIManager> Ui;
     Ref<TweenManager> Tweens;
+    Ref<TimeManager> Time;
   };
 } // namespace Base

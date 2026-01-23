@@ -29,6 +29,9 @@ namespace Base
 {
   void Game::GameImpl::Init(const GameConfig &config)
   {
+    // Init TimeManager
+    _timeManager.Init();
+
     // Init Audio
     _audioMan.Init();
     _audioMan.SetAssetManager(&_assetManager);
@@ -58,7 +61,6 @@ namespace Base
     {
       for (const auto &[type, pathList] : config.GlobalAssets)
       {
-
         switch (type)
         {
         case AssetType::Texture:
@@ -136,65 +138,61 @@ namespace Base
     {
       Renderer::PollWindow();
 
-      // if (!IsWindowMinimized())
-      // {
-      auto windowWidth = static_cast<float>(Renderer::GetWindowSize().x);
-      auto windowHeight = static_cast<float>(Renderer::GetWindowSize().y);
+      if (!Renderer::IsWindowMinimized())
+      {
+        auto windowWidth = static_cast<float>(Renderer::GetWindowSize().x);
+        auto windowHeight = static_cast<float>(Renderer::GetWindowSize().y);
 
-      float scale = std::min(             //
-        (float)windowWidth / _gameWidth,  //
-        (float)windowHeight / _gameHeight //
-      );
-      float marginX = (windowWidth - (_gameWidth * scale)) / 2;
-      float marginY = (windowHeight - (_gameHeight * scale)) / 2;
-      const RenderContext *rd = RenderContextSingleton::GetInstance();
-      RenderContext rendercontext = {
-        .gameWidth = _gameWidth,
-        .gameHeight = _gameHeight,
-        .marginX = (float)marginX,
-        .marginY = (float)marginY,
-        .scale = scale,
-        .mousePosition = {(Renderer::GetWindowMousePosition().x - marginX) / scale,
-                          (Renderer::GetWindowMousePosition().y - marginY) / scale},
-      };
-      RenderContextSingleton::UpdateInstance(&rendercontext);
+        float scale = std::min(             //
+          (float)windowWidth / _gameWidth,  //
+          (float)windowHeight / _gameHeight //
+        );
+        float marginX = (windowWidth - (_gameWidth * scale)) / 2;
+        float marginY = (windowHeight - (_gameHeight * scale)) / 2;
+        const RenderContext *rd = RenderContextSingleton::GetInstance();
+        RenderContext rendercontext = {
+          .gameWidth = _gameWidth,
+          .gameHeight = _gameHeight,
+          .marginX = (float)marginX,
+          .marginY = (float)marginY,
+          .scale = scale,
+          .mousePosition =
+            {
+              (Renderer::GetWindowMousePosition().x - marginX) / scale,
+              (Renderer::GetWindowMousePosition().y - marginY) / scale,
+            },
+        };
+        RenderContextSingleton::UpdateInstance(&rendercontext);
 
-      // Delta Time
-      auto now = std::chrono::steady_clock::now();
-      std::chrono::duration<float> delta = now - _lastFrameTime;
-      _lastFrameTime = now;
+        // Delta Time
 
-      float dt = delta.count();
+        float dt = _timeManager.GetDeltaTime();
 
-      _inpMan.PollAndDispatch();
+        _inpMan.PollAndDispatch();
 
-      _sceneManager.Update(dt);
+        _sceneManager.Update(dt);
 
-      _uiManager.Update(dt);
+        _uiManager.Update(dt);
 
-      _renderingManager.Update(dt);
+        _renderingManager.Update(dt);
 
-      _systemManager.Update(dt);
+        _systemManager.Update(dt);
 
-      _particleManager.Update(dt);
+        _particleManager.Update(dt);
 
-      _tweenManager.Update(dt);
+        _tweenManager.Update(dt);
 
-      // Render
-      _renderingManager.Render();
+        // Render
+        _renderingManager.Render();
 
-      Renderer::SwapWindowBuffers();
+        Renderer::SwapWindowBuffers();
 
-      // Post Update
-      _inpMan.PostUpdate();
-      _entityManager.RemoveDeadEntities();
-      _sceneManager.PostUpdate();
-      _audioMan.ProcessCleanup();
-
-      // }
-      // else
-      // {
-      // }
+        // Post Update
+        _inpMan.PostUpdate();
+        _entityManager.RemoveDeadEntities();
+        _sceneManager.PostUpdate();
+        _audioMan.ProcessCleanup();
+      }
     }
 
     // Cleanup

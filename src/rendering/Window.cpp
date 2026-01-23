@@ -326,9 +326,14 @@ namespace Base
     UpdateWindowSize(spec.MinSize.x, spec.MinSize.y);
   }
 
-  bool Window::WindowClosed() const
+  bool Window::IsClosed() const
   {
     return glfwWindowShouldClose(_window);
+  }
+
+  bool Window::IsMinimized()
+  {
+    return glfwGetWindowAttrib(_window, GLFW_ICONIFIED);
   }
 
   void Window::SwapBuffers()

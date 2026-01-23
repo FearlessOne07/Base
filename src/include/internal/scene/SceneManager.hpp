@@ -3,6 +3,7 @@
 #include "base/rendering/RenderingManager.hpp"
 #include "base/scenes/Engine.hpp"
 #include "base/scenes/SceneData.hpp"
+#include "base/timing/TimeManager.hpp"
 #include "base/util/Ref.hpp"
 #include "internal/input/InputListener.hpp"
 #include <functional>
@@ -36,6 +37,7 @@ namespace Base
     Ref<ParticleManager> _particleManager;
     Ref<UIManager> _uiManager;
     Ref<TweenManager> _tweenManager;
+    Ref<TimeManager> _timeManager;
 
   private:
     std::stack<std::shared_ptr<Scene>> _scenes;

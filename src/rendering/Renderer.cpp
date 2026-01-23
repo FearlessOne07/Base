@@ -220,10 +220,16 @@ namespace Base
     _instance->_window->SwapBuffers();
   }
 
+  bool Renderer::IsWindowMinimized()
+  {
+    return _instance->_window->IsMinimized();
+  }
+
   bool Renderer::IsWindowClosed()
   {
-    return _instance->_window->WindowClosed();
+    return _instance->_window->IsClosed();
   }
+
   IVector2 Renderer::GetWindowSize()
   {
     return {_instance->_window->GetWindowWidth(), _instance->_window->GetWindowHeight()};
