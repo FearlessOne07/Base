@@ -294,7 +294,7 @@ namespace Base
         }
         else if (particle->shape == ParticleEmitter::ParticleShape::Texture)
         {
-          Renderer::DrawSprite(particle->sprite, particle->position, size);
+          Renderer::DrawSprite(particle->sprite, particle->position, size, particle->rotation, color);
         }
       }
     }
