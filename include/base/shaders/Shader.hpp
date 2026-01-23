@@ -22,18 +22,20 @@ namespace Base
     inline static uint8_t _maxTextureSlots = 0;
     inline static std::unordered_map<GeometryType, const std::string> _defaultVertexShaders = {
       {
-        GeometryType::Quad,
+        GeometryType::Texture,
         R"(
         #version 460
         layout(location = 0) in vec3 aPosition;
         layout(location = 1) in vec3 aUv;
-        layout(location = 2) in vec4 aColor;
-        layout(location = 3) in uint aAttachmentMask;
+        layout(location = 2) in uint aMode;
+        layout(location = 3) in vec4 aColor;
+        layout(location = 4) in uint aAttachmentMask;
         
         //Outputs
         out vec4 vFragColor;
         out vec3 vUv;
         out flat uint vAttachmentMask;
+        out flat uint vMode;
         
         // Uniforms
         uniform mat4 uProjView;
@@ -43,31 +45,7 @@ namespace Base
           vFragColor = aColor;
           vUv = aUv;
           vAttachmentMask = aAttachmentMask;
-        }
-      )",
-      },
-      {
-        GeometryType::Text,
-        R"(
-        #version 460
-        layout(location = 0) in vec3 aPosition;
-        layout(location = 1) in vec3 aUv;
-        layout(location = 2) in vec4 aColor;
-        layout(location = 3) in uint aAttachmentMask;
-        
-        //Outputs
-        out vec4 vFragColor;
-        out vec3 vUv;
-        out flat uint vAttachmentMask;
-        
-        // Uniforms
-        uniform mat4 uProjView;
-        
-        void main() {
-          gl_Position = uProjView * vec4(aPosition, 1.0);
-          vFragColor = aColor;
-          vUv = aUv;
-          vAttachmentMask = aAttachmentMask;
+          vMode = aMode;
         }
       )",
       },

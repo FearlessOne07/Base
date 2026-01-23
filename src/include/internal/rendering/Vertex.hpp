@@ -6,10 +6,11 @@
 namespace Base
 {
 
-  struct QuadVertex
+  struct TextureVertex
   {
     Vector3 Position;
     Vector3 Uv;
+    uint32_t Mode;
     Vector4 Color;
     uint32_t ColorAttachmentMask = 0;
 

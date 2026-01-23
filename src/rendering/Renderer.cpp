@@ -31,9 +31,6 @@ namespace Base
     _quadBatcher.SetCamera(_defaultCamera);
     _quadBatcher.SetMaxTextureSlots(_window->GetGlContexData().MaxTextureUnits);
 
-    _textBatcher.Init();
-    _textBatcher.SetCamera(_defaultCamera);
-
     _circleBatcher.Init();
     _circleBatcher.SetCamera(_defaultCamera);
   }
@@ -264,7 +261,6 @@ namespace Base
   void Renderer::Deinit()
   {
     _instance->_quadBatcher.DeInit();
-    _instance->_textBatcher.DeInit();
     _instance->_circleBatcher.DeInit();
     _instance->_window->Close();
   }
@@ -331,7 +327,6 @@ namespace Base
         _currentCamera = com.CameraToSet;
 
         _quadBatcher.SetCamera(_currentCamera);
-        _textBatcher.SetCamera(_currentCamera);
         _circleBatcher.SetCamera(_currentCamera);
         if (_currentBatcher)
         {
@@ -345,7 +340,7 @@ namespace Base
           _currentBatcher = &_quadBatcher;
           _currentBatcher->Begin();
         }
-        else if (_currentBatcher->GetGeometryType() != GeometryType::Quad)
+        else if (_currentBatcher->GetGeometryType() != GeometryType::Texture)
         {
           _currentBatcher->Flush();
           _currentBatcher = &_quadBatcher;
@@ -359,7 +354,7 @@ namespace Base
         {
           _currentBatcher = &_quadBatcher;
         }
-        else if (_currentBatcher->GetGeometryType() != GeometryType::Quad)
+        else if (_currentBatcher->GetGeometryType() != GeometryType::Texture)
         {
           _currentBatcher->Flush();
           _currentBatcher = &_quadBatcher;
@@ -385,12 +380,12 @@ namespace Base
       {
         if (!_currentBatcher)
         {
-          _currentBatcher = &_textBatcher;
+          _currentBatcher = &_quadBatcher;
         }
-        else if (_currentBatcher->GetGeometryType() != GeometryType::Text)
+        else if (_currentBatcher->GetGeometryType() != GeometryType::Texture)
         {
           _currentBatcher->Flush();
-          _currentBatcher = &_textBatcher;
+          _currentBatcher = &_quadBatcher;
           _currentBatcher->Begin();
         }
         _currentBatcher->Submit(command);

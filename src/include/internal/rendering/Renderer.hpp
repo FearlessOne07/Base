@@ -9,8 +9,7 @@
 #include "internal/rendering/Window.hpp"
 #include "internal/rendering/WindowMode.hpp"
 #include "internal/rendering/batchers/CircleBatcher.hpp"
-#include "internal/rendering/batchers/QuadBatcher.hpp"
-#include "internal/rendering/batchers/TextBatcher.hpp"
+#include "internal/rendering/batchers/TextureBatcher.hpp"
 #include <glm/glm.hpp>
 #include <memory>
 #include <queue>
@@ -42,8 +41,7 @@ namespace Base
     glm::vec2 _windowViewPort = {0, 0};
 
     // Batchers
-    QuadBatcher _quadBatcher;
-    TextBatcher _textBatcher;
+    TextureBatcher _quadBatcher;
     CircleBatcher _circleBatcher;
 
     // Currents

@@ -4,8 +4,7 @@ namespace Base
 {
   enum class GeometryType
   {
-    Quad,
-    Text,
+    Texture,
     Circle
   };
 } // namespace Base

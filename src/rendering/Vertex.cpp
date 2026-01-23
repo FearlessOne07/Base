@@ -4,17 +4,18 @@
 namespace Base
 {
 
-  void QuadVertex::Init()
+  void TextureVertex::Init()
   {
     _layout = {{
       {ShaderDataType::Float3},
       {ShaderDataType::Float3},
+      {ShaderDataType::Int},
       {ShaderDataType::Float4},
       {ShaderDataType::Int},
     }};
   }
 
-  const BufferLayout &QuadVertex::GetLayout()
+  const BufferLayout &TextureVertex::GetLayout()
   {
     return _layout;
   }
