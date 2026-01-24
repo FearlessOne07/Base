@@ -82,8 +82,7 @@ namespace Base
   {
     if (!(static_cast<uint8_t>(attachmentIndex) < _colorAttachmentCount))
     {
-      std::cout << "Attachement Index out of bounds!\n";
-      exit(-1);
+      THROW_BASE_RUNTIME_ERROR("Attachement Index out of bounds!");
     }
 
     return _colorAttachments[static_cast<uint8_t>(attachmentIndex)];
