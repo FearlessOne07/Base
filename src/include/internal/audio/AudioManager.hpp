@@ -6,6 +6,7 @@
 #include "base/audio/signals/PlaySoundSignal.hpp"
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "internal/audio/SoundInstance.hpp"
+#include "internal/utils/TSCommandQueue.hpp"
 #include <array>
 #include <atomic>
 #include <portaudio.h>
@@ -26,53 +27,6 @@ namespace Base
     AudioStream *stream = nullptr;
     std::atomic<bool> active{false};
     std::atomic<bool> pendingRelease{false};
-  };
-
-  // Lock-free command queue for audio operations
-  template <typename T, size_t Size> class RTCommandQueue
-  {
-  private:
-    struct Command
-    {
-      T data;
-      std::atomic<bool> ready{false};
-    };
-
-    std::array<Command, Size> _commands;
-    std::atomic<size_t> _writeIndex{0};
-    std::atomic<size_t> _readIndex{0};
-
-  public:
-    bool Push(const T &item)
-    {
-      size_t write = _writeIndex.load(std::memory_order_relaxed);
-      size_t nextWrite = (write + 1) % Size;
-
-      if (nextWrite == _readIndex.load(std::memory_order_acquire))
-      {
-        return false; // Queue full
-      }
-
-      _commands[write].data = item;
-      _commands[write].ready.store(true, std::memory_order_release);
-      _writeIndex.store(nextWrite, std::memory_order_release);
-      return true;
-    }
-
-    bool Pop(T &item)
-    {
-      size_t read = _readIndex.load(std::memory_order_relaxed);
-
-      if (!_commands[read].ready.load(std::memory_order_acquire))
-      {
-        return false; // Nothing to read
-      }
-
-      item = _commands[read].data;
-      _commands[read].ready.store(false, std::memory_order_release);
-      _readIndex.store((read + 1) % Size, std::memory_order_release);
-      return true;
-    }
   };
 
   // Commands for RT thread
@@ -107,21 +61,21 @@ namespace Base
     // RT-safe sound management
     static constexpr size_t MAX_SOUNDS = 64;
     std::array<SoundSlot, MAX_SOUNDS> _soundSlots;
-    RTCommandQueue<PlaySoundCommand, MAX_SOUNDS> _soundCommands;
+    TSCommandQueue<PlaySoundCommand, MAX_SOUNDS> _soundCommands;
 
     // RT-safe stream management
     static constexpr size_t MAX_STREAMS = 8;
     std::array<StreamSlot, MAX_STREAMS> _streamSlots;
-    RTCommandQueue<PlayStreamCommand, MAX_STREAMS> _playStreamCommands;
-    RTCommandQueue<StopStreamCommand, MAX_STREAMS> _stopStreamCommands;
+    TSCommandQueue<PlayStreamCommand, MAX_STREAMS> _playStreamCommands;
+    TSCommandQueue<StopStreamCommand, MAX_STREAMS> _stopStreamCommands;
 
-    // Cleanup queue (non-RT thread reads this)
-    RTCommandQueue<SoundInstance *, MAX_SOUNDS> _soundCleanupQueue;
-    RTCommandQueue<AudioStream *, MAX_STREAMS> _streamCleanupQueue;
+    // Cleanup queue
+    TSCommandQueue<SoundInstance *, MAX_SOUNDS> _soundCleanupQueue;
+    TSCommandQueue<AudioStream *, MAX_STREAMS> _streamCleanupQueue;
 
     static constexpr int FRAMES_PER_BUFFER = 64 * 8;
 
-    // Storage for owned instances (accessed only from non-RT thread)
+    // Storage for owned instances
     struct OwnedSound
     {
       std::shared_ptr<SoundInstance> instance;
@@ -137,9 +91,11 @@ namespace Base
     std::array<OwnedStream, MAX_STREAMS> _ownedStreams;
 
   public:
-    static int AudioCallBack(const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer,
-                             const PaStreamCallbackTimeInfo *timeInfo, PaStreamCallbackFlags statusFlags,
-                             void *userData);
+    static int AudioCallBack( //
+      const void *inputBuffer, void *outputBuffer, unsigned long framesPerBuffer,
+      const PaStreamCallbackTimeInfo *timeInfo, PaStreamCallbackFlags statusFlags,
+      void *userData //
+    );
 
     void Init();
     void SetAssetManager(AssetManager *assetManager);
@@ -147,7 +103,7 @@ namespace Base
     void PlayStream(const std::shared_ptr<PlayAudioStreamSignal> &signal);
     void StopStream(const std::shared_ptr<StopAudioStreamSignal> &signal);
     bool AllSoundsDone();
-    void ProcessCleanup(); // Call periodically from non-RT thread
+    void ProcessCleanup();
     void DeInit();
 
   private:
