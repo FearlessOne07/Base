@@ -25,10 +25,10 @@ message(STATUS "Base headers location ${ROOT_BASE_DIR}/include")
 
 ### GLFW OPTIONS
 # Enable Wayland backend in GLFW
-set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "Build GLFW with Wayland support")
+set(GLFW_BUILD_WAYLAND ON CACHE BOOL "Build GLFW with Wayland support")
 
 # Disable X11 backend in GLFW
-set(GLFW_BUILD_X11 ON CACHE BOOL "Do not build GLFW with X11 support")
+set(GLFW_BUILD_X11 OFF CACHE BOOL "Do not build GLFW with X11 support")
 
 # Opengl Stuff
 add_subdirectory("./vendor/glfw/")
