@@ -346,7 +346,12 @@ namespace Base
     switch (mode)
     {
     case WindowMode::Fullscreen: {
-      GLFWmonitor *monitor = glfwGetWindowMonitor(_window);
+
+      _lastWindowHeight = _windowHeight;
+      _lastWindowWidth = _windowWidth;
+      glfwGetWindowPos(_window, &_lastWindowPosX, &_lastWindowPosY);
+
+      GLFWmonitor *monitor = glfwGetPrimaryMonitor();
       const GLFWvidmode *mode = glfwGetVideoMode(monitor);
 
       glfwSetWindowMonitor( //
@@ -359,13 +364,18 @@ namespace Base
       break;
     }
     case WindowMode::Windowed: {
-
       glfwSetWindowAttrib(_window, GLFW_DECORATED, GL_TRUE);
+      glfwSetWindowPos(_window, (int)_lastWindowPosX, (int)_lastWindowPosY);
+      glfwSetWindowSize(_window, _lastWindowWidth, _lastWindowHeight);
       break;
     }
     case WindowMode::Borderless: {
+
+      _lastWindowHeight = _windowHeight;
+      _lastWindowWidth = _windowWidth;
+      glfwGetWindowPos(_window, (int *)&_lastWindowPosX, (int *)&_lastWindowPosY);
       glfwSetWindowAttrib(_window, GLFW_DECORATED, GLFW_FALSE);
-      GLFWmonitor *monitor = glfwGetWindowMonitor(_window);
+      GLFWmonitor *monitor = glfwGetPrimaryMonitor();
       const GLFWvidmode *mode = glfwGetVideoMode(monitor);
 
       glfwSetWindowPos(_window, 0, 0);

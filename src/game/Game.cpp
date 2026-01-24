@@ -128,7 +128,6 @@ namespace Base
         },
     };
     RenderContextSingleton::UpdateInstance(&rendercontext);
-    _lastFrameTime = std::chrono::steady_clock::now();
   }
 
   void Game::GameImpl::Run()
@@ -231,6 +230,13 @@ namespace Base
     {
       if (keyEvent->Key == Key::F11 && keyEvent->action == InputEvent::Action::Pressed)
       {
+        if(_fullscreen){
+          Renderer::SetWindowMode(Base::WindowMode::Windowed);
+          _fullscreen = false;
+        } else {
+          Renderer::SetWindowMode(Base::WindowMode::Borderless);
+          _fullscreen = true;
+        }
         event->isHandled = true;
         return;
       }

@@ -38,6 +38,11 @@ namespace Base
     int _windowWidth = 0;
     int _windowHeight = 0;
 
+    int _lastWindowWidth = 0;
+    int _lastWindowHeight = 0;
+    int _lastWindowPosX = 0;
+    int _lastWindowPosY = 0;
+
     int _frameBufferHeight = 0;
     int _frameBufferWidth = 0;
 
