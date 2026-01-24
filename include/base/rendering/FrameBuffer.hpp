@@ -9,28 +9,26 @@
 
 namespace Base
 {
-  enum class FrameBufferFormat
-  {
-  };
-
   struct FrameBufferSpec
   {
     int Width = 0;
     int Height = 0;
-    std::array<TextureFormat, 1> ColorAttachments = {
-      TextureFormat::RGBA8
-      // TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8,
+    uint8_t ColorAttachmentCount = 1;
+    std::array<TextureFormat, 8> ColorAttachmentFormats = {
+      TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8,
+      TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8, TextureFormat::RGBA8,
     };
   };
 
   class FrameBuffer
   {
   private:
+    static constexpr uint8_t MAX_COLOR_ATTACHMENTS = 8;
     friend class Renderer;
     RenderID _id;
     RenderID _depthAttachment;
 
-    std::array<std::shared_ptr<Texture>, 1> _colorAttachments;
+    std::array<std::shared_ptr<Texture>, MAX_COLOR_ATTACHMENTS> _colorAttachments;
     uint8_t _colorAttachmentCount = 0;
 
     int _width = 0, _height = 0;

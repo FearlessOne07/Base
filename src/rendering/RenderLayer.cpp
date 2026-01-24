@@ -10,16 +10,15 @@
 namespace Base
 {
   RenderLayer::RenderLayer( //
-    Ref<SceneManager> sceneManager, Vector2 position, Vector2 size,
-    Color clearColor //
-    )
-    : _position(position), _size(size), _sceneManager(sceneManager), _clearColor(clearColor), _layerCamera(size)
+    Ref<SceneManager> sceneManager, Vector2 position, Color clearColor, const FrameBufferSpec &framebufferSpec)
+    : _position(position), _size({framebufferSpec.Width, framebufferSpec.Height}), _sceneManager(sceneManager),
+      _clearColor(clearColor), _layerCamera({framebufferSpec.Width, framebufferSpec.Height})
   {
-    _framebuffer = FrameBuffer::Create({.Width = static_cast<int>(_size.x), .Height = static_cast<int>(_size.y)});
-    _ping = FrameBuffer::Create({.Width = static_cast<int>(_size.x), .Height = static_cast<int>(_size.y)});
+    _framebuffer = FrameBuffer::Create(framebufferSpec);
+    _ping = FrameBuffer::Create(framebufferSpec);
   }
 
-  RenderLayer::RenderLayer(RenderLayer &&other) noexcept
+  RenderLayer::RenderLayer(const RenderLayer &&other) noexcept
     : _position(other._position), _size(other._size), _renderFunctions(std::move(other._renderFunctions)),
       _framebuffer(other._framebuffer), _effectChain(std::move(other._effectChain)), _ping(other._ping),
       _layerCamera(other._layerCamera)
@@ -187,6 +186,16 @@ namespace Base
   void RenderLayer::EndCamera()
   {
     _layerCamera.End();
+  }
+
+  RenderLayerState &RenderLayer::GetState()
+  {
+    return _state;
+  }
+
+  const RenderLayerState &RenderLayer::GetState() const
+  {
+    return _state;
   }
 
   void RenderLayer::Update(float dt)

@@ -101,11 +101,6 @@ namespace Base
     Exit();
   }
 
-  Ref<RenderLayer> Scene::AddRenderLayer(Vector2 size, Color clearColor)
-  {
-    return _engine.Rendering->InitLayer(shared_from_this(), {0, 0}, size, clearColor);
-  }
-
   void Scene::PauseLayer(int layerIndex)
   {
     auto bus = SignalBus::GetInstance();

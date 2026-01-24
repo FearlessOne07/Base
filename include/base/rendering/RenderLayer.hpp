@@ -16,6 +16,19 @@ namespace Base
 {
   class Scene;
   class SceneManager;
+
+  enum class RenderLayerVisibilty
+  {
+    Visible,
+    Opaque,
+    Transperent
+  };
+
+  struct RenderLayerState
+  {
+    RenderLayerVisibilty Visibilty = RenderLayerVisibilty::Visible;
+  };
+
   class RenderLayer
   {
     friend class RenderingManager;
@@ -25,6 +38,7 @@ namespace Base
     Ptr<FrameBuffer> _framebuffer;
     std::deque<RenderFunction> _renderFunctions;
     Color _clearColor = Base::Blank;
+    RenderLayerState _state;
 
     // Camera
     CameraController _layerCamera;
@@ -44,8 +58,8 @@ namespace Base
     void Update(float dt);
 
   public:
-    RenderLayer(Ref<SceneManager>, Vector2 position, Vector2 size, Color clearColor);
-    RenderLayer(RenderLayer &&other) noexcept;
+    RenderLayer(Ref<SceneManager>, Vector2 position, Color clearColor, const FrameBufferSpec &framebufferSpec);
+    RenderLayer(const RenderLayer &&other) noexcept;
     RenderLayer &operator=(RenderLayer &&other) noexcept;
     ~RenderLayer();
     void Render();
@@ -66,10 +80,13 @@ namespace Base
     Vector2 GetWorldToScreen(Vector2 position) const;
     float GetWorldToScreen(float distance) const;
     float GetScreenToWorld(float distance) const;
+    float GetCameraZoom() const;
     void BeginCamera();
     void EndCamera();
 
-    float GetCameraZoom() const;
+    // State
+    RenderLayerState &GetState();
+    const RenderLayerState &GetState() const;
 
     // Shader Effect Management
     template <typename T, typename... Args> void AddShaderEffect(std::weak_ptr<Scene> ownerScene, Args &&...args)

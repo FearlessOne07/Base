@@ -1,7 +1,9 @@
 #include "base/rendering/FrameBuffer.hpp"
+#include "base/util/Exception.hpp"
 #include "glad/glad.h"
 #include <iostream>
 #include <memory>
+#include <vector>
 
 namespace Base
 {
@@ -24,15 +26,27 @@ namespace Base
     glCreateFramebuffers(1, _id.data());
     glBindFramebuffer(GL_FRAMEBUFFER, _id);
 
-    for (int i = 0; i < spec.ColorAttachments.size(); i++)
+    if (spec.ColorAttachmentCount > MAX_COLOR_ATTACHMENTS)
     {
-      _colorAttachments[i] = Texture::Create(
-        nullptr, TextureSpec{.Width = _width, .Height = _height, .Format = spec.ColorAttachments[i], .MipMaps = false});
+      THROW_BASE_RUNTIME_ERROR("Invalide Number of Color Attachments for Framebuffer; Max is 8");
+    }
+
+    _colorAttachmentCount = spec.ColorAttachmentCount;
+    for (int i = 0; i < spec.ColorAttachmentCount; i++)
+    {
+      _colorAttachments[i] = Texture::Create( //
+        nullptr,
+        TextureSpec{
+          .Width = _width,
+          .Height = _height,
+          .Format = spec.ColorAttachmentFormats[i],
+          .MipMaps = false,
+        } //
+      );
       glFramebufferTexture2D( //
         GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, _colorAttachments[i]->GetRenderID(),
         0 //
       );
-      _colorAttachmentCount++;
     }
 
     glGenRenderbuffers(1, _depthAttachment.data());
@@ -50,10 +64,12 @@ namespace Base
   void FrameBuffer::Bind()
   {
     glBindFramebuffer(GL_FRAMEBUFFER, _id);
-    static constexpr GLenum bufs[1] = {
-      GL_COLOR_ATTACHMENT0,
-    };
-    glDrawBuffers(1, bufs);
+    std::vector<GLenum> bufs;
+    for (int i = 0; i < _colorAttachmentCount; i++)
+    {
+      bufs.push_back(GL_COLOR_ATTACHMENT0 + i);
+    }
+    glDrawBuffers(_colorAttachmentCount, bufs.data());
   }
 
   void FrameBuffer::Unbind()
@@ -64,7 +80,7 @@ namespace Base
 
   std::shared_ptr<Texture> FrameBuffer::GetColorAttachment(FramebufferAttachmentIndex attachmentIndex) const
   {
-    if (!(static_cast<uint8_t>(attachmentIndex) + 1 <= _colorAttachmentCount))
+    if (!(static_cast<uint8_t>(attachmentIndex) < _colorAttachmentCount))
     {
       std::cout << "Attachement Index out of bounds!\n";
       exit(-1);

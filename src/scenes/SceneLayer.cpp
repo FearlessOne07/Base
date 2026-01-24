@@ -59,6 +59,11 @@ namespace Base
     return _size;
   }
 
+  RenderLayerState &SceneLayer::GetRenderLayerState()
+  {
+    return _renderLayer->GetState();
+  }
+
   float SceneLayer::GetCameraZoom() const
   {
     return _renderLayer->GetCameraZoom();

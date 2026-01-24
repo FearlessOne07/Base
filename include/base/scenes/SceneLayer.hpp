@@ -61,6 +61,9 @@ namespace Base
     void EndCamera();
     void SetCameraPauseMask();
 
+    // Renderlayer
+    RenderLayerState &GetRenderLayerState();
+
     // Pausing
     void Pause();
     void UnPause();

@@ -59,7 +59,6 @@ namespace Base
   protected:
     // Rendering
     void SetClearColor(Color color);
-    Ref<RenderLayer> AddRenderLayer(Vector2 size, Color clearColor = {0, 0, 0, 0});
 
     ShaderEffectChain _postProcessingEffects;
 

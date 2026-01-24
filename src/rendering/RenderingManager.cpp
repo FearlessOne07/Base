@@ -1,4 +1,5 @@
 #include "base/rendering/RenderingManager.hpp"
+#include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/RenderContextSingleton.hpp"
 #include "base/rendering/RenderLayer.hpp"
 #include "base/scenes/Scene.hpp"
@@ -22,13 +23,13 @@ namespace Base
     _sceneManager = sceneManager;
   }
 
-  Ref<RenderLayer> RenderingManager::InitLayer(                                                   //
-    const std::weak_ptr<const Scene> ownerScene, Vector2 position, Vector2 size, Color clearColor //
+  Ref<RenderLayer> RenderingManager::InitLayer(                                                                  //
+    const std::weak_ptr<const Scene> ownerScene, Vector2 position, Color clearColor, const FrameBufferSpec &spec //
   )
   {
     if (_renderLayers.contains(ownerScene.lock()->GetSceneID()))
     {
-      _renderLayers.at(ownerScene.lock()->GetSceneID()).emplace_back(_sceneManager, position, size, clearColor);
+      _renderLayers.at(ownerScene.lock()->GetSceneID()).emplace_back(_sceneManager, position, clearColor, spec);
       return _renderLayers.at(ownerScene.lock()->GetSceneID()).back();
     }
     return Ref<RenderLayer>();
@@ -99,34 +100,55 @@ namespace Base
   void RenderingManager::Update(float dt)
   {
     Renderer::Update();
-    auto &layers = _renderLayers.at(_currentScene);
+    auto &layersRaw = _renderLayers.at(_currentScene);
+
+    std::vector<RenderLayer *> layers;
+    for (auto &layer : layersRaw)
+    {
+      layers.push_back(&layer);
+      if (layer.GetState().Visibilty == RenderLayerVisibilty::Opaque)
+      {
+        break;
+      }
+    }
+
     for (auto &layer : layers)
     {
-      layer.Update(dt);
+      layer->Update(dt);
     }
   }
 
   void RenderingManager::Render()
   {
 
-    Renderer::BeginFrame();
+    auto &layersRaw = _renderLayers.at(_currentScene);
+
+    std::vector<RenderLayer *> layers;
+    for (auto &layer : layersRaw)
+    {
+      layers.push_back(&layer);
+      if (layer.GetState().Visibilty == RenderLayerVisibilty::Opaque)
+      {
+        break;
+      }
+    }
 
     // Begin rendering of Scenes
-    auto &layers = _renderLayers.at(_currentScene);
+    Renderer::BeginFrame();
     for (auto &layer : layers)
     {
-      layer.Render();
+      layer->Render();
     }
 
     // Composite Layers
     Renderer::BeginFramebuffer(_renderTexture);
     Renderer::Clear(_sceneManager->GetCurrentScene()->GetClearColor());
-    auto &&layersRev = std::views::reverse(_renderLayers.at(_currentScene));
+    auto &&layersRev = std::views::reverse(layers);
     for (auto &layer : layersRev)
     {
       auto rd = RenderContextSingleton::GetInstance();
       Renderer::DrawFramebuffer( //
-        layer.GetFramebuffer(), {rd->gameWidth, rd->gameHeight},
+        layer->GetFramebuffer(), {rd->gameWidth, rd->gameHeight},
         FramebufferAttachmentIndex::Color0 //
       );
     }
@@ -138,7 +160,6 @@ namespace Base
 
     if (!scenePost.Empty())
     {
-
       for (auto &effect : scenePost)
       {
         effect->Apply(input, output, _renderResolution);

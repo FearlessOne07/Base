@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base/game/GameConfig.hpp"
+#include "base/rendering/FrameBuffer.hpp"
 #include "base/rendering/RenderLayer.hpp"
 #include "base/scenes/SceneID.hpp"
 #include "base/util/Ref.hpp"
@@ -37,8 +38,9 @@ namespace Base
 
   public:
     void Render();
-    Ref<RenderLayer> InitLayer(                                                                     //
-      const std::weak_ptr<const Scene> ownerScene, Vector2 position, Vector2 size, Color clearColor //
+    Ref<RenderLayer> InitLayer( //
+      const std::weak_ptr<const Scene> ownerScene, Vector2 position, Color clearColor,
+      const FrameBufferSpec &framebufferSpec //
     );
   };
 } // namespace Base
