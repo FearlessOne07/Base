@@ -1,5 +1,4 @@
 #include "base/scenes/Scene.hpp"
-#include "base/rendering/RenderingManager.hpp"
 #include "base/scenes/SceneData.hpp"
 #include "base/scenes/signals/SceneLayerPausedSignal.hpp"
 #include "base/signals/SignalBus.hpp"

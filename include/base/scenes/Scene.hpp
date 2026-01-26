@@ -9,7 +9,6 @@
 #include "base/ui/UIManager.hpp"
 #include <bitset>
 #include <memory>
-#include <unordered_map>
 
 namespace Base
 {
@@ -43,9 +42,9 @@ namespace Base
 
     Color _clearColor = {0, 0, 0, 255};
     SharedSceneDataStore<void> _sharedData;
+    SharedSceneDataStore<void> _assetStore;
 
     SceneLayerStack _layerStack;
-    std::unordered_map<std::string, AssetHandle<void>> _assets;
 
     // Private Getters
     [[nodiscard]] const SceneTransition &GetSceneTransition() const;
@@ -112,7 +111,7 @@ namespace Base
     }
 
     // Shared Data
-    template <typename T> std::shared_ptr<T> GetSharedData()
+    template <typename T> std::shared_ptr<T> SharedData()
     {
       return _sharedData.Get<T>();
     }

@@ -1,7 +1,6 @@
 #pragma once
 #include "base/assets/BaseAsset.hpp"
 #include "base/util/Type.hpp"
-#include <filesystem>
 #include <unordered_map>
 #include <vector>
 
