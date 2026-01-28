@@ -11,14 +11,14 @@ namespace Base
 {
   enum class TransitionEvaluationType
   {
-    OR = 0,
-    AND
+    Or = 0,
+    And
   };
   class TransitionConditionBlock
   {
     std::vector<std::shared_ptr<TransitionComponent>> _components;
     std::vector<bool> _flags;
-    TransitionEvaluationType _evaluationType = TransitionEvaluationType::OR;
+    TransitionEvaluationType _evaluationType = TransitionEvaluationType::Or;
     std::string _nextState = "";
 
   public:

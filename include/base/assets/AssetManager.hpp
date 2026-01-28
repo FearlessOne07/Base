@@ -61,7 +61,7 @@ namespace Base
         if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
         {
           std::stringstream error;
-          error << "Scene-local Font '" << name << "' does not exist";
+          error << "Scene-local Asset '" << name << "' does not exist";
           THROW_BASE_RUNTIME_ERROR(error.str());
         }
         return AssetHandle<T>::Cast(_sceneAssets.at(scene).at(name).handle);

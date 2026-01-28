@@ -20,11 +20,11 @@ namespace Base
       bool transition = false;
       const std::vector<bool> &flags = currentState.transitionBlock.GetFlags();
 
-      if (currentState.transitionBlock.GetEvaluationType() == TransitionEvaluationType::OR)
+      if (currentState.transitionBlock.GetEvaluationType() == TransitionEvaluationType::Or)
       {
         transition = std::any_of(flags.begin(), flags.end(), [](bool f) { return f; });
       }
-      else if (currentState.transitionBlock.GetEvaluationType() == TransitionEvaluationType::AND)
+      else if (currentState.transitionBlock.GetEvaluationType() == TransitionEvaluationType::And)
       {
         transition = std::all_of(flags.begin(), flags.end(), [](bool f) { return f; });
       }
