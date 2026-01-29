@@ -275,109 +275,94 @@ namespace Base
   {
     while (!_renderQueue.empty())
     {
-      auto command = _renderQueue.front();
+      RenderCommand command = std::move(_renderQueue.front());
       _renderQueue.pop();
 
-      if (std::holds_alternative<ClearCommand>(command))
-      {
-        auto com = std::get<ClearCommand>(command);
-        glm::vec4 color = com.Color;
+      std::visit(
+        Overloaded{
 
-        if (_instance->_currentFramebuffer)
-        {
-          glClearBufferfv(GL_COLOR, static_cast<uint8_t>(com.AttachmentToClear), glm::value_ptr(color));
-        }
-        else
-        {
-          glClearBufferfv(GL_COLOR, 0, glm::value_ptr(color));
-        }
-      }
-      else if (std::holds_alternative<SetFramebufferCommand>(command))
-      {
-        auto com = std::get<SetFramebufferCommand>(command);
-        auto &framebuffer = com.FramebufferToSet;
+          // ---------------- Clear ----------------
+          [&](const ClearCommand &com) {
+            glm::vec4 color = com.Color;
 
-        if (_currentBatcher)
-        {
-          _currentBatcher->Flush();
-        }
+            if (_instance->_currentFramebuffer)
+            {
+              glClearBufferfv(GL_COLOR, static_cast<uint8_t>(com.AttachmentToClear), glm::value_ptr(color));
+            }
+            else
+            {
+              glClearBufferfv(GL_COLOR, 0, glm::value_ptr(color));
+            }
+          },
 
-        if (framebuffer)
-        {
-          _instance->_currentFramebuffer = framebuffer;
-          framebuffer->Bind();
-          _instance->_defaultCamera->SetViewPort({framebuffer->GetWidth(), framebuffer->GetHeight()});
-          glViewport(0, 0, framebuffer->GetWidth(), framebuffer->GetHeight());
-        }
-        else
-        {
-          glBindFramebuffer(GL_FRAMEBUFFER, 0);
-          _instance->_currentFramebuffer = nullptr;
-          // Restore window viewport
-          _instance->_defaultCamera->SetViewPort({_instance->_windowViewPort.x, _instance->_windowViewPort.y});
-          glViewport(0, 0, _instance->_windowViewPort.x, _instance->_windowViewPort.y);
-        }
+          // ---------------- Framebuffer ----------------
+          [&](const SetFramebufferCommand &com) {
+            if (_currentBatcher)
+              _currentBatcher->Flush();
 
-        if (_currentBatcher)
-        {
-          _currentBatcher->Begin();
-        }
-      }
-      else if (std::holds_alternative<SetCameraCommand>(command))
-      {
-        if (_currentBatcher)
-        {
-          _currentBatcher->Flush();
-        }
-        auto com = std::get<SetCameraCommand>(command);
-        _currentCamera = com.CameraToSet;
+            auto &framebuffer = com.FramebufferToSet;
 
-        _quadBatcher.SetCamera(_currentCamera);
-        _circleBatcher.SetCamera(_currentCamera);
-        if (_currentBatcher)
-        {
-          _currentBatcher->Begin();
-        }
-      }
-      else if ( //
-        std::holds_alternative<QuadCommand>(command) || std::holds_alternative<SpriteCommand>(command) ||
-        std::holds_alternative<TextCommand>(command) //
-      )
-      {
-        if (!_currentBatcher)
-        {
-          _currentBatcher = &_quadBatcher;
-          _currentBatcher->Begin();
-        }
-        else if (_currentBatcher->GetGeometryType() != GeometryType::Texture)
-        {
-          _currentBatcher->Flush();
-          _currentBatcher = &_quadBatcher;
-          _currentBatcher->Begin();
-        }
-        _currentBatcher->Submit(command);
-      }
-      else if (std::holds_alternative<CircleCommand>(command))
-      {
-        if (!_currentBatcher)
-        {
-          _currentBatcher = &_circleBatcher;
-          _circleBatcher.Begin();
-        }
-        else if (_currentBatcher->GetGeometryType() != GeometryType::Circle)
-        {
-          _currentBatcher->Flush();
-          _currentBatcher = &_circleBatcher;
-          _currentBatcher->Begin();
-        }
-        _currentBatcher->Submit(command);
-      }
+            if (framebuffer)
+            {
+              _instance->_currentFramebuffer = framebuffer;
+              framebuffer->Bind();
+              _instance->_defaultCamera->SetViewPort({framebuffer->GetWidth(), framebuffer->GetHeight()});
+              glViewport(0, 0, framebuffer->GetWidth(), framebuffer->GetHeight());
+            }
+            else
+            {
+              glBindFramebuffer(GL_FRAMEBUFFER, 0);
+              _instance->_currentFramebuffer = nullptr;
+              _instance->_defaultCamera->SetViewPort({_instance->_windowViewPort.x, _instance->_windowViewPort.y});
+              glViewport(0, 0, _instance->_windowViewPort.x, _instance->_windowViewPort.y);
+            }
+
+            if (_currentBatcher)
+              _currentBatcher->Begin();
+          },
+
+          // ---------------- Camera ----------------
+          [&](const SetCameraCommand &com) {
+            if (_currentBatcher)
+              _currentBatcher->Flush();
+
+            _currentCamera = com.CameraToSet;
+
+            _quadBatcher.SetCamera(_currentCamera);
+            _circleBatcher.SetCamera(_currentCamera);
+
+            if (_currentBatcher)
+              _currentBatcher->Begin();
+          },
+
+          // ---------------- Quad / Sprite / Text ----------------
+          [&](const QuadCommand &com) { SubmitQuadLike(com); }, [&](const SpriteCommand &com) { SubmitQuadLike(com); },
+          [&](const TextCommand &com) { SubmitQuadLike(com); },
+
+          // ---------------- Circle ----------------
+          [&](const CircleCommand &com) {
+            if (!_currentBatcher)
+            {
+              _currentBatcher = &_circleBatcher;
+              _currentBatcher->Begin();
+            }
+            else if (_currentBatcher->GetGeometryType() != GeometryType::Circle)
+            {
+              _currentBatcher->Flush();
+              _currentBatcher = &_circleBatcher;
+              _currentBatcher->Begin();
+            }
+
+            _currentBatcher->Submit(com);
+          }
+
+        },
+        command);
     }
 
     if (_currentBatcher)
-    {
       _currentBatcher->Flush();
-    }
+
     _currentBatcher = nullptr;
   }
 } // namespace Base

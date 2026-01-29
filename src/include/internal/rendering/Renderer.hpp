@@ -28,6 +28,12 @@ namespace Base
     bool ResizableWindow = true;
   };
 
+  template <typename... Ts> struct Overloaded : Ts...
+  {
+    using Ts::operator()...;
+  };
+  template <typename... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
+
   class Renderer
   {
   private:
@@ -59,6 +65,23 @@ namespace Base
     void _init(const RenderSpec &spec);
     void _shutdown();
     void ExecuteRenderCommands();
+
+    template <typename T> void SubmitQuadLike(const T &command)
+    {
+      if (!_currentBatcher)
+      {
+        _currentBatcher = &_quadBatcher;
+        _currentBatcher->Begin();
+      }
+      else if (_currentBatcher->GetGeometryType() != GeometryType::Texture)
+      {
+        _currentBatcher->Flush();
+        _currentBatcher = &_quadBatcher;
+        _currentBatcher->Begin();
+      }
+
+      _currentBatcher->Submit(command);
+    }
 
   public:
     static void Init(const RenderSpec &spec = {});
