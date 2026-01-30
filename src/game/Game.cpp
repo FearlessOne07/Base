@@ -8,7 +8,6 @@
 #include "base/scenes/Scene.hpp"
 #include "base/systems/System.hpp"
 #include "base/util/Exception.hpp"
-#include "internal/game/GameImpl.hpp"
 #include "internal/rendering/Renderer.hpp"
 #include <algorithm>
 #include <memory>
@@ -24,10 +23,10 @@ extern "C"
   __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif
-// TODO: Maybe make a base Manager class for _currentScene functionality
+
 namespace Base
 {
-  void Game::GameImpl::Init(const GameConfig &config)
+  void Game::Init(const GameConfig &config)
   {
     // Init TimeManager
     _timeManager.Init();
@@ -57,47 +56,6 @@ namespace Base
 
     // Load Global Assets
     _assetManager.Init();
-    if (config.GlobalAssets.size() > 0)
-    {
-      for (const auto &[type, pathList] : config.GlobalAssets)
-      {
-        switch (type)
-        {
-        case AssetType::Texture:
-          for (const auto &path : pathList)
-          {
-            _assetManager.LoadTexture(path, true);
-          }
-          break;
-        case AssetType::Sound:
-          for (const auto &path : pathList)
-          {
-            _assetManager.LoadSound(path, true);
-          }
-          break;
-        case AssetType::AudioStream:
-          for (const auto &path : pathList)
-          {
-            _assetManager.LoadAudioStream(path, true);
-          }
-          break;
-        case AssetType::Font:
-          for (const auto &path : pathList)
-          {
-            _assetManager.LoadFont(path, true);
-          }
-          break;
-        case AssetType::Shader:
-          for (const auto &path : pathList)
-          {
-            _assetManager.LoadShader(path, true);
-          }
-          break;
-        default:
-          THROW_BASE_RUNTIME_ERROR("Invalid Asset type speicfied in global assets");
-        };
-      }
-    }
 
     // Initialize Systems
     _systemManager.Init();
@@ -130,7 +88,7 @@ namespace Base
     RenderContextSingleton::UpdateInstance(&rendercontext);
   }
 
-  void Game::GameImpl::Run()
+  void Game::Run()
   {
     // Loop Wule the window is Open
     while (!Renderer::IsWindowClosed() && _running)
@@ -198,7 +156,7 @@ namespace Base
     End();
   }
 
-  void Game::GameImpl::End()
+  void Game::End()
   {
     // Deinitilize Systems
     _audioMan.DeInit();
@@ -206,17 +164,17 @@ namespace Base
     _renderingManager.DeInit();
   }
 
-  void Game::GameImpl::Quit()
+  void Game::Quit()
   {
     _running = false;
   }
 
-  void Game::GameImpl::RegisterScene(std::type_index sceneID, FactoryCallBack factory, bool startScene)
+  void Game::_registerScene(std::type_index sceneID, FactoryCallBack factory, bool startScene)
   {
     _sceneManager.RegisterScene(sceneID, std::move(factory), startScene);
   }
 
-  void Game::GameImpl::RegisterSystem(                                            //
+  void Game::_registerSystem(                                                     //
     std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem //
   )
   {
@@ -224,16 +182,19 @@ namespace Base
     _systemManager.RegisterSystem(systemID, std::move(system), isRenderSystem);
   }
 
-  void Game::GameImpl::OnInputEvent(std::shared_ptr<InputEvent> event)
+  void Game::OnInputEvent(std::shared_ptr<InputEvent> event)
   {
     if (auto keyEvent = std::dynamic_pointer_cast<KeyEvent>(event))
     {
       if (keyEvent->Key == Key::F11 && keyEvent->action == InputEvent::Action::Pressed)
       {
-        if(_fullscreen){
+        if (_fullscreen)
+        {
           Renderer::SetWindowMode(Base::WindowMode::Windowed);
           _fullscreen = false;
-        } else {
+        }
+        else
+        {
           Renderer::SetWindowMode(Base::WindowMode::Borderless);
           _fullscreen = true;
         }
@@ -244,40 +205,7 @@ namespace Base
     _sceneManager.OnInputEvent(event);
   }
 
-  void Game::GameImpl::ToggleFullscreenBorderless()
+  void Game::ToggleFullscreenBorderless()
   {
-  }
-
-  // Game Class
-  Game::Game()
-  {
-    _impl = new GameImpl;
-  }
-
-  Game::~Game()
-  {
-    delete _impl;
-  }
-
-  void Game::Run()
-  {
-    _impl->Run();
-  }
-
-  void Game::Init(GameConfig config)
-  {
-    _impl->Init(config);
-  }
-
-  void Game::RegisterSceneImpl(                                                               //
-    std::type_index sceneID, std::function<std::shared_ptr<Scene>()> factory, bool startScene //
-  )
-  {
-    _impl->RegisterScene(sceneID, std::move(factory), startScene);
-  }
-
-  void Game::RegisterSystemImpl(std::type_index systemID, std::shared_ptr<System> system, bool isRenderSystem)
-  {
-    _impl->RegisterSystem(systemID, std::move(system), isRenderSystem);
   }
 } // namespace Base

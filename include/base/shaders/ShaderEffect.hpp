@@ -12,7 +12,6 @@ namespace Base
   class ShaderEffect
   {
   protected:
-    std::weak_ptr<Scene> _currentScene;
     bool _active = true;
 
     void BeginFrameBuffer(Ptr<FrameBuffer> framebuffer);
@@ -29,7 +28,6 @@ namespace Base
 
   public:
     virtual ~ShaderEffect() = default;
-    virtual void Setup(std::weak_ptr<Base::Scene> scene) = 0;
     virtual void Apply(Ptr<FrameBuffer> input, Ptr<FrameBuffer> output, Vector2 resolution) = 0;
     virtual void Update(float dt) {};
 

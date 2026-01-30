@@ -1,9 +1,10 @@
 // Implementation
-#include "internal/audio/AudioManager.hpp"
+#include "base/audio/AudioManager.hpp"
 #include "base/audio/signals/PlaySoundSignal.hpp"
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
 #include "base/signals/SignalBus.hpp"
 #include "base/util/Exception.hpp"
+#include "internal/audio/SoundInstance.hpp"
 #include "portaudio.h"
 #include <algorithm>
 #include <cstring>

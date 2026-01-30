@@ -109,9 +109,6 @@ set(SRC
 )
 
 set(PV_HDRS
-  "./include/internal/game/GameImpl.hpp"
-
-  "./include/internal/audio/AudioManager.hpp"
   "./include/internal/audio/SoundInstance.hpp"
 
   "./include/internal/input/InputManager.hpp"
@@ -165,6 +162,7 @@ set(PB_HDRS
   # Audio
   # =======================
   "../include/base/audio/Sound.hpp"
+  "../include/base/audio/AudioManager.hpp"
   "../include/base/audio/AudioStream.hpp"
   "../include/base/audio/signals/PlaySoundSignal.hpp"
   "../include/base/audio/signals/PlayAudioStreamSignal.hpp"

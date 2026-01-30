@@ -28,7 +28,6 @@ namespace Base
       {
         _effectIds.push_back(id);
         std::shared_ptr<T> effect = std::make_shared<T>(std::forward<Args>(args)...);
-        effect->Setup(ownerScene);
         _effects.emplace_back(std::move(effect));
         return std::static_pointer_cast<T>(_effects.back());
       }

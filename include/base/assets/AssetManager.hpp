@@ -1,11 +1,13 @@
 #pragma once
 #include "base/assets/AssetHandle.hpp"
+#include "base/assets/AssetLayout.hpp"
 #include "base/assets/BaseAsset.hpp"
 #include "base/assets/Font.hpp"
 #include "base/assets/Texture.hpp"
 #include "base/audio/AudioStream.hpp"
 #include "base/audio/Sound.hpp"
 #include "base/scenes/SceneID.hpp"
+#include "base/scenes/SharedSceneDataStore.hpp"
 #include "base/shaders/Shader.hpp"
 #include "base/util/Exception.hpp"
 #include "base/util/Strings.hpp"
@@ -31,9 +33,9 @@ namespace Base
     };
 
   private:
+    SharedSceneDataStore<void> _globalAssetStore;
     std::unordered_map<std::string, AssetSlot> _globalAssets;
     std::unordered_map<SceneID, std::unordered_map<std::string, AssetSlot>> _sceneAssets;
-
     SceneID _currentScene;
 
     // Sound Settings
@@ -45,42 +47,59 @@ namespace Base
     void UnloadScene(SceneID);
     void SetCurrentScene(SceneID);
 
-  public:
-    void Init();
-    void Deinit();
-    void SetAudioSampleRate(uint64_t sampleRate);
-
-    template <typename T>
-      requires(std::is_base_of_v<BaseAsset, T>)
-    AssetHandle<T> GetAsset(const std::string &assetName, bool global = false)
+    friend class Game;
+    template <typename T> void InitGlobalAssets()
     {
-      std::string name = Base::Strings::ToLower(assetName);
-      if (!global)
-      {
-        auto &scene = _currentScene;
-        if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
-        {
-          std::stringstream error;
-          error << "Scene-local Asset '" << name << "' does not exist";
-          THROW_BASE_RUNTIME_ERROR(error.str());
-        }
-        return AssetHandle<T>::Cast(_sceneAssets.at(scene).at(name).handle);
-      }
-      else
-      {
-        if (_globalAssets.find(name) == _globalAssets.end())
-        {
-          std::stringstream error;
-          error << "Global asset '" << name << "' does not exist";
-          THROW_BASE_RUNTIME_ERROR(error.str());
-        }
-        return AssetHandle<T>::Cast(_globalAssets.at(name).handle);
-      }
+      auto data = SharedSceneDataStore<T>();
+      data.Init();
+      AssetLayout<T>::Load(*this, *(data.template Get<T>()));
+      _globalAssetStore = data;
     }
+
+    template <typename T> friend class AssetLayout;
+
     AssetHandle<Texture> LoadTexture(const AssetPath &path, bool global = false);
     AssetHandle<Shader> LoadShader(const AssetPath &path, bool global = false);
     AssetHandle<Sound> LoadSound(const AssetPath &path, bool global = false);
     AssetHandle<AudioStream> LoadAudioStream(const AssetPath &path, bool global = false);
     AssetHandle<Font> LoadFont(const AssetPath &path, bool global = false);
+
+  public:
+    void Init();
+    void Deinit();
+    void SetAudioSampleRate(uint64_t sampleRate);
+
+    // template <typename T>
+    //   requires(std::is_base_of_v<BaseAsset, T>)
+    // AssetHandle<T> GetAsset(const std::string &assetName, bool global = false)
+    // {
+    //   std::string name = Base::Strings::ToLower(assetName);
+    //   if (!global)
+    //   {
+    //     auto &scene = _currentScene;
+    //     if (_sceneAssets.at(scene).find(name) == _sceneAssets.at(scene).end())
+    //     {
+    //       std::stringstream error;
+    //       error << "Scene-local Asset '" << name << "' does not exist";
+    //       THROW_BASE_RUNTIME_ERROR(error.str());
+    //     }
+    //     return AssetHandle<T>::Cast(_sceneAssets.at(scene).at(name).handle);
+    //   }
+    //   else
+    //   {
+    //     if (_globalAssets.find(name) == _globalAssets.end())
+    //     {
+    //       std::stringstream error;
+    //       error << "Global asset '" << name << "' does not exist";
+    //       THROW_BASE_RUNTIME_ERROR(error.str());
+    //     }
+    //     return AssetHandle<T>::Cast(_globalAssets.at(name).handle);
+    //   }
+    // }
+    template <typename T> std::shared_ptr<T> GlobalAssetStore()
+    {
+      return _globalAssetStore.Get<T>();
+    }
   };
 } // namespace Base
+// amespace Base

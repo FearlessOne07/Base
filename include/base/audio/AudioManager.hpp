@@ -5,7 +5,6 @@
 #include "base/audio/signals/PlayAudioStreamSignal.hpp"
 #include "base/audio/signals/PlaySoundSignal.hpp"
 #include "base/audio/signals/StopAudioStreamSignal.hpp"
-#include "internal/audio/SoundInstance.hpp"
 #include "internal/utils/TSCommandQueue.hpp"
 #include <array>
 #include <atomic>
@@ -14,6 +13,7 @@
 namespace Base
 {
   // RT-safe sound slot that holds raw pointers and state
+  class SoundInstance;
   struct SoundSlot
   {
     SoundInstance *instance = nullptr;

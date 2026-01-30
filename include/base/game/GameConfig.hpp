@@ -1,8 +1,5 @@
 #pragma once
-#include "base/assets/BaseAsset.hpp"
 #include "base/util/Type.hpp"
-#include <unordered_map>
-#include <vector>
 
 namespace Base
 {
@@ -14,6 +11,5 @@ namespace Base
     int TargetFps = 0;
     bool Vsync = false;
     bool ResizableWindow = true;
-    std::unordered_map<Base::AssetType, std::vector<AssetPath>> GlobalAssets = {};
   };
 } // namespace Base

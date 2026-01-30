@@ -1,4 +1,5 @@
 #pragma once
+#include "base/assets/AssetLayout.hpp"
 #include "base/scenes/Engine.hpp"
 #include "base/scenes/SceneID.hpp"
 #include "base/scenes/SceneLayerStack.hpp"
@@ -76,6 +77,14 @@ namespace Base
       _sharedData = data;
     }
 
+    template <typename T> void InitAssetStore()
+    {
+      auto data = SharedSceneDataStore<T>();
+      data.Init();
+      AssetLayout<T>::Load(Engine().Assets, *(data.template Get<T>()));
+      _assetStore = data;
+    }
+
   public:
     Scene() = default;
     virtual ~Scene() = default;
@@ -114,6 +123,11 @@ namespace Base
     template <typename T> std::shared_ptr<T> SharedData()
     {
       return _sharedData.Get<T>();
+    }
+
+    template <typename T> std::shared_ptr<T> AssetStore()
+    {
+      return _assetStore.Get<T>();
     }
 
     const std::bitset<8> &GetPauseMask() const;
